@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#09090b"/>
+  <!-- Dartboard rings -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#22c55e" stroke-width="4" opacity="0.3"/>
+  <circle cx="256" cy="256" r="140" fill="none" stroke="#22c55e" stroke-width="4" opacity="0.5"/>
+  <circle cx="256" cy="256" r="80" fill="none" stroke="#22c55e" stroke-width="4" opacity="0.7"/>
+  <circle cx="256" cy="256" r="36" fill="#22c55e" opacity="0.9"/>
+  <circle cx="256" cy="256" r="18" fill="#22c55e"/>
+  <!-- NLC text -->
+  <text x="256" y="420" text-anchor="middle" font-family="Arial Black, sans-serif" font-weight="900" font-size="72" fill="#22c55e" letter-spacing="4">NLC</text>
+</svg>

@@ -1,5 +1,5 @@
 /**
- * Granboard LED command builders — reverse-engineered from leds.cpp (BoardLed library).
+ * Granboard LED command builders
  *
  * All commands are 16 bytes except clear() which is 20 bytes.
  * Byte layout for 16-byte commands:
@@ -33,7 +33,6 @@ export const Colors = {
 /**
  * Maps dart number (1–20) to LED ring cell position.
  * Index 0 = bull (center, position 0).
- * Source: ledpos[21] in leds.cpp
  */
 export const LED_POSITIONS = [
   0, // 0 = bull
@@ -89,7 +88,6 @@ export function buildHitCommand(
 
 /**
  * Light the entire ring with one color. Never switches off automatically.
- * Source: lightRing() in leds.cpp
  */
 export function buildLightRingCommand(color: RGB): number[] {
   return cmd16({
@@ -105,7 +103,6 @@ export function buildLightRingCommand(color: RGB): number[] {
 /**
  * Blink the entire ring then switch off after a delay.
  * Used for bull hits, busts, etc.
- * Source: blinkBull() / blinkOut() in leds.cpp
  */
 export function buildBlinkCommand(color: RGB, duration = 0x1e): number[] {
   return cmd16({
@@ -120,7 +117,6 @@ export function buildBlinkCommand(color: RGB, duration = 0x1e): number[] {
 
 /**
  * Wave animation triggered by the board button press.
- * Source: pressButton() in leds.cpp
  */
 export function buildButtonPressCommand(
   colorUp: RGB,
@@ -141,7 +137,6 @@ export function buildButtonPressCommand(
 
 /**
  * Turn off all LEDs.
- * Source: clear() in leds.cpp  (note: 20 bytes, not 16)
  */
 export function buildClearCommand(): number[] {
   return new Array<number>(20).fill(0);

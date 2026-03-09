@@ -1,3 +1,8 @@
+declare module "*.mp4" {
+  const src: string;
+  export default src;
+}
+
 type RequestDeviceOptions = {
   filters?: {
     services?: Array<number | string>;
@@ -20,6 +25,10 @@ interface BluetoothDevice {
   id: string;
   name?: string;
   gatt?: BluetoothRemoteGATTServer;
+  watchAdvertisements?(): Promise<void>;
+  unwatchAdvertisements?(): Promise<void>;
+  addEventListener(type: "advertisementreceived", listener: () => void, options?: { once?: boolean }): void;
+  addEventListener(type: string, listener: (event: Event) => void): void;
 }
 interface BluetoothRemoteGATTServer {
   connect(): Promise<BluetoothRemoteGATTServer>;

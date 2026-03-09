@@ -1,9 +1,7 @@
-// 藍牙 UUID
 import { CreateSegment, type Segment, SegmentID } from "./Dartboard.ts";
 
 const GRANBOARD_UUID = "442F1570-8A00-9A28-CBE1-E1D4212D53EB".toLowerCase();
 
-// 完整 SEGMENT_MAPPING（此為範例，請補齊所有對應）
 const SEGMENT_MAPPING: Record<string, SegmentID> = {
   "50-46-51-64": SegmentID.INNER_1,
   "50-46-52-64": SegmentID.TRP_1,
@@ -88,7 +86,7 @@ const SEGMENT_MAPPING: Record<string, SegmentID> = {
   "56-46-48-64": SegmentID.BULL,
   "52-46-48-64": SegmentID.DBL_BULL,
   "66-84-78-64": SegmentID.RESET_BUTTON,
-  // ...請補齊
+  "79-85-84-64": SegmentID.MISS,
 };
 
 export class Granboard {
@@ -96,7 +94,15 @@ export class Granboard {
   private writeCharacteristic: BluetoothRemoteGATTCharacteristic;
   public segmentHitCallback?: (segment: Segment) => void;
 
-  private static async connectToDevice(device: BluetoothDevice): Promise<Granboard> {
+  public setSegmentHitCallback(
+    cb: ((segment: Segment) => void) | undefined,
+  ): void {
+    this.segmentHitCallback = cb;
+  }
+
+  private static async connectToDevice(
+    device: BluetoothDevice,
+  ): Promise<Granboard> {
     if (!device.gatt) throw new Error("Could not find dartboard GATT service.");
     if (!device.gatt.connected) await device.gatt.connect();
 
@@ -129,25 +135,42 @@ export class Granboard {
 
   /**
    * Try to reconnect to a previously paired Granboard without showing the picker.
-   * Relies on navigator.bluetooth.getDevices() (Chrome 85+).
-   * Throws if no previously paired device is available or reachable.
+   * Uses getDevices() + watchAdvertisements() so the connection fires as soon as
+   * the board starts advertising — no blind retries needed.
+   * Requires chrome://flags/#enable-experimental-web-platform-features on Chrome 85+.
    */
-  public static async TryAutoReconnect(): Promise<Granboard> {
+  public static async TryAutoReconnect(timeoutMs = 30000): Promise<Granboard> {
     if (!navigator.bluetooth?.getDevices) {
       throw new Error("getDevices not supported.");
     }
     const devices = await navigator.bluetooth.getDevices();
     if (devices.length === 0) throw new Error("No previously paired devices.");
 
-    // All devices here were granted via our GRANBOARD_UUID filter, so try each
-    for (const device of devices) {
-      try {
-        return await Granboard.connectToDevice(device);
-      } catch {
-        // not reachable, try next
+    return new Promise<Granboard>((resolve, reject) => {
+      const cleanup = () => {
+        for (const device of devices) {
+          device.unwatchAdvertisements?.().catch(() => {});
+        }
+      };
+
+      const timer = setTimeout(() => {
+        cleanup();
+        reject(new Error("Timed out waiting for Granboard to advertise."));
+      }, timeoutMs);
+
+      for (const device of devices) {
+        device.watchAdvertisements?.().catch(() => {});
+        device.addEventListener(
+          "advertisementreceived",
+          () => {
+            clearTimeout(timer);
+            cleanup();
+            Granboard.connectToDevice(device).then(resolve).catch(reject);
+          },
+          { once: true },
+        );
       }
-    }
-    throw new Error("Previously paired Granboard is not reachable.");
+    });
   }
 
   constructor(

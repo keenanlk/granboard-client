@@ -35,7 +35,8 @@ export const useGranboardStore = create<GranboardState>((set, get) => ({
     try {
       const board = await Granboard.TryAutoReconnect();
       set({ board, status: "connected" });
-    } catch {
+    } catch (error) {
+      console.error("Auto-reconnect failed:", error);
       // No previously paired device or out of range — silently go back to disconnected
       set({ status: "disconnected" });
     }
