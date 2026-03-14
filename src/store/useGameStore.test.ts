@@ -236,7 +236,7 @@ describe("bust rules", () => {
     // This is getting complicated. Let's just test the core: a bust restores the turn-start score.
     store().startGame(
       {
-        startingScore: 20,
+        startingScore: 20 as 301,
         splitBull: false,
         doubleOut: false,
         masterOut: false,
@@ -252,7 +252,7 @@ describe("bust rules", () => {
   it("subsequent darts ignored after bust", () => {
     store().startGame(
       {
-        startingScore: 20,
+        startingScore: 20 as 301,
         splitBull: false,
         doubleOut: false,
         masterOut: false,
@@ -273,10 +273,10 @@ describe("bust rules", () => {
 // Double-out
 // ---------------------------------------------------------------------------
 describe("doubleOut", () => {
-  function startDoubleOut(startingScore: 301 | 501 | 701 = 501) {
+  function startDoubleOut(startingScore: number = 501) {
     store().startGame(
       {
-        startingScore,
+        startingScore: startingScore as 301,
         splitBull: false,
         doubleOut: true,
         masterOut: false,
@@ -324,10 +324,10 @@ describe("doubleOut", () => {
 // Master-out
 // ---------------------------------------------------------------------------
 describe("masterOut", () => {
-  function startMasterOut(startingScore: 301 | 501 | 701 = 501) {
+  function startMasterOut(startingScore: number = 501) {
     store().startGame(
       {
-        startingScore,
+        startingScore: startingScore as 301,
         splitBull: false,
         doubleOut: false,
         masterOut: true,
@@ -495,7 +495,7 @@ describe("splitBull", () => {
     );
     store().startGame(
       {
-        startingScore: 50,
+        startingScore: 50 as 301,
         splitBull: false,
         doubleOut: true,
         masterOut: false,
@@ -559,7 +559,7 @@ describe("undoLastDart", () => {
   it("clears bust state on undo", () => {
     store().startGame(
       {
-        startingScore: 20,
+        startingScore: 20 as 301,
         splitBull: false,
         doubleOut: false,
         masterOut: false,
@@ -576,7 +576,7 @@ describe("undoLastDart", () => {
   it("clears winner on undo", () => {
     store().startGame(
       {
-        startingScore: 20,
+        startingScore: 20 as 301,
         splitBull: false,
         doubleOut: false,
         masterOut: false,
@@ -590,9 +590,39 @@ describe("undoLastDart", () => {
     expect(store().winner).toBeNull();
   });
 
-  it("no-ops when no darts thrown", () => {
+  it("no-ops when no darts thrown and no completed rounds", () => {
     store().undoLastDart();
     expect(store().players[0].score).toBe(501);
+  });
+
+  it("cross-turn: reverts to previous player when current turn has no darts", () => {
+    store().startGame(
+      { startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false },
+      ["Alice", "Bob"],
+    );
+    store().addDart(s20); // Alice: 481
+    store().addDart(t20); // Alice: 421
+    store().nextTurn();   // Bob's turn
+    // Bob hasn't thrown yet — undo should revert to Alice's turn
+    store().undoLastDart();
+    expect(store().currentPlayerIndex).toBe(0); // back to Alice
+    expect(store().currentRoundDarts).toHaveLength(0);
+    expect(store().players[0].score).toBe(501); // Alice's score restored
+    expect(store().players[0].rounds).toHaveLength(0); // round removed
+    expect(store().players[0].totalDartsThrown).toBe(0);
+  });
+
+  it("cross-turn: restores score correctly when previous round was a bust", () => {
+    store().startGame(
+      { startingScore: 20 as 301, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false },
+      ["Alice", "Bob"],
+    );
+    store().addDart(t20); // Alice: bust (20 restored)
+    store().nextTurn();   // Bob's turn
+    store().undoLastDart(); // back to Alice
+    expect(store().currentPlayerIndex).toBe(0);
+    expect(store().players[0].score).toBe(20); // bust round: score = 0, restores to 20
+    expect(store().players[0].rounds).toHaveLength(0);
   });
 
   it("restores double-in opened state on undo back past opening dart", () => {
@@ -658,7 +688,7 @@ describe("nextTurn", () => {
   it("resets bust flag and currentRoundDarts", () => {
     store().startGame(
       {
-        startingScore: 20,
+        startingScore: 20 as 301,
         splitBull: false,
         doubleOut: false,
         masterOut: false,
@@ -675,7 +705,7 @@ describe("nextTurn", () => {
   it("does not advance turn if game is won", () => {
     store().startGame(
       {
-        startingScore: 20,
+        startingScore: 20 as 301,
         splitBull: false,
         doubleOut: false,
         masterOut: false,

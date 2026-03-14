@@ -220,7 +220,7 @@ export function PlayersScreen({ onBack }: PlayersScreenProps) {
   return (
     <div
       className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden"
-      style={{ paddingLeft: "var(--sal)", paddingRight: "var(--sar)" }}
+      style={{ paddingLeft: "var(--sal)" }}
     >
       {/* Header */}
       <header

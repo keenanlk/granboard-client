@@ -33,7 +33,7 @@ export function HomeScreen({ onSelectGame, onPlayers }: HomeScreenProps) {
   const isConnecting = status === "connecting";
 
   return (
-    <div className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden" style={{ paddingLeft: "var(--sal)", paddingRight: "var(--sar)" }}>
+    <div className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden" style={{ paddingLeft: "var(--sal)" }}>
       {/* Header — padded for notch */}
       <header
         className="flex items-center justify-between px-6 pb-3 shrink-0 bg-zinc-950"

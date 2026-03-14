@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { AwardType } from "../lib/awards.ts";
+import { getVolume } from "../sound/sounds.ts";
 import hattrickSrc from "../assets/awards/hattrick.mp4";
 import ton80Src from "../assets/awards/ton80.mp4";
 import hightonSrc from "../assets/awards/highton.mp4";
@@ -41,6 +42,7 @@ export function AwardOverlay({ award, onDismiss }: AwardOverlayProps) {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+    video.volume = getVolume();
     video.currentTime = 0;
     void video.play();
   }, [award]);

@@ -5,13 +5,21 @@ export type { RecordedDart };
 export class GameRecorder {
   private rounds: RoundRecord[] = [];
   private roundCounters: number[];
+  private gameType: "x01" | "cricket" | "highscore";
+  private playerNames: string[];
+  private playerIds: (string | null)[];
+  private options: unknown;
 
   constructor(
-    private gameType: "x01" | "cricket" | "highscore",
-    private playerNames: string[],
-    private playerIds: (string | null)[],
-    private options: unknown,
+    gameType: "x01" | "cricket" | "highscore",
+    playerNames: string[],
+    playerIds: (string | null)[],
+    options: unknown,
   ) {
+    this.gameType = gameType;
+    this.playerNames = playerNames;
+    this.playerIds = playerIds;
+    this.options = options;
     this.roundCounters = playerNames.map(() => 0);
   }
 

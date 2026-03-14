@@ -16,5 +16,11 @@ Do not invent rules from memory when a rule file exists.
 ## Important paths
 - Rules docs: `/docs/game-rules`
 
+## Linting
+- Use `npm run lint` to lint code.
+
+## Testing
+- Use `npm test` to run tests.
+
 ## Design
 - The gameplay should somewhat resemble the design the Granboard App uses. This ![image](/public/granboard.png) is a good starting point.

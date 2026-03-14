@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useHighScoreStore, type HighScoreOptions } from "../store/useHighScoreStore.ts";
 import { HighScoreController } from "../controllers/HighScoreController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
+import { useBotTurn } from "../hooks/useBotTurn.ts";
 import { GameShell } from "../components/GameShell.tsx";
+import { Bot } from "../bot/Bot.ts";
+import type { BotSkill } from "../bot/Bot.ts";
+import { CreateSegment } from "../board/Dartboard.ts";
+import { gameLogger } from "../lib/GameLogger.ts";
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { detectAward } from "../lib/awards.ts";
@@ -19,6 +24,7 @@ interface HighScoreScreenProps {
   options: HighScoreOptions;
   playerNames: string[];
   playerIds: (string | null)[];
+  botSkills: (BotSkill | null)[];
   onExit: () => void;
 }
 
@@ -26,6 +32,7 @@ export function HighScoreScreen({
   options,
   playerNames,
   playerIds,
+  botSkills,
   onExit,
 }: HighScoreScreenProps) {
   const {
@@ -43,6 +50,7 @@ export function HighScoreScreen({
     gameType: "highscore",
     playerNames,
     playerIds,
+    botSkills,
     options,
     createController: () => new HighScoreController(),
     extractRound: () => {
@@ -72,6 +80,33 @@ export function HighScoreScreen({
   const isLastRound = currentRound === options.rounds;
   const textSizes = playerTextSizes(n);
 
+  const bots = useMemo(() => {
+    const map = new Map<number, Bot>();
+    botSkills.forEach((skill, i) => {
+      if (skill !== null) map.set(i, new Bot(playerNames[i], skill));
+    });
+    return map;
+  }, [botSkills, playerNames]);
+
+  const isCurrentBot = bots.has(currentPlayerIndex);
+
+  const getThrow = useCallback((bot: Bot) => {
+    return CreateSegment(bot.throwHighScore(options.splitBull, (target, actual) => {
+      gameLogger.logDart(bot.name, target, actual, {});
+    }));
+  }, [options.splitBull]);
+
+  useBotTurn({
+    bots,
+    currentPlayerIndex,
+    dartsThrown: currentRoundDarts.length,
+    isBust: false,
+    hasWinner: !!winners,
+    isTransitioning,
+    onNextTurn: handleNextTurn,
+    getThrow,
+  });
+
   const [pendingAward, setPendingAward] = useState<AwardType | null>(null);
   useEffect(() => {
     if (!readyToSwitch) return;
@@ -89,10 +124,10 @@ export function HighScoreScreen({
 
   return (
     <GameShell
-      headerBorderClass="border-yellow-900"
+      gameClass="game-highscore"
       title={
         <>
-          <span className="font-black text-yellow-400 text-2xl tracking-widest">
+          <span className="font-black text-[var(--color-game-accent)] text-2xl tracking-widest">
             High Score
           </span>
           <span className="text-zinc-500 text-xs uppercase tracking-widest">
@@ -102,7 +137,7 @@ export function HighScoreScreen({
       }
       onExit={onExit}
       onUndo={undoLastDart}
-      undoDisabled={currentRoundDarts.length === 0 || !!winners}
+      undoDisabled={currentRoundDarts.length === 0 || !!winners || isCurrentBot}
       isTransitioning={isTransitioning}
       countdown={countdown}
       nextPlayerName={n > 1 ? nextPlayer?.name : undefined}
@@ -110,9 +145,6 @@ export function HighScoreScreen({
         <>
           {winners && (
             <ResultsOverlay
-              accentClass="text-yellow-400"
-              buttonClass="bg-yellow-500 hover:bg-yellow-400 active:bg-yellow-600 text-black"
-              glowClass="shadow-[0_0_30px_rgba(234,179,8,0.4)]"
               onExit={onExit}
               playerResults={players
                 .slice()
@@ -141,7 +173,7 @@ export function HighScoreScreen({
             <AwardOverlay award={pendingAward} onDismiss={() => setPendingAward(null)} />
           )}
           {inPlayoff && !winners && (
-            <div className="absolute top-0 inset-x-0 z-10 bg-yellow-500 text-black text-center py-2 font-black text-sm uppercase tracking-widest">
+            <div className="absolute top-0 inset-x-0 z-10 bg-[var(--color-game-accent)] text-[var(--color-game-accent-text)] text-center py-2 font-black text-sm uppercase tracking-widest">
               Playoff — throw 1 dart
             </div>
           )}
@@ -149,13 +181,13 @@ export function HighScoreScreen({
       }
     >
       {/* Main area */}
-      <div className="flex-1 flex min-h-0">
+      <div className="flex-1 flex min-h-0" style={{ paddingLeft: "var(--sal)" }}>
 
         {/* Left: active player score */}
         <div className="flex-1 flex flex-col min-h-0 min-w-0 px-4 py-2">
           <div className="flex items-center gap-3 shrink-0">
-            <span className="w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_10px_4px_rgba(234,179,8,0.5)]" />
-            <span className="text-yellow-400 font-black uppercase tracking-widest text-lg">
+            <span className="glow-dot" />
+            <span className="text-[var(--color-game-accent)] font-black uppercase tracking-widest text-lg">
               {currentPlayer?.name}
             </span>
           </div>
@@ -166,7 +198,7 @@ export function HighScoreScreen({
                 {(currentPlayer?.score ?? 0) + roundTotal}
               </p>
               {roundTotal > 0 && (
-                <p className="text-yellow-400 font-black text-2xl tabular-nums">+{roundTotal}</p>
+                <p className="text-[var(--color-game-accent)] font-black text-2xl tabular-nums">+{roundTotal}</p>
               )}
             </div>
             {/* Round history */}
@@ -195,29 +227,25 @@ export function HighScoreScreen({
         </div>
 
         {/* Right: dart slots + Next Turn button */}
-        <div className="flex flex-col shrink-0 w-24 border-l border-zinc-800 min-h-0">
+        <div className="flex flex-col shrink-0 w-24 border-l border-border-default min-h-0">
 
           {/* Compact dart slots */}
           <div className="flex flex-col gap-1 p-2 shrink-0">
             {[0, 1, 2].map((j) => {
               const dart = currentRoundDarts[j];
               const isNext = j === currentRoundDarts.length && !readyToSwitch;
+              const state = dart
+                ? dart.value > 0
+                  ? "scored"
+                  : "miss"
+                : isNext
+                  ? "next"
+                  : "empty";
               return (
-                <div
-                  key={j}
-                  className={`h-7 rounded flex items-center justify-center gap-1.5 border transition-all duration-200 ${
-                    dart
-                      ? dart.value > 0
-                        ? "border-yellow-600 bg-yellow-950/40"
-                        : "border-zinc-700 bg-zinc-800/40"
-                      : isNext
-                        ? "border-yellow-700 border-dashed bg-zinc-900"
-                        : "border-zinc-800 bg-zinc-900/50"
-                  }`}
-                >
+                <div key={j} className="dart-slot" data-state={state}>
                   {dart ? (
                     <>
-                      <span className={`text-xs font-black leading-none ${dart.value > 0 ? "text-yellow-400" : "text-zinc-600"}`}>
+                      <span className={`text-xs font-black leading-none ${dart.value > 0 ? "text-[var(--color-game-accent)]" : "text-zinc-600"}`}>
                         {dart.value}
                       </span>
                       <span className="text-[10px] text-zinc-500 font-bold uppercase">
@@ -225,9 +253,9 @@ export function HighScoreScreen({
                       </span>
                     </>
                   ) : isNext ? (
-                    <span className="text-yellow-700 text-xs font-black">{j + 1}</span>
+                    <span className="text-[var(--color-game-accent)] text-xs font-black opacity-60">{j + 1}</span>
                   ) : (
-                    <span className="text-zinc-700 text-xs">·</span>
+                    <span className="text-content-faint text-xs">·</span>
                   )}
                 </div>
               );
@@ -237,32 +265,44 @@ export function HighScoreScreen({
           {/* Next Turn button */}
           <div className="relative flex-1 min-h-0 p-2">
             {readyToSwitch && !winners && (
-              <span className="absolute inset-2 rounded-xl bg-yellow-500 opacity-20 animate-ping" />
+              <span
+                className="absolute inset-2 rounded-xl opacity-20 animate-ping"
+                style={{ backgroundColor: "var(--color-game-accent)" }}
+              />
             )}
-            <button
-              onClick={handleNextTurn}
-              disabled={!!winners}
-              className={`relative w-full h-full rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200 flex flex-col items-center justify-center gap-1 ${
-                readyToSwitch
-                  ? "bg-yellow-500 hover:bg-yellow-400 active:bg-yellow-600 text-black shadow-[0_0_24px_rgba(234,179,8,0.35)]"
-                  : "bg-zinc-900 border-2 border-zinc-800 text-zinc-600"
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              <span className="text-center leading-tight px-1">{nextLabel()}</span>
-              <span className="text-base">→</span>
-            </button>
+            {isCurrentBot ? (
+              <div className="w-full h-full rounded-xl bg-surface-raised border-2 border-purple-900 flex flex-col items-center justify-center gap-1 opacity-70">
+                <span className="text-state-bot text-[10px] uppercase tracking-widest font-black">CPU</span>
+                <span className="text-purple-600 text-base animate-pulse">···</span>
+              </div>
+            ) : (
+              <button
+                onClick={handleNextTurn}
+                disabled={!!winners}
+                className={`relative w-full h-full rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200 flex flex-col items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  readyToSwitch
+                    ? "text-[var(--color-game-accent-text)]"
+                    : "bg-surface-raised border-2 border-border-default text-content-faint"
+                }`}
+                style={readyToSwitch ? {
+                  backgroundColor: "var(--color-game-accent)",
+                  boxShadow: "var(--shadow-glow-md)",
+                } : undefined}
+              >
+                <span className="text-center leading-tight px-1">{nextLabel()}</span>
+                <span className="text-base">→</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       {/* Player strip — always single row */}
       <div
-        className={`shrink-0 grid border-t-2 bg-black transition-all duration-300 ${
-          readyToSwitch ? "border-yellow-800" : "border-zinc-800"
-        }`}
+        className="shrink-0 grid border-t-2 bg-surface-sunken transition-all duration-300"
         style={{
+          borderColor: readyToSwitch ? "var(--color-game-accent)" : "var(--color-border-default)",
           gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))`,
-          paddingBottom: "calc(var(--sab) + 0.25rem)",
         }}
       >
         {players.map((player, i) => {
@@ -276,17 +316,17 @@ export function HighScoreScreen({
           return (
             <div
               key={i}
-              className={`flex flex-col items-center justify-center py-1.5 px-1 border-r border-zinc-800 last:border-r-0 transition-all duration-300 ${
-                isActive ? "bg-zinc-900 shadow-[inset_0_2px_0_rgba(234,179,8,0.5)]" : "bg-black"
-              }`}
+              className="player-strip-cell border-r border-border-default last:border-r-0"
+              data-active={String(isActive)}
+              style={i === 0 ? { paddingLeft: "var(--sal)" } : undefined}
             >
-              <span className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${isActive ? "text-yellow-400" : "text-zinc-600"} ${textSizes.name}`}>
+              <span className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"} ${textSizes.name}`}>
                 {player.name}
               </span>
-              <span className={`font-black tabular-nums leading-tight transition-colors duration-300 ${isActive ? "text-white" : "text-zinc-500"} ${textSizes.score}`}>
+              <span className={`font-black tabular-nums leading-tight transition-colors duration-300 ${isActive ? "text-content-primary" : "text-content-muted"} ${textSizes.score}`}>
                 {player.score}
               </span>
-              <span className={`tabular-nums transition-colors duration-300 ${isActive ? "text-zinc-400" : "text-zinc-700"} ${textSizes.stat}`}>
+              <span className={`tabular-nums transition-colors duration-300 ${isActive ? "text-content-secondary" : "text-content-faint"} ${textSizes.stat}`}>
                 avg {avg}
               </span>
             </div>

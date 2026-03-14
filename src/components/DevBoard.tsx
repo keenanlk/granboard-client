@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useGranboardStore } from "../store/useGranboardStore.ts";
 import { MockGranboard } from "../board/MockGranboard.ts";
 import { SegmentID } from "../board/Dartboard.ts";
+import { gameLogger } from "../lib/GameLogger.ts";
 
 // Numbers in dartboard clockwise order (same as physical board layout)
 const BOARD_ORDER = [
@@ -110,6 +111,16 @@ export function DevBoard() {
               className="flex-1 py-1 rounded bg-blue-900 hover:bg-blue-700 text-blue-300 font-black"
             >
               RESET
+            </button>
+          </div>
+
+          {/* Log download */}
+          <div className="border-t border-zinc-800 pt-2 mt-1">
+            <button
+              onClick={() => gameLogger.download()}
+              className="w-full py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-400 font-black text-[10px] uppercase tracking-wider"
+            >
+              Download Game Log
             </button>
           </div>
         </div>

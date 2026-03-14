@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import { TurnDelayOverlay } from "./TurnDelayOverlay.tsx";
+import { GameMenu } from "./GameMenu.tsx";
 
 interface GameShellProps {
-  /** e.g. "border-green-900" — header bottom border */
-  headerBorderClass: string;
+  gameClass: "game-x01" | "game-cricket" | "game-highscore";
   /** Center of the header (title, subtitle, etc.) */
   title: ReactNode;
   onExit: () => void;
@@ -19,7 +19,7 @@ interface GameShellProps {
 }
 
 export function GameShell({
-  headerBorderClass,
+  gameClass,
   title,
   onExit,
   onUndo,
@@ -32,8 +32,7 @@ export function GameShell({
 }: GameShellProps) {
   return (
     <div
-      className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden"
-      style={{ paddingLeft: "var(--sal)", paddingRight: "var(--sar)" }}
+      className={`h-screen bg-surface-sunken text-content-primary flex flex-col overflow-hidden ${gameClass}`}
     >
       {/* Turn delay overlay — shown between every turn across all game modes */}
       {isTransitioning && (
@@ -44,23 +43,18 @@ export function GameShell({
       {overlays}
 
       <header
-        className={`flex items-center justify-between px-6 pb-3 bg-black border-b-2 ${headerBorderClass} shrink-0`}
-        style={{ paddingTop: "calc(var(--sat) + 0.75rem)" }}
+        className="flex items-center justify-between pb-3 bg-surface-sunken border-b-2 border-[var(--color-game-accent)] shrink-0"
+        style={{
+          paddingTop: "calc(var(--sat) + 0.75rem)",
+          paddingLeft: "calc(var(--sal) + 1.5rem)",
+          paddingRight: "1.5rem",
+        }}
       >
-        <button
-          onClick={onExit}
-          className="text-zinc-500 hover:text-white transition-colors text-sm uppercase tracking-wider w-16"
-        >
+        <button onClick={onExit} className="btn-ghost w-16">
           ← Exit
         </button>
         <div className="flex flex-col items-center">{title}</div>
-        <button
-          onClick={onUndo}
-          disabled={undoDisabled}
-          className="text-zinc-500 hover:text-red-400 disabled:text-zinc-800 transition-colors text-sm uppercase tracking-wider w-16 text-right disabled:cursor-not-allowed"
-        >
-          Undo
-        </button>
+        <GameMenu onUndo={onUndo} undoDisabled={undoDisabled} />
       </header>
 
       {children}

@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import { CreateSegment, type Segment, SegmentID } from "./Dartboard.ts";
 
 // Raw BLE byte sequences → SegmentID (same as original Granboard protocol)
@@ -93,22 +94,10 @@ function dispatchUID(uid: string, cb?: (segment: Segment) => void): void {
   if (segmentID !== undefined) cb?.(CreateSegment(segmentID));
 }
 
-// ── Environment detection ─────────────────────────────────────────────────────
-
-const isElectron = typeof window !== "undefined" && !!window.electronAPI;
-
 const SERVICE_UUID = "442f1570-8a00-9a28-cbe1-e1d4212d53eb";
 const DEVICE_ID_KEY = "granboard_device_id";
 
-// ── Electron IPC listener (registered once at module load) ────────────────────
-
-let activeHitCallback: ((uid: string) => void) | null = null;
-
-if (isElectron) {
-  window.electronAPI!.onDartHit((uid) => activeHitCallback?.(uid));
-}
-
-// ── Capacitor BLE state ───────────────────────────────────────────────────────
+// ── Capacitor BLE ─────────────────────────────────────────────────────────────
 
 let capDeviceId: string | null = null;
 let capWriteCharUUID: string | null = null;
@@ -128,9 +117,7 @@ async function connectCapacitor(deviceId?: string): Promise<void> {
   }
 
   let device: { deviceId: string };
-
   if (deviceId) {
-    // Try reconnecting to previously paired device
     device = { deviceId };
   } else {
     device = await BleClient.requestDevice({ services: [SERVICE_UUID] });
@@ -141,7 +128,6 @@ async function connectCapacitor(deviceId?: string): Promise<void> {
     capDeviceId = null;
     capWriteCharUUID = null;
   });
-
   capDeviceId = device.deviceId;
 
   const services = await BleClient.getServices(device.deviceId);
@@ -172,14 +158,66 @@ async function connectCapacitor(deviceId?: string): Promise<void> {
   );
 }
 
+// ── Web Bluetooth API ─────────────────────────────────────────────────────────
+
+let webWriteChar: BluetoothRemoteGATTCharacteristic | null = null;
+let webHitCallback: ((uid: string) => void) | null = null;
+
+async function connectWeb(deviceId?: string): Promise<void> {
+  let device: BluetoothDevice | undefined;
+
+  // Try to reconnect to a previously permitted device without showing the picker
+  if (deviceId && "getDevices" in navigator.bluetooth) {
+    const permitted = await navigator.bluetooth.getDevices();
+    device = permitted.find((d) => d.id === deviceId);
+  }
+
+  if (!device) {
+    device = await navigator.bluetooth.requestDevice({
+      filters: [{ services: [SERVICE_UUID] }],
+    });
+    localStorage.setItem(DEVICE_ID_KEY, device.id);
+  }
+
+  const server = await device.gatt!.connect();
+  const service = await server.getPrimaryService(SERVICE_UUID);
+  const characteristics = await service.getCharacteristics();
+
+  const notifyChar = characteristics.find((c) => c.properties.notify);
+  const writeChar =
+    characteristics.find(
+      (c) => c.properties.write || c.properties.writeWithoutResponse,
+    ) ?? notifyChar;
+
+  if (!notifyChar || !writeChar)
+    throw new Error("Required BLE characteristics not found.");
+
+  webWriteChar = writeChar;
+
+  await notifyChar.startNotifications();
+  notifyChar.addEventListener("characteristicvaluechanged", (event) => {
+    const value = (event.target as BluetoothRemoteGATTCharacteristic).value!;
+    const uid = Array.from(new Uint8Array(value.buffer)).join("-");
+    webHitCallback?.(uid);
+  });
+
+  device.addEventListener("gattserverdisconnected", () => {
+    webWriteChar = null;
+  });
+}
+
+// ── Granboard class ───────────────────────────────────────────────────────────
+
+const isNative = Capacitor.isNativePlatform();
+
 export class Granboard {
   public segmentHitCallback?: (segment: Segment) => void;
 
   constructor() {
-    if (isElectron) {
-      activeHitCallback = (uid) => dispatchUID(uid, this.segmentHitCallback);
-    } else {
+    if (isNative) {
       capHitCallback = (uid) => dispatchUID(uid, this.segmentHitCallback);
+    } else {
+      webHitCallback = (uid) => dispatchUID(uid, this.segmentHitCallback);
     }
   }
 
@@ -190,39 +228,38 @@ export class Granboard {
   }
 
   async sendCommand(bytes: number[]): Promise<void> {
-    if (isElectron) {
-      await window.electronAPI!.sendCommand(bytes);
-      return;
+    if (isNative) {
+      if (!capDeviceId || !capWriteCharUUID)
+        throw new Error("Not connected to GranBoard.");
+      const BleClient = await getBleClient();
+      const buf = new DataView(new ArrayBuffer(bytes.length));
+      bytes.forEach((b, i) => buf.setUint8(i, b));
+      await BleClient.write(capDeviceId, SERVICE_UUID, capWriteCharUUID, buf);
+    } else {
+      if (!webWriteChar) throw new Error("Not connected to GranBoard.");
+      await webWriteChar.writeValueWithoutResponse(new Uint8Array(bytes));
     }
-
-    if (!capDeviceId || !capWriteCharUUID)
-      throw new Error("Not connected to GranBoard.");
-
-    const BleClient = await getBleClient();
-    const buf = new DataView(new ArrayBuffer(bytes.length));
-    bytes.forEach((b, i) => buf.setUint8(i, b));
-    await BleClient.write(capDeviceId, SERVICE_UUID, capWriteCharUUID, buf);
   }
 
   public static async ConnectToBoard(): Promise<Granboard> {
-    if (isElectron) {
-      await window.electronAPI!.connect();
-    } else {
+    if (isNative) {
       await connectCapacitor();
+    } else {
+      await connectWeb();
     }
     return new Granboard();
   }
 
   public static async TryAutoReconnect(): Promise<Granboard> {
-    if (isElectron) {
-      await window.electronAPI!.autoReconnect();
-      return new Granboard();
+    const savedId = localStorage.getItem(DEVICE_ID_KEY) ?? undefined;
+    if (isNative) {
+      if (!savedId) throw new Error("No previously paired device.");
+      await connectCapacitor(savedId);
+    } else {
+      // On web, getDevices() silently finds the device if the browser supports it
+      // and the user has previously granted permission. Falls back to picker otherwise.
+      await connectWeb(savedId);
     }
-
-    // Capacitor: try last known device, fail silently if unavailable
-    const savedId = localStorage.getItem(DEVICE_ID_KEY);
-    if (!savedId) throw new Error("No previously paired device.");
-    await connectCapacitor(savedId);
     return new Granboard();
   }
 }

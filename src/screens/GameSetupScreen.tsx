@@ -5,13 +5,17 @@ import {
   DEFAULT_HIGHSCORE_OPTIONS,
   type HighScoreOptions,
 } from "../store/useHighScoreStore.ts";
-import { PlayerSelectStep, type RosterEntry } from "../components/PlayerSelectStep.tsx";
+import { PlayerSelectStep, BotSkill, type RosterEntry } from "../components/PlayerSelectStep.tsx";
+import type { BotSkill as BotSkillType } from "../bot/Bot.ts";
+
+export type { BotSkillType };
 
 interface GameSetupScreenProps {
   game: "x01" | "cricket" | "highscore";
   onStart: (
     players: string[],
     playerIds: (string | null)[],
+    botSkills: (BotSkillType | null)[],
     x01Options?: X01Options,
     cricketOptions?: CricketOptions,
     highScoreOptions?: HighScoreOptions,
@@ -41,45 +45,43 @@ export function GameSetupScreen({ game, onStart, onBack }: GameSetupScreenProps)
     });
 
   const title = game === "x01" ? "X01" : game === "cricket" ? "Cricket" : "High Score";
-  const accentClass =
-    game === "x01" ? "text-red-500" : game === "cricket" ? "text-green-400" : "text-yellow-400";
-  const btnClass =
-    game === "x01"
-      ? "bg-red-600 hover:bg-red-500 active:bg-red-700 text-white"
-      : game === "cricket"
-        ? "bg-green-600 hover:bg-green-500 active:bg-green-700 text-white"
-        : "bg-yellow-500 hover:bg-yellow-400 active:bg-yellow-600 text-black";
+  const gameClass = game === "x01" ? "game-x01" : game === "cricket" ? "game-cricket" : "game-highscore";
 
   const handleBack = () => (step === 2 ? setStep(1) : onBack());
 
   return (
     <div
-      className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden"
-      style={{ paddingLeft: "var(--sal)", paddingRight: "var(--sar)" }}
+      className={`screen-root ${gameClass}`}
     >
       {/* Header */}
       <header
-        className="flex items-center justify-between px-6 pb-3 border-b border-zinc-800 shrink-0"
+        className="flex items-center justify-between px-6 pb-3 border-b border-border-default shrink-0"
         style={{ paddingTop: "calc(var(--sat) + 0.75rem)" }}
       >
         <button
           onClick={handleBack}
-          className="text-zinc-500 hover:text-white transition-colors text-sm uppercase tracking-wider w-14"
+          className="btn-ghost w-14"
         >
           ← Back
         </button>
         <div className="flex flex-col items-center">
-          <span className={`font-black text-xl tracking-widest ${accentClass}`}>
+          <span className="font-black text-xl tracking-widest text-[var(--color-game-accent)]">
             {title}
           </span>
-          <span className="text-zinc-600 text-xs uppercase tracking-widest">
+          <span className="text-content-faint text-xs uppercase tracking-widest">
             {step === 1 ? "Options" : "Players"}
           </span>
         </div>
         {/* Step dots */}
         <div className="flex items-center gap-1.5 w-14 justify-end">
-          <span className={`w-2 h-2 rounded-full transition-colors ${step === 1 ? (game === "x01" ? "bg-red-500" : game === "cricket" ? "bg-green-400" : "bg-yellow-400") : "bg-zinc-600"}`} />
-          <span className={`w-2 h-2 rounded-full transition-colors ${step === 2 ? (game === "x01" ? "bg-red-500" : game === "cricket" ? "bg-green-400" : "bg-yellow-400") : "bg-zinc-600"}`} />
+          <span
+            className="w-2 h-2 rounded-full transition-colors"
+            style={{ backgroundColor: step === 1 ? "var(--color-game-accent)" : "var(--color-border-subtle)" }}
+          />
+          <span
+            className="w-2 h-2 rounded-full transition-colors"
+            style={{ backgroundColor: step === 2 ? "var(--color-game-accent)" : "var(--color-border-subtle)" }}
+          />
         </div>
       </header>
 
@@ -100,17 +102,14 @@ export function GameSetupScreen({ game, onStart, onBack }: GameSetupScreenProps)
                   <button
                     key={key}
                     onClick={() => setX01Option(key, !x01Options[key])}
-                    className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 transition-all duration-150 px-3 py-3 min-h-[80px] max-h-[160px] ${
-                      x01Options[key]
-                        ? "border-red-500 bg-red-950/30"
-                        : "border-zinc-800 bg-zinc-900"
-                    }`}
+                    className="option-card min-h-[80px] max-h-[160px]"
+                    data-active={String(x01Options[key])}
                   >
-                    <span className={`text-xl font-black ${x01Options[key] ? "text-red-400" : "text-zinc-600"}`}>
+                    <span className={`text-xl font-black ${x01Options[key] ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
                       {x01Options[key] ? "ON" : "OFF"}
                     </span>
-                    <span className={`text-sm font-bold text-center leading-tight ${x01Options[key] ? "text-white" : "text-zinc-400"}`}>{label}</span>
-                    <span className="text-xs text-zinc-500 text-center leading-tight">{desc}</span>
+                    <span className={`text-sm font-bold text-center leading-tight ${x01Options[key] ? "text-content-primary" : "text-zinc-400"}`}>{label}</span>
+                    <span className="text-xs text-content-muted text-center leading-tight">{desc}</span>
                   </button>
                 ))}
               </div>
@@ -120,17 +119,14 @@ export function GameSetupScreen({ game, onStart, onBack }: GameSetupScreenProps)
               <div className="grid grid-cols-2 gap-3 w-full" style={{ maxHeight: "min(100%, 200px)" }}>
                 <button
                   onClick={() => setCricketOptions((prev) => ({ ...prev, singleBull: !prev.singleBull }))}
-                  className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 transition-all duration-150 px-3 py-3 min-h-[80px] max-h-[160px] ${
-                    cricketOptions.singleBull
-                      ? "border-green-500 bg-green-950/30"
-                      : "border-zinc-800 bg-zinc-900"
-                  }`}
+                  className="option-card min-h-[80px] max-h-[160px]"
+                  data-active={String(cricketOptions.singleBull)}
                 >
-                  <span className={`text-xl font-black ${cricketOptions.singleBull ? "text-green-400" : "text-zinc-600"}`}>
+                  <span className={`text-xl font-black ${cricketOptions.singleBull ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
                     {cricketOptions.singleBull ? "ON" : "OFF"}
                   </span>
-                  <span className={`text-sm font-bold text-center ${cricketOptions.singleBull ? "text-white" : "text-zinc-400"}`}>Split Bull</span>
-                  <span className="text-xs text-zinc-500 text-center leading-tight">Both bull zones count as 1 mark</span>
+                  <span className={`text-sm font-bold text-center ${cricketOptions.singleBull ? "text-content-primary" : "text-zinc-400"}`}>Split Bull</span>
+                  <span className="text-xs text-content-muted text-center leading-tight">Both bull zones count as 1 mark</span>
                 </button>
               </div>
             )}
@@ -142,13 +138,12 @@ export function GameSetupScreen({ game, onStart, onBack }: GameSetupScreenProps)
                     <button
                       key={r}
                       onClick={() => setHighScoreOptions((prev) => ({ ...prev, rounds: r }))}
-                      className={`flex-1 py-4 rounded-xl font-black text-2xl transition-colors border-2 ${
-                        highScoreOptions.rounds === r
-                          ? "border-yellow-500 bg-yellow-950/40 text-yellow-400"
-                          : "border-zinc-800 bg-zinc-900 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
-                      }`}
+                      className="option-card flex-1 py-4"
+                      data-active={String(highScoreOptions.rounds === r)}
                     >
-                      {r}
+                      <span className={`font-black text-2xl ${highScoreOptions.rounds === r ? "text-[var(--color-game-accent)]" : "text-content-muted"}`}>
+                        {r}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -160,17 +155,14 @@ export function GameSetupScreen({ game, onStart, onBack }: GameSetupScreenProps)
                         tieRule: prev.tieRule === "playoff" ? "stand" : "playoff",
                       }))
                     }
-                    className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 transition-all duration-150 px-3 py-3 min-h-[80px] max-h-[160px] ${
-                      highScoreOptions.tieRule === "playoff"
-                        ? "border-yellow-500 bg-yellow-950/30"
-                        : "border-zinc-800 bg-zinc-900"
-                    }`}
+                    className="option-card min-h-[80px] max-h-[160px]"
+                    data-active={String(highScoreOptions.tieRule === "playoff")}
                   >
-                    <span className={`text-xl font-black ${highScoreOptions.tieRule === "playoff" ? "text-yellow-400" : "text-zinc-600"}`}>
+                    <span className={`text-xl font-black ${highScoreOptions.tieRule === "playoff" ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
                       {highScoreOptions.tieRule === "playoff" ? "ON" : "OFF"}
                     </span>
-                    <span className={`text-sm font-bold text-center ${highScoreOptions.tieRule === "playoff" ? "text-white" : "text-zinc-400"}`}>One-Dart Playoff</span>
-                    <span className="text-xs text-zinc-500 text-center leading-tight">Throw 1 dart to break ties</span>
+                    <span className={`text-sm font-bold text-center ${highScoreOptions.tieRule === "playoff" ? "text-content-primary" : "text-zinc-400"}`}>One-Dart Playoff</span>
+                    <span className="text-xs text-content-muted text-center leading-tight">Throw 1 dart to break ties</span>
                   </button>
                   <button
                     onClick={() =>
@@ -179,17 +171,14 @@ export function GameSetupScreen({ game, onStart, onBack }: GameSetupScreenProps)
                         splitBull: !prev.splitBull,
                       }))
                     }
-                    className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 transition-all duration-150 px-3 py-3 min-h-[80px] max-h-[160px] ${
-                      highScoreOptions.splitBull
-                        ? "border-yellow-500 bg-yellow-950/30"
-                        : "border-zinc-800 bg-zinc-900"
-                    }`}
+                    className="option-card min-h-[80px] max-h-[160px]"
+                    data-active={String(highScoreOptions.splitBull)}
                   >
-                    <span className={`text-xl font-black ${highScoreOptions.splitBull ? "text-yellow-400" : "text-zinc-600"}`}>
+                    <span className={`text-xl font-black ${highScoreOptions.splitBull ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
                       {highScoreOptions.splitBull ? "ON" : "OFF"}
                     </span>
-                    <span className={`text-sm font-bold text-center ${highScoreOptions.splitBull ? "text-white" : "text-zinc-400"}`}>Split Bull</span>
-                    <span className="text-xs text-zinc-500 text-center leading-tight">Outer bull scores 25</span>
+                    <span className={`text-sm font-bold text-center ${highScoreOptions.splitBull ? "text-content-primary" : "text-zinc-400"}`}>Split Bull</span>
+                    <span className="text-xs text-content-muted text-center leading-tight">Outer bull scores 25</span>
                   </button>
                 </div>
               </div>
@@ -197,13 +186,10 @@ export function GameSetupScreen({ game, onStart, onBack }: GameSetupScreenProps)
           </div>
 
           <div
-            className="shrink-0 px-5 pt-3 border-t border-zinc-800 bg-black"
+            className="shrink-0 px-5 pt-3 border-t border-border-default bg-surface-sunken"
             style={{ paddingBottom: "calc(var(--sab) + 0.75rem)" }}
           >
-            <button
-              onClick={() => setStep(2)}
-              className={`w-full py-4 rounded-2xl font-black text-2xl transition-colors ${btnClass}`}
-            >
+            <button onClick={() => setStep(2)} className="btn-primary rounded-2xl text-2xl">
               Next →
             </button>
           </div>
@@ -217,14 +203,11 @@ export function GameSetupScreen({ game, onStart, onBack }: GameSetupScreenProps)
             <PlayerSelectStep
               roster={roster}
               onChange={setRoster}
-              accentClass={accentClass}
-              activeBg={game === "x01" ? "bg-red-950/50" : game === "cricket" ? "bg-green-950/50" : "bg-yellow-950/50"}
-              activeBorder={game === "x01" ? "border-red-500" : game === "cricket" ? "border-green-500" : "border-yellow-500"}
             />
           </div>
 
           <div
-            className="shrink-0 px-5 pt-3 border-t border-zinc-800 bg-black"
+            className="shrink-0 px-5 pt-3 border-t border-border-default bg-surface-sunken"
             style={{ paddingBottom: "calc(var(--sab) + 0.75rem)" }}
           >
             {game === "x01" ? (
@@ -232,9 +215,10 @@ export function GameSetupScreen({ game, onStart, onBack }: GameSetupScreenProps)
                 {([301, 501, 701] as const).map((score) => (
                   <button
                     key={score}
-                    onClick={() => onStart(roster.map(r => r.name), roster.map(r => r.id), { ...x01Options, startingScore: score })}
+                    onClick={() => onStart(roster.map(r => r.name), roster.map(r => r.id), roster.map(r => r.isBot ? (r.botSkill ?? BotSkill.Intermediate) : null), { ...x01Options, startingScore: score })}
                     disabled={roster.length === 0}
-                    className="flex-1 py-4 rounded-2xl bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-black text-2xl transition-colors disabled:opacity-40"
+                    className="btn-primary flex-1 rounded-2xl text-2xl"
+                    style={{ width: "auto" }}
                   >
                     {score}
                   </button>
@@ -242,17 +226,17 @@ export function GameSetupScreen({ game, onStart, onBack }: GameSetupScreenProps)
               </div>
             ) : game === "cricket" ? (
               <button
-                onClick={() => onStart(roster.map(r => r.name), roster.map(r => r.id), undefined, cricketOptions)}
+                onClick={() => onStart(roster.map(r => r.name), roster.map(r => r.id), roster.map(r => r.isBot ? (r.botSkill ?? BotSkill.Intermediate) : null), undefined, cricketOptions)}
                 disabled={roster.length === 0}
-                className="w-full py-4 rounded-2xl bg-green-600 hover:bg-green-500 active:bg-green-700 text-white font-black text-2xl transition-colors disabled:opacity-40"
+                className="btn-primary rounded-2xl text-2xl"
               >
                 Start Cricket
               </button>
             ) : (
               <button
-                onClick={() => onStart(roster.map(r => r.name), roster.map(r => r.id), undefined, undefined, highScoreOptions)}
+                onClick={() => onStart(roster.map(r => r.name), roster.map(r => r.id), roster.map(r => r.isBot ? (r.botSkill ?? BotSkill.Intermediate) : null), undefined, undefined, highScoreOptions)}
                 disabled={roster.length === 0}
-                className="w-full py-4 rounded-2xl bg-yellow-500 hover:bg-yellow-400 active:bg-yellow-600 text-black font-black text-2xl transition-colors disabled:opacity-40"
+                className="btn-primary rounded-2xl text-2xl"
               >
                 Start — {highScoreOptions.rounds} Rounds
               </button>

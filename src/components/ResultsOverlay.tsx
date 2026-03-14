@@ -7,21 +7,12 @@ interface PlayerResult {
 
 interface ResultsOverlayProps {
   playerResults: PlayerResult[];
-  accentClass: string;       // e.g. "text-green-400"
-  buttonClass: string;       // e.g. "bg-green-600 hover:bg-green-500 active:bg-green-700 text-white"
-  glowClass: string;         // e.g. "shadow-[0_0_30px_rgba(34,197,94,0.4)]"
   onExit: () => void;
 }
 
 const RANK_MEDAL = ["🥇", "🥈", "🥉"];
 
-export function ResultsOverlay({
-  playerResults,
-  accentClass,
-  buttonClass,
-  glowClass,
-  onExit,
-}: ResultsOverlayProps) {
+export function ResultsOverlay({ playerResults, onExit }: ResultsOverlayProps) {
   const winners = playerResults.filter((p) => p.isWinner);
   const losers = playerResults.filter((p) => !p.isWinner);
   const isTie = winners.length > 1;
@@ -31,7 +22,7 @@ export function ResultsOverlay({
       {/* Header */}
       <div className="shrink-0 pt-10 pb-4 flex flex-col items-center gap-1">
         <p className="text-zinc-500 text-xs uppercase tracking-[0.25em]">Game Over</p>
-        <p className={`font-black text-sm uppercase tracking-widest ${accentClass}`}>
+        <p className="font-black text-sm uppercase tracking-widest text-[var(--color-game-accent)]">
           {isTie ? "It's a Tie!" : "Winner"}
         </p>
       </div>
@@ -44,7 +35,7 @@ export function ResultsOverlay({
             <div className="flex gap-3 flex-wrap justify-center">
               {p.stats.map((s) => (
                 <div key={s.label} className="flex flex-col items-center">
-                  <span className={`font-black text-xl tabular-nums leading-none ${accentClass}`}>
+                  <span className="font-black text-xl tabular-nums leading-none text-[var(--color-game-accent)]">
                     {s.value}
                   </span>
                   <span className="text-zinc-600 text-[10px] uppercase tracking-wider">
@@ -90,10 +81,7 @@ export function ResultsOverlay({
         className="shrink-0 px-6 py-6"
         style={{ paddingBottom: "calc(var(--sab) + 1.5rem)" }}
       >
-        <button
-          onClick={onExit}
-          className={`w-full py-4 rounded-xl font-black text-lg uppercase tracking-widest transition-colors ${buttonClass} ${glowClass}`}
-        >
+        <button onClick={onExit} className="btn-primary tracking-widest">
           Back to Menu
         </button>
       </div>

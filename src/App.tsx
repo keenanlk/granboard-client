@@ -9,6 +9,7 @@ import { PlayersScreen } from "./screens/PlayersScreen.tsx";
 import type { X01Options } from "./store/useGameStore.ts";
 import type { CricketOptions } from "./store/useCricketStore.ts";
 import type { HighScoreOptions } from "./store/useHighScoreStore.ts";
+import type { BotSkill } from "./bot/Bot.ts";
 import { useGranboardStore } from "./store/useGranboardStore.ts";
 import { useBoardWiring } from "./hooks/useBoardWiring.ts";
 // Side-effect imports — activate sound and LED event subscriptions
@@ -19,9 +20,9 @@ type Screen =
   | { name: "home" }
   | { name: "players" }
   | { name: "setup"; game: "x01" | "cricket" | "highscore" }
-  | { name: "game"; x01Options: X01Options; playerNames: string[]; playerIds: (string | null)[] }
-  | { name: "cricket"; options: CricketOptions; playerNames: string[]; playerIds: (string | null)[] }
-  | { name: "highscore"; options: HighScoreOptions; playerNames: string[]; playerIds: (string | null)[] };
+  | { name: "game"; x01Options: X01Options; playerNames: string[]; playerIds: (string | null)[]; botSkills: (BotSkill | null)[] }
+  | { name: "cricket"; options: CricketOptions; playerNames: string[]; playerIds: (string | null)[]; botSkills: (BotSkill | null)[] }
+  | { name: "highscore"; options: HighScoreOptions; playerNames: string[]; playerIds: (string | null)[]; botSkills: (BotSkill | null)[] };
 
 function App() {
   const [screen, setScreen] = useState<Screen>({ name: "home" });
@@ -38,6 +39,7 @@ function App() {
         x01Options={screen.x01Options}
         playerNames={screen.playerNames}
         playerIds={screen.playerIds}
+        botSkills={screen.botSkills}
         onExit={() => setScreen({ name: "home" })}
       />
     );
@@ -49,6 +51,7 @@ function App() {
         options={screen.options}
         playerNames={screen.playerNames}
         playerIds={screen.playerIds}
+        botSkills={screen.botSkills}
         onExit={() => setScreen({ name: "home" })}
       />
     );
@@ -60,6 +63,7 @@ function App() {
         options={screen.options}
         playerNames={screen.playerNames}
         playerIds={screen.playerIds}
+        botSkills={screen.botSkills}
         onExit={() => setScreen({ name: "home" })}
       />
     );
@@ -70,13 +74,13 @@ function App() {
       <GameSetupScreen
         game={screen.game}
         onBack={() => setScreen({ name: "home" })}
-        onStart={(playerNames, playerIds, x01Options, cricketOptions, highScoreOptions) => {
+        onStart={(playerNames, playerIds, botSkills, x01Options, cricketOptions, highScoreOptions) => {
           if (screen.game === "x01" && x01Options) {
-            setScreen({ name: "game", x01Options, playerNames, playerIds });
+            setScreen({ name: "game", x01Options, playerNames, playerIds, botSkills });
           } else if (screen.game === "cricket" && cricketOptions) {
-            setScreen({ name: "cricket", options: cricketOptions, playerNames, playerIds });
+            setScreen({ name: "cricket", options: cricketOptions, playerNames, playerIds, botSkills });
           } else if (screen.game === "highscore" && highScoreOptions) {
-            setScreen({ name: "highscore", options: highScoreOptions, playerNames, playerIds });
+            setScreen({ name: "highscore", options: highScoreOptions, playerNames, playerIds, botSkills });
           }
         }}
       />

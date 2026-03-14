@@ -1,37 +1,32 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import electron from "vite-plugin-electron/simple";
-
-const isWebBuild = process.env.BUILD_TARGET === "web";
+import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
-    ...(isWebBuild
-      ? []
-      : [
-          electron({
-            main: {
-              entry: "electron/main.ts",
-              vite: {
-                build: {
-                  rollupOptions: {
-                    // Native modules cannot be bundled — load from node_modules at runtime
-                    external: [
-                      "@abandonware/noble",
-                      "@abandonware/bluetooth-hci-socket",
-                    ],
-                  },
-                },
-              },
-            },
-            preload: {
-              input: "electron/preload.ts",
-            },
-          }),
-        ]),
+    VitePWA({
+      registerType: "autoUpdate",
+      manifest: {
+        name: "NLC Darts",
+        short_name: "NLC Darts",
+        description: "GranBoard darts scoring app",
+        theme_color: "#09090b",
+        background_color: "#09090b",
+        display: "fullscreen",
+        orientation: "landscape",
+        icons: [
+          { src: "/AppIcons/android/mipmap-mdpi/ic_launcher.png", sizes: "48x48", type: "image/png" },
+          { src: "/AppIcons/android/mipmap-hdpi/ic_launcher.png", sizes: "72x72", type: "image/png" },
+          { src: "/AppIcons/android/mipmap-xhdpi/ic_launcher.png", sizes: "96x96", type: "image/png" },
+          { src: "/AppIcons/android/mipmap-xxhdpi/ic_launcher.png", sizes: "144x144", type: "image/png" },
+          { src: "/AppIcons/android/mipmap-xxxhdpi/ic_launcher.png", sizes: "192x192", type: "image/png" },
+          { src: "/AppIcons/appstore.png", sizes: "1024x1024", type: "image/png" },
+        ],
+      },
+    }),
   ],
 });

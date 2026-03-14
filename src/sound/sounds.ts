@@ -7,14 +7,33 @@ import doubleSrc from "../assets/sounds/double.mp3";
 import singleSrc from "../assets/sounds/single.mp3";
 import buzzerSrc from "../assets/sounds/buzzer.mp3";
 
-const intro = new Audio(introSrc);
-const hit = new Audio(hitSrc);
-const bull = new Audio(bullSrc);
-const dbull = new Audio(dbullSrc);
-const triple = new Audio(tripleSrc);
-const double_ = new Audio(doubleSrc);
-const single = new Audio(singleSrc);
-const buzzer = new Audio(buzzerSrc);
+let _volume = parseFloat(localStorage.getItem("app-volume") ?? "1");
+
+export function getVolume(): number { return _volume; }
+
+const allAudio: HTMLAudioElement[] = [];
+
+function makeAudio(src: string): HTMLAudioElement {
+  const a = new Audio(src);
+  a.volume = _volume;
+  allAudio.push(a);
+  return a;
+}
+
+export function setVolume(v: number) {
+  _volume = v;
+  for (const a of allAudio) a.volume = v;
+  localStorage.setItem("app-volume", String(v));
+}
+
+const intro = makeAudio(introSrc);
+const hit = makeAudio(hitSrc);
+const bull = makeAudio(bullSrc);
+const dbull = makeAudio(dbullSrc);
+const triple = makeAudio(tripleSrc);
+const double_ = makeAudio(doubleSrc);
+const single = makeAudio(singleSrc);
+const buzzer = makeAudio(buzzerSrc);
 
 export const Sounds = {
   intro: () => { intro.currentTime = 0; void intro.play(); },

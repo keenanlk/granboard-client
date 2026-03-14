@@ -5,11 +5,14 @@ import { GameRecorder } from "../db/gameRecorder.ts";
 import type { RecordedDart } from "../db/gameRecorder.ts";
 import { useTurnDelay } from "./useTurnDelay.ts";
 import { Sounds } from "../sound/sounds.ts";
+import { gameLogger } from "../lib/GameLogger.ts";
+import type { BotSkill } from "../bot/Bot.ts";
 
 export interface RoundExtract {
   playerIndex: number;
   darts: RecordedDart[];
   roundScore: number;
+  busted?: boolean;
 }
 
 /**
@@ -28,6 +31,7 @@ export function useGameSession({
   gameType,
   playerNames,
   playerIds,
+  botSkills,
   options,
   createController,
   extractRound,
@@ -38,6 +42,7 @@ export function useGameSession({
   gameType: "x01" | "cricket" | "highscore";
   playerNames: string[];
   playerIds: (string | null)[];
+  botSkills?: (BotSkill | null)[];
   options: unknown;
   createController: () => GameController;
   extractRound: () => RoundExtract;
@@ -68,6 +73,7 @@ export function useGameSession({
 
   useEffect(() => {
     Sounds.intro();
+    gameLogger.start(gameType, playerNames, botSkills ?? [], options);
     onInitRef.current();
 
     // createController intentionally excluded from deps — it never needs to change
@@ -82,9 +88,10 @@ export function useGameSession({
 
     const origOnNextTurn = controller.onNextTurn.bind(controller);
     controller.onNextTurn = () => {
-      const { playerIndex, darts, roundScore } = extractRoundRef.current();
+      const { playerIndex, darts, roundScore, busted } = extractRoundRef.current();
       if (darts.length > 0) {
         recorderRef.current?.recordRound(playerIndex, darts, roundScore);
+        gameLogger.logTurnEnd(playerNames[playerIndex], darts.length, roundScore, busted);
       }
       setActiveController(null);
       triggerDelayRef.current(() => {
@@ -107,12 +114,16 @@ export function useGameSession({
   useEffect(() => {
     if (!winner || savedRef.current) return;
     savedRef.current = true;
-    const { playerIndex, darts, roundScore } = extractRoundRef.current();
+    const { playerIndex, darts, roundScore, busted } = extractRoundRef.current();
     if (darts.length > 0) {
       recorderRef.current?.recordRound(playerIndex, darts, roundScore);
+      gameLogger.logTurnEnd(playerNames[playerIndex], darts.length, roundScore, busted);
     }
-    void recorderRef.current?.save(winner, getFinalScoresRef.current());
-  }, [winner]);
+    const finalScores = getFinalScoresRef.current();
+    const scoreMap = Object.fromEntries(playerNames.map((n, i) => [n, finalScores[i]]));
+    gameLogger.logGameEnd(winner, scoreMap);
+    void recorderRef.current?.save(winner, finalScores);
+  }, [winner]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleNextTurn = useCallback(() => {
     controllerRef.current?.onNextTurn();
