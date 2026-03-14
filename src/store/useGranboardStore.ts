@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { Granboard } from "../lib/Granboard.ts";
+import { Granboard } from "../board/Granboard.ts";
+import { MockGranboard } from "../board/MockGranboard.ts";
 
 type ConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
 
@@ -10,6 +11,7 @@ interface GranboardState {
   connect: () => Promise<void>;
   autoReconnect: () => Promise<void>;
   disconnect: () => void;
+  connectMock: () => void;
 }
 
 export const useGranboardStore = create<GranboardState>((set, get) => ({
@@ -18,6 +20,8 @@ export const useGranboardStore = create<GranboardState>((set, get) => ({
   errorMessage: null,
 
   connect: async () => {
+    const { status } = get();
+    if (status === "connecting" || status === "connected") return;
     set({ status: "connecting", errorMessage: null });
     try {
       const board = await Granboard.ConnectToBoard();
@@ -31,19 +35,27 @@ export const useGranboardStore = create<GranboardState>((set, get) => ({
   },
 
   autoReconnect: async () => {
+    const { status } = get();
+    if (status === "connecting" || status === "connected") return;
     set({ status: "connecting", errorMessage: null });
     try {
       const board = await Granboard.TryAutoReconnect();
       set({ board, status: "connected" });
     } catch (error) {
       console.error("Auto-reconnect failed:", error);
-      // No previously paired device or out of range — silently go back to disconnected
-      set({ status: "disconnected" });
+      // Only revert if nothing else (e.g. mock) connected while we were scanning
+      if (get().status !== "connected") {
+        set({ status: "disconnected" });
+      }
     }
   },
 
   disconnect: () => {
     get().board;
     set({ board: null, status: "disconnected", errorMessage: null });
+  },
+
+  connectMock: () => {
+    set({ board: new MockGranboard(), status: "connected", errorMessage: null });
   },
 }));

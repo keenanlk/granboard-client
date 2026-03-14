@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { SegmentID, SegmentSection, SegmentType, type Segment } from "../lib/Dartboard.ts";
+import { SegmentID, SegmentSection, SegmentType, type Segment } from "../board/Dartboard.ts";
 
 export const CRICKET_TARGETS = [20, 19, 18, 17, 16, 15, 25] as const;
 export type CricketTarget = (typeof CRICKET_TARGETS)[number];
@@ -17,7 +17,8 @@ export interface CricketThrownDart {
   segment: Segment;
   target: CricketTarget | null; // null = not a valid cricket target
   marksAdded: number;           // marks added toward closing (≤3 cap); used for undo
-  marksEarned: number;          // total marks from the dart; used to undo totalMarksEarned
+  marksEarned: number;          // raw physical marks from the dart (1/2/3); used for animation
+  effectiveMarks: number;       // marks that counted: closing marks + scoring extras; used for totalMarksEarned / undo
   pointsScored: number;
 }
 
@@ -46,6 +47,78 @@ interface CricketState {
 function emptyMarks(): Record<CricketTarget, number> {
   return { 20: 0, 19: 0, 18: 0, 17: 0, 16: 0, 15: 0, 25: 0 };
 }
+
+// ---------------------------------------------------------------------------
+// addDart helpers
+// ---------------------------------------------------------------------------
+
+/*
+ * Rule: which segments are valid cricket targets and how many marks they earn
+ * - Bull (any ring): always target 25.
+ *     - Outer bull = 1 mark always.
+ *     - Inner bull = 2 marks normally; 1 mark if singleBull option is on.
+ * - Numbers 15–20: valid targets worth 1/2/3 marks for single/double/triple.
+ * - Any other segment (1–14, miss): not a cricket target — scores nothing.
+ */
+function getCricketTargetAndMarks(
+  segment: Segment,
+  singleBull: boolean,
+): { target: CricketTarget | null; marksEarned: number } {
+  if (segment.Section === SegmentSection.BULL) {
+    const marksEarned = segment.ID === SegmentID.DBL_BULL && !singleBull ? 2 : 1;
+    return { target: 25, marksEarned };
+  }
+  if (segment.Section >= 15 && segment.Section <= 20) {
+    const marksEarned =
+      segment.Type === SegmentType.Triple ? 3
+      : segment.Type === SegmentType.Double ? 2
+      : 1;
+    return { target: segment.Section as CricketTarget, marksEarned };
+  }
+  return { target: null, marksEarned: 0 };
+}
+
+/*
+ * Rule: when do extra marks (beyond the 3-cap) score points?
+ * - If the player has already closed a number (3 marks), additional hits on it can score points.
+ * - Points only score if at least one opponent still has fewer than 3 marks on that number.
+ * - Once all opponents have also closed it, extra marks on that number score nothing.
+ * - Point value = face value of the number (bull = 25 per mark).
+ */
+function calcPointsFromExtras(
+  target: CricketTarget,
+  extraMarks: number,
+  players: CricketPlayer[],
+  currentPlayerIndex: number,
+): { scoringExtras: number; pointsScored: number } {
+  if (extraMarks === 0) return { scoringExtras: 0, pointsScored: 0 };
+  const anyOpponentOpen = players.some(
+    (p, i) => i !== currentPlayerIndex && p.marks[target] < 3,
+  );
+  if (!anyOpponentOpen) return { scoringExtras: 0, pointsScored: 0 };
+  return {
+    scoringExtras: extraMarks,
+    pointsScored: extraMarks * (target === 25 ? 25 : target),
+  };
+}
+
+/*
+ * Rule: cricket win condition — both conditions must be true simultaneously:
+ * 1. The player has closed all 7 targets (20, 19, 18, 17, 16, 15, bull) — each needs 3 marks.
+ * 2. The player's score is greater than or equal to every opponent's score.
+ * A player who closes everything first but trails on points has NOT yet won.
+ */
+function checkCricketWinner(
+  player: CricketPlayer,
+  allPlayers: CricketPlayer[],
+  currentIndex: number,
+): string | null {
+  const allClosed = CRICKET_TARGETS.every((t) => player.marks[t] >= 3);
+  const leadsAll = allPlayers.every((p, i) => i === currentIndex || player.score >= p.score);
+  return allClosed && leadsAll ? player.name : null;
+}
+
+// ---------------------------------------------------------------------------
 
 const DEFAULT_STATE = {
   options: DEFAULT_CRICKET_OPTIONS,
@@ -77,43 +150,26 @@ export const useCricketStore = create<CricketState>((set) => ({
     set((state) => {
       if (state.winner || state.currentRoundDarts.length >= 3) return state;
 
-      const player = state.players[state.currentPlayerIndex];
-      const section = segment.Section;
+      const { currentPlayerIndex: ci, players, options } = state;
+      const player = players[ci];
 
-      // Determine target and marks earned
-      let target: CricketTarget | null = null;
-      let marksEarned = 0;
-
-      if (section === SegmentSection.BULL) {
-        target = 25;
-        // Outer bull always 1 mark; inner bull: 2 marks standard, 1 if singleBull
-        marksEarned =
-          segment.ID === SegmentID.DBL_BULL && !state.options.singleBull ? 2 : 1;
-      } else if (section >= 15 && section <= 20) {
-        target = section as CricketTarget;
-        marksEarned =
-          segment.Type === SegmentType.Triple ? 3
-          : segment.Type === SegmentType.Double ? 2
-          : 1;
-      }
-      // Any other segment scores nothing
+      const { target, marksEarned } = getCricketTargetAndMarks(segment, options.singleBull);
 
       const currentMarks = target !== null ? player.marks[target] : 0;
       const marksToAdd = target !== null ? Math.min(marksEarned, 3 - currentMarks) : 0;
       const extraMarks = marksEarned - marksToAdd;
 
-      let pointsScored = 0;
-      if (target !== null && extraMarks > 0) {
-        const anyOpponentOpen = state.players.some(
-          (p, i) => i !== state.currentPlayerIndex && p.marks[target!] < 3,
-        );
-        if (anyOpponentOpen) {
-          pointsScored = extraMarks * (target === 25 ? 25 : target);
-        }
-      }
+      // Points only score if at least one opponent hasn't closed this target yet
+      const { scoringExtras, pointsScored } =
+        target !== null
+          ? calcPointsFromExtras(target, extraMarks, players, ci)
+          : { scoringExtras: 0, pointsScored: 0 };
 
-      const newPlayers = state.players.map((p, i) => {
-        if (i !== state.currentPlayerIndex) return p;
+      // effectiveMarks: closing marks + marks that actually scored (used for undo / stats)
+      const effectiveMarks = marksToAdd + scoringExtras;
+
+      const newPlayers = players.map((p, i) => {
+        if (i !== ci) return p;
         const newMarks =
           target !== null
             ? { ...p.marks, [target]: Math.min(currentMarks + marksToAdd, 3) }
@@ -123,22 +179,16 @@ export const useCricketStore = create<CricketState>((set) => ({
           marks: newMarks,
           score: p.score + pointsScored,
           totalDartsThrown: p.totalDartsThrown + 1,
-          totalMarksEarned: p.totalMarksEarned + marksEarned,
+          totalMarksEarned: p.totalMarksEarned + effectiveMarks,
         };
       });
 
-      // Win: all targets closed AND score >= every opponent
-      const updated = newPlayers[state.currentPlayerIndex];
-      const allClosed = CRICKET_TARGETS.every((t) => updated.marks[t] >= 3);
-      const leadsAll = newPlayers.every(
-        (p, i) => i === state.currentPlayerIndex || updated.score >= p.score,
-      );
-      const winner = allClosed && leadsAll ? updated.name : null;
+      const winner = checkCricketWinner(newPlayers[ci], newPlayers, ci);
 
       return {
         currentRoundDarts: [
           ...state.currentRoundDarts,
-          { segment, target, marksAdded: marksToAdd, marksEarned, pointsScored },
+          { segment, target, marksAdded: marksToAdd, marksEarned, effectiveMarks, pointsScored },
         ],
         players: newPlayers,
         winner,
@@ -161,7 +211,7 @@ export const useCricketStore = create<CricketState>((set) => ({
           marks: newMarks,
           score: p.score - last.pointsScored,
           totalDartsThrown: Math.max(0, p.totalDartsThrown - 1),
-          totalMarksEarned: Math.max(0, p.totalMarksEarned - last.marksEarned),
+          totalMarksEarned: Math.max(0, p.totalMarksEarned - last.effectiveMarks),
         };
       });
 
