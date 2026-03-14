@@ -3,23 +3,17 @@ import { useCricketStore, CRICKET_TARGETS } from "./useCricketStore.ts";
 import { CreateSegment, SegmentID } from "../board/Dartboard.ts";
 
 // Helpers — segments for cricket targets
-const s20 = CreateSegment(SegmentID.OUTER_20);  // Single 20 = 1 mark, value 20
-const d20 = CreateSegment(SegmentID.DBL_20);    // Double 20 = 2 marks, value 40
-const t20 = CreateSegment(SegmentID.TRP_20);    // Triple 20 = 3 marks, value 60
-const s19 = CreateSegment(SegmentID.OUTER_19);  // Single 19 = 1 mark
-const d19 = CreateSegment(SegmentID.DBL_19);    // Double 19 = 2 marks
-const t19 = CreateSegment(SegmentID.TRP_19);    // Triple 19 = 3 marks
-const s18 = CreateSegment(SegmentID.OUTER_18);
+const s20 = CreateSegment(SegmentID.OUTER_20); // Single 20 = 1 mark, value 20
+const d20 = CreateSegment(SegmentID.DBL_20); // Double 20 = 2 marks, value 40
+const t20 = CreateSegment(SegmentID.TRP_20); // Triple 20 = 3 marks, value 60
+const t19 = CreateSegment(SegmentID.TRP_19); // Triple 19 = 3 marks
 const t18 = CreateSegment(SegmentID.TRP_18);
-const s17 = CreateSegment(SegmentID.OUTER_17);
 const t17 = CreateSegment(SegmentID.TRP_17);
-const s16 = CreateSegment(SegmentID.OUTER_16);
 const t16 = CreateSegment(SegmentID.TRP_16);
-const s15 = CreateSegment(SegmentID.OUTER_15);
 const t15 = CreateSegment(SegmentID.TRP_15);
-const bull = CreateSegment(SegmentID.BULL);     // Outer bull = 1 mark always
+const bull = CreateSegment(SegmentID.BULL); // Outer bull = 1 mark always
 const dblBull = CreateSegment(SegmentID.DBL_BULL); // Inner bull = 2 marks standard, 1 if singleBull
-const s5 = CreateSegment(SegmentID.OUTER_5);   // Non-cricket number — 5
+const s5 = CreateSegment(SegmentID.OUTER_5); // Non-cricket number — 5
 
 function store() {
   return useCricketStore.getState();
@@ -84,7 +78,8 @@ describe("mark tracking", () => {
 
   it("marks are capped at 3", () => {
     store().addDart(t20); // 3 marks — closed
-    store().nextTurn(); store().nextTurn(); // cycle back to alice
+    store().nextTurn();
+    store().nextTurn(); // cycle back to alice
     store().addDart(s20); // extra mark — capped, no scoring (bob still open)
     expect(store().players[0].marks[20]).toBe(3);
   });
@@ -98,7 +93,9 @@ describe("mark tracking", () => {
   });
 
   it("limit of 3 darts per turn enforced", () => {
-    store().addDart(s20); store().addDart(s20); store().addDart(s20);
+    store().addDart(s20);
+    store().addDart(s20);
+    store().addDart(s20);
     store().addDart(s20); // 4th — ignored
     expect(store().currentRoundDarts).toHaveLength(3);
   });
@@ -118,7 +115,8 @@ describe("scoring (points)", () => {
     start(); // Alice, Bob
     // Alice closes 20 — Bob still has 0 marks on 20
     store().addDart(t20); // alice: 3 marks, closed
-    store().nextTurn(); store().nextTurn(); // back to alice
+    store().nextTurn();
+    store().nextTurn(); // back to alice
     store().addDart(s20); // 1 extra mark beyond 3 → 1×20 = 20 points
     expect(store().players[0].score).toBe(20);
   });
@@ -126,7 +124,8 @@ describe("scoring (points)", () => {
   it("double dart on closed number scores 2×face value", () => {
     start();
     store().addDart(t20); // alice closes
-    store().nextTurn(); store().nextTurn();
+    store().nextTurn();
+    store().nextTurn();
     store().addDart(d20); // 2 extra marks → 40 points
     expect(store().players[0].score).toBe(40);
   });
@@ -134,7 +133,8 @@ describe("scoring (points)", () => {
   it("triple dart on closed number scores 3×face value", () => {
     start();
     store().addDart(t20); // alice closes
-    store().nextTurn(); store().nextTurn();
+    store().nextTurn();
+    store().nextTurn();
     store().addDart(t20); // 3 extra marks → 60 points
     expect(store().players[0].score).toBe(60);
   });
@@ -155,7 +155,8 @@ describe("scoring (points)", () => {
   it("partial extra marks: triple on 2 existing marks → 1 closing + 2 extra", () => {
     start();
     store().addDart(d20); // alice: 2 marks
-    store().nextTurn(); store().nextTurn();
+    store().nextTurn();
+    store().nextTurn();
     store().addDart(t20); // 1 closing mark + 2 extra → 40 pts, alice: 3 marks
     expect(store().players[0].marks[20]).toBe(3);
     expect(store().players[0].score).toBe(40);
@@ -193,7 +194,8 @@ describe("bull marks", () => {
   it("inner bull closes in 2 darts (singleBull=false)", () => {
     start(false);
     store().addDart(dblBull); // 2 marks
-    store().nextTurn(); store().nextTurn();
+    store().nextTurn();
+    store().nextTurn();
     store().addDart(dblBull); // 2 more → 3 (capped) + 1 extra → 25 pts
     expect(store().players[0].marks[25]).toBe(3);
     expect(store().players[0].score).toBe(25);
@@ -202,9 +204,11 @@ describe("bull marks", () => {
   it("inner bull closes in 3 darts (singleBull=true)", () => {
     start(true);
     store().addDart(dblBull); // 1 mark
-    store().nextTurn(); store().nextTurn();
+    store().nextTurn();
+    store().nextTurn();
     store().addDart(dblBull); // 2 marks
-    store().nextTurn(); store().nextTurn();
+    store().nextTurn();
+    store().nextTurn();
     store().addDart(dblBull); // 3 marks → closed
     expect(store().players[0].marks[25]).toBe(3);
     expect(store().players[0].score).toBe(0); // no extras this turn
@@ -215,33 +219,15 @@ describe("bull marks", () => {
 // Win condition
 // ---------------------------------------------------------------------------
 describe("win condition", () => {
-  function closeAllFor(playerIdx: number) {
-    // Close all 7 targets for the given player index (alice=0, bob=1)
-    // We toggle turn to that player and throw triple for each target
-    const targets = [t20, t19, t18, t17, t16, t15];
-    for (const seg of targets) {
-      while (store().currentPlayerIndex !== playerIdx) {
-        store().nextTurn();
-      }
-      store().addDart(seg);
-      store().nextTurn();
-    }
-    // Close bull with 3 singles (triple bull not available, use 3 outer)
-    while (store().currentPlayerIndex !== playerIdx) store().nextTurn();
-    store().addDart(bull);
-    store().nextTurn();
-    while (store().currentPlayerIndex !== playerIdx) store().nextTurn();
-    store().addDart(bull);
-    store().nextTurn();
-    while (store().currentPlayerIndex !== playerIdx) store().nextTurn();
-    store().addDart(bull);
-  }
-
   it("no win until all targets closed", () => {
     start(false, ["Alice"]);
-    store().addDart(t20); store().addDart(t19); store().addDart(t18);
+    store().addDart(t20);
+    store().addDart(t19);
+    store().addDart(t18);
     store().nextTurn();
-    store().addDart(t17); store().addDart(t16); store().addDart(t15);
+    store().addDart(t17);
+    store().addDart(t16);
+    store().addDart(t15);
     store().nextTurn();
     // Bull not yet closed
     expect(store().winner).toBeNull();
@@ -249,11 +235,17 @@ describe("win condition", () => {
 
   it("win in solo game when all targets closed", () => {
     store().startGame({ singleBull: false }, ["Solo"]);
-    store().addDart(t20); store().addDart(t19); store().addDart(t18);
+    store().addDart(t20);
+    store().addDart(t19);
+    store().addDart(t18);
     store().nextTurn();
-    store().addDart(t17); store().addDart(t16); store().addDart(t15);
+    store().addDart(t17);
+    store().addDart(t16);
+    store().addDart(t15);
     store().nextTurn();
-    store().addDart(bull); store().addDart(bull); store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
     expect(store().winner).toBe("Solo");
   });
 
@@ -275,29 +267,39 @@ describe("win condition", () => {
     store().nextTurn();
     // alice: close remaining targets without scoring (bob already closed 20)
     // Alice closes 19,18,17,16,15,bull — bob has 0 marks on these
-    store().addDart(t19); store().addDart(t18); store().addDart(t15);
+    store().addDart(t19);
+    store().addDart(t18);
+    store().addDart(t15);
     store().nextTurn();
     store().nextTurn(); // bob's turn (no darts)
     store().nextTurn(); // back to alice
-    store().addDart(t17); store().addDart(t16);
+    store().addDart(t17);
+    store().addDart(t16);
     // score: alice=20, bob=40 — alice has fewer points
     // Now alice closes bull — has all closed but score 20 < bob 40 → no win yet
     // Wait, alice only threw 2 darts this turn. Add bull
     store().addDart(bull);
     store().nextTurn();
     while (store().currentPlayerIndex !== 0) store().nextTurn();
-    store().addDart(bull); store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
     // alice: all closed, score=20, bob score=40 → NO win
     expect(store().winner).toBeNull();
   });
 
   it("wins when all closed and score >= all opponents", () => {
     store().startGame({ singleBull: false }, ["Solo"]);
-    store().addDart(t20); store().addDart(t19); store().addDart(t18);
+    store().addDart(t20);
+    store().addDart(t19);
+    store().addDart(t18);
     store().nextTurn();
-    store().addDart(t17); store().addDart(t16); store().addDart(t15);
+    store().addDart(t17);
+    store().addDart(t16);
+    store().addDart(t15);
     store().nextTurn();
-    store().addDart(bull); store().addDart(bull); store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
     expect(store().winner).toBe("Solo");
   });
 });
@@ -316,7 +318,8 @@ describe("undoLastDart", () => {
 
   it("reverses points from scoring dart", () => {
     store().addDart(t20); // close
-    store().nextTurn(); store().nextTurn();
+    store().nextTurn();
+    store().nextTurn();
     store().addDart(s20); // 20 pts
     store().undoLastDart();
     expect(store().players[0].score).toBe(0);
@@ -330,11 +333,17 @@ describe("undoLastDart", () => {
 
   it("clears winner on undo", () => {
     store().startGame({ singleBull: false }, ["Solo"]);
-    store().addDart(t20); store().addDart(t19); store().addDart(t18);
+    store().addDart(t20);
+    store().addDart(t19);
+    store().addDart(t18);
     store().nextTurn();
-    store().addDart(t17); store().addDart(t16); store().addDart(t15);
+    store().addDart(t17);
+    store().addDart(t16);
+    store().addDart(t15);
     store().nextTurn();
-    store().addDart(bull); store().addDart(bull); store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
     expect(store().winner).toBe("Solo");
     store().undoLastDart();
     expect(store().winner).toBeNull();
@@ -372,11 +381,17 @@ describe("nextTurn", () => {
 
   it("does not advance turn after game won", () => {
     store().startGame({ singleBull: false }, ["Solo"]);
-    store().addDart(t20); store().addDart(t19); store().addDart(t18);
+    store().addDart(t20);
+    store().addDart(t19);
+    store().addDart(t18);
     store().nextTurn();
-    store().addDart(t17); store().addDart(t16); store().addDart(t15);
+    store().addDart(t17);
+    store().addDart(t16);
+    store().addDart(t15);
     store().nextTurn();
-    store().addDart(bull); store().addDart(bull); store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
     store().nextTurn(); // should be blocked
     expect(store().currentPlayerIndex).toBe(0);
   });

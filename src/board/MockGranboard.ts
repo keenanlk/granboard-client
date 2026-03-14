@@ -1,5 +1,9 @@
 import { Granboard } from "./Granboard.ts";
-import { CreateSegment, SegmentID, type SegmentID as SegmentIDType } from "./Dartboard.ts";
+import {
+  CreateSegment,
+  SegmentID,
+  type SegmentID as SegmentIDType,
+} from "./Dartboard.ts";
 import { getActiveController } from "../controllers/GameController.ts";
 
 export class MockGranboard extends Granboard {
@@ -15,5 +19,6 @@ export class MockGranboard extends Granboard {
 
   override async sendCommand(_bytes: number[]): Promise<void> {
     // No-op — no real board to send to
+    void _bytes;
   }
 }

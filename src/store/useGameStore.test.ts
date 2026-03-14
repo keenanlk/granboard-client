@@ -3,15 +3,11 @@ import { useGameStore } from "./useGameStore.ts";
 import { CreateSegment, SegmentID } from "../board/Dartboard.ts";
 
 // Helpers
-const s1 = CreateSegment(SegmentID.OUTER_1);   // Single 1 — value 1
-const d1 = CreateSegment(SegmentID.DBL_1);     // Double 1 — value 2
-const t1 = CreateSegment(SegmentID.TRP_1);     // Triple 1 — value 3
+const s1 = CreateSegment(SegmentID.OUTER_1); // Single 1 — value 1
 const s20 = CreateSegment(SegmentID.OUTER_20); // Single 20 — value 20
-const d20 = CreateSegment(SegmentID.DBL_20);   // Double 20 — value 40
-const t20 = CreateSegment(SegmentID.TRP_20);   // Triple 20 — value 60
-const s10 = CreateSegment(SegmentID.OUTER_10); // Single 10 — value 10
-const d10 = CreateSegment(SegmentID.DBL_10);   // Double 10 — value 20
-const bull = CreateSegment(SegmentID.BULL);     // Outer bull — value 25
+const d20 = CreateSegment(SegmentID.DBL_20); // Double 20 — value 40
+const t20 = CreateSegment(SegmentID.TRP_20); // Triple 20 — value 60
+const bull = CreateSegment(SegmentID.BULL); // Outer bull — value 25
 const dblBull = CreateSegment(SegmentID.DBL_BULL); // Inner bull — value 50
 
 function store() {
@@ -26,10 +22,22 @@ beforeEach(() => {
 // Starting scores
 // ---------------------------------------------------------------------------
 describe("starting scores", () => {
-  it.each([301, 501, 701] as const)("initializes player score to %i", (score) => {
-    store().startGame({ startingScore: score, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
-    expect(store().players[0].score).toBe(score);
-  });
+  it.each([301, 501, 701] as const)(
+    "initializes player score to %i",
+    (score) => {
+      store().startGame(
+        {
+          startingScore: score,
+          splitBull: false,
+          doubleOut: false,
+          masterOut: false,
+          doubleIn: false,
+        },
+        ["Alice"],
+      );
+      expect(store().players[0].score).toBe(score);
+    },
+  );
 });
 
 // ---------------------------------------------------------------------------
@@ -37,7 +45,16 @@ describe("starting scores", () => {
 // ---------------------------------------------------------------------------
 describe("basic scoring", () => {
   beforeEach(() => {
-    store().startGame({ startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
   });
 
   it("subtracts single dart value from score", () => {
@@ -72,7 +89,16 @@ describe("basic scoring", () => {
 
   it("detects winner when score reaches 0", () => {
     // Use a small startingScore (type-cast) so we can reach 0 in one dart
-    store().startGame({ startingScore: 20 as 301, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 20 as 301,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(s20); // 20-20=0 → win
     expect(store().winner).toBe("Alice");
   });
@@ -83,62 +109,159 @@ describe("basic scoring", () => {
 // ---------------------------------------------------------------------------
 describe("bust rules", () => {
   it("busts when score goes below 0", () => {
-    store().startGame({ startingScore: 19 as 301, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 19 as 301,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(s20); // 19-20=-1 → bust
     expect(store().isBust).toBe(true);
     expect(store().players[0].score).toBe(19); // restored
   });
 
-  it("busts when score would be exactly 1", () => {
-    store().startGame({ startingScore: 301, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
-    // bring to 21
-    for (let i = 0; i < 4; i++) { store().addDart(t20); store().addDart(t20); store().addDart(t20); store().nextTurn(); }
-    // After 4 turns of T20×3=180: 180*4=720 but start is 301
-    // Let me use s20 approach
-    store().resetGame();
-    store().startGame({ startingScore: 301, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
-    // 14 darts of s20 = 280 → score = 21
-    for (let i = 0; i < 4; i++) { store().addDart(s20); store().addDart(s20); store().addDart(s20); store().nextTurn(); }
-    store().addDart(s20); store().addDart(s20); store().nextTurn(); // now 12+2=14 darts, score=21... wait
-    // 4 turns × 3×s20 = 240. Score = 61.
-    // 2 more s20 = 40. Score = 21. nextTurn.
-    store().addDart(s20); // 21-20=1 → bust
+  it("score=1 does NOT bust in straight play (no doubleOut/masterOut)", () => {
+    store().startGame(
+      {
+        startingScore: 21 as 301,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
+    store().addDart(s20); // 21-20=1 — valid under straight rules
+    expect(store().isBust).toBe(false);
+    expect(store().players[0].score).toBe(1);
+  });
+
+  it("score=1 busts under doubleOut (unreachable finish)", () => {
+    store().startGame(
+      {
+        startingScore: 21 as 301,
+        splitBull: false,
+        doubleOut: true,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
+    store().addDart(s20); // 21-20=1 → bust (can't finish from 1 with a double)
     expect(store().isBust).toBe(true);
-    expect(store().players[0].score).toBe(21); // restored to turn-start
+    expect(store().players[0].score).toBe(21);
+  });
+
+  it("score=1 busts under masterOut (unreachable finish)", () => {
+    store().startGame(
+      {
+        startingScore: 21 as 301,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: true,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
+    store().addDart(s20); // 21-20=1 → bust (can't finish from 1 with a master)
+    expect(store().isBust).toBe(true);
+    expect(store().players[0].score).toBe(21);
   });
 
   it("restores score on bust", () => {
-    store().startGame({ startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(s20); // 481
     store().addDart(t20); // 421 — score at start of turn = 501
     store().addDart(CreateSegment(SegmentID.INNER_1)); // pretend remaining = 421-1=420
     store().nextTurn();
-    // now score = 420, turn start = 420
-    const scoreBefore = store().players[0].score;
+
     // Throw to try to bust: bring to 2
-    store().startGame({ startingScore: 301, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 301,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     // reach score=20 exactly (via s20×14 turns + 1)
-    for (let i = 0; i < 4; i++) { store().addDart(s20); store().addDart(s20); store().addDart(s20); store().nextTurn(); }
-    store().addDart(s20); store().addDart(s20); store().addDart(s20); store().nextTurn(); // score=61
-    store().addDart(t20); store().nextTurn(); // 61-60=1, but t20=60, 61-60=1... that would be score=1 which bust? No that's next turn
+    for (let i = 0; i < 4; i++) {
+      store().addDart(s20);
+      store().addDart(s20);
+      store().addDart(s20);
+      store().nextTurn();
+    }
+    store().addDart(s20);
+    store().addDart(s20);
+    store().addDart(s20);
+    store().nextTurn(); // score=61
+    store().addDart(t20);
+    store().nextTurn(); // 61-60=1, but t20=60, 61-60=1... that would be score=1 which bust? No that's next turn
     // Let me just test simply: score=501, throw dart that goes below 0
-    store().startGame({ startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     // Reach score = 10
     for (let i = 0; i < 16; i++) {
-      store().addDart(s20); store().addDart(s20); store().addDart(s20); store().nextTurn(); // 60 per turn
-      if (i === 7) { /* after 8 turns: 480 subtracted, score=21 */ break; }
+      store().addDart(s20);
+      store().addDart(s20);
+      store().addDart(s20);
+      store().nextTurn(); // 60 per turn
+      if (i === 7) {
+        /* after 8 turns: 480 subtracted, score=21 */ break;
+      }
     }
     // This is getting complicated. Let's just test the core: a bust restores the turn-start score.
-    store().startGame({ startingScore: 20, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 20,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(t20); // 20-60 = -40 → bust immediately
     expect(store().isBust).toBe(true);
     expect(store().players[0].score).toBe(20);
   });
 
   it("subsequent darts ignored after bust", () => {
-    store().startGame({ startingScore: 20, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 20,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(t20); // bust
-    store().addDart(s1);  // should be ignored
+    store().addDart(s1); // should be ignored
     expect(store().currentRoundDarts).toHaveLength(1); // only the bust dart recorded? No wait...
     // After bust, isBust=true so addDart returns early
     expect(store().isBust).toBe(true);
@@ -151,7 +274,16 @@ describe("bust rules", () => {
 // ---------------------------------------------------------------------------
 describe("doubleOut", () => {
   function startDoubleOut(startingScore: 301 | 501 | 701 = 501) {
-    store().startGame({ startingScore, splitBull: false, doubleOut: true, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore,
+        splitBull: false,
+        doubleOut: true,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
   }
 
   it("wins with a double when score reaches 0", () => {
@@ -193,7 +325,16 @@ describe("doubleOut", () => {
 // ---------------------------------------------------------------------------
 describe("masterOut", () => {
   function startMasterOut(startingScore: 301 | 501 | 701 = 501) {
-    store().startGame({ startingScore, splitBull: false, doubleOut: false, masterOut: true, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: true,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
   }
 
   it("wins with a double", () => {
@@ -234,7 +375,16 @@ describe("masterOut", () => {
 // ---------------------------------------------------------------------------
 describe("doubleIn", () => {
   beforeEach(() => {
-    store().startGame({ startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: true }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: true,
+      },
+      ["Alice"],
+    );
   });
 
   it("player starts unopened", () => {
@@ -276,8 +426,8 @@ describe("doubleIn", () => {
 
   it("opened state persists after nextTurn", () => {
     store().addDart(d20); // open
-    store().nextTurn();   // advance to p1 then back
-    store().nextTurn();   // only 1 player so nextTurn stays on player 0
+    store().nextTurn(); // advance to p1 then back
+    store().nextTurn(); // only 1 player so nextTurn stays on player 0
     // With 1 player, turnOpened should persist as true
     expect(store().players[0].opened).toBe(true);
   });
@@ -288,33 +438,87 @@ describe("doubleIn", () => {
 // ---------------------------------------------------------------------------
 describe("splitBull", () => {
   it("outer bull counts as 50 when splitBull=false", () => {
-    store().startGame({ startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(bull); // outer bull → effective 50
     expect(store().players[0].score).toBe(451);
   });
 
   it("outer bull counts as 25 when splitBull=true", () => {
-    store().startGame({ startingScore: 501, splitBull: true, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: true,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(bull); // stays as 25
     expect(store().players[0].score).toBe(476);
   });
 
   it("inner bull always counts as 50", () => {
-    store().startGame({ startingScore: 501, splitBull: true, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: true,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(dblBull);
     expect(store().players[0].score).toBe(451);
   });
 
   it("outer bull counts as double for doubleOut when splitBull=false", () => {
-    store().startGame({ startingScore: 501, splitBull: false, doubleOut: true, masterOut: false, doubleIn: false }, ["Alice"]);
-    store().startGame({ startingScore: 50, splitBull: false, doubleOut: true, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: true,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
+    store().startGame(
+      {
+        startingScore: 50,
+        splitBull: false,
+        doubleOut: true,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(bull); // → 50 (double bull), score=0, valid double finish
     expect(store().winner).toBe("Alice");
   });
 
   it("outer bull counts as double for doubleOut even when splitBull=true (section=BULL satisfies finish)", () => {
     // isDoubleOrBull checks section===BULL (not type), so outer bull always qualifies as a finish dart
-    store().startGame({ startingScore: 25 as 301, splitBull: true, doubleOut: true, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 25 as 301,
+        splitBull: true,
+        doubleOut: true,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(bull); // outer bull = 25 pts (splitBull=true), section=BULL → valid double-out finish
     expect(store().winner).toBe("Alice");
     expect(store().isBust).toBe(false);
@@ -326,7 +530,16 @@ describe("splitBull", () => {
 // ---------------------------------------------------------------------------
 describe("undoLastDart", () => {
   beforeEach(() => {
-    store().startGame({ startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
   });
 
   it("reverses last dart's score", () => {
@@ -344,7 +557,16 @@ describe("undoLastDart", () => {
   });
 
   it("clears bust state on undo", () => {
-    store().startGame({ startingScore: 20, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 20,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(t20); // bust
     store().undoLastDart();
     expect(store().isBust).toBe(false);
@@ -352,7 +574,16 @@ describe("undoLastDart", () => {
   });
 
   it("clears winner on undo", () => {
-    store().startGame({ startingScore: 20, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 20,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
     store().addDart(s20); // win
     expect(store().winner).toBe("Alice");
     store().undoLastDart();
@@ -365,7 +596,16 @@ describe("undoLastDart", () => {
   });
 
   it("restores double-in opened state on undo back past opening dart", () => {
-    store().startGame({ startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: true }, ["Alice"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: true,
+      },
+      ["Alice"],
+    );
     store().addDart(d20); // opens + 40
     store().undoLastDart();
     // turnStartOpened was false, no remaining scored darts → opened should be false
@@ -379,7 +619,16 @@ describe("undoLastDart", () => {
 // ---------------------------------------------------------------------------
 describe("nextTurn", () => {
   it("cycles through two players", () => {
-    store().startGame({ startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice", "Bob"]);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice", "Bob"],
+    );
     expect(store().currentPlayerIndex).toBe(0);
     store().nextTurn();
     expect(store().currentPlayerIndex).toBe(1);
@@ -388,15 +637,35 @@ describe("nextTurn", () => {
   });
 
   it("records round history on nextTurn", () => {
-    store().startGame({ startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice"]);
-    store().addDart(s20); store().addDart(s20); store().addDart(s20);
+    store().startGame(
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice"],
+    );
+    store().addDart(s20);
+    store().addDart(s20);
+    store().addDart(s20);
     store().nextTurn();
     expect(store().players[0].rounds).toHaveLength(1);
     expect(store().players[0].rounds[0].score).toBe(60);
   });
 
   it("resets bust flag and currentRoundDarts", () => {
-    store().startGame({ startingScore: 20, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice", "Bob"]);
+    store().startGame(
+      {
+        startingScore: 20,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice", "Bob"],
+    );
     store().addDart(t20); // bust alice
     store().nextTurn();
     expect(store().isBust).toBe(false);
@@ -404,7 +673,16 @@ describe("nextTurn", () => {
   });
 
   it("does not advance turn if game is won", () => {
-    store().startGame({ startingScore: 20, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false }, ["Alice", "Bob"]);
+    store().startGame(
+      {
+        startingScore: 20,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
+      ["Alice", "Bob"],
+    );
     store().addDart(s20); // alice wins
     store().nextTurn(); // should be blocked
     expect(store().currentPlayerIndex).toBe(0);

@@ -71,9 +71,14 @@ export function useGameSession({
     onInitRef.current();
 
     // createController intentionally excluded from deps — it never needs to change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     const controller = createController();
-    recorderRef.current = new GameRecorder(gameType, playerNames, playerIds, options);
+    recorderRef.current = new GameRecorder(
+      gameType,
+      playerNames,
+      playerIds,
+      options,
+    );
 
     const origOnNextTurn = controller.onNextTurn.bind(controller);
     controller.onNextTurn = () => {

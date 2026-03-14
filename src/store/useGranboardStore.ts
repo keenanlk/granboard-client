@@ -51,11 +51,14 @@ export const useGranboardStore = create<GranboardState>((set, get) => ({
   },
 
   disconnect: () => {
-    get().board;
     set({ board: null, status: "disconnected", errorMessage: null });
   },
 
   connectMock: () => {
-    set({ board: new MockGranboard(), status: "connected", errorMessage: null });
+    set({
+      board: new MockGranboard(),
+      status: "connected",
+      errorMessage: null,
+    });
   },
 }));

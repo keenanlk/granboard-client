@@ -1,5 +1,11 @@
 import { create } from "zustand";
-import { CreateSegment, SegmentID, SegmentSection, SegmentType, type Segment } from "../board/Dartboard.ts";
+import {
+  CreateSegment,
+  SegmentID,
+  SegmentSection,
+  SegmentType,
+  type Segment,
+} from "../board/Dartboard.ts";
 
 export interface X01Options {
   startingScore: 301 | 501 | 701;
@@ -32,7 +38,10 @@ export interface Player {
   score: number;
   /** For double-in: whether the player has opened by hitting a double. Always true if doubleIn=false. */
   opened: boolean;
-  rounds: { score: number; darts: { value: number; shortName: string; scored: boolean }[] }[];
+  rounds: {
+    score: number;
+    darts: { value: number; shortName: string; scored: boolean }[];
+  }[];
   /** Total darts thrown this game (all darts, including busts and double-in misses). */
   totalDartsThrown: number;
 }
@@ -96,19 +105,28 @@ function isDoubleOrBull(seg: Segment): boolean {
 /*
  * Rule: bust conditions (any one of these = bust, turn is canceled)
  * 1. Score goes below 0 — overshot.
- * 2. Score lands on exactly 1 — unreachable finish (no segment scores 1 as a double/master).
+ * 2. Score lands on exactly 1 when in double out or master out — unreachable finish (no segment scores 1 as a double/master).
  * 3. doubleOut is on and score reaches 0 on a non-double/non-bull — invalid finish.
  * 4. masterOut is on and score reaches 0 on a single — must finish on double, triple, or bull.
  */
 function isX01Bust(newScore: number, opts: X01Options, seg: Segment): boolean {
-  if (newScore < 0 || newScore === 1) return true;
-  if (newScore === 0 && opts.doubleOut && !isDoubleOrBull(seg)) return true;
-  if (newScore === 0 && opts.masterOut && !isDoubleOrBull(seg) && seg.Type !== SegmentType.Triple) return true;
-  return false;
+  if (newScore < 0) return true;
+  if (newScore === 1 && (opts.doubleOut || opts.masterOut)) return true;
+  return (
+    (newScore === 0 && opts.doubleOut && !isDoubleOrBull(seg)) ||
+    (newScore === 0 &&
+      opts.masterOut &&
+      !isDoubleOrBull(seg) &&
+      seg.Type !== SegmentType.Triple)
+  );
 }
 
 /** Returns a new players array with only the player at `index` updated via `fn`. */
-function mapCurrentPlayer(players: Player[], index: number, fn: (p: Player) => Player): Player[] {
+function mapCurrentPlayer(
+  players: Player[],
+  index: number,
+  fn: (p: Player) => Player,
+): Player[] {
   return players.map((p, i) => (i === index ? fn(p) : p));
 }
 
@@ -139,9 +157,16 @@ export const useGameStore = create<GameState>((set) => ({
 
   addDart: (segment) =>
     set((state) => {
-      if (state.winner || state.isBust || state.currentRoundDarts.length >= 3) return state;
+      if (state.winner || state.isBust || state.currentRoundDarts.length >= 3)
+        return state;
 
-      const { currentPlayerIndex: ci, players, x01Options: opts, turnStartScores, turnStartOpened } = state;
+      const {
+        currentPlayerIndex: ci,
+        players,
+        x01Options: opts,
+        turnStartScores,
+        turnStartOpened,
+      } = state;
       const player = players[ci];
 
       const effective = getEffectiveSegment(segment, opts.splitBull);
@@ -152,8 +177,14 @@ export const useGameStore = create<GameState>((set) => ({
         if (!dbOrBull) {
           // Dart thrown but scores 0 — player not yet opened
           return {
-            currentRoundDarts: [...state.currentRoundDarts, { segment: effective, scored: false }],
-            players: mapCurrentPlayer(players, ci, (p) => ({ ...p, totalDartsThrown: p.totalDartsThrown + 1 })),
+            currentRoundDarts: [
+              ...state.currentRoundDarts,
+              { segment: effective, scored: false },
+            ],
+            players: mapCurrentPlayer(players, ci, (p) => ({
+              ...p,
+              totalDartsThrown: p.totalDartsThrown + 1,
+            })),
           };
         }
         // Opening double — fall through to score it normally
@@ -164,7 +195,10 @@ export const useGameStore = create<GameState>((set) => ({
       if (isX01Bust(newScore, opts, effective)) {
         // Entire turn canceled — reset to turn-start score and opened state
         return {
-          currentRoundDarts: [...state.currentRoundDarts, { segment: effective, scored: false }],
+          currentRoundDarts: [
+            ...state.currentRoundDarts,
+            { segment: effective, scored: false },
+          ],
           players: mapCurrentPlayer(players, ci, (p) => ({
             ...p,
             score: turnStartScores[ci],
@@ -177,7 +211,10 @@ export const useGameStore = create<GameState>((set) => ({
 
       // Valid dart — update score and mark player as opened
       return {
-        currentRoundDarts: [...state.currentRoundDarts, { segment: effective, scored: true }],
+        currentRoundDarts: [
+          ...state.currentRoundDarts,
+          { segment: effective, scored: true },
+        ],
         players: mapCurrentPlayer(players, ci, (p) => ({
           ...p,
           score: newScore,
@@ -233,7 +270,12 @@ export const useGameStore = create<GameState>((set) => ({
         currentPlayerIndex: nextIndex,
         currentRoundDarts: [],
         players: state.players.map((p, i) =>
-          i === ci ? { ...p, rounds: [...p.rounds, { score: roundScore, darts: roundDarts }] } : p,
+          i === ci
+            ? {
+                ...p,
+                rounds: [...p.rounds, { score: roundScore, darts: roundDarts }],
+              }
+            : p,
         ),
         turnStartScores: state.players.map((p) => p.score),
         turnStartOpened: state.players.map((p) => p.opened),

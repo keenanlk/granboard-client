@@ -12,7 +12,7 @@
     "build:web": "BUILD_TARGET=web tsc -b && vite build",
     "cap:sync": "npm run build:web && cap sync",
     "cap:ios": "npm run cap:sync && cap open ios",
-    "lint": "eslint .",
+    "lint": "eslint . && tsc",
     "test": "vitest run",
     "preview": "vite preview",
     "postinstall": "electron-rebuild"
