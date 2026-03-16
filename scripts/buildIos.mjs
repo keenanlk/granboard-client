@@ -13,6 +13,29 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { execSync } from "child_process";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const root = resolve(__dirname, "..");
+
+// ---------------------------------------------------------------------------
+// Auto-increment iOS build number (CURRENT_PROJECT_VERSION)
+// ---------------------------------------------------------------------------
+
+const pbxPath = resolve(root, "ios/App/App.xcodeproj/project.pbxproj");
+let pbx = readFileSync(pbxPath, "utf-8");
+const buildMatch = pbx.match(/CURRENT_PROJECT_VERSION = (\d+);/);
+const currentBuild = buildMatch ? Number(buildMatch[1]) : 0;
+const nextBuild = currentBuild + 1;
+pbx = pbx.replace(
+  /CURRENT_PROJECT_VERSION = \d+;/g,
+  `CURRENT_PROJECT_VERSION = ${nextBuild};`,
+);
+writeFileSync(pbxPath, pbx);
+console.log(`→ Bumped build number: ${currentBuild} -> ${nextBuild}`);
+
+// ---------------------------------------------------------------------------
 
 const CONFIG_PATH = "capacitor.config.ts";
 const original = readFileSync(CONFIG_PATH, "utf-8");
