@@ -24,7 +24,9 @@ const production = original.replace(
 );
 
 if (production === original) {
-  console.log("⚠  No dev server block found — config already production-ready.");
+  console.log(
+    "⚠  No dev server block found — config already production-ready.",
+  );
 } else {
   console.log("→ Removing dev server block from capacitor.config.ts");
 }

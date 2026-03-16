@@ -12,6 +12,7 @@
     "dev:ios": "cap run ios --livereload --external",
     "build:ios": "node scripts/buildIos.mjs",
     "lint": "eslint . && tsc && prettier --check .",
+    "format": "prettier --write .",
     "test": "vitest run",
     "preview": "vite preview",
     "sim": "tsx scripts/botSim.ts"

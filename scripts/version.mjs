@@ -68,7 +68,9 @@ const next = ["major", "minor", "patch"].includes(arg)
   ? bump(current, arg)
   : (() => {
       if (!semverRe.test(arg)) {
-        console.error(`"${arg}" is not a valid semver version or bump type (major|minor|patch).`);
+        console.error(
+          `"${arg}" is not a valid semver version or bump type (major|minor|patch).`,
+        );
         process.exit(1);
       }
       return arg;
@@ -107,7 +109,9 @@ pbx = pbx.replace(
 );
 
 writeFileSync(pbxPath, pbx);
-console.log(`  Updated iOS project.pbxproj (MARKETING_VERSION=${next}, build=${nextBuild})`);
+console.log(
+  `  Updated iOS project.pbxproj (MARKETING_VERSION=${next}, build=${nextBuild})`,
+);
 
 // ---------------------------------------------------------------------------
 // 3. PWA — vite-plugin-pwa manifest gets version from package.json at build

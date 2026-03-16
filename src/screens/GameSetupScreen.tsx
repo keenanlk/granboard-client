@@ -63,7 +63,6 @@ export function GameSetupScreen({
       return next;
     });
 
-
   const title =
     game === "x01" ? "X01" : game === "cricket" ? "Cricket" : "High Score";
   const gameClass =
@@ -119,8 +118,10 @@ export function GameSetupScreen({
       {/* Step 1 — Options */}
       {step === 1 && (
         <>
-          <div className="flex-1 min-h-0 flex flex-col items-center justify-center pr-5 py-4 gap-3 overflow-hidden"
-              style={{ paddingLeft: "1.25rem" }}>
+          <div
+            className="flex-1 min-h-0 flex flex-col items-center justify-center pr-5 py-4 gap-3 overflow-hidden"
+            style={{ paddingLeft: "1.25rem" }}
+          >
             {game === "x01" && (
               <div
                 className="grid grid-cols-3 gap-3 w-full"
@@ -128,10 +129,26 @@ export function GameSetupScreen({
               >
                 {(
                   [
-                    { key: "splitBull" as const, label: "Split Bull", desc: "Outer bull scores 25" },
-                    { key: "doubleOut" as const, label: "Double Out", desc: "Finish on a double" },
-                    { key: "masterOut" as const, label: "Master Out", desc: "Finish on double, triple, or bull" },
-                    { key: "doubleIn" as const, label: "Double In", desc: "Open on a double" },
+                    {
+                      key: "splitBull" as const,
+                      label: "Split Bull",
+                      desc: "Outer bull scores 25",
+                    },
+                    {
+                      key: "doubleOut" as const,
+                      label: "Double Out",
+                      desc: "Finish on a double",
+                    },
+                    {
+                      key: "masterOut" as const,
+                      label: "Master Out",
+                      desc: "Finish on double, triple, or bull",
+                    },
+                    {
+                      key: "doubleIn" as const,
+                      label: "Double In",
+                      desc: "Open on a double",
+                    },
                   ] as const
                 ).map(({ key, label, desc }) => (
                   <button
@@ -140,10 +157,14 @@ export function GameSetupScreen({
                     className="option-card min-h-[80px] max-h-[160px]"
                     data-active={String(x01Options[key])}
                   >
-                    <span className={`text-xl font-black ${x01Options[key] ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
+                    <span
+                      className={`text-xl font-black ${x01Options[key] ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                    >
                       {x01Options[key] ? "ON" : "OFF"}
                     </span>
-                    <span className={`text-sm font-bold text-center leading-tight ${x01Options[key] ? "text-content-primary" : "text-zinc-400"}`}>
+                    <span
+                      className={`text-sm font-bold text-center leading-tight ${x01Options[key] ? "text-content-primary" : "text-zinc-400"}`}
+                    >
                       {label}
                     </span>
                     <span className="text-xs text-content-muted text-center leading-tight">
@@ -162,18 +183,30 @@ export function GameSetupScreen({
                 {/* Round limit — cycles through options */}
                 <button
                   onClick={() => {
-                    const idx = CRICKET_ROUND_OPTIONS.indexOf(cricketOptions.roundLimit as typeof CRICKET_ROUND_OPTIONS[number]);
-                    const next = CRICKET_ROUND_OPTIONS[(idx + 1) % CRICKET_ROUND_OPTIONS.length];
-                    setCricketOptions((prev) => ({ ...prev, roundLimit: next }));
+                    const idx = CRICKET_ROUND_OPTIONS.indexOf(
+                      cricketOptions.roundLimit as (typeof CRICKET_ROUND_OPTIONS)[number],
+                    );
+                    const next =
+                      CRICKET_ROUND_OPTIONS[
+                        (idx + 1) % CRICKET_ROUND_OPTIONS.length
+                      ];
+                    setCricketOptions((prev) => ({
+                      ...prev,
+                      roundLimit: next,
+                    }));
                   }}
                   className="option-card min-h-[80px] max-h-[160px] flex-1 max-w-xs"
                   data-active="true"
                 >
                   <span className="font-black text-2xl text-[var(--color-game-accent)]">
-                    {cricketOptions.roundLimit === 0 ? "∞" : cricketOptions.roundLimit}
+                    {cricketOptions.roundLimit === 0
+                      ? "∞"
+                      : cricketOptions.roundLimit}
                   </span>
                   <span className="text-sm font-bold text-center text-content-primary">
-                    {cricketOptions.roundLimit === 0 ? "No Limit" : "Round Limit"}
+                    {cricketOptions.roundLimit === 0
+                      ? "No Limit"
+                      : "Round Limit"}
                   </span>
                   <span className="text-xs text-content-muted text-center leading-tight">
                     Tap to change
@@ -181,14 +214,23 @@ export function GameSetupScreen({
                 </button>
                 {/* Cut-Throat toggle */}
                 <button
-                  onClick={() => setCricketOptions((prev) => ({ ...prev, cutThroat: !prev.cutThroat }))}
+                  onClick={() =>
+                    setCricketOptions((prev) => ({
+                      ...prev,
+                      cutThroat: !prev.cutThroat,
+                    }))
+                  }
                   className="option-card min-h-[80px] max-h-[160px] flex-1 max-w-xs"
                   data-active={String(cricketOptions.cutThroat)}
                 >
-                  <span className={`text-xl font-black ${cricketOptions.cutThroat ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
+                  <span
+                    className={`text-xl font-black ${cricketOptions.cutThroat ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                  >
                     {cricketOptions.cutThroat ? "ON" : "OFF"}
                   </span>
-                  <span className={`text-sm font-bold text-center leading-tight ${cricketOptions.cutThroat ? "text-content-primary" : "text-zinc-400"}`}>
+                  <span
+                    className={`text-sm font-bold text-center leading-tight ${cricketOptions.cutThroat ? "text-content-primary" : "text-zinc-400"}`}
+                  >
                     Cut-Throat
                   </span>
                   <span className="text-xs text-content-muted text-center leading-tight">
@@ -206,8 +248,11 @@ export function GameSetupScreen({
                 {/* Rounds — cycles through options */}
                 <button
                   onClick={() => {
-                    const idx = ROUND_OPTIONS.indexOf(highScoreOptions.rounds as typeof ROUND_OPTIONS[number]);
-                    const next = ROUND_OPTIONS[(idx + 1) % ROUND_OPTIONS.length];
+                    const idx = ROUND_OPTIONS.indexOf(
+                      highScoreOptions.rounds as (typeof ROUND_OPTIONS)[number],
+                    );
+                    const next =
+                      ROUND_OPTIONS[(idx + 1) % ROUND_OPTIONS.length];
                     setHighScoreOptions((prev) => ({ ...prev, rounds: next }));
                   }}
                   className="option-card min-h-[80px] max-h-[160px]"
@@ -235,10 +280,14 @@ export function GameSetupScreen({
                   className="option-card min-h-[80px] max-h-[160px]"
                   data-active={String(highScoreOptions.tieRule === "playoff")}
                 >
-                  <span className={`text-xl font-black ${highScoreOptions.tieRule === "playoff" ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
+                  <span
+                    className={`text-xl font-black ${highScoreOptions.tieRule === "playoff" ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                  >
                     {highScoreOptions.tieRule === "playoff" ? "ON" : "OFF"}
                   </span>
-                  <span className={`text-sm font-bold text-center ${highScoreOptions.tieRule === "playoff" ? "text-content-primary" : "text-zinc-400"}`}>
+                  <span
+                    className={`text-sm font-bold text-center ${highScoreOptions.tieRule === "playoff" ? "text-content-primary" : "text-zinc-400"}`}
+                  >
                     One-Dart Playoff
                   </span>
                   <span className="text-xs text-content-muted text-center leading-tight">
@@ -257,10 +306,14 @@ export function GameSetupScreen({
                   className="option-card min-h-[80px] max-h-[160px]"
                   data-active={String(highScoreOptions.splitBull)}
                 >
-                  <span className={`text-xl font-black ${highScoreOptions.splitBull ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
+                  <span
+                    className={`text-xl font-black ${highScoreOptions.splitBull ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                  >
                     {highScoreOptions.splitBull ? "ON" : "OFF"}
                   </span>
-                  <span className={`text-sm font-bold text-center ${highScoreOptions.splitBull ? "text-content-primary" : "text-zinc-400"}`}>
+                  <span
+                    className={`text-sm font-bold text-center ${highScoreOptions.splitBull ? "text-content-primary" : "text-zinc-400"}`}
+                  >
                     Split Bull
                   </span>
                   <span className="text-xs text-content-muted text-center leading-tight">
@@ -288,8 +341,10 @@ export function GameSetupScreen({
       {/* Step 2 — Players */}
       {step === 2 && (
         <>
-          <div className="flex-1 min-h-0 flex flex-col pr-5 py-3 gap-2 overflow-hidden"
-              style={{ paddingLeft: "1.25rem" }}>
+          <div
+            className="flex-1 min-h-0 flex flex-col pr-5 py-3 gap-2 overflow-hidden"
+            style={{ paddingLeft: "1.25rem" }}
+          >
             <PlayerSelectStep roster={roster} onChange={setRoster} />
           </div>
 
@@ -338,7 +393,9 @@ export function GameSetupScreen({
                 disabled={roster.length === 0}
                 className="btn-primary rounded-2xl text-2xl"
               >
-                {cricketOptions.cutThroat ? "Start Cut-Throat" : "Start Cricket"}
+                {cricketOptions.cutThroat
+                  ? "Start Cut-Throat"
+                  : "Start Cricket"}
               </button>
             ) : (
               <button

@@ -32,7 +32,9 @@ export const usePlayerProfileStore = create<PlayerProfileState>((set, get) => ({
   createPlayer: async (name: string) => {
     const player = await dbAddPlayer(name.trim());
     set((s) => ({
-      players: [...s.players, player].sort((a, b) => a.name.localeCompare(b.name)),
+      players: [...s.players, player].sort((a, b) =>
+        a.name.localeCompare(b.name),
+      ),
     }));
     return player;
   },

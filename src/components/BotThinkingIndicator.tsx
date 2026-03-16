@@ -13,8 +13,15 @@ export function BotThinkingIndicator({ skill }: BotThinkingIndicatorProps) {
         className={`w-full h-full rounded-xl bg-surface-raised border-2 flex flex-col items-center justify-center gap-1 ${ch.animationClass}`}
         style={{ borderColor: ch.color, boxShadow: `0 0 12px ${ch.glow}` }}
       >
-        <span className="text-[10px] uppercase tracking-widest font-black" style={{ fontFamily: "Beon, sans-serif", color: ch.color }}>{ch.name}</span>
-        <span className="text-base animate-pulse" style={{ color: ch.color }}>···</span>
+        <span
+          className="text-[10px] uppercase tracking-widest font-black"
+          style={{ fontFamily: "Beon, sans-serif", color: ch.color }}
+        >
+          {ch.name}
+        </span>
+        <span className="text-base animate-pulse" style={{ color: ch.color }}>
+          ···
+        </span>
       </div>
     </div>
   );

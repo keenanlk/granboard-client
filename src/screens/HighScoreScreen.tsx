@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useHighScoreStore, type HighScoreOptions } from "../store/useHighScoreStore.ts";
+import {
+  useHighScoreStore,
+  type HighScoreOptions,
+} from "../store/useHighScoreStore.ts";
 import { HighScoreController } from "../controllers/HighScoreController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
@@ -57,7 +60,8 @@ export function HighScoreScreen({
     options,
     createController: () => new HighScoreController(),
     extractRound: () => {
-      const { currentPlayerIndex, currentRoundDarts } = useHighScoreStore.getState();
+      const { currentPlayerIndex, currentRoundDarts } =
+        useHighScoreStore.getState();
       const roundTotal = currentRoundDarts.reduce((sum, d) => sum + d.value, 0);
       return {
         playerIndex: currentPlayerIndex,
@@ -69,8 +73,10 @@ export function HighScoreScreen({
       };
     },
     winner: winners,
-    getFinalScores: () => useHighScoreStore.getState().players.map((p) => p.score),
-    getSerializableState: () => useHighScoreStore.getState().getSerializableState(),
+    getFinalScores: () =>
+      useHighScoreStore.getState().players.map((p) => p.score),
+    getSerializableState: () =>
+      useHighScoreStore.getState().getSerializableState(),
     onInit: () => {
       if (restoredState) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,11 +113,16 @@ export function HighScoreScreen({
 
   const isCurrentBot = bots.has(currentPlayerIndex);
 
-  const getThrow = useCallback((bot: Bot) => {
-    return CreateSegment(bot.throwHighScore(options.splitBull, (target, actual) => {
-      gameLogger.logDart(bot.name, target, actual, {});
-    }));
-  }, [options.splitBull]);
+  const getThrow = useCallback(
+    (bot: Bot) => {
+      return CreateSegment(
+        bot.throwHighScore(options.splitBull, (target, actual) => {
+          gameLogger.logDart(bot.name, target, actual, {});
+        }),
+      );
+    },
+    [options.splitBull],
+  );
 
   useBotTurn({
     bots,
@@ -124,19 +135,33 @@ export function HighScoreScreen({
     getThrow,
   });
 
-  const [pendingAward, dismissAward] = useAwardDetection(
-    readyToSwitch,
-    () => detectAward(currentRoundDarts),
+  const [pendingAward, dismissAward] = useAwardDetection(readyToSwitch, () =>
+    detectAward(currentRoundDarts),
   );
 
   // Auto-advance when last player finishes last round (show results immediately)
   useEffect(() => {
-    if (!readyToSwitch || !isLastPlayerOfRound || !isLastRound || !!winners || isTransitioning || pendingAward) return;
+    if (
+      !readyToSwitch ||
+      !isLastPlayerOfRound ||
+      !isLastRound ||
+      !!winners ||
+      isTransitioning ||
+      pendingAward
+    )
+      return;
     // Small delay so the last dart visually lands before results appear
     const timer = setTimeout(() => handleNextTurn(), 800);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readyToSwitch, isLastPlayerOfRound, isLastRound, winners, isTransitioning, pendingAward]);
+  }, [
+    readyToSwitch,
+    isLastPlayerOfRound,
+    isLastRound,
+    winners,
+    isTransitioning,
+    pendingAward,
+  ]);
 
   return (
     <GameShell
@@ -173,7 +198,8 @@ export function HighScoreScreen({
                   const avg =
                     p.rounds.length > 0
                       ? Math.round(
-                          p.rounds.reduce((a, r) => a + r.score, 0) / p.rounds.length,
+                          p.rounds.reduce((a, r) => a + r.score, 0) /
+                            p.rounds.length,
                         )
                       : 0;
                   return {
@@ -201,17 +227,25 @@ export function HighScoreScreen({
       }
     >
       {/* Main area */}
-      <div className="flex-1 flex min-h-0" style={{ paddingLeft: "var(--sal)" }}>
-
+      <div
+        className="flex-1 flex min-h-0"
+        style={{ paddingLeft: "var(--sal)" }}
+      >
         {/* Left: active player score */}
         <div className="flex-1 flex flex-col min-w-0 min-h-0 px-4 py-2">
           <div className="flex items-center gap-2 shrink-0">
             <span className="glow-dot" />
             <span
               className={`font-black uppercase tracking-widest text-[clamp(1rem,2vw,2.5rem)] ${isCurrentBot ? getBotCharacter(botSkills[currentPlayerIndex]!).animationClass : ""}`}
-              style={isCurrentBot
-                ? { fontFamily: "Beon, sans-serif", color: getBotCharacter(botSkills[currentPlayerIndex]!).color, textShadow: `0 0 12px ${getBotCharacter(botSkills[currentPlayerIndex]!).glow}` }
-                : { color: "var(--color-game-accent)" }
+              style={
+                isCurrentBot
+                  ? {
+                      fontFamily: "Beon, sans-serif",
+                      color: getBotCharacter(botSkills[currentPlayerIndex]!)
+                        .color,
+                      textShadow: `0 0 12px ${getBotCharacter(botSkills[currentPlayerIndex]!).glow}`,
+                    }
+                  : { color: "var(--color-game-accent)" }
               }
             >
               {currentPlayer?.name}
@@ -227,7 +261,12 @@ export function HighScoreScreen({
             )}
             <span
               className="font-normal tabular-nums leading-none select-none text-[clamp(7rem,16vw,40rem)]"
-              style={{ fontFamily: "Beon, sans-serif", color: "var(--color-game-accent)", textShadow: "0 0 20px var(--color-game-accent), 0 0 60px var(--color-game-accent), 0 0 100px var(--color-game-accent-glow), 0 0 150px var(--color-game-accent-glow)" }}
+              style={{
+                fontFamily: "Beon, sans-serif",
+                color: "var(--color-game-accent)",
+                textShadow:
+                  "0 0 20px var(--color-game-accent), 0 0 60px var(--color-game-accent), 0 0 100px var(--color-game-accent-glow), 0 0 150px var(--color-game-accent-glow)",
+              }}
             >
               {(currentPlayer?.score ?? 0) + roundTotal}
             </span>
@@ -235,9 +274,15 @@ export function HighScoreScreen({
         </div>
 
         {/* Right: game info + history grid */}
-        <div className="flex flex-col shrink-0 border-l border-border-default min-h-0" style={{ width: "clamp(12rem, 16vw, 22rem)" }}>
+        <div
+          className="flex flex-col shrink-0 border-l border-border-default min-h-0"
+          style={{ width: "clamp(12rem, 16vw, 22rem)" }}
+        >
           {/* Game title + menu */}
-          <div className="shrink-0 px-2 py-2 flex items-center border-b border-border-default" style={{ paddingTop: "calc(var(--sat) + 0.5rem)" }}>
+          <div
+            className="shrink-0 px-2 py-2 flex items-center border-b border-border-default"
+            style={{ paddingTop: "calc(var(--sat) + 0.5rem)" }}
+          >
             <div className="flex-1 flex flex-col items-center">
               <span className="font-black text-[var(--color-game-accent)] text-[clamp(0.8rem,1.3vw,1.25rem)] tracking-widest">
                 High Score
@@ -246,7 +291,11 @@ export function HighScoreScreen({
                 Round {currentRound} of {options.rounds}
               </span>
             </div>
-            <GameMenu onUndo={undoLastDart} undoDisabled={!!winners || isCurrentBot || undoStack.length === 0} onExit={onExit} />
+            <GameMenu
+              onUndo={undoLastDart}
+              undoDisabled={!!winners || isCurrentBot || undoStack.length === 0}
+              onExit={onExit}
+            />
           </div>
 
           {/* Rows: current round (live) + completed rounds newest-first */}
@@ -282,7 +331,9 @@ export function HighScoreScreen({
           </div>
 
           {/* Bot thinking indicator */}
-          {isCurrentBot && <BotThinkingIndicator skill={botSkills[currentPlayerIndex]!} />}
+          {isCurrentBot && (
+            <BotThinkingIndicator skill={botSkills[currentPlayerIndex]!} />
+          )}
         </div>
       </div>
 
@@ -290,7 +341,9 @@ export function HighScoreScreen({
       <div
         className="shrink-0 grid border-t-2 bg-surface-sunken transition-all duration-300"
         style={{
-          borderColor: readyToSwitch ? "var(--color-game-accent)" : "var(--color-border-default)",
+          borderColor: readyToSwitch
+            ? "var(--color-game-accent)"
+            : "var(--color-border-default)",
           gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))`,
         }}
       >
@@ -299,7 +352,8 @@ export function HighScoreScreen({
           const avg =
             player.rounds.length > 0
               ? Math.round(
-                  player.rounds.reduce((a, r) => a + r.score, 0) / player.rounds.length,
+                  player.rounds.reduce((a, r) => a + r.score, 0) /
+                    player.rounds.length,
                 )
               : 0;
           return (
@@ -313,7 +367,15 @@ export function HighScoreScreen({
                 className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${botSkills[i] != null ? getBotCharacter(botSkills[i]!).animationClass : isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
                 style={{
                   fontSize: textSizes.name,
-                  ...(botSkills[i] != null ? { fontFamily: "Beon, sans-serif", color: getBotCharacter(botSkills[i]!).color, textShadow: isActive ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}` : "none" } : {}),
+                  ...(botSkills[i] != null
+                    ? {
+                        fontFamily: "Beon, sans-serif",
+                        color: getBotCharacter(botSkills[i]!).color,
+                        textShadow: isActive
+                          ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}`
+                          : "none",
+                      }
+                    : {}),
                 }}
               >
                 {player.name}

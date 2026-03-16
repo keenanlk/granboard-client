@@ -138,9 +138,16 @@ export class X01Engine implements GameEngine<X01State, X01Options> {
   }
 
   addDart(state: X01State, segment: Segment): Partial<X01State> {
-    if (state.winner || state.isBust || state.currentRoundDarts.length >= 3) return state;
+    if (state.winner || state.isBust || state.currentRoundDarts.length >= 3)
+      return state;
 
-    const { currentPlayerIndex: ci, players, x01Options: opts, turnStartScores, turnStartOpened } = state;
+    const {
+      currentPlayerIndex: ci,
+      players,
+      x01Options: opts,
+      turnStartScores,
+      turnStartOpened,
+    } = state;
     const player = players[ci];
 
     const effective = getEffectiveSegment(segment, opts.splitBull);
@@ -150,7 +157,10 @@ export class X01Engine implements GameEngine<X01State, X01Options> {
     if (opts.doubleIn && !player.opened) {
       if (!dbOrBull) {
         return {
-          currentRoundDarts: [...state.currentRoundDarts, { segment: effective, scored: false }],
+          currentRoundDarts: [
+            ...state.currentRoundDarts,
+            { segment: effective, scored: false },
+          ],
           players: mapCurrentPlayer(players, ci, (p) => ({
             ...p,
             totalDartsThrown: p.totalDartsThrown + 1,
@@ -164,7 +174,10 @@ export class X01Engine implements GameEngine<X01State, X01Options> {
 
     if (isX01Bust(newScore, opts, effective)) {
       return {
-        currentRoundDarts: [...state.currentRoundDarts, { segment: effective, scored: false }],
+        currentRoundDarts: [
+          ...state.currentRoundDarts,
+          { segment: effective, scored: false },
+        ],
         players: mapCurrentPlayer(players, ci, (p) => ({
           ...p,
           score: turnStartScores[ci],
@@ -176,7 +189,10 @@ export class X01Engine implements GameEngine<X01State, X01Options> {
     }
 
     return {
-      currentRoundDarts: [...state.currentRoundDarts, { segment: effective, scored: true }],
+      currentRoundDarts: [
+        ...state.currentRoundDarts,
+        { segment: effective, scored: true },
+      ],
       players: mapCurrentPlayer(players, ci, (p) => ({
         ...p,
         score: newScore,
@@ -222,13 +238,18 @@ export class X01Engine implements GameEngine<X01State, X01Options> {
     const restoredScore = prevPlayer.score + lastRound.score;
 
     const newPlayers = state.players.map((p, i) =>
-      i !== prevIndex ? p : {
-        ...p,
-        score: restoredScore,
-        opened: lastRound.openedBefore,
-        rounds: p.rounds.slice(0, -1),
-        totalDartsThrown: Math.max(0, p.totalDartsThrown - lastRound.darts.length),
-      }
+      i !== prevIndex
+        ? p
+        : {
+            ...p,
+            score: restoredScore,
+            opened: lastRound.openedBefore,
+            rounds: p.rounds.slice(0, -1),
+            totalDartsThrown: Math.max(
+              0,
+              p.totalDartsThrown - lastRound.darts.length,
+            ),
+          },
     );
 
     return {
@@ -258,7 +279,17 @@ export class X01Engine implements GameEngine<X01State, X01Options> {
       currentRoundDarts: [],
       players: state.players.map((p, i) =>
         i === ci
-          ? { ...p, rounds: [...p.rounds, { score: roundScore, darts: roundDarts, openedBefore: state.turnStartOpened[ci] }] }
+          ? {
+              ...p,
+              rounds: [
+                ...p.rounds,
+                {
+                  score: roundScore,
+                  darts: roundDarts,
+                  openedBefore: state.turnStartOpened[ci],
+                },
+              ],
+            }
           : p,
       ),
       turnStartScores: state.players.map((p) => p.score),

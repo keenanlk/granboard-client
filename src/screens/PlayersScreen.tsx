@@ -12,8 +12,12 @@ interface PlayersScreenProps {
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col items-center justify-center bg-zinc-900 rounded-xl px-4 py-3 gap-0.5">
-      <span className="text-2xl font-black text-white tabular-nums">{value}</span>
-      <span className="text-xs text-zinc-500 uppercase tracking-wider font-bold">{label}</span>
+      <span className="text-2xl font-black text-white tabular-nums">
+        {value}
+      </span>
+      <span className="text-xs text-zinc-500 uppercase tracking-wider font-bold">
+        {label}
+      </span>
     </div>
   );
 }
@@ -100,24 +104,40 @@ function PlayerDetail({
           <>
             {/* Overall */}
             <section className="flex flex-col gap-2">
-              <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Overall</p>
+              <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">
+                Overall
+              </p>
               <div className="grid grid-cols-3 gap-2">
                 <StatBox label="Games" value={String(stats.totalGames)} />
                 <StatBox label="Wins" value={String(stats.totalWins)} />
-                <StatBox label="Win %" value={pct(stats.totalWins, stats.totalGames)} />
+                <StatBox
+                  label="Win %"
+                  value={pct(stats.totalWins, stats.totalGames)}
+                />
               </div>
             </section>
 
             {/* X01 */}
             {stats.x01.gamesPlayed > 0 && (
               <section className="flex flex-col gap-2">
-                <p className="text-red-500 text-xs uppercase tracking-widest font-bold">X01</p>
+                <p className="text-red-500 text-xs uppercase tracking-widest font-bold">
+                  X01
+                </p>
                 <div className="grid grid-cols-2 gap-2">
-                  <StatBox label="Games" value={`${stats.x01.wins}W / ${stats.x01.gamesPlayed}G`} />
-                  <StatBox label="Win %" value={pct(stats.x01.wins, stats.x01.gamesPlayed)} />
+                  <StatBox
+                    label="Games"
+                    value={`${stats.x01.wins}W / ${stats.x01.gamesPlayed}G`}
+                  />
+                  <StatBox
+                    label="Win %"
+                    value={pct(stats.x01.wins, stats.x01.gamesPlayed)}
+                  />
                   <StatBox label="PPD" value={fmt(stats.x01.ppd)} />
                   <StatBox label="Avg Round" value={fmt(stats.x01.avgRound)} />
-                  <StatBox label="Best Round" value={fmt(stats.x01.bestRound, 0)} />
+                  <StatBox
+                    label="Best Round"
+                    value={fmt(stats.x01.bestRound, 0)}
+                  />
                 </div>
               </section>
             )}
@@ -125,12 +145,23 @@ function PlayerDetail({
             {/* Cricket */}
             {stats.cricket.gamesPlayed > 0 && (
               <section className="flex flex-col gap-2">
-                <p className="text-green-400 text-xs uppercase tracking-widest font-bold">Cricket</p>
+                <p className="text-green-400 text-xs uppercase tracking-widest font-bold">
+                  Cricket
+                </p>
                 <div className="grid grid-cols-2 gap-2">
-                  <StatBox label="Games" value={`${stats.cricket.wins}W / ${stats.cricket.gamesPlayed}G`} />
-                  <StatBox label="Win %" value={pct(stats.cricket.wins, stats.cricket.gamesPlayed)} />
+                  <StatBox
+                    label="Games"
+                    value={`${stats.cricket.wins}W / ${stats.cricket.gamesPlayed}G`}
+                  />
+                  <StatBox
+                    label="Win %"
+                    value={pct(stats.cricket.wins, stats.cricket.gamesPlayed)}
+                  />
                   <StatBox label="MPR" value={fmt(stats.cricket.mpr)} />
-                  <StatBox label="Avg Pts/Round" value={fmt(stats.cricket.avgRoundScore)} />
+                  <StatBox
+                    label="Avg Pts/Round"
+                    value={fmt(stats.cricket.avgRoundScore)}
+                  />
                 </div>
               </section>
             )}
@@ -138,27 +169,54 @@ function PlayerDetail({
             {/* High Score */}
             {stats.highscore.gamesPlayed > 0 && (
               <section className="flex flex-col gap-2">
-                <p className="text-yellow-400 text-xs uppercase tracking-widest font-bold">High Score</p>
+                <p className="text-yellow-400 text-xs uppercase tracking-widest font-bold">
+                  High Score
+                </p>
                 <div className="grid grid-cols-2 gap-2">
-                  <StatBox label="Games" value={`${stats.highscore.wins}W / ${stats.highscore.gamesPlayed}G`} />
-                  <StatBox label="Win %" value={pct(stats.highscore.wins, stats.highscore.gamesPlayed)} />
-                  <StatBox label="Avg Score" value={fmt(stats.highscore.avgScore, 0)} />
-                  <StatBox label="Best Score" value={fmt(stats.highscore.bestScore, 0)} />
-                  <StatBox label="Avg Round" value={fmt(stats.highscore.avgRound, 0)} />
-                  <StatBox label="Best Round" value={fmt(stats.highscore.bestRound, 0)} />
+                  <StatBox
+                    label="Games"
+                    value={`${stats.highscore.wins}W / ${stats.highscore.gamesPlayed}G`}
+                  />
+                  <StatBox
+                    label="Win %"
+                    value={pct(
+                      stats.highscore.wins,
+                      stats.highscore.gamesPlayed,
+                    )}
+                  />
+                  <StatBox
+                    label="Avg Score"
+                    value={fmt(stats.highscore.avgScore, 0)}
+                  />
+                  <StatBox
+                    label="Best Score"
+                    value={fmt(stats.highscore.bestScore, 0)}
+                  />
+                  <StatBox
+                    label="Avg Round"
+                    value={fmt(stats.highscore.avgRound, 0)}
+                  />
+                  <StatBox
+                    label="Best Round"
+                    value={fmt(stats.highscore.bestRound, 0)}
+                  />
                 </div>
               </section>
             )}
 
             {/* Recent sessions */}
             <section className="flex flex-col gap-2">
-              <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Recent Games</p>
+              <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">
+                Recent Games
+              </p>
               <div className="flex flex-col gap-1.5">
                 {[...sessions!]
                   .sort((a, b) => b.playedAt - a.playedAt)
                   .slice(0, 10)
                   .map((s) => {
-                    const me = s.participants.find((p) => p.playerId === player.id);
+                    const me = s.participants.find(
+                      (p) => p.playerId === player.id,
+                    );
                     const date = new Date(s.playedAt);
                     const label =
                       s.gameType === "x01"
@@ -172,9 +230,12 @@ function PlayerDetail({
                         className="flex items-center justify-between bg-zinc-900 rounded-lg px-3 py-2"
                       >
                         <div className="flex flex-col">
-                          <span className="text-sm font-bold text-white">{label}</span>
+                          <span className="text-sm font-bold text-white">
+                            {label}
+                          </span>
                           <span className="text-xs text-zinc-500">
-                            {date.toLocaleDateString()} · {s.participants.length} players
+                            {date.toLocaleDateString()} ·{" "}
+                            {s.participants.length} players
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
@@ -233,7 +294,9 @@ export function PlayersScreen({ onBack }: PlayersScreenProps) {
         >
           ← Back
         </button>
-        <span className="font-black text-white text-xl tracking-widest">Players</span>
+        <span className="font-black text-white text-xl tracking-widest">
+          Players
+        </span>
         <div className="w-14" />
       </header>
 

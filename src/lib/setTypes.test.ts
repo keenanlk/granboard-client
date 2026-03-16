@@ -7,7 +7,9 @@ describe("getSetWinner", () => {
   });
 
   it("returns null after 1 win in bo3", () => {
-    expect(getSetWinner([{ winnerName: "Alice", winnerIndex: 0 }], "bo3")).toBeNull();
+    expect(
+      getSetWinner([{ winnerName: "Alice", winnerIndex: 0 }], "bo3"),
+    ).toBeNull();
   });
 
   it("returns winner after 2 wins in bo3", () => {

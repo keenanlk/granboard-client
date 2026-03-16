@@ -23,9 +23,24 @@ export default defineConfig({
         display: "fullscreen",
         orientation: "landscape",
         icons: [
-          { src: "/nlc-darts-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-          { src: "/nlc-darts-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-          { src: "/nlc-darts-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+          {
+            src: "/nlc-darts-192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "/nlc-darts-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "/nlc-darts-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
         ],
       },
     }),

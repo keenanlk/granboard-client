@@ -50,8 +50,10 @@ describe("simulateThrow — statistical accuracy", () => {
     let proHits = 0;
     let beginnerHits = 0;
     for (let i = 0; i < SAMPLES; i++) {
-      if (sector20.has(simulateThrow(SegmentID.TRP_20, BotSkill.Pro))) proHits++;
-      if (sector20.has(simulateThrow(SegmentID.TRP_20, BotSkill.Beginner))) beginnerHits++;
+      if (sector20.has(simulateThrow(SegmentID.TRP_20, BotSkill.Pro)))
+        proHits++;
+      if (sector20.has(simulateThrow(SegmentID.TRP_20, BotSkill.Beginner)))
+        beginnerHits++;
     }
 
     // Pro should land in the 20 sector significantly more often than a beginner
@@ -62,7 +64,8 @@ describe("simulateThrow — statistical accuracy", () => {
     // TRP_20 is an 8mm-wide ring; σ=6mm → ~45% hit rate, well above 35%.
     let hits = 0;
     for (let i = 0; i < SAMPLES; i++) {
-      if (simulateThrow(SegmentID.TRP_20, BotSkill.Pro) === SegmentID.TRP_20) hits++;
+      if (simulateThrow(SegmentID.TRP_20, BotSkill.Pro) === SegmentID.TRP_20)
+        hits++;
     }
     expect(hits).toBeGreaterThan(SAMPLES * 0.35);
   });

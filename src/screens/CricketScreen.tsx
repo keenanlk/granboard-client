@@ -67,15 +67,15 @@ function MarksIcon({
   sizeClass: string;
 }) {
   // Colors
-  const barColor = marks >= 3
-    ? "var(--color-game-accent)"
-    : isActive
-      ? "#fff"
-      : "#71717a"; // zinc-500
-  const dimColor = isActive ? "rgba(255,255,255,0.15)" : "rgba(113,113,122,0.2)";
-  const glowFilter = marks >= 3
-    ? "drop-shadow(0 0 4px var(--color-game-accent-glow)) drop-shadow(0 0 8px var(--color-game-accent-glow))"
-    : "none";
+  const barColor =
+    marks >= 3 ? "var(--color-game-accent)" : isActive ? "#fff" : "#71717a"; // zinc-500
+  const dimColor = isActive
+    ? "rgba(255,255,255,0.15)"
+    : "rgba(113,113,122,0.2)";
+  const glowFilter =
+    marks >= 3
+      ? "drop-shadow(0 0 4px var(--color-game-accent-glow)) drop-shadow(0 0 8px var(--color-game-accent-glow))"
+      : "none";
 
   // Bar positions: 3 vertical bars evenly spaced, with strike-through at 3
   const barX = [5, 12, 19]; // center x for each of the 3 bars
@@ -195,20 +195,30 @@ export function CricketScreen({
 
   const isCurrentBot = bots.has(currentPlayerIndex);
 
-  const getThrow = useCallback((bot: Bot) => {
-    const { players: ps, currentPlayerIndex: ci } = useCricketStore.getState();
-    return CreateSegment(
-      bot.throwCricket(ps[ci].marks, ps, ci, (target, actual) => {
-        gameLogger.logDart(bot.name, target, actual, {
-          players: ps.map((p) => ({
-            name: p.name,
-            score: p.score,
-            marks: p.marks,
-          })),
-        });
-      }, options.cutThroat),
-    );
-  }, [options.cutThroat]);
+  const getThrow = useCallback(
+    (bot: Bot) => {
+      const { players: ps, currentPlayerIndex: ci } =
+        useCricketStore.getState();
+      return CreateSegment(
+        bot.throwCricket(
+          ps[ci].marks,
+          ps,
+          ci,
+          (target, actual) => {
+            gameLogger.logDart(bot.name, target, actual, {
+              players: ps.map((p) => ({
+                name: p.name,
+                score: p.score,
+                marks: p.marks,
+              })),
+            });
+          },
+          options.cutThroat,
+        ),
+      );
+    },
+    [options.cutThroat],
+  );
 
   useBotTurn({
     bots,
@@ -252,7 +262,10 @@ export function CricketScreen({
   const leftPlayers = players.slice(0, Math.ceil(n / 2));
   const rightPlayers = players.slice(Math.ceil(n / 2));
   const leftIndices = Array.from({ length: leftPlayers.length }, (_, i) => i);
-  const rightIndices = Array.from({ length: rightPlayers.length }, (_, i) => i + Math.ceil(n / 2));
+  const rightIndices = Array.from(
+    { length: rightPlayers.length },
+    (_, i) => i + Math.ceil(n / 2),
+  );
 
   const numColWidth = "1fr";
 
@@ -268,7 +281,12 @@ export function CricketScreen({
           )}
           <span
             className="font-normal text-2xl tracking-widest"
-            style={{ fontFamily: "Beon, sans-serif", color: "var(--color-game-accent)", textShadow: "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)" }}
+            style={{
+              fontFamily: "Beon, sans-serif",
+              color: "var(--color-game-accent)",
+              textShadow:
+                "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)",
+            }}
           >
             {options.cutThroat ? "Cut-Throat" : "Cricket"}
           </span>
@@ -276,7 +294,8 @@ export function CricketScreen({
             {options.roundLimit > 0
               ? `Round ${currentRound}/${options.roundLimit}`
               : `Round ${currentRound}`}
-            {options.cutThroat ? " · Cut-Throat" : ""}{options.singleBull ? " · Split Bull" : ""}
+            {options.cutThroat ? " · Cut-Throat" : ""}
+            {options.singleBull ? " · Split Bull" : ""}
           </span>
         </>
       }
@@ -299,7 +318,9 @@ export function CricketScreen({
               onNextLeg={onNextLeg}
               playerResults={players
                 .slice()
-                .sort((a, b) => options.cutThroat ? a.score - b.score : b.score - a.score)
+                .sort((a, b) =>
+                  options.cutThroat ? a.score - b.score : b.score - a.score,
+                )
                 .map((p, rank) => {
                   const mpr =
                     p.totalDartsThrown === 0
@@ -343,7 +364,11 @@ export function CricketScreen({
         {/* Marks scoreboard — column-based layout with continuous borders */}
         <div
           className="flex-1 min-h-0 min-w-0 grid"
-          style={{ gridTemplateColumns: `repeat(${leftPlayers.length}, minmax(0, 1fr)) ${numColWidth} repeat(${rightPlayers.length}, minmax(0, 1fr))`, maxWidth: `${(n + 1) * 5}rem`, margin: "0 auto" }}
+          style={{
+            gridTemplateColumns: `repeat(${leftPlayers.length}, minmax(0, 1fr)) ${numColWidth} repeat(${rightPlayers.length}, minmax(0, 1fr))`,
+            maxWidth: `${(n + 1) * 5}rem`,
+            margin: "0 auto",
+          }}
         >
           {/* Left side player columns — marks aligned right toward center */}
           {leftIndices.map((pi) => (
@@ -351,15 +376,19 @@ export function CricketScreen({
               key={`left-${pi}`}
               className="flex flex-col min-h-0 border-r border-solid transition-colors duration-200"
               style={{
-                borderColor: pi === currentPlayerIndex
-                  ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
-                  : "var(--color-border-subtle)",
+                borderColor:
+                  pi === currentPlayerIndex
+                    ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
+                    : "var(--color-border-subtle)",
               }}
             >
               {CRICKET_TARGETS.map((target) => {
                 const allClosed = isNumberClosedByAll(players, target);
                 return (
-                  <div key={target} className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}>
+                  <div
+                    key={target}
+                    className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}
+                  >
                     <MarksIcon
                       marks={players[pi]?.marks[target] ?? 0}
                       isActive={pi === currentPlayerIndex}
@@ -375,14 +404,21 @@ export function CricketScreen({
           <div className="flex flex-col min-h-0">
             {CRICKET_TARGETS.map((target) => {
               const allClosed = isNumberClosedByAll(players, target);
-              const openForCurrent = !allClosed && (currentPlayer?.marks[target] ?? 0) >= 3;
+              const openForCurrent =
+                !allClosed && (currentPlayer?.marks[target] ?? 0) >= 3;
               return (
-                <div key={target} className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}>
+                <div
+                  key={target}
+                  className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}
+                >
                   <span
                     className={`font-normal tabular-nums leading-none whitespace-nowrap text-[clamp(1rem,5vh,3rem)] transition-colors duration-200`}
                     style={{
                       fontFamily: "Beon, sans-serif",
-                      color: allClosed || openForCurrent ? "var(--color-game-accent)" : "#e4e4e7",
+                      color:
+                        allClosed || openForCurrent
+                          ? "var(--color-game-accent)"
+                          : "#e4e4e7",
                       textShadow: allClosed
                         ? "0 0 8px var(--color-game-accent-glow)"
                         : openForCurrent
@@ -403,15 +439,19 @@ export function CricketScreen({
               key={`right-${pi}`}
               className="flex flex-col min-h-0 border-l border-solid transition-colors duration-200"
               style={{
-                borderColor: pi === currentPlayerIndex
-                  ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
-                  : "var(--color-border-subtle)",
+                borderColor:
+                  pi === currentPlayerIndex
+                    ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
+                    : "var(--color-border-subtle)",
               }}
             >
               {CRICKET_TARGETS.map((target) => {
                 const allClosed = isNumberClosedByAll(players, target);
                 return (
-                  <div key={target} className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}>
+                  <div
+                    key={target}
+                    className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}
+                  >
                     <MarksIcon
                       marks={players[pi]?.marks[target] ?? 0}
                       isActive={pi === currentPlayerIndex}
@@ -425,9 +465,22 @@ export function CricketScreen({
         </div>
 
         {/* Right: game info + round history — wider when fewer players */}
-        <div className="flex flex-col shrink-0 border-l border-border-default min-h-0" style={{ width: n <= 2 ? "clamp(14rem,25vw,28rem)" : n <= 4 ? "clamp(12rem,20vw,24rem)" : "clamp(10rem,16vw,20rem)" }}>
+        <div
+          className="flex flex-col shrink-0 border-l border-border-default min-h-0"
+          style={{
+            width:
+              n <= 2
+                ? "clamp(14rem,25vw,28rem)"
+                : n <= 4
+                  ? "clamp(12rem,20vw,24rem)"
+                  : "clamp(10rem,16vw,20rem)",
+          }}
+        >
           {/* Game title + menu */}
-          <div className="shrink-0 px-2 py-2 flex items-center border-b border-border-default" style={{ paddingTop: "calc(var(--sat) + 0.5rem)" }}>
+          <div
+            className="shrink-0 px-2 py-2 flex items-center border-b border-border-default"
+            style={{ paddingTop: "calc(var(--sat) + 0.5rem)" }}
+          >
             <div className="flex-1 flex flex-col items-center">
               {setProgress && (
                 <span className="text-blue-400 text-[clamp(0.5rem,0.8vw,0.7rem)] font-bold uppercase tracking-widest">
@@ -436,7 +489,12 @@ export function CricketScreen({
               )}
               <span
                 className="font-normal text-[clamp(1rem,2vw,2rem)] tracking-widest"
-                style={{ fontFamily: "Beon, sans-serif", color: "var(--color-game-accent)", textShadow: "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)" }}
+                style={{
+                  fontFamily: "Beon, sans-serif",
+                  color: "var(--color-game-accent)",
+                  textShadow:
+                    "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)",
+                }}
               >
                 Cricket
               </span>
@@ -446,7 +504,11 @@ export function CricketScreen({
                   : `R${currentRound}`}
               </span>
             </div>
-            <GameMenu onUndo={undoLastDart} undoDisabled={!!winner || isCurrentBot || undoStack.length === 0} onExit={onExit} />
+            <GameMenu
+              onUndo={undoLastDart}
+              undoDisabled={!!winner || isCurrentBot || undoStack.length === 0}
+              onExit={onExit}
+            />
           </div>
           {/* Round history */}
           <div className="flex-1 flex flex-col min-h-0 overflow-hidden px-1 gap-1.5 pt-1">
@@ -455,7 +517,8 @@ export function CricketScreen({
               darts={currentRoundDarts.map((d) => ({
                 value: d.segment.Value,
                 shortName: d.segment.ShortName,
-                state: d.pointsScored > 0 || d.marksEarned > 0 ? "scored" : "miss",
+                state:
+                  d.pointsScored > 0 || d.marksEarned > 0 ? "scored" : "miss",
               }))}
               totalDarts={currentRoundDarts.length}
               readyToSwitch={readyToSwitch}
@@ -481,7 +544,9 @@ export function CricketScreen({
           </div>
 
           {/* Bot thinking indicator */}
-          {isCurrentBot && !readyToSwitch && <BotThinkingIndicator skill={botSkills[currentPlayerIndex]!} />}
+          {isCurrentBot && !readyToSwitch && (
+            <BotThinkingIndicator skill={botSkills[currentPlayerIndex]!} />
+          )}
         </div>
       </div>
 
@@ -515,7 +580,15 @@ export function CricketScreen({
                 className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${botSkills[i] != null ? getBotCharacter(botSkills[i]!).animationClass : isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
                 style={{
                   fontSize: textSizes.name,
-                  ...(botSkills[i] != null ? { fontFamily: "Beon, sans-serif", color: getBotCharacter(botSkills[i]!).color, textShadow: isActive ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}` : "none" } : {}),
+                  ...(botSkills[i] != null
+                    ? {
+                        fontFamily: "Beon, sans-serif",
+                        color: getBotCharacter(botSkills[i]!).color,
+                        textShadow: isActive
+                          ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}`
+                          : "none",
+                      }
+                    : {}),
                 }}
               >
                 {player.name}
@@ -524,7 +597,14 @@ export function CricketScreen({
                 className={`font-normal tabular-nums leading-tight transition-colors duration-300 ${isActive ? "" : "text-content-muted"}`}
                 style={{
                   fontSize: textSizes.score,
-                  ...(isActive ? { fontFamily: "Beon, sans-serif", color: "var(--color-game-accent)", textShadow: "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)" } : {}),
+                  ...(isActive
+                    ? {
+                        fontFamily: "Beon, sans-serif",
+                        color: "var(--color-game-accent)",
+                        textShadow:
+                          "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)",
+                      }
+                    : {}),
                 }}
               >
                 {player.score}

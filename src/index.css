@@ -15,7 +15,9 @@
   --sar: env(safe-area-inset-right, 0px);
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   overflow: hidden;
 }
@@ -84,10 +86,17 @@ html, body, #root {
 .game-cricket,
 .game-highscore {
   background-image:
-    radial-gradient(ellipse at center, transparent 20%, rgba(0, 0, 0, 0.6) 100%),
+    radial-gradient(
+      ellipse at center,
+      transparent 20%,
+      rgba(0, 0, 0, 0.6) 100%
+    ),
     linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 100% 100%, 40px 40px, 40px 40px;
+  background-size:
+    100% 100%,
+    40px 40px,
+    40px 40px;
 }
 
 @layer components {
@@ -130,9 +139,16 @@ html, body, #root {
     box-shadow: var(--shadow-glow-md);
     transition: filter 0.15s;
   }
-  .btn-primary:hover { filter: brightness(1.12); }
-  .btn-primary:active { filter: brightness(0.9); }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary:hover {
+    filter: brightness(1.12);
+  }
+  .btn-primary:active {
+    filter: brightness(0.9);
+  }
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 
   .btn-ghost {
     color: var(--color-content-muted);
@@ -141,8 +157,13 @@ html, body, #root {
     letter-spacing: 0.05em;
     transition: color 0.15s;
   }
-  .btn-ghost:hover { color: var(--color-content-primary); }
-  .btn-ghost:disabled { color: var(--color-content-faint); cursor: not-allowed; }
+  .btn-ghost:hover {
+    color: var(--color-content-primary);
+  }
+  .btn-ghost:disabled {
+    color: var(--color-content-faint);
+    cursor: not-allowed;
+  }
 
   /* Option toggle card (setup screen) */
   .option-card {
@@ -158,7 +179,11 @@ html, body, #root {
   }
   .option-card[data-active="true"] {
     border-color: var(--color-game-accent);
-    background-color: color-mix(in oklch, var(--color-game-accent) 15%, transparent);
+    background-color: color-mix(
+      in oklch,
+      var(--color-game-accent) 15%,
+      transparent
+    );
   }
   .option-card[data-active="false"] {
     border-color: var(--color-border-default);
@@ -178,7 +203,11 @@ html, body, #root {
   }
   .dart-slot[data-state="empty"] {
     border-color: var(--color-border-default);
-    background-color: color-mix(in oklch, var(--color-surface-raised) 50%, transparent);
+    background-color: color-mix(
+      in oklch,
+      var(--color-surface-raised) 50%,
+      transparent
+    );
   }
   .dart-slot[data-state="next"] {
     border-color: var(--color-game-accent);
@@ -186,16 +215,32 @@ html, body, #root {
     background-color: var(--color-surface-raised);
   }
   .dart-slot[data-state="scored"] {
-    border-color: color-mix(in oklch, var(--color-game-accent) 60%, transparent);
-    background-color: color-mix(in oklch, var(--color-game-accent-dim) 60%, transparent);
+    border-color: color-mix(
+      in oklch,
+      var(--color-game-accent) 60%,
+      transparent
+    );
+    background-color: color-mix(
+      in oklch,
+      var(--color-game-accent-dim) 60%,
+      transparent
+    );
   }
   .dart-slot[data-state="bust"] {
     border-color: var(--color-state-bust);
-    background-color: color-mix(in oklch, var(--color-state-bust-bg) 60%, transparent);
+    background-color: color-mix(
+      in oklch,
+      var(--color-state-bust-bg) 60%,
+      transparent
+    );
   }
   .dart-slot[data-state="miss"] {
     border-color: var(--color-border-subtle);
-    background-color: color-mix(in oklch, var(--color-surface-raised) 40%, transparent);
+    background-color: color-mix(
+      in oklch,
+      var(--color-surface-raised) 40%,
+      transparent
+    );
   }
 
   /* Player strip cell */
@@ -228,11 +273,43 @@ html, body, #root {
     transition: all 0.2s;
     margin: 0 2px;
   }
-  .history-dart-cell[data-state="empty"] { border-color: transparent; background: transparent; }
-  .history-dart-cell[data-state="next"] { border-color: var(--color-game-accent); border-style: dashed; background-color: var(--color-surface-raised); }
-  .history-dart-cell[data-state="scored"] { border-color: color-mix(in oklch, var(--color-game-accent) 60%, transparent); background-color: color-mix(in oklch, var(--color-game-accent-dim) 60%, transparent); }
-  .history-dart-cell[data-state="bust"] { border-color: var(--color-state-bust); background-color: color-mix(in oklch, var(--color-state-bust-bg) 60%, transparent); }
-  .history-dart-cell[data-state="miss"] { border-color: var(--color-border-subtle); background-color: color-mix(in oklch, var(--color-surface-raised) 40%, transparent); }
+  .history-dart-cell[data-state="empty"] {
+    border-color: transparent;
+    background: transparent;
+  }
+  .history-dart-cell[data-state="next"] {
+    border-color: var(--color-game-accent);
+    border-style: dashed;
+    background-color: var(--color-surface-raised);
+  }
+  .history-dart-cell[data-state="scored"] {
+    border-color: color-mix(
+      in oklch,
+      var(--color-game-accent) 60%,
+      transparent
+    );
+    background-color: color-mix(
+      in oklch,
+      var(--color-game-accent-dim) 60%,
+      transparent
+    );
+  }
+  .history-dart-cell[data-state="bust"] {
+    border-color: var(--color-state-bust);
+    background-color: color-mix(
+      in oklch,
+      var(--color-state-bust-bg) 60%,
+      transparent
+    );
+  }
+  .history-dart-cell[data-state="miss"] {
+    border-color: var(--color-border-subtle);
+    background-color: color-mix(
+      in oklch,
+      var(--color-surface-raised) 40%,
+      transparent
+    );
+  }
 
   /* Glow dot (active player indicator) */
   .glow-dot {
@@ -252,9 +329,24 @@ html, body, #root {
   animation: neon-flicker-kf 3s infinite;
 }
 @keyframes neon-flicker-kf {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-  20%, 24%, 55% { opacity: 0.3; }
-  22% { opacity: 0.6; }
+  0%,
+  19%,
+  21%,
+  23%,
+  25%,
+  54%,
+  56%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  24%,
+  55% {
+    opacity: 0.3;
+  }
+  22% {
+    opacity: 0.6;
+  }
 }
 
 /* Tier 2 — Glow: soft steady pulse */
@@ -262,8 +354,15 @@ html, body, #root {
   animation: neon-glow-kf 4s ease-in-out infinite;
 }
 @keyframes neon-glow-kf {
-  0%, 100% { opacity: 0.7; filter: brightness(0.85); }
-  50% { opacity: 1; filter: brightness(1.1); }
+  0%,
+  100% {
+    opacity: 0.7;
+    filter: brightness(0.85);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.1);
+  }
 }
 
 /* Tier 3 — Buzz: humming vibration */
@@ -271,10 +370,23 @@ html, body, #root {
   animation: neon-buzz-kf 2.5s ease-in-out infinite;
 }
 @keyframes neon-buzz-kf {
-  0%, 100% { opacity: 0.85; filter: brightness(1); }
-  25% { opacity: 1; filter: brightness(1.15); }
-  50% { opacity: 0.9; filter: brightness(1.05); }
-  75% { opacity: 1; filter: brightness(1.2); }
+  0%,
+  100% {
+    opacity: 0.85;
+    filter: brightness(1);
+  }
+  25% {
+    opacity: 1;
+    filter: brightness(1.15);
+  }
+  50% {
+    opacity: 0.9;
+    filter: brightness(1.05);
+  }
+  75% {
+    opacity: 1;
+    filter: brightness(1.2);
+  }
 }
 
 /* Tier 4 — Flash: marquee pulse */
@@ -282,8 +394,13 @@ html, body, #root {
   animation: neon-flash-kf 2s ease-in-out infinite;
 }
 @keyframes neon-flash-kf {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.4); }
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.4);
+  }
 }
 
 /* Tier 5 — Volt: electric crackle */
@@ -291,13 +408,28 @@ html, body, #root {
   animation: neon-volt-kf 1.5s infinite;
 }
 @keyframes neon-volt-kf {
-  0%, 100% { filter: brightness(1); }
-  10% { filter: brightness(1.6); }
-  12% { filter: brightness(0.9); }
-  14% { filter: brightness(1.4); }
-  50% { filter: brightness(1.1); }
-  80% { filter: brightness(1.3); }
-  82% { filter: brightness(0.95); }
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  10% {
+    filter: brightness(1.6);
+  }
+  12% {
+    filter: brightness(0.9);
+  }
+  14% {
+    filter: brightness(1.4);
+  }
+  50% {
+    filter: brightness(1.1);
+  }
+  80% {
+    filter: brightness(1.3);
+  }
+  82% {
+    filter: brightness(0.95);
+  }
 }
 
 /* Tier 6 — Blaze: intense glow throb */
@@ -305,8 +437,13 @@ html, body, #root {
   animation: neon-blaze-kf 1.8s ease-in-out infinite;
 }
 @keyframes neon-blaze-kf {
-  0%, 100% { filter: brightness(1.1); }
-  50% { filter: brightness(1.5); }
+  0%,
+  100% {
+    filter: brightness(1.1);
+  }
+  50% {
+    filter: brightness(1.5);
+  }
 }
 
 /* Tier 7 — Nova: radiant explosion pulse */
@@ -314,6 +451,11 @@ html, body, #root {
   animation: neon-nova-kf 2s ease-in-out infinite;
 }
 @keyframes neon-nova-kf {
-  0%, 100% { filter: brightness(1.2) saturate(1.2); }
-  50% { filter: brightness(1.8) saturate(1.5); }
+  0%,
+  100% {
+    filter: brightness(1.2) saturate(1.2);
+  }
+  50% {
+    filter: brightness(1.8) saturate(1.5);
+  }
 }

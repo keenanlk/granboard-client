@@ -37,12 +37,14 @@ export function GameShell({
     >
       {/* Turn delay overlay — shown between every turn across all game modes */}
       {isTransitioning && (
-        <TurnDelayOverlay countdown={countdown} nextPlayerName={nextPlayerName} />
+        <TurnDelayOverlay
+          countdown={countdown}
+          nextPlayerName={nextPlayerName}
+        />
       )}
 
       {/* Game-specific overlays: winner, award, playoff banner, etc. */}
       {overlays}
-
 
       {children}
 
@@ -54,7 +56,8 @@ export function GameShell({
           style={{
             bottom: "calc(var(--sab) + clamp(1rem, 2vh, 1.5rem))",
             right: "clamp(1rem, 2vw, 2rem)",
-            padding: "clamp(0.75rem, 1.5vh, 1.25rem) clamp(1.5rem, 3vw, 2.5rem)",
+            padding:
+              "clamp(0.75rem, 1.5vh, 1.25rem) clamp(1.5rem, 3vw, 2.5rem)",
             fontSize: "clamp(0.875rem, 1.5vw, 1.25rem)",
             backgroundColor: "var(--color-game-accent)",
             boxShadow: "var(--shadow-glow-lg), 0 4px 20px rgba(0,0,0,0.5)",

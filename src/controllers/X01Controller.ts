@@ -10,7 +10,8 @@ export class X01Controller implements GameController {
     const after = useGameStore.getState();
 
     // Only emit if the dart was actually registered (not ignored due to 3 already thrown)
-    if (after.currentRoundDarts.length === before.currentRoundDarts.length) return;
+    if (after.currentRoundDarts.length === before.currentRoundDarts.length)
+      return;
     gameEventBus.emit("dart_hit", { segment });
 
     if (!before.isBust && after.isBust) {

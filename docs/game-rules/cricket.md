@@ -1,9 +1,11 @@
 # Cricket
 
 ## Objective
+
 Score the most points while closing the numbers **20, 19, 18, 17, 16, 15, and bull**.
 
 To win a player must:
+
 1. Close all numbers
 2. Have equal or more points than every opponent
 
@@ -31,12 +33,12 @@ Each target requires **3 marks** to close.
 
 Marks are earned by hitting:
 
-| Hit | Marks |
-|----|----|
-| Single | 1 |
-| Double | 2 |
-| Triple | 3 |
-| Bull | 1 or 2 depending on settings |
+| Hit    | Marks                        |
+| ------ | ---------------------------- |
+| Single | 1                            |
+| Double | 2                            |
+| Triple | 3                            |
+| Bull   | 1 or 2 depending on settings |
 
 Examples:
 
@@ -88,10 +90,10 @@ If **all opponents have closed a number**, additional hits on that number score 
 
 Typical configuration:
 
-| Hit | Marks |
-|----|----|
-| Outer Bull | 1 |
-| Inner Bull | 2 |
+| Hit        | Marks |
+| ---------- | ----- |
+| Outer Bull | 1     |
+| Inner Bull | 2     |
 
 Some leagues use **single bull**, where both bulls count as **1 mark**.
 

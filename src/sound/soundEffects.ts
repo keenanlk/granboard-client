@@ -10,12 +10,19 @@ export function setTurnTransitioning(value: boolean) {
 gameEventBus.on("dart_hit", ({ segment, effectiveMarks }) => {
   if (_turnTransitioning) return;
   // In cricket, a dart with no effective marks just gets a plain hit sound
-  if (effectiveMarks === 0) { Sounds.hit(); return; }
+  if (effectiveMarks === 0) {
+    Sounds.hit();
+    return;
+  }
 
   // Cricket darts: play sound based on effective marks earned (1, 2, or 3+)
   if (effectiveMarks !== undefined) {
     if (segment.Section === SegmentSection.BULL) {
-      if (segment.ID === SegmentID.DBL_BULL) { Sounds.dbull(); } else { Sounds.bull(); }
+      if (segment.ID === SegmentID.DBL_BULL) {
+        Sounds.dbull();
+      } else {
+        Sounds.bull();
+      }
     } else if (effectiveMarks >= 3) {
       Sounds.triple();
     } else if (effectiveMarks === 2) {
@@ -28,7 +35,11 @@ gameEventBus.on("dart_hit", ({ segment, effectiveMarks }) => {
 
   // X01 darts: play sound based on segment type
   if (segment.Section === SegmentSection.BULL) {
-    if (segment.ID === SegmentID.DBL_BULL) { Sounds.dbull(); } else { Sounds.bull(); }
+    if (segment.ID === SegmentID.DBL_BULL) {
+      Sounds.dbull();
+    } else {
+      Sounds.bull();
+    }
   } else if (segment.Type === SegmentType.Triple) {
     Sounds.triple();
   } else if (segment.Type !== SegmentType.Other) {

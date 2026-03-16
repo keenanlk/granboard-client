@@ -43,7 +43,10 @@ export interface SetProgress {
  * Returns the winner's name once someone has won the majority of legs,
  * or null if the set is still in progress.
  */
-export function getSetWinner(legResults: LegResult[], format: SetFormat): string | null {
+export function getSetWinner(
+  legResults: LegResult[],
+  format: SetFormat,
+): string | null {
   const needed = format === "bo3" ? 2 : 3;
   const wins = new Map<string, number>();
   for (const r of legResults) {

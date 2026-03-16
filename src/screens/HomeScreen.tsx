@@ -29,8 +29,14 @@ const GAMES = [
 
 const LONG_PRESS_MS = 7000;
 
-export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: HomeScreenProps) {
-  const { status, errorMessage, connect, disconnect, connectMock } = useGranboardStore();
+export function HomeScreen({
+  onSelectGame,
+  onSetMatch,
+  onPractice,
+  onPlayers,
+}: HomeScreenProps) {
+  const { status, errorMessage, connect, disconnect, connectMock } =
+    useGranboardStore();
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isConnected = status === "connected";
@@ -51,7 +57,10 @@ export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: 
   }, [clearLongPress, connectMock]);
 
   return (
-    <div className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden" style={{ paddingLeft: "var(--sal)" }}>
+    <div
+      className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden"
+      style={{ paddingLeft: "var(--sal)" }}
+    >
       {/* Header — padded for notch */}
       <header
         className="flex items-center justify-between px-6 pb-3 shrink-0 bg-zinc-950"
@@ -63,10 +72,19 @@ export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: 
             style={{
               fontFamily: "Beon, sans-serif",
               color: "#fff",
-              textShadow: "0 0 10px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.2)",
+              textShadow:
+                "0 0 10px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.2)",
             }}
           >
-            NLC <span style={{ color: "#ef4444", textShadow: "0 0 15px #ef4444, 0 0 40px rgba(239,68,68,0.5)" }}>Darts</span>
+            NLC{" "}
+            <span
+              style={{
+                color: "#ef4444",
+                textShadow: "0 0 15px #ef4444, 0 0 40px rgba(239,68,68,0.5)",
+              }}
+            >
+              Darts
+            </span>
           </h1>
           <button
             onClick={onPlayers}
@@ -78,12 +96,18 @@ export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: 
 
         <div className="flex items-center gap-3">
           <button
-            onClick={isConnected ? disconnect : isConnecting ? undefined : connect}
+            onClick={
+              isConnected ? disconnect : isConnecting ? undefined : connect
+            }
             disabled={isConnecting}
-            onMouseDown={!isConnected && !isConnecting ? startLongPress : undefined}
+            onMouseDown={
+              !isConnected && !isConnecting ? startLongPress : undefined
+            }
             onMouseUp={clearLongPress}
             onMouseLeave={clearLongPress}
-            onTouchStart={!isConnected && !isConnecting ? startLongPress : undefined}
+            onTouchStart={
+              !isConnected && !isConnecting ? startLongPress : undefined
+            }
             onTouchEnd={clearLongPress}
             onTouchCancel={clearLongPress}
             className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors select-none ${
@@ -108,14 +132,20 @@ export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: 
               }`}
             />
             <span className="text-sm font-bold capitalize">
-              {isConnecting ? "Connecting…" : isConnected ? "Connected" : "Connect"}
+              {isConnecting
+                ? "Connecting…"
+                : isConnected
+                  ? "Connected"
+                  : "Connect"}
             </span>
           </button>
         </div>
       </header>
 
       {status === "error" && errorMessage && (
-        <p className="px-6 pb-2 text-red-400 text-sm shrink-0">{errorMessage}</p>
+        <p className="px-6 pb-2 text-red-400 text-sm shrink-0">
+          {errorMessage}
+        </p>
       )}
 
       {/* Game list — tiles fill all remaining space equally */}
@@ -137,8 +167,14 @@ export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: 
               disabled={!isConnected}
               className="w-full rounded-2xl px-6 text-left transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed flex flex-col justify-center bg-zinc-900 border-2 border-zinc-800"
               style={{ borderColor: undefined }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = game.color; e.currentTarget.style.boxShadow = `0 0 12px ${game.glow}`; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = ""; e.currentTarget.style.boxShadow = ""; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = game.color;
+                e.currentTarget.style.boxShadow = `0 0 12px ${game.glow}`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "";
+                e.currentTarget.style.boxShadow = "";
+              }}
             >
               <p
                 className="text-4xl tracking-tight font-normal"
@@ -161,15 +197,22 @@ export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: 
             disabled={!isConnected}
             className="w-full rounded-2xl px-6 text-left transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed flex flex-col justify-center bg-zinc-900 border-2 border-zinc-800 hover:border-blue-500"
             style={{ borderColor: undefined }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#60a5fa"; e.currentTarget.style.boxShadow = "0 0 12px rgba(96,165,250,0.5)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = ""; e.currentTarget.style.boxShadow = ""; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "#60a5fa";
+              e.currentTarget.style.boxShadow = "0 0 12px rgba(96,165,250,0.5)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "";
+              e.currentTarget.style.boxShadow = "";
+            }}
           >
             <p
               className="text-4xl tracking-tight font-normal"
               style={{
                 fontFamily: "Beon, sans-serif",
                 color: "#60a5fa",
-                textShadow: "0 0 20px #60a5fa, 0 0 60px #60a5fa, 0 0 100px rgba(96, 165, 250, 0.5)",
+                textShadow:
+                  "0 0 20px #60a5fa, 0 0 60px #60a5fa, 0 0 100px rgba(96, 165, 250, 0.5)",
               }}
             >
               Set Match
@@ -184,15 +227,23 @@ export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: 
             disabled={!isConnected}
             className="w-full rounded-2xl px-6 text-left transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed flex flex-col justify-center bg-zinc-900 border-2 border-zinc-800"
             style={{ borderColor: undefined }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#a78bfa"; e.currentTarget.style.boxShadow = "0 0 12px rgba(167,139,250,0.5)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = ""; e.currentTarget.style.boxShadow = ""; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "#a78bfa";
+              e.currentTarget.style.boxShadow =
+                "0 0 12px rgba(167,139,250,0.5)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "";
+              e.currentTarget.style.boxShadow = "";
+            }}
           >
             <p
               className="text-4xl tracking-tight font-normal"
               style={{
                 fontFamily: "Beon, sans-serif",
                 color: "#a78bfa",
-                textShadow: "0 0 20px #a78bfa, 0 0 60px #a78bfa, 0 0 100px rgba(167,139,250,0.5)",
+                textShadow:
+                  "0 0 20px #a78bfa, 0 0 60px #a78bfa, 0 0 100px rgba(167,139,250,0.5)",
               }}
             >
               Practice

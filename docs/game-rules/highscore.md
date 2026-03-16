@@ -74,9 +74,11 @@ After all rounds are completed:
 If 2 or more players are tied for the highest score, choose one of these rules:
 
 ### Option 1: tie stands
+
 - The game ends in a tie
 
 ### Option 2: one-dart playoff
+
 - Tied players each throw 1 dart
 - Highest scoring dart wins
 - Repeat if still tied
@@ -90,6 +92,7 @@ Your app should make this configurable.
 Assume a 3-round game.
 
 ### Player A
+
 Round 1:
 
     T20, T20, T20
@@ -156,6 +159,7 @@ For a simple first version:
 ## Notes
 
 This game does **not** use:
+
 - closing numbers
 - bust logic
 - double-out

@@ -66,7 +66,10 @@ function determineWinners(players: HighScorePlayer[]): string[] {
 // Engine class
 // ---------------------------------------------------------------------------
 
-export class HighScoreEngine implements GameEngine<HighScoreState, HighScoreOptions> {
+export class HighScoreEngine implements GameEngine<
+  HighScoreState,
+  HighScoreOptions
+> {
   startGame(options: HighScoreOptions, playerNames: string[]): HighScoreState {
     return {
       options,
@@ -102,7 +105,10 @@ export class HighScoreEngine implements GameEngine<HighScoreState, HighScoreOpti
   nextTurn(state: HighScoreState): Partial<HighScoreState> {
     if (state.winners) return state;
 
-    const roundTotal = state.currentRoundDarts.reduce((sum, d) => sum + d.value, 0);
+    const roundTotal = state.currentRoundDarts.reduce(
+      (sum, d) => sum + d.value,
+      0,
+    );
 
     const updatedPlayers = state.players.map((p, i) => {
       if (i !== state.currentPlayerIndex) return p;
@@ -125,7 +131,9 @@ export class HighScoreEngine implements GameEngine<HighScoreState, HighScoreOpti
     const isLastPlayer = state.currentPlayerIndex === state.players.length - 1;
     const isLastRound = state.currentRound === state.options.rounds;
     const nextPlayerIndex = isLastPlayer ? 0 : state.currentPlayerIndex + 1;
-    const nextRound = isLastPlayer ? state.currentRound + 1 : state.currentRound;
+    const nextRound = isLastPlayer
+      ? state.currentRound + 1
+      : state.currentRound;
 
     if (isLastPlayer && isLastRound) {
       const topNames = determineWinners(updatedPlayers);
@@ -145,7 +153,9 @@ export class HighScoreEngine implements GameEngine<HighScoreState, HighScoreOpti
         currentRoundDarts: [],
         inPlayoff: true,
         playoffDarts: [],
-        currentPlayerIndex: updatedPlayers.findIndex((p) => topNames.includes(p.name)),
+        currentPlayerIndex: updatedPlayers.findIndex((p) =>
+          topNames.includes(p.name),
+        ),
       };
     }
 

@@ -17,7 +17,9 @@ import { useGranboardStore } from "../store/useGranboardStore.ts";
  * Dart numbers sorted by LED ring position descending (pos 58 → pos 1).
  * Used to animate a depleting ring during the remove-darts countdown.
  */
-const REMOVE_DARTS_ORDER = [19, 3, 17, 2, 15, 10, 6, 13, 4, 18, 1, 20, 5, 12, 9, 14, 11, 8, 16, 7];
+const REMOVE_DARTS_ORDER = [
+  19, 3, 17, 2, 15, 10, 6, 13, 4, 18, 1, 20, 5, 12, 9, 14, 11, 8, 16, 7,
+];
 
 let removeDartsTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -35,12 +37,16 @@ export function startRemoveDartsCountdown(durationMs: number): void {
   const intervalMs = Math.floor(durationMs / steps);
   let remaining = [...REMOVE_DARTS_ORDER];
 
-  void board.sendCommand(buildPersistentNumbersCommand(remaining, LED_COLOR_ORANGE));
+  void board.sendCommand(
+    buildPersistentNumbersCommand(remaining, LED_COLOR_ORANGE),
+  );
 
   removeDartsTimer = setInterval(() => {
     remaining = remaining.slice(1);
     void board.sendCommand(
-      remaining.length > 0 ? buildPersistentNumbersCommand(remaining, LED_COLOR_ORANGE) : buildClearCommand(),
+      remaining.length > 0
+        ? buildPersistentNumbersCommand(remaining, LED_COLOR_ORANGE)
+        : buildClearCommand(),
     );
     if (remaining.length === 0) {
       clearInterval(removeDartsTimer!);
@@ -50,8 +56,9 @@ export function startRemoveDartsCountdown(durationMs: number): void {
 }
 
 /** Dart numbers sorted clockwise by LED ring position. */
-const RING_ORDER = Array.from({ length: 20 }, (_, i) => i + 1)
-  .sort((a, b) => LED_POSITIONS[a] - LED_POSITIONS[b]);
+const RING_ORDER = Array.from({ length: 20 }, (_, i) => i + 1).sort(
+  (a, b) => LED_POSITIONS[a] - LED_POSITIONS[b],
+);
 
 function lerpColor(a: RGB, b: RGB, t: number): RGB {
   return {
@@ -112,7 +119,9 @@ gameEventBus.on("dart_hit", ({ segment, effectiveMarks }) => {
         : segment.Type === SegmentType.Triple
           ? Colors.YELLOW
           : Colors.RED;
-    void board.sendCommand(buildHitCommand(segment.Section, segment.Type, color));
+    void board.sendCommand(
+      buildHitCommand(segment.Section, segment.Type, color),
+    );
   }
 });
 
@@ -126,6 +135,8 @@ gameEventBus.on("open_numbers", ({ numbers }) => {
     const board = useGranboardStore.getState().board;
     if (!board) return;
     // 20-byte direct state command — persistent, no timeout
-    void board.sendCommand(buildPersistentNumbersCommand(numbers, LED_COLOR_ORANGE));
+    void board.sendCommand(
+      buildPersistentNumbersCommand(numbers, LED_COLOR_ORANGE),
+    );
   }, 700);
 });

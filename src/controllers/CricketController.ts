@@ -18,9 +18,14 @@ export class CricketController implements GameController {
     const after = useCricketStore.getState();
 
     // Only emit if the dart was actually registered (not ignored due to 3 already thrown)
-    if (after.currentRoundDarts.length === before.currentRoundDarts.length) return;
-    const lastDart = after.currentRoundDarts[after.currentRoundDarts.length - 1];
-    gameEventBus.emit("dart_hit", { segment, effectiveMarks: lastDart?.effectiveMarks });
+    if (after.currentRoundDarts.length === before.currentRoundDarts.length)
+      return;
+    const lastDart =
+      after.currentRoundDarts[after.currentRoundDarts.length - 1];
+    gameEventBus.emit("dart_hit", {
+      segment,
+      effectiveMarks: lastDart?.effectiveMarks,
+    });
     emitOpenNumbers();
 
     if (!before.winner && after.winner) {

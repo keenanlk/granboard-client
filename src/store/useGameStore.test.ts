@@ -597,12 +597,18 @@ describe("undoLastDart", () => {
 
   it("cross-turn: reverts step by step back to previous player", () => {
     store().startGame(
-      { startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false },
+      {
+        startingScore: 501,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
       ["Alice", "Bob"],
     );
     store().addDart(s20); // Alice: 481
     store().addDart(t20); // Alice: 421
-    store().nextTurn();   // Bob's turn
+    store().nextTurn(); // Bob's turn
     // Undo 1: back to Alice's turn with 2 darts (state before nextTurn)
     store().undoLastDart();
     expect(store().currentPlayerIndex).toBe(0);
@@ -621,11 +627,17 @@ describe("undoLastDart", () => {
 
   it("cross-turn: restores score correctly when previous round was a bust", () => {
     store().startGame(
-      { startingScore: 20 as 301, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false },
+      {
+        startingScore: 20 as 301,
+        splitBull: false,
+        doubleOut: false,
+        masterOut: false,
+        doubleIn: false,
+      },
       ["Alice", "Bob"],
     );
     store().addDart(t20); // Alice: bust (20 restored)
-    store().nextTurn();   // Bob's turn
+    store().nextTurn(); // Bob's turn
     // Undo 1: back to Alice's busted state (before nextTurn)
     store().undoLastDart();
     expect(store().currentPlayerIndex).toBe(0);

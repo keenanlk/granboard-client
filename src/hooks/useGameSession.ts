@@ -111,10 +111,16 @@ export function useGameSession({
 
     const origOnNextTurn = controller.onNextTurn.bind(controller);
     controller.onNextTurn = () => {
-      const { playerIndex, darts, roundScore, busted } = extractRoundRef.current();
+      const { playerIndex, darts, roundScore, busted } =
+        extractRoundRef.current();
       if (darts.length > 0) {
         recorderRef.current?.recordRound(playerIndex, darts, roundScore);
-        gameLogger.logTurnEnd(playerNames[playerIndex], darts.length, roundScore, busted);
+        gameLogger.logTurnEnd(
+          playerNames[playerIndex],
+          darts.length,
+          roundScore,
+          busted,
+        );
       }
       if (shouldSkipDelayRef.current?.()) {
         origOnNextTurn();
@@ -159,13 +165,21 @@ export function useGameSession({
   useEffect(() => {
     if (!winner || savedRef.current) return;
     savedRef.current = true;
-    const { playerIndex, darts, roundScore, busted } = extractRoundRef.current();
+    const { playerIndex, darts, roundScore, busted } =
+      extractRoundRef.current();
     if (darts.length > 0) {
       recorderRef.current?.recordRound(playerIndex, darts, roundScore);
-      gameLogger.logTurnEnd(playerNames[playerIndex], darts.length, roundScore, busted);
+      gameLogger.logTurnEnd(
+        playerNames[playerIndex],
+        darts.length,
+        roundScore,
+        busted,
+      );
     }
     const finalScores = getFinalScoresRef.current();
-    const scoreMap = Object.fromEntries(playerNames.map((n, i) => [n, finalScores[i]]));
+    const scoreMap = Object.fromEntries(
+      playerNames.map((n, i) => [n, finalScores[i]]),
+    );
     gameLogger.logGameEnd(winner, scoreMap);
     void recorderRef.current?.save(winner, finalScores);
     clearSession();
