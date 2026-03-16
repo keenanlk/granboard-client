@@ -1,5 +1,5 @@
+import { useRef, useCallback } from "react";
 import { useGranboardStore } from "../store/useGranboardStore.ts";
-import { DevBoard } from "../components/DevBoard.tsx"; // dev-only, guarded below
 
 interface HomeScreenProps {
   onSelectGame: (game: "x01" | "cricket") => void;
@@ -27,11 +27,28 @@ const GAMES = [
   },
 ];
 
+const LONG_PRESS_MS = 7000;
+
 export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: HomeScreenProps) {
-  const { status, errorMessage, connect, disconnect } = useGranboardStore();
+  const { status, errorMessage, connect, disconnect, connectMock } = useGranboardStore();
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isConnected = status === "connected";
   const isConnecting = status === "connecting";
+
+  const clearLongPress = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  const startLongPress = useCallback(() => {
+    clearLongPress();
+    longPressTimer.current = setTimeout(() => {
+      connectMock();
+    }, LONG_PRESS_MS);
+  }, [clearLongPress, connectMock]);
 
   return (
     <div className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden" style={{ paddingLeft: "var(--sal)" }}>
@@ -60,11 +77,16 @@ export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: 
         </div>
 
         <div className="flex items-center gap-3">
-          {import.meta.env.DEV && <DevBoard />}
           <button
             onClick={isConnected ? disconnect : isConnecting ? undefined : connect}
             disabled={isConnecting}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
+            onMouseDown={!isConnected && !isConnecting ? startLongPress : undefined}
+            onMouseUp={clearLongPress}
+            onMouseLeave={clearLongPress}
+            onTouchStart={!isConnected && !isConnecting ? startLongPress : undefined}
+            onTouchEnd={clearLongPress}
+            onTouchCancel={clearLongPress}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors select-none ${
               isConnected
                 ? "border-green-800 bg-green-950/40 text-green-400 hover:bg-red-950/40 hover:border-red-800 hover:text-red-400"
                 : isConnecting

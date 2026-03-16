@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Menu, Undo2, Volume2, LogOut } from "lucide-react";
 import { setVolume } from "../sound/sounds";
 import { DevBoardMenuButton, DevBoardPanel } from "./DevBoard.tsx";
+import { useGranboardStore } from "../store/useGranboardStore.ts";
+import { MockGranboard } from "../board/MockGranboard.ts";
 
 interface GameMenuProps {
   onUndo: () => void;
@@ -16,6 +18,9 @@ export function GameMenu({ onUndo, undoDisabled, onExit }: GameMenuProps) {
     parseFloat(localStorage.getItem("app-volume") ?? "1"),
   );
   const panelRef = useRef<HTMLDivElement>(null);
+  const board = useGranboardStore((s) => s.board);
+  const isMock = board instanceof MockGranboard;
+  const showMockBoard = import.meta.env.DEV || isMock;
 
   useEffect(() => {
     if (!open) return;
@@ -87,8 +92,8 @@ export function GameMenu({ onUndo, undoDisabled, onExit }: GameMenuProps) {
 
           <div className="h-px bg-border-default" />
 
-          {/* Mock Board — dev only */}
-          {import.meta.env.DEV && (
+          {/* Mock Board — only in dev or when connected to mock */}
+          {showMockBoard && (
             <>
               <DevBoardMenuButton onActivate={() => { setBoardOpen(true); setOpen(false); }} />
               <div className="h-px bg-border-default" />
@@ -106,8 +111,8 @@ export function GameMenu({ onUndo, undoDisabled, onExit }: GameMenuProps) {
         </div>
       )}
 
-      {/* Floating board panel — persists outside dropdown (dev only) */}
-      {import.meta.env.DEV && boardOpen && <DevBoardPanel onClose={() => setBoardOpen(false)} />}
+      {/* Floating board panel */}
+      {showMockBoard && boardOpen && <DevBoardPanel onClose={() => setBoardOpen(false)} />}
     </div>
   );
 }
