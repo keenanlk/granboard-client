@@ -57,8 +57,9 @@ export class Bot {
     allPlayers: CricketPlayer[],
     myIndex: number,
     onThrow?: (target: SegmentID, actual: SegmentID) => void,
+    cutThroat?: boolean,
   ): SegmentID {
-    const target = cricketPickTarget(myMarks, allPlayers, myIndex);
+    const target = cricketPickTarget(myMarks, allPlayers, myIndex, cutThroat);
     const actual = simulateThrow(target, this.sigma);
     onThrow?.(target, actual);
     return actual;

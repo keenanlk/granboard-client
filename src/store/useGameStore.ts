@@ -1,5 +1,4 @@
-import { create } from "zustand";
-import type { Segment } from "../board/Dartboard.ts";
+import { createGameStore } from "./createGameStore.ts";
 import { x01Engine, type X01State } from "../engine/x01Engine.ts";
 
 // Re-export types so existing imports from this module continue to work.
@@ -17,19 +16,4 @@ const DEFAULT_STATE: X01State = {
   winner: null,
 };
 
-interface GameActions {
-  startGame: (options: X01State["x01Options"], playerNames: string[]) => void;
-  addDart: (segment: Segment) => void;
-  undoLastDart: () => void;
-  nextTurn: () => void;
-  resetGame: () => void;
-}
-
-export const useGameStore = create<X01State & GameActions>((set) => ({
-  ...DEFAULT_STATE,
-  startGame: (options, playerNames) => set(x01Engine.startGame(options, playerNames)),
-  addDart: (segment) => set((s) => x01Engine.addDart(s, segment)),
-  undoLastDart: () => set((s) => x01Engine.undoLastDart(s)),
-  nextTurn: () => set((s) => x01Engine.nextTurn(s)),
-  resetGame: () => set(DEFAULT_STATE),
-}));
+export const useGameStore = createGameStore(x01Engine, DEFAULT_STATE);

@@ -17,19 +17,32 @@ import { useBotTurn } from "../hooks/useBotTurn.ts";
 import { GameShell } from "../components/GameShell.tsx";
 import { Bot } from "../bot/Bot.ts";
 import type { BotSkill } from "../bot/Bot.ts";
+import { getBotCharacter } from "../bot/botCharacters.ts";
+import { GameMenu } from "../components/GameMenu.tsx";
 import { CreateSegment } from "../board/Dartboard.ts";
 import { gameLogger } from "../lib/GameLogger.ts";
+import { HistoryRow } from "../components/HistoryRow.tsx";
+import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
+import { playerTextSizes } from "../lib/playerTextSizes.ts";
+import type { SetProgress, SetConfig, LegResult } from "../lib/setTypes.ts";
 
 interface CricketScreenProps {
   options: CricketOptions;
   playerNames: string[];
   playerIds: (string | null)[];
   botSkills: (BotSkill | null)[];
+  restoredState?: unknown;
   onExit: () => void;
+  onRematch: () => void;
+  setProgress?: SetProgress;
+  onNextLeg?: () => void;
+  setConfig?: SetConfig;
+  legResults?: LegResult[];
+  currentLegIndex?: number;
 }
 
 function targetLabel(t: CricketTarget) {
-  return t === 25 ? "BULL" : String(t);
+  return t === 25 ? "B" : String(t);
 }
 
 function isNumberClosedByAll(
@@ -40,11 +53,10 @@ function isNumberClosedByAll(
 }
 
 function marksIconSize(n: number) {
-  if (n <= 2) return "w-8 h-8";
-  if (n <= 4) return "w-6 h-6";
-  return "w-5 h-5";
+  if (n <= 2) return "size-[clamp(2.5rem,10vh,6rem)]";
+  if (n <= 4) return "size-[clamp(2rem,8vh,5rem)]";
+  return "size-[clamp(1.5rem,7vh,4rem)]";
 }
-
 function MarksIcon({
   marks,
   isActive,
@@ -54,44 +66,55 @@ function MarksIcon({
   isActive: boolean;
   sizeClass: string;
 }) {
-  const color =
-    marks >= 3
-      ? "text-[var(--color-game-accent)] drop-shadow-[0_0_6px_var(--color-game-accent-glow)]"
-      : isActive
-        ? "text-white"
-        : "text-zinc-500";
+  // Colors
+  const barColor = marks >= 3
+    ? "var(--color-game-accent)"
+    : isActive
+      ? "#fff"
+      : "#71717a"; // zinc-500
+  const dimColor = isActive ? "rgba(255,255,255,0.15)" : "rgba(113,113,122,0.2)";
+  const glowFilter = marks >= 3
+    ? "drop-shadow(0 0 4px var(--color-game-accent-glow)) drop-shadow(0 0 8px var(--color-game-accent-glow))"
+    : "none";
 
-  if (marks === 0) {
-    return (
-      <span
-        className={`font-black leading-none select-none transition-colors duration-200 ${color} ${sizeClass.includes("w-5") ? "text-base" : "text-xl"}`}
-      >
-        —
-      </span>
-    );
-  }
+  // Bar positions: 3 vertical bars evenly spaced, with strike-through at 3
+  const barX = [5, 12, 19]; // center x for each of the 3 bars
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      stroke="currentColor"
       fill="none"
-      strokeWidth="3"
-      className={`select-none transition-colors duration-200 ${color} ${sizeClass}`}
+      className={`select-none transition-all duration-200 ${sizeClass}`}
+      style={{ filter: glowFilter }}
     >
-      <line x1="18" y1="6" x2="6" y2="18" />
-      {marks >= 2 && <line x1="6" y1="6" x2="18" y2="18" />}
-      {marks >= 3 && <circle cx="12" cy="12" r="9" />}
+      {/* Vertical bars — dim slots for unearned, lit for earned */}
+      {barX.map((x, i) => (
+        <rect
+          key={i}
+          x={x - 1.5}
+          y={4}
+          width={3}
+          height={16}
+          rx={1.5}
+          fill={i < marks ? barColor : dimColor}
+          className="transition-all duration-200"
+        />
+      ))}
+      {/* Strike-through line when closed (3 marks) */}
+      {marks >= 3 && (
+        <line
+          x1={2}
+          y1={12}
+          x2={22}
+          y2={12}
+          stroke={barColor}
+          strokeWidth={2.5}
+          strokeLinecap="round"
+        />
+      )}
     </svg>
   );
-}
-
-function playerTextSizes(n: number) {
-  if (n <= 2) return { name: "text-sm", score: "text-2xl", mpr: "text-xs" };
-  if (n <= 4) return { name: "text-xs", score: "text-xl", mpr: "text-xs" };
-  if (n <= 6) return { name: "text-[10px]", score: "text-base", mpr: "text-[9px]" };
-  return { name: "text-[9px]", score: "text-sm", mpr: "text-[8px]" };
 }
 
 export function CricketScreen({
@@ -99,15 +122,24 @@ export function CricketScreen({
   playerNames,
   playerIds,
   botSkills,
+  restoredState,
   onExit,
+  onRematch,
+  setProgress,
+  onNextLeg,
+  setConfig,
+  legResults,
+  currentLegIndex,
 }: CricketScreenProps) {
   const {
     players,
     currentPlayerIndex,
+    currentRound,
     currentRoundDarts,
     winner,
     startGame,
     undoLastDart,
+    undoStack,
   } = useCricketStore();
 
   const { handleNextTurn, isTransitioning, countdown } = useGameSession({
@@ -118,8 +150,12 @@ export function CricketScreen({
     options,
     createController: () => new CricketController(),
     extractRound: () => {
-      const { currentPlayerIndex, currentRoundDarts } = useCricketStore.getState();
-      const roundScore = currentRoundDarts.reduce((sum, d) => sum + d.pointsScored, 0);
+      const { currentPlayerIndex, currentRoundDarts } =
+        useCricketStore.getState();
+      const roundScore = currentRoundDarts.reduce(
+        (sum, d) => sum + d.pointsScored,
+        0,
+      );
       return {
         playerIndex: currentPlayerIndex,
         darts: currentRoundDarts.map((d) => ({
@@ -131,11 +167,22 @@ export function CricketScreen({
       };
     },
     winner: winner ? [winner] : null,
-    getFinalScores: () => useCricketStore.getState().players.map((p) => p.score),
+    getFinalScores: () =>
+      useCricketStore.getState().players.map((p) => p.score),
+    getSerializableState: () =>
+      useCricketStore.getState().getSerializableState(),
     onInit: () => {
-      startGame(options, playerNames);
+      if (restoredState) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        useCricketStore.getState().restoreState(restoredState as any);
+      } else {
+        startGame(options, playerNames);
+      }
       gameEventBus.emit("open_numbers", { numbers: [...CRICKET_TARGETS] });
     },
+    setConfig,
+    legResults,
+    currentLegIndex,
   });
 
   const bots = useMemo(() => {
@@ -150,12 +197,18 @@ export function CricketScreen({
 
   const getThrow = useCallback((bot: Bot) => {
     const { players: ps, currentPlayerIndex: ci } = useCricketStore.getState();
-    return CreateSegment(bot.throwCricket(ps[ci].marks, ps, ci, (target, actual) => {
-      gameLogger.logDart(bot.name, target, actual, {
-        players: ps.map((p) => ({ name: p.name, score: p.score, marks: p.marks })),
-      });
-    }));
-  }, []);
+    return CreateSegment(
+      bot.throwCricket(ps[ci].marks, ps, ci, (target, actual) => {
+        gameLogger.logDart(bot.name, target, actual, {
+          players: ps.map((p) => ({
+            name: p.name,
+            score: p.score,
+            marks: p.marks,
+          })),
+        });
+      }, options.cutThroat),
+    );
+  }, [options.cutThroat]);
 
   useBotTurn({
     bots,
@@ -168,11 +221,12 @@ export function CricketScreen({
     getThrow,
   });
 
+  // Cricket has custom award detection (marks animation fallback)
   const [pendingAward, setPendingAward] = useState<AwardType | null>(null);
   const [showMarksAnimation, setShowMarksAnimation] = useState(false);
 
   useEffect(() => {
-    if (currentRoundDarts.length !== 3) return;
+    if (currentRoundDarts.length !== 3 || winner) return;
     const award = detectCricketAward(currentRoundDarts);
     if (award) {
       setPendingAward(award);
@@ -191,47 +245,68 @@ export function CricketScreen({
   const nextPlayerIndex = (currentPlayerIndex + 1) % players.length;
   const nextPlayer = players[nextPlayerIndex];
   const currentPlayer = players[currentPlayerIndex];
-  const isTwoPlayer = n === 2;
   const iconSize = marksIconSize(n);
   const textSizes = playerTextSizes(n);
 
-  // Number label column width — slightly narrower on small player counts
-  const numColWidth = n <= 4 ? "2.5rem" : "2rem";
+  // Split players into left and right halves
+  const leftPlayers = players.slice(0, Math.ceil(n / 2));
+  const rightPlayers = players.slice(Math.ceil(n / 2));
+  const leftIndices = Array.from({ length: leftPlayers.length }, (_, i) => i);
+  const rightIndices = Array.from({ length: rightPlayers.length }, (_, i) => i + Math.ceil(n / 2));
+
+  const numColWidth = "1fr";
 
   return (
     <GameShell
       gameClass="game-cricket"
       title={
         <>
-          <span className="font-black text-[var(--color-game-accent)] text-2xl tracking-widest">
-            Cricket
-          </span>
-          {options.singleBull && (
-            <span className="text-zinc-600 text-xs uppercase tracking-widest">
-              Split Bull
+          {setProgress && (
+            <span className="text-blue-400 text-[10px] font-bold uppercase tracking-widest">
+              Leg {setProgress.currentLeg}/{setProgress.totalLegs}
             </span>
           )}
+          <span
+            className="font-normal text-2xl tracking-widest"
+            style={{ fontFamily: "Beon, sans-serif", color: "var(--color-game-accent)", textShadow: "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)" }}
+          >
+            {options.cutThroat ? "Cut-Throat" : "Cricket"}
+          </span>
+          <span className="text-zinc-600 text-xs uppercase tracking-widest">
+            {options.roundLimit > 0
+              ? `Round ${currentRound}/${options.roundLimit}`
+              : `Round ${currentRound}`}
+            {options.cutThroat ? " · Cut-Throat" : ""}{options.singleBull ? " · Split Bull" : ""}
+          </span>
         </>
       }
       onExit={onExit}
       onUndo={undoLastDart}
-      undoDisabled={currentRoundDarts.length === 0 || !!winner || isCurrentBot}
+      undoDisabled={!!winner || isCurrentBot || undoStack.length === 0}
       isTransitioning={isTransitioning}
       countdown={countdown}
       nextPlayerName={nextPlayer?.name}
+      onNextTurn={handleNextTurn}
+      showNextTurn={readyToSwitch}
+      hasWinner={!!winner}
       overlays={
         <>
-          {winner && (
+          {winner && !pendingAward && (
             <ResultsOverlay
               onExit={onExit}
+              onRematch={setProgress ? undefined : onRematch}
+              setProgress={setProgress}
+              onNextLeg={onNextLeg}
               playerResults={players
                 .slice()
-                .sort((a, b) => b.score - a.score)
+                .sort((a, b) => options.cutThroat ? a.score - b.score : b.score - a.score)
                 .map((p, rank) => {
                   const mpr =
                     p.totalDartsThrown === 0
                       ? "0.00"
-                      : ((p.totalMarksEarned * 3) / p.totalDartsThrown).toFixed(2);
+                      : ((p.totalMarksEarned * 3) / p.totalDartsThrown).toFixed(
+                          2,
+                        );
                   return {
                     name: p.name,
                     isWinner: p.name === winner,
@@ -261,187 +336,162 @@ export function CricketScreen({
       }
     >
       {/* Main area */}
-      <div className="flex-1 flex min-h-0" style={{ paddingLeft: "var(--sal)" }}>
+      <div
+        className="flex-1 flex min-h-0"
+        style={{ paddingLeft: "var(--sal)" }}
+      >
+        {/* Marks scoreboard — column-based layout with continuous borders */}
+        <div
+          className="flex-1 min-h-0 min-w-0 grid"
+          style={{ gridTemplateColumns: `repeat(${leftPlayers.length}, minmax(0, 1fr)) ${numColWidth} repeat(${rightPlayers.length}, minmax(0, 1fr))`, maxWidth: `${(n + 1) * 5}rem`, margin: "0 auto" }}
+        >
+          {/* Left side player columns — marks aligned right toward center */}
+          {leftIndices.map((pi) => (
+            <div
+              key={`left-${pi}`}
+              className="flex flex-col min-h-0 border-r border-solid transition-colors duration-200"
+              style={{
+                borderColor: pi === currentPlayerIndex
+                  ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
+                  : "var(--color-border-subtle)",
+              }}
+            >
+              {CRICKET_TARGETS.map((target) => {
+                const allClosed = isNumberClosedByAll(players, target);
+                return (
+                  <div key={target} className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}>
+                    <MarksIcon
+                      marks={players[pi]?.marks[target] ?? 0}
+                      isActive={pi === currentPlayerIndex}
+                      sizeClass={iconSize}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ))}
 
-        {/* Left: marks scoreboard */}
-        <div className="flex-1 flex flex-col min-h-0 min-w-0 px-2 py-1">
-          <div className="flex-1 flex flex-col justify-around min-h-0">
+          {/* Center — target labels */}
+          <div className="flex flex-col min-h-0">
             {CRICKET_TARGETS.map((target) => {
               const allClosed = isNumberClosedByAll(players, target);
-              const openForCurrent =
-                !allClosed && (currentPlayer?.marks[target] ?? 0) >= 3;
-
+              const openForCurrent = !allClosed && (currentPlayer?.marks[target] ?? 0) >= 3;
               return (
-                <div
-                  key={target}
-                  className={`grid items-center transition-opacity duration-200 ${allClosed ? "opacity-25" : ""}`}
-                  style={
-                    isTwoPlayer
-                      ? { gridTemplateColumns: `1fr ${numColWidth} 1fr` }
-                      : { gridTemplateColumns: `${numColWidth} repeat(${n}, 1fr)` }
-                  }
-                >
-                  {isTwoPlayer ? (
-                    <>
-                      {/* Player 0 marks */}
-                      <div className="flex justify-end pr-2 border-r border-border-default">
-                        <MarksIcon
-                          marks={players[0]?.marks[target] ?? 0}
-                          isActive={currentPlayerIndex === 0}
-                          sizeClass={iconSize}
-                        />
-                      </div>
-                      {/* Target label */}
-                      <div className="flex justify-center">
-                        <span
-                          className={`font-black tabular-nums leading-none text-xl transition-colors duration-200 ${
-                            allClosed
-                              ? "text-content-faint"
-                              : openForCurrent
-                                ? "text-[var(--color-game-accent)] drop-shadow-[0_0_8px_var(--color-game-accent-glow)]"
-                                : "text-zinc-200"
-                          }`}
-                        >
-                          {targetLabel(target)}
-                        </span>
-                      </div>
-                      {/* Player 1 marks */}
-                      <div className="flex justify-start pl-2 border-l border-border-default">
-                        <MarksIcon
-                          marks={players[1]?.marks[target] ?? 0}
-                          isActive={currentPlayerIndex === 1}
-                          sizeClass={iconSize}
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {/* Target label */}
-                      <span
-                        className={`font-black tabular-nums text-sm text-right pr-2 transition-colors duration-200 ${
-                          allClosed
-                            ? "text-content-faint"
-                            : openForCurrent
-                              ? "text-[var(--color-game-accent)] drop-shadow-[0_0_8px_var(--color-game-accent-glow)]"
-                              : "text-content-secondary"
-                        }`}
-                      >
-                        {targetLabel(target)}
-                      </span>
-                      {/* Per-player columns with left border */}
-                      {players.map((p, pi) => (
-                        <div
-                          key={pi}
-                          className="flex justify-center border-l transition-colors duration-200"
-                          style={{
-                            borderColor: pi === currentPlayerIndex
-                              ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
-                              : "var(--color-border-default)",
-                          }}
-                        >
-                          <MarksIcon
-                            marks={p.marks[target]}
-                            isActive={pi === currentPlayerIndex}
-                            sizeClass={iconSize}
-                          />
-                        </div>
-                      ))}
-                    </>
-                  )}
+                <div key={target} className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}>
+                  <span
+                    className={`font-normal tabular-nums leading-none whitespace-nowrap text-[clamp(1rem,5vh,3rem)] transition-colors duration-200`}
+                    style={{
+                      fontFamily: "Beon, sans-serif",
+                      color: allClosed || openForCurrent ? "var(--color-game-accent)" : "#e4e4e7",
+                      textShadow: allClosed
+                        ? "0 0 8px var(--color-game-accent-glow)"
+                        : openForCurrent
+                          ? "0 0 15px var(--color-game-accent), 0 0 40px var(--color-game-accent-glow)"
+                          : "0 0 6px rgba(255,255,255,0.15)",
+                    }}
+                  >
+                    {targetLabel(target)}
+                  </span>
                 </div>
               );
             })}
           </div>
+
+          {/* Right side player columns — marks aligned left toward center */}
+          {rightIndices.map((pi) => (
+            <div
+              key={`right-${pi}`}
+              className="flex flex-col min-h-0 border-l border-solid transition-colors duration-200"
+              style={{
+                borderColor: pi === currentPlayerIndex
+                  ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
+                  : "var(--color-border-subtle)",
+              }}
+            >
+              {CRICKET_TARGETS.map((target) => {
+                const allClosed = isNumberClosedByAll(players, target);
+                return (
+                  <div key={target} className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}>
+                    <MarksIcon
+                      marks={players[pi]?.marks[target] ?? 0}
+                      isActive={pi === currentPlayerIndex}
+                      sizeClass={iconSize}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
-        {/* Right: dart slots + Next Turn button */}
-        <div className="flex flex-col shrink-0 w-24 border-l border-border-default min-h-0">
-
-          {/* Compact dart slots */}
-          <div className="flex flex-col gap-1 p-2 shrink-0">
-            {[0, 1, 2].map((j) => {
-              const thrown = currentRoundDarts[j];
-              const isNext = j === currentRoundDarts.length && !readyToSwitch;
-              const scored = thrown && thrown.pointsScored > 0;
-              const state = thrown
-                ? scored
-                  ? "scored"
-                  : "miss"
-                : isNext
-                  ? "next"
-                  : "empty";
-              return (
-                <div key={j} className="dart-slot" data-state={state}>
-                  {thrown ? (
-                    <>
-                      <span
-                        className={`text-xs font-black leading-none ${scored ? "text-[var(--color-game-accent)]" : thrown.target !== null ? "text-white" : "text-zinc-600"}`}
-                      >
-                        {thrown.target !== null
-                          ? thrown.marksEarned > 0
-                            ? `+${thrown.marksEarned}`
-                            : "0"
-                          : "0"}
-                      </span>
-                      <span className="text-[10px] text-zinc-500 font-bold uppercase">
-                        {thrown.target !== null
-                          ? targetLabel(thrown.target)
-                          : thrown.segment.ShortName}
-                      </span>
-                    </>
-                  ) : isNext ? (
-                    <span className="text-[var(--color-game-accent)] text-xs font-black opacity-60">{j + 1}</span>
-                  ) : (
-                    <span className="text-content-faint text-xs">·</span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Next Turn button — fills remaining space */}
-          <div className="relative flex-1 min-h-0 p-2">
-            {readyToSwitch && !winner && (
-              <span
-                className="absolute inset-2 rounded-xl opacity-20 animate-ping"
-                style={{ backgroundColor: "var(--color-game-accent)" }}
-              />
-            )}
-            {isCurrentBot && !readyToSwitch ? (
-              <div className="w-full h-full rounded-xl bg-surface-raised border-2 border-purple-900 flex flex-col items-center justify-center gap-1 opacity-70">
-                <span className="text-state-bot text-[10px] uppercase tracking-widest font-black">CPU</span>
-                <span className="text-purple-600 text-base animate-pulse">···</span>
-              </div>
-            ) : (
-              <button
-                onClick={handleNextTurn}
-                disabled={!!winner}
-                className={`relative w-full h-full rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200 flex flex-col items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  readyToSwitch
-                    ? "text-[var(--color-game-accent-text)]"
-                    : "bg-surface-raised border-2 border-border-default text-content-faint"
-                }`}
-                style={readyToSwitch ? {
-                  backgroundColor: "var(--color-game-accent)",
-                  boxShadow: "var(--shadow-glow-md)",
-                } : undefined}
-              >
-                <span className="text-center leading-tight px-1">
-                  {readyToSwitch && nextPlayer ? nextPlayer.name : "Next"}
+        {/* Right: game info + round history — wider when fewer players */}
+        <div className="flex flex-col shrink-0 border-l border-border-default min-h-0" style={{ width: n <= 2 ? "clamp(14rem,25vw,28rem)" : n <= 4 ? "clamp(12rem,20vw,24rem)" : "clamp(10rem,16vw,20rem)" }}>
+          {/* Game title + menu */}
+          <div className="shrink-0 px-2 py-2 flex items-center border-b border-border-default" style={{ paddingTop: "calc(var(--sat) + 0.5rem)" }}>
+            <div className="flex-1 flex flex-col items-center">
+              {setProgress && (
+                <span className="text-blue-400 text-[clamp(0.5rem,0.8vw,0.7rem)] font-bold uppercase tracking-widest">
+                  Leg {setProgress.currentLeg}/{setProgress.totalLegs}
                 </span>
-                <span className="text-base">→</span>
-              </button>
-            )}
+              )}
+              <span
+                className="font-normal text-[clamp(1rem,2vw,2rem)] tracking-widest"
+                style={{ fontFamily: "Beon, sans-serif", color: "var(--color-game-accent)", textShadow: "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)" }}
+              >
+                Cricket
+              </span>
+              <span className="text-zinc-600 text-[clamp(0.5rem,0.8vw,0.7rem)] uppercase tracking-widest">
+                {options.roundLimit > 0
+                  ? `R${currentRound}/${options.roundLimit}`
+                  : `R${currentRound}`}
+              </span>
+            </div>
+            <GameMenu onUndo={undoLastDart} undoDisabled={!!winner || isCurrentBot || undoStack.length === 0} onExit={onExit} />
           </div>
-        </div>
+          {/* Round history */}
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden px-1 gap-1.5 pt-1">
+            <HistoryRow
+              roundNum={(currentPlayer?.rounds?.length ?? 0) + 1}
+              darts={currentRoundDarts.map((d) => ({
+                value: d.segment.Value,
+                shortName: d.segment.ShortName,
+                state: d.pointsScored > 0 || d.marksEarned > 0 ? "scored" : "miss",
+              }))}
+              totalDarts={currentRoundDarts.length}
+              readyToSwitch={readyToSwitch}
+              isCurrent={true}
+            />
+            {[...(currentPlayer?.rounds ?? [])].reverse().map((r, i) => {
+              const roundNum = (currentPlayer?.rounds.length ?? 0) - i;
+              return (
+                <HistoryRow
+                  key={roundNum}
+                  roundNum={roundNum}
+                  darts={r.darts.map((d) => ({
+                    value: d.value,
+                    shortName: d.shortName,
+                    state: d.value > 0 ? "scored" : "miss",
+                  }))}
+                  totalDarts={r.darts.length}
+                  readyToSwitch={false}
+                  isCurrent={false}
+                />
+              );
+            })}
+          </div>
 
+          {/* Bot thinking indicator */}
+          {isCurrentBot && !readyToSwitch && <BotThinkingIndicator skill={botSkills[currentPlayerIndex]!} />}
+        </div>
       </div>
 
       {/* Player strip — always single row */}
       <div
         className="shrink-0 grid border-t-2 bg-surface-sunken transition-all duration-300"
         style={{
-          borderColor: readyToSwitch ? "var(--color-game-accent)" : "var(--color-border-default)",
+          borderColor: readyToSwitch
+            ? "var(--color-game-accent)"
+            : "var(--color-border-default)",
           gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))`,
         }}
       >
@@ -450,7 +500,10 @@ export function CricketScreen({
           const mpr =
             player.totalDartsThrown === 0
               ? "0.00"
-              : ((player.totalMarksEarned * 3) / player.totalDartsThrown).toFixed(2);
+              : (
+                  (player.totalMarksEarned * 3) /
+                  player.totalDartsThrown
+                ).toFixed(2);
           return (
             <div
               key={i}
@@ -459,17 +512,26 @@ export function CricketScreen({
               style={i === 0 ? { paddingLeft: "var(--sal)" } : undefined}
             >
               <span
-                className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"} ${textSizes.name}`}
+                className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${botSkills[i] != null ? getBotCharacter(botSkills[i]!).animationClass : isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                style={{
+                  fontSize: textSizes.name,
+                  ...(botSkills[i] != null ? { fontFamily: "Beon, sans-serif", color: getBotCharacter(botSkills[i]!).color, textShadow: isActive ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}` : "none" } : {}),
+                }}
               >
                 {player.name}
               </span>
               <span
-                className={`font-black tabular-nums leading-tight transition-colors duration-300 ${isActive ? "text-content-primary" : "text-content-muted"} ${textSizes.score}`}
+                className={`font-normal tabular-nums leading-tight transition-colors duration-300 ${isActive ? "" : "text-content-muted"}`}
+                style={{
+                  fontSize: textSizes.score,
+                  ...(isActive ? { fontFamily: "Beon, sans-serif", color: "var(--color-game-accent)", textShadow: "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)" } : {}),
+                }}
               >
                 {player.score}
               </span>
               <span
-                className={`tabular-nums transition-colors duration-300 ${isActive ? "text-content-secondary" : "text-content-faint"} ${textSizes.mpr}`}
+                className={`tabular-nums transition-colors duration-300 ${isActive ? "text-content-secondary" : "text-content-faint"}`}
+                style={{ fontSize: textSizes.stat }}
               >
                 {mpr} mpr
               </span>

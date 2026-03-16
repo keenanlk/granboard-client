@@ -1,7 +1,10 @@
 import { useGranboardStore } from "../store/useGranboardStore.ts";
+import { DevBoard } from "../components/DevBoard.tsx"; // dev-only, guarded below
 
 interface HomeScreenProps {
-  onSelectGame: (game: "x01" | "cricket" | "highscore") => void;
+  onSelectGame: (game: "x01" | "cricket") => void;
+  onSetMatch: () => void;
+  onPractice: () => void;
   onPlayers: () => void;
 }
 
@@ -11,22 +14,20 @@ const GAMES = [
     name: "X01",
     description: "301 · 501 · 701",
     accent: "red",
+    color: "#ef4444",
+    glow: "rgba(239, 68, 68, 0.5)",
   },
   {
     id: "cricket" as const,
     name: "Cricket",
     description: "Standard cricket scoring",
     accent: "green",
-  },
-  {
-    id: "highscore" as const,
-    name: "High Score",
-    description: "Most points wins",
-    accent: "yellow",
+    color: "#4ade80",
+    glow: "rgba(74, 222, 128, 0.5)",
   },
 ];
 
-export function HomeScreen({ onSelectGame, onPlayers }: HomeScreenProps) {
+export function HomeScreen({ onSelectGame, onSetMatch, onPractice, onPlayers }: HomeScreenProps) {
   const { status, errorMessage, connect, disconnect } = useGranboardStore();
 
   const isConnected = status === "connected";
@@ -40,8 +41,15 @@ export function HomeScreen({ onSelectGame, onPlayers }: HomeScreenProps) {
         style={{ paddingTop: "calc(var(--sat) + 0.75rem)" }}
       >
         <div className="flex items-center gap-4">
-          <h1 className="text-3xl font-black tracking-tight">
-            NLC <span className="text-red-500">Darts</span>
+          <h1
+            className="text-3xl tracking-tight font-normal"
+            style={{
+              fontFamily: "Beon, sans-serif",
+              color: "#fff",
+              textShadow: "0 0 10px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.2)",
+            }}
+          >
+            NLC <span style={{ color: "#ef4444", textShadow: "0 0 15px #ef4444, 0 0 40px rgba(239,68,68,0.5)" }}>Darts</span>
           </h1>
           <button
             onClick={onPlayers}
@@ -51,34 +59,37 @@ export function HomeScreen({ onSelectGame, onPlayers }: HomeScreenProps) {
           </button>
         </div>
 
-        <button
-          onClick={isConnected ? disconnect : isConnecting ? undefined : connect}
-          disabled={isConnecting}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
-            isConnected
-              ? "border-green-800 bg-green-950/40 text-green-400 hover:bg-red-950/40 hover:border-red-800 hover:text-red-400"
-              : isConnecting
-                ? "border-yellow-800 bg-yellow-950/40 text-yellow-400 cursor-default"
-                : status === "error"
-                  ? "border-red-800 bg-red-950/40 text-red-400 hover:bg-red-900/40"
-                  : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-500 hover:text-white"
-          }`}
-        >
-          <span
-            className={`size-2 rounded-full ${
+        <div className="flex items-center gap-3">
+          {import.meta.env.DEV && <DevBoard />}
+          <button
+            onClick={isConnected ? disconnect : isConnecting ? undefined : connect}
+            disabled={isConnecting}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
               isConnected
-                ? "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.7)]"
+                ? "border-green-800 bg-green-950/40 text-green-400 hover:bg-red-950/40 hover:border-red-800 hover:text-red-400"
                 : isConnecting
-                  ? "bg-yellow-400 animate-pulse"
+                  ? "border-yellow-800 bg-yellow-950/40 text-yellow-400 cursor-default"
                   : status === "error"
-                    ? "bg-red-500"
-                    : "bg-zinc-600"
+                    ? "border-red-800 bg-red-950/40 text-red-400 hover:bg-red-900/40"
+                    : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-500 hover:text-white"
             }`}
-          />
-          <span className="text-sm font-bold capitalize">
-            {isConnecting ? "Connecting…" : isConnected ? "Connected" : "Connect"}
-          </span>
-        </button>
+          >
+            <span
+              className={`size-2 rounded-full ${
+                isConnected
+                  ? "bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.7)]"
+                  : isConnecting
+                    ? "bg-yellow-400 animate-pulse"
+                    : status === "error"
+                      ? "bg-red-500"
+                      : "bg-zinc-600"
+              }`}
+            />
+            <span className="text-sm font-bold capitalize">
+              {isConnecting ? "Connecting…" : isConnected ? "Connected" : "Connect"}
+            </span>
+          </button>
+        </div>
       </header>
 
       {status === "error" && errorMessage && (
@@ -96,35 +107,79 @@ export function HomeScreen({ onSelectGame, onPlayers }: HomeScreenProps) {
           </p>
         )}
 
-        {GAMES.map((game) => (
+        <div className="flex-1 min-h-0 grid grid-cols-2 grid-rows-2 gap-3">
+          {GAMES.map((game) => (
+            <button
+              key={game.id}
+              onClick={() => onSelectGame(game.id)}
+              disabled={!isConnected}
+              className="w-full rounded-2xl px-6 text-left transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed flex flex-col justify-center bg-zinc-900 border-2 border-zinc-800"
+              style={{ borderColor: undefined }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = game.color; e.currentTarget.style.boxShadow = `0 0 12px ${game.glow}`; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = ""; e.currentTarget.style.boxShadow = ""; }}
+            >
+              <p
+                className="text-4xl tracking-tight font-normal"
+                style={{
+                  fontFamily: "Beon, sans-serif",
+                  color: game.color,
+                  textShadow: `0 0 20px ${game.color}, 0 0 60px ${game.color}, 0 0 100px ${game.glow}`,
+                }}
+              >
+                {game.name}
+              </p>
+              <p className="text-zinc-500 text-sm mt-1 font-medium">
+                {game.description}
+              </p>
+            </button>
+          ))}
+
           <button
-            key={game.id}
-            onClick={() => onSelectGame(game.id)}
+            onClick={onSetMatch}
             disabled={!isConnected}
-            className={`flex-1 min-h-0 w-full rounded-2xl px-6 text-left transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed flex flex-col justify-center ${
-              game.accent === "red"
-                ? "bg-zinc-900 border-2 border-zinc-800 hover:border-red-700 hover:bg-red-950/20 active:bg-red-950/40"
-                : game.accent === "green"
-                  ? "bg-zinc-900 border-2 border-zinc-800 hover:border-green-700 hover:bg-green-950/20 active:bg-green-950/40"
-                  : "bg-zinc-900 border-2 border-zinc-800 hover:border-yellow-700 hover:bg-yellow-950/20 active:bg-yellow-950/40"
-            }`}
+            className="w-full rounded-2xl px-6 text-left transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed flex flex-col justify-center bg-zinc-900 border-2 border-zinc-800 hover:border-blue-500"
+            style={{ borderColor: undefined }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#60a5fa"; e.currentTarget.style.boxShadow = "0 0 12px rgba(96,165,250,0.5)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = ""; e.currentTarget.style.boxShadow = ""; }}
           >
             <p
-              className={`text-4xl font-black tracking-tight ${
-                game.accent === "red"
-                  ? "text-red-500"
-                  : game.accent === "green"
-                    ? "text-green-400"
-                    : "text-yellow-400"
-              }`}
+              className="text-4xl tracking-tight font-normal"
+              style={{
+                fontFamily: "Beon, sans-serif",
+                color: "#60a5fa",
+                textShadow: "0 0 20px #60a5fa, 0 0 60px #60a5fa, 0 0 100px rgba(96, 165, 250, 0.5)",
+              }}
             >
-              {game.name}
+              Set Match
             </p>
             <p className="text-zinc-500 text-sm mt-1 font-medium">
-              {game.description}
+              Best of 3 or 5 · Mix games
             </p>
           </button>
-        ))}
+
+          <button
+            onClick={onPractice}
+            disabled={!isConnected}
+            className="w-full rounded-2xl px-6 text-left transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed flex flex-col justify-center bg-zinc-900 border-2 border-zinc-800"
+            style={{ borderColor: undefined }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#a78bfa"; e.currentTarget.style.boxShadow = "0 0 12px rgba(167,139,250,0.5)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = ""; e.currentTarget.style.boxShadow = ""; }}
+          >
+            <p
+              className="text-4xl tracking-tight font-normal"
+              style={{
+                fontFamily: "Beon, sans-serif",
+                color: "#a78bfa",
+                textShadow: "0 0 20px #a78bfa, 0 0 60px #a78bfa, 0 0 100px rgba(167,139,250,0.5)",
+              }}
+            >
+              Practice
+            </p>
+            <p className="text-zinc-500 text-sm mt-1 font-medium">
+              Solo practice games
+            </p>
+          </button>
+        </div>
       </main>
     </div>
   );

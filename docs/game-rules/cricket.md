@@ -182,3 +182,27 @@ Per player track:
 3. Any marks beyond 3 become points if opponents have not closed the number.
 4. Update player score if points were earned.
 5. Check win condition after the turn.
+
+---
+
+## Cut-Throat Variant
+
+Cut-Throat Cricket inverts the scoring model. Instead of scoring points for yourself, extra marks add points to **opponents** who haven't closed the number. The player with the **lowest** score wins.
+
+### Scoring
+
+- After closing a number, additional marks add points to **each opponent** who hasn't closed that number.
+- The current player's score is **never** increased by their own throw.
+- Point value = face value of the number × extra marks (same as standard).
+
+### Win condition
+
+A player wins when:
+
+1. All numbers (20–15 and bull) are closed.
+2. The player has **equal or fewer** points than every opponent.
+
+### Round limit / stalemate
+
+- When all players have closed all targets, the player with the **lowest** score wins.
+- When the round limit is reached, the player with the **lowest** score wins.

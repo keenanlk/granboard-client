@@ -7,4 +7,5 @@ export type GameEventMap = {
   next_turn: Record<string, never>;
   /** Cricket only: numbers the current player has open (closed by them, not yet by all) */
   open_numbers: { numbers: number[] };
+  game_start: Record<string, never>;
 };

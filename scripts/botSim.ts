@@ -131,8 +131,11 @@ function runX01(bots: [Bot, Bot], stats: [BotStats, BotStats]): void {
   }
 }
 
+const CRICKET_ROUND_LIMIT = parseInt(arg("--cricket-rounds", "20"), 10);
+
 function runCricket(bots: [Bot, Bot], stats: [BotStats, BotStats]): void {
-  let state: CricketState = cricketEngine.startGame(DEFAULT_CRICKET_OPTIONS, [
+  const cricketOpts = { ...DEFAULT_CRICKET_OPTIONS, roundLimit: CRICKET_ROUND_LIMIT };
+  let state: CricketState = cricketEngine.startGame(cricketOpts, [
     bots[0].name,
     bots[1].name,
   ]);

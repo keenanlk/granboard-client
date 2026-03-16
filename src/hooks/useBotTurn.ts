@@ -15,7 +15,8 @@ import type { Segment } from "../board/Dartboard.ts";
  * the caller) so they can be included as effect deps without causing infinite loops.
  */
 
-const BOT_DART_DELAY = 700;  // ms between each bot dart
+const BOT_DART_DELAY = 1500;  // ms between each bot dart
+const BOT_NEXT_DELAY = 2000;  // ms after last dart before auto-advancing turn
 
 export function useBotTurn({
   bots,
@@ -44,8 +45,11 @@ export function useBotTurn({
     if (!bot || hasWinner || isTransitioning) return;
 
     if (dartsThrown >= 3 || isBust) {
-      // Turn is over — wait for human to click "Next Turn" so board state can be inspected.
-      return;
+      // Turn is over — auto-advance after a short pause so the user can see the last dart.
+      const t = setTimeout(() => {
+        onNextTurn();
+      }, BOT_NEXT_DELAY);
+      return () => clearTimeout(t);
     }
 
     // Still has darts — fire the next one after a brief "thinking" delay.

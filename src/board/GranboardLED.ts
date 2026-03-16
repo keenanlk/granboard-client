@@ -30,6 +30,9 @@ export const Colors = {
   LIGHT_BLUE: { r: 0, g: 200, b: 255 },
 } as const;
 
+/** Board color palette index for orange (used with 20-byte persistent state commands). */
+export const LED_COLOR_ORANGE = 0x05;
+
 /**
  * Maps dart number (1–20) to LED ring cell position.
  * Index 0 = bull (center, position 0).

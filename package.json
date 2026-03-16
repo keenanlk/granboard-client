@@ -9,6 +9,8 @@
     "build": "tsc -b && vite build",
     "cap:sync": "npm run build && cap sync",
     "cap:ios": "npm run cap:sync && cap open ios",
+    "dev:ios": "cap run ios --livereload --external",
+    "build:ios": "node scripts/buildIos.mjs",
     "lint": "eslint . && tsc",
     "test": "vitest run",
     "preview": "vite preview",

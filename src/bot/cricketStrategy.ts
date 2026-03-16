@@ -98,8 +98,11 @@ export function cricketPickTarget(
   myMarks: Record<CricketTarget, number>,
   allPlayers: CricketPlayer[],
   myIndex: number,
+  cutThroat?: boolean,
 ): SegmentID {
-  const scoreDiff = myScore(allPlayers, myIndex) - bestOpponentScore(allPlayers, myIndex);
+  const rawDiff = myScore(allPlayers, myIndex) - bestOpponentScore(allPlayers, myIndex);
+  // In cut-throat, lower score is better — invert the diff so mode selection works correctly
+  const scoreDiff = cutThroat ? -rawDiff : rawDiff;
 
   const weights =
     scoreDiff <= -CATCHUP_THRESHOLD ? CATCHUP_WEIGHTS :

@@ -1,5 +1,4 @@
-import { create } from "zustand";
-import type { Segment } from "../board/Dartboard.ts";
+import { createGameStore } from "./createGameStore.ts";
 import { highScoreEngine, type HighScoreState } from "../engine/highScoreEngine.ts";
 
 // Re-export types so existing imports from this module continue to work.
@@ -17,19 +16,4 @@ const DEFAULT_STATE: HighScoreState = {
   playoffDarts: [],
 };
 
-interface HighScoreActions {
-  startGame: (options: HighScoreState["options"], playerNames: string[]) => void;
-  addDart: (segment: Segment) => void;
-  undoLastDart: () => void;
-  nextTurn: () => void;
-  resetGame: () => void;
-}
-
-export const useHighScoreStore = create<HighScoreState & HighScoreActions>((set) => ({
-  ...DEFAULT_STATE,
-  startGame: (options, playerNames) => set(highScoreEngine.startGame(options, playerNames)),
-  addDart: (segment) => set((s) => highScoreEngine.addDart(s, segment)),
-  undoLastDart: () => set((s) => highScoreEngine.undoLastDart(s)),
-  nextTurn: () => set((s) => highScoreEngine.nextTurn(s)),
-  resetGame: () => set(DEFAULT_STATE),
-}));
+export const useHighScoreStore = createGameStore(highScoreEngine, DEFAULT_STATE);

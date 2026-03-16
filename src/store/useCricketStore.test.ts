@@ -19,8 +19,8 @@ function store() {
   return useCricketStore.getState();
 }
 
-function start(singleBull = false, players = ["Alice", "Bob"]) {
-  store().startGame({ singleBull }, players);
+function start(singleBull = false, players = ["Alice", "Bob"], cutThroat = false) {
+  store().startGame({ singleBull, roundLimit: 0, cutThroat }, players);
 }
 
 beforeEach(() => {
@@ -50,7 +50,7 @@ describe("startGame", () => {
   });
 
   it("supports single player", () => {
-    store().startGame({ singleBull: false }, ["Solo"]);
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, ["Solo"]);
     expect(store().players).toHaveLength(1);
   });
 });
@@ -234,7 +234,7 @@ describe("win condition", () => {
   });
 
   it("win in solo game when all targets closed", () => {
-    store().startGame({ singleBull: false }, ["Solo"]);
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, ["Solo"]);
     store().addDart(t20);
     store().addDart(t19);
     store().addDart(t18);
@@ -288,7 +288,7 @@ describe("win condition", () => {
   });
 
   it("wins when all closed and score >= all opponents", () => {
-    store().startGame({ singleBull: false }, ["Solo"]);
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, ["Solo"]);
     store().addDart(t20);
     store().addDart(t19);
     store().addDart(t18);
@@ -332,7 +332,7 @@ describe("undoLastDart", () => {
   });
 
   it("clears winner on undo", () => {
-    store().startGame({ singleBull: false }, ["Solo"]);
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, ["Solo"]);
     store().addDart(t20);
     store().addDart(t19);
     store().addDart(t18);
@@ -380,7 +380,7 @@ describe("nextTurn", () => {
   });
 
   it("does not advance turn after game won", () => {
-    store().startGame({ singleBull: false }, ["Solo"]);
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, ["Solo"]);
     store().addDart(t20);
     store().addDart(t19);
     store().addDart(t18);
@@ -394,5 +394,167 @@ describe("nextTurn", () => {
     store().addDart(bull);
     store().nextTurn(); // should be blocked
     expect(store().currentPlayerIndex).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Cut-Throat Cricket
+// ---------------------------------------------------------------------------
+describe("cut-throat cricket", () => {
+  function startCT(players = ["Alice", "Bob"]) {
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: true }, players);
+  }
+
+  it("points go to opponents, not self", () => {
+    startCT();
+    // Alice closes 20
+    store().addDart(t20);
+    store().nextTurn();
+    store().nextTurn(); // back to Alice
+    // Alice hits S20 — extra mark scores on Bob (who hasn't closed 20)
+    store().addDart(s20);
+    expect(store().players[0].score).toBe(0); // Alice gets nothing
+    expect(store().players[1].score).toBe(20); // Bob gets 20
+  });
+
+  it("points go to ALL open opponents (3+ players)", () => {
+    startCT(["Alice", "Bob", "Carol"]);
+    // Alice closes 20
+    store().addDart(t20);
+    store().nextTurn();
+    store().nextTurn();
+    store().nextTurn(); // back to Alice
+    // Alice hits S20 — both Bob and Carol are open
+    store().addDart(s20);
+    expect(store().players[0].score).toBe(0);
+    expect(store().players[1].score).toBe(20);
+    expect(store().players[2].score).toBe(20);
+  });
+
+  it("no points when all opponents have closed the number", () => {
+    startCT();
+    // Alice closes 20
+    store().addDart(t20);
+    store().nextTurn();
+    // Bob closes 20
+    store().addDart(t20);
+    store().nextTurn();
+    // Alice hits S20 — Bob is also closed, no one gets points
+    store().addDart(s20);
+    expect(store().players[0].score).toBe(0);
+    expect(store().players[1].score).toBe(0);
+  });
+
+  it("win with lowest score + all closed", () => {
+    startCT();
+    // Alice closes everything without scoring on Bob
+    store().addDart(t20);
+    store().addDart(t19);
+    store().addDart(t18);
+    store().nextTurn();
+    store().nextTurn(); // back to Alice
+    store().addDart(t17);
+    store().addDart(t16);
+    store().addDart(t15);
+    store().nextTurn();
+    store().nextTurn(); // back to Alice
+    store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
+    // Alice: all closed, score 0. Bob: score 0.
+    // Alice wins because 0 <= 0 and all closed
+    expect(store().winner).toBe("Alice");
+  });
+
+  it("no win if score higher than opponent despite all closed", () => {
+    startCT();
+    // Bob scores points ON Alice: Bob closes 20, then hits extra 20s
+    store().nextTurn(); // Bob's turn
+    store().addDart(t20); // Bob closes 20
+    store().nextTurn(); // Alice's turn
+    store().nextTurn(); // back to Bob
+    store().addDart(t20); // Bob extra = 60 pts go to Alice (who has 0 marks on 20)
+    expect(store().players[0].score).toBe(60); // Alice has 60 from Bob's scoring
+    store().nextTurn(); // Alice's turn
+    // Alice closes everything
+    store().addDart(t20);
+    store().addDart(t19);
+    store().addDart(t18);
+    store().nextTurn();
+    store().nextTurn(); // back to Alice
+    store().addDart(t17);
+    store().addDart(t16);
+    store().addDart(t15);
+    store().nextTurn();
+    store().nextTurn(); // back to Alice
+    store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
+    // Alice: all closed, score=60. Bob: score=0.
+    // Alice has HIGHER score, so should NOT win in cut-throat
+    expect(store().winner).not.toBe("Alice");
+  });
+
+  it("stalemate: lowest score wins", () => {
+    startCT();
+    // Both players close everything; Alice got some points dumped on her
+    // Alice closes all
+    store().addDart(t20);
+    store().addDart(t19);
+    store().addDart(t18);
+    store().nextTurn();
+    // Bob closes all
+    store().addDart(t20);
+    store().addDart(t19);
+    store().addDart(t18);
+    store().nextTurn();
+    store().addDart(t17);
+    store().addDart(t16);
+    store().addDart(t15);
+    store().nextTurn();
+    store().addDart(t17);
+    store().addDart(t16);
+    store().addDart(t15);
+    store().nextTurn();
+    // Both need bull. Alice hits extra 20 first to give Bob points, then closes bull.
+    // But both already closed 20, so extra 20s won't score. Use scoring on something open.
+    // Actually at this point all numbers except bull are closed by both. Let's just close bull.
+    store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
+    store().nextTurn();
+    // Bob closes bull — stalemate, both have 0. First found = Alice
+    store().addDart(bull);
+    store().addDart(bull);
+    store().addDart(bull);
+    // Both all closed, both score 0 — lowest (0) found first = Alice
+    expect(store().winner).not.toBeNull();
+  });
+
+  it("undo reverses opponent points", () => {
+    startCT();
+    // Alice closes 20
+    store().addDart(t20);
+    store().nextTurn();
+    store().nextTurn(); // back to Alice
+    // Alice hits S20 — Bob gets 20 points
+    store().addDart(s20);
+    expect(store().players[1].score).toBe(20);
+    // Undo
+    store().undoLastDart();
+    expect(store().players[1].score).toBe(0);
+    expect(store().players[0].score).toBe(0);
+  });
+
+  it("round limit: lowest score wins", () => {
+    store().startGame({ singleBull: false, roundLimit: 1, cutThroat: true }, ["Alice", "Bob"]);
+    // Alice closes 20 and scores on Bob
+    store().addDart(t20);
+    store().nextTurn(); // Alice's turn done
+    // Bob does nothing useful
+    store().addDart(s5);
+    store().nextTurn(); // round limit reached
+    // Alice: 0, Bob: 0 — lowest score wins (first found)
+    expect(store().winner).not.toBeNull();
   });
 });

@@ -1,31 +1,31 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useHighScoreStore, type HighScoreOptions } from "../store/useHighScoreStore.ts";
 import { HighScoreController } from "../controllers/HighScoreController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
+import { useAwardDetection } from "../hooks/useAwardDetection.ts";
 import { GameShell } from "../components/GameShell.tsx";
 import { Bot } from "../bot/Bot.ts";
 import type { BotSkill } from "../bot/Bot.ts";
+import { getBotCharacter } from "../bot/botCharacters.ts";
 import { CreateSegment } from "../board/Dartboard.ts";
 import { gameLogger } from "../lib/GameLogger.ts";
+import { GameMenu } from "../components/GameMenu.tsx";
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { detectAward } from "../lib/awards.ts";
-import type { AwardType } from "../lib/awards.ts";
-
-function playerTextSizes(n: number) {
-  if (n <= 2) return { name: "text-sm", score: "text-2xl", stat: "text-xs" };
-  if (n <= 4) return { name: "text-xs", score: "text-xl", stat: "text-xs" };
-  if (n <= 6) return { name: "text-[10px]", score: "text-base", stat: "text-[9px]" };
-  return { name: "text-[9px]", score: "text-sm", stat: "text-[8px]" };
-}
+import { HistoryRow } from "../components/HistoryRow.tsx";
+import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
+import { playerTextSizes } from "../lib/playerTextSizes.ts";
 
 interface HighScoreScreenProps {
   options: HighScoreOptions;
   playerNames: string[];
   playerIds: (string | null)[];
   botSkills: (BotSkill | null)[];
+  restoredState?: unknown;
   onExit: () => void;
+  onRematch: () => void;
 }
 
 export function HighScoreScreen({
@@ -33,7 +33,9 @@ export function HighScoreScreen({
   playerNames,
   playerIds,
   botSkills,
+  restoredState,
   onExit,
+  onRematch,
 }: HighScoreScreenProps) {
   const {
     players,
@@ -44,6 +46,7 @@ export function HighScoreScreen({
     inPlayoff,
     startGame,
     undoLastDart,
+    undoStack,
   } = useHighScoreStore();
 
   const { handleNextTurn, isTransitioning, countdown } = useGameSession({
@@ -67,7 +70,21 @@ export function HighScoreScreen({
     },
     winner: winners,
     getFinalScores: () => useHighScoreStore.getState().players.map((p) => p.score),
-    onInit: () => startGame(options, playerNames),
+    getSerializableState: () => useHighScoreStore.getState().getSerializableState(),
+    onInit: () => {
+      if (restoredState) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        useHighScoreStore.getState().restoreState(restoredState as any);
+      } else {
+        startGame(options, playerNames);
+      }
+    },
+    shouldSkipDelay: () => {
+      const s = useHighScoreStore.getState();
+      const isLast = s.currentPlayerIndex === s.players.length - 1;
+      const isFinalRound = s.currentRound === s.options.rounds;
+      return isLast && isFinalRound;
+    },
   });
 
   const n = players.length;
@@ -107,20 +124,19 @@ export function HighScoreScreen({
     getThrow,
   });
 
-  const [pendingAward, setPendingAward] = useState<AwardType | null>(null);
-  useEffect(() => {
-    if (!readyToSwitch) return;
-    const award = detectAward(currentRoundDarts);
-    if (award) setPendingAward(award);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readyToSwitch]);
+  const [pendingAward, dismissAward] = useAwardDetection(
+    readyToSwitch,
+    () => detectAward(currentRoundDarts),
+  );
 
-  function nextLabel() {
-    if (!readyToSwitch) return "Next";
-    if (!isLastPlayerOfRound) return nextPlayer?.name ?? "Next";
-    if (!isLastRound) return `Round ${currentRound + 1}`;
-    return "Results";
-  }
+  // Auto-advance when last player finishes last round (show results immediately)
+  useEffect(() => {
+    if (!readyToSwitch || !isLastPlayerOfRound || !isLastRound || !!winners || isTransitioning || pendingAward) return;
+    // Small delay so the last dart visually lands before results appear
+    const timer = setTimeout(() => handleNextTurn(), 800);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readyToSwitch, isLastPlayerOfRound, isLastRound, winners, isTransitioning, pendingAward]);
 
   return (
     <GameShell
@@ -137,15 +153,19 @@ export function HighScoreScreen({
       }
       onExit={onExit}
       onUndo={undoLastDart}
-      undoDisabled={currentRoundDarts.length === 0 || !!winners || isCurrentBot}
+      undoDisabled={!!winners || isCurrentBot || undoStack.length === 0}
       isTransitioning={isTransitioning}
       countdown={countdown}
       nextPlayerName={n > 1 ? nextPlayer?.name : undefined}
+      onNextTurn={handleNextTurn}
+      showNextTurn={readyToSwitch}
+      hasWinner={!!winners}
       overlays={
         <>
           {winners && (
             <ResultsOverlay
               onExit={onExit}
+              onRematch={onRematch}
               playerResults={players
                 .slice()
                 .sort((a, b) => b.score - a.score)
@@ -170,7 +190,7 @@ export function HighScoreScreen({
             />
           )}
           {pendingAward && (
-            <AwardOverlay award={pendingAward} onDismiss={() => setPendingAward(null)} />
+            <AwardOverlay award={pendingAward} onDismiss={dismissAward} />
           )}
           {inPlayoff && !winners && (
             <div className="absolute top-0 inset-x-0 z-10 bg-[var(--color-game-accent)] text-[var(--color-game-accent-text)] text-center py-2 font-black text-sm uppercase tracking-widest">
@@ -184,116 +204,85 @@ export function HighScoreScreen({
       <div className="flex-1 flex min-h-0" style={{ paddingLeft: "var(--sal)" }}>
 
         {/* Left: active player score */}
-        <div className="flex-1 flex flex-col min-h-0 min-w-0 px-4 py-2">
-          <div className="flex items-center gap-3 shrink-0">
+        <div className="flex-1 flex flex-col min-w-0 min-h-0 px-4 py-2">
+          <div className="flex items-center gap-2 shrink-0">
             <span className="glow-dot" />
-            <span className="text-[var(--color-game-accent)] font-black uppercase tracking-widest text-lg">
+            <span
+              className={`font-black uppercase tracking-widest text-[clamp(1rem,2vw,2.5rem)] ${isCurrentBot ? getBotCharacter(botSkills[currentPlayerIndex]!).animationClass : ""}`}
+              style={isCurrentBot
+                ? { fontFamily: "Beon, sans-serif", color: getBotCharacter(botSkills[currentPlayerIndex]!).color, textShadow: `0 0 12px ${getBotCharacter(botSkills[currentPlayerIndex]!).glow}` }
+                : { color: "var(--color-game-accent)" }
+              }
+            >
               {currentPlayer?.name}
             </span>
           </div>
-          <div className="flex-1 flex items-center min-h-0 gap-2">
-            {/* Big score */}
-            <div className="flex-1 flex flex-col items-center justify-center min-h-0">
-              <p className="text-[min(6rem,20vh)] font-black tabular-nums leading-none text-white">
-                {(currentPlayer?.score ?? 0) + roundTotal}
-              </p>
-              {roundTotal > 0 && (
-                <p className="text-[var(--color-game-accent)] font-black text-2xl tabular-nums">+{roundTotal}</p>
-              )}
-            </div>
-            {/* Round history */}
-            <div className="flex flex-col justify-center gap-1 shrink-0 w-20 overflow-hidden min-h-0">
-              {[...(currentPlayer?.rounds ?? [])].reverse().slice(0, 7).map((r, i, arr) => {
-                const round = (currentPlayer?.rounds.length ?? 0) - i;
-                const opacity = 1 - i * (0.8 / Math.max(arr.length, 1));
-                return (
-                  <div key={i} className="flex flex-col" style={{ opacity: Math.max(opacity, 0.15) }}>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-zinc-600 text-[9px] font-bold w-5 shrink-0">R{round}</span>
-                      <span className="text-xs font-black tabular-nums text-zinc-300">{r.score}</span>
-                    </div>
-                    <div className="flex gap-0.5 pl-5 flex-wrap">
-                      {r.darts.map((d, di) => (
-                        <span key={di} className="text-[9px] tabular-nums text-zinc-500">
-                          {d.shortName}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+
+          {/* Big score */}
+          <div className="flex-1 flex flex-col items-center justify-center min-h-0">
+            {roundTotal > 0 && (
+              <span className="text-[var(--color-game-accent)] font-black text-[clamp(1.25rem,2.5vw,3rem)] leading-none mb-2">
+                +{roundTotal}
+              </span>
+            )}
+            <span
+              className="font-normal tabular-nums leading-none select-none text-[clamp(7rem,16vw,40rem)]"
+              style={{ fontFamily: "Beon, sans-serif", color: "var(--color-game-accent)", textShadow: "0 0 20px var(--color-game-accent), 0 0 60px var(--color-game-accent), 0 0 100px var(--color-game-accent-glow), 0 0 150px var(--color-game-accent-glow)" }}
+            >
+              {(currentPlayer?.score ?? 0) + roundTotal}
+            </span>
           </div>
         </div>
 
-        {/* Right: dart slots + Next Turn button */}
-        <div className="flex flex-col shrink-0 w-24 border-l border-border-default min-h-0">
+        {/* Right: game info + history grid */}
+        <div className="flex flex-col shrink-0 border-l border-border-default min-h-0" style={{ width: "clamp(12rem, 16vw, 22rem)" }}>
+          {/* Game title + menu */}
+          <div className="shrink-0 px-2 py-2 flex items-center border-b border-border-default" style={{ paddingTop: "calc(var(--sat) + 0.5rem)" }}>
+            <div className="flex-1 flex flex-col items-center">
+              <span className="font-black text-[var(--color-game-accent)] text-[clamp(0.8rem,1.3vw,1.25rem)] tracking-widest">
+                High Score
+              </span>
+              <span className="text-zinc-600 text-[clamp(0.5rem,0.8vw,0.7rem)] uppercase tracking-widest">
+                Round {currentRound} of {options.rounds}
+              </span>
+            </div>
+            <GameMenu onUndo={undoLastDart} undoDisabled={!!winners || isCurrentBot || undoStack.length === 0} onExit={onExit} />
+          </div>
 
-          {/* Compact dart slots */}
-          <div className="flex flex-col gap-1 p-2 shrink-0">
-            {[0, 1, 2].map((j) => {
-              const dart = currentRoundDarts[j];
-              const isNext = j === currentRoundDarts.length && !readyToSwitch;
-              const state = dart
-                ? dart.value > 0
-                  ? "scored"
-                  : "miss"
-                : isNext
-                  ? "next"
-                  : "empty";
+          {/* Rows: current round (live) + completed rounds newest-first */}
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden px-1 gap-1.5 pt-1">
+            <HistoryRow
+              roundNum={(currentPlayer?.rounds?.length ?? 0) + 1}
+              darts={currentRoundDarts.map((d) => ({
+                value: d.value,
+                shortName: d.segment.ShortName,
+                state: d.value > 0 ? "scored" : "miss",
+              }))}
+              totalDarts={currentRoundDarts.length}
+              readyToSwitch={readyToSwitch}
+              isCurrent={true}
+            />
+            {[...(currentPlayer?.rounds ?? [])].reverse().map((r, i) => {
+              const roundNum = (currentPlayer?.rounds.length ?? 0) - i;
               return (
-                <div key={j} className="dart-slot" data-state={state}>
-                  {dart ? (
-                    <>
-                      <span className={`text-xs font-black leading-none ${dart.value > 0 ? "text-[var(--color-game-accent)]" : "text-zinc-600"}`}>
-                        {dart.value}
-                      </span>
-                      <span className="text-[10px] text-zinc-500 font-bold uppercase">
-                        {dart.segment.ShortName}
-                      </span>
-                    </>
-                  ) : isNext ? (
-                    <span className="text-[var(--color-game-accent)] text-xs font-black opacity-60">{j + 1}</span>
-                  ) : (
-                    <span className="text-content-faint text-xs">·</span>
-                  )}
-                </div>
+                <HistoryRow
+                  key={roundNum}
+                  roundNum={roundNum}
+                  darts={r.darts.map((d) => ({
+                    value: d.value,
+                    shortName: d.shortName,
+                    state: d.value > 0 ? "scored" : "miss",
+                  }))}
+                  totalDarts={r.darts.length}
+                  readyToSwitch={false}
+                  isCurrent={false}
+                />
               );
             })}
           </div>
 
-          {/* Next Turn button */}
-          <div className="relative flex-1 min-h-0 p-2">
-            {readyToSwitch && !winners && (
-              <span
-                className="absolute inset-2 rounded-xl opacity-20 animate-ping"
-                style={{ backgroundColor: "var(--color-game-accent)" }}
-              />
-            )}
-            {isCurrentBot ? (
-              <div className="w-full h-full rounded-xl bg-surface-raised border-2 border-purple-900 flex flex-col items-center justify-center gap-1 opacity-70">
-                <span className="text-state-bot text-[10px] uppercase tracking-widest font-black">CPU</span>
-                <span className="text-purple-600 text-base animate-pulse">···</span>
-              </div>
-            ) : (
-              <button
-                onClick={handleNextTurn}
-                disabled={!!winners}
-                className={`relative w-full h-full rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200 flex flex-col items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  readyToSwitch
-                    ? "text-[var(--color-game-accent-text)]"
-                    : "bg-surface-raised border-2 border-border-default text-content-faint"
-                }`}
-                style={readyToSwitch ? {
-                  backgroundColor: "var(--color-game-accent)",
-                  boxShadow: "var(--shadow-glow-md)",
-                } : undefined}
-              >
-                <span className="text-center leading-tight px-1">{nextLabel()}</span>
-                <span className="text-base">→</span>
-              </button>
-            )}
-          </div>
+          {/* Bot thinking indicator */}
+          {isCurrentBot && <BotThinkingIndicator skill={botSkills[currentPlayerIndex]!} />}
         </div>
       </div>
 
@@ -320,13 +309,25 @@ export function HighScoreScreen({
               data-active={String(isActive)}
               style={i === 0 ? { paddingLeft: "var(--sal)" } : undefined}
             >
-              <span className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"} ${textSizes.name}`}>
+              <span
+                className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${botSkills[i] != null ? getBotCharacter(botSkills[i]!).animationClass : isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                style={{
+                  fontSize: textSizes.name,
+                  ...(botSkills[i] != null ? { fontFamily: "Beon, sans-serif", color: getBotCharacter(botSkills[i]!).color, textShadow: isActive ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}` : "none" } : {}),
+                }}
+              >
                 {player.name}
               </span>
-              <span className={`font-black tabular-nums leading-tight transition-colors duration-300 ${isActive ? "text-content-primary" : "text-content-muted"} ${textSizes.score}`}>
+              <span
+                className={`font-black tabular-nums leading-tight transition-colors duration-300 ${isActive ? "text-content-primary" : "text-content-muted"}`}
+                style={{ fontSize: textSizes.score }}
+              >
                 {player.score}
               </span>
-              <span className={`tabular-nums transition-colors duration-300 ${isActive ? "text-content-secondary" : "text-content-faint"} ${textSizes.stat}`}>
+              <span
+                className={`tabular-nums transition-colors duration-300 ${isActive ? "text-content-secondary" : "text-content-faint"}`}
+                style={{ fontSize: textSizes.stat }}
+              >
                 avg {avg}
               </span>
             </div>

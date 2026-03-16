@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AwardType } from "../lib/awards.ts";
-import { getVolume } from "../sound/sounds.ts";
+import { connectMediaElement } from "../sound/sounds.ts";
 import hattrickSrc from "../assets/awards/hattrick.mp4";
 import ton80Src from "../assets/awards/ton80.mp4";
 import hightonSrc from "../assets/awards/highton.mp4";
@@ -36,16 +36,31 @@ interface AwardOverlayProps {
   onDismiss: () => void;
 }
 
+const AWARD_DELAY_MS = 1000;
+
 export function AwardOverlay({ award, onDismiss }: AwardOverlayProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const connectedRef = useRef(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), AWARD_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [award]);
+
+  useEffect(() => {
+    if (!visible) return;
     const video = videoRef.current;
     if (!video) return;
-    video.volume = getVolume();
+    if (!connectedRef.current) {
+      connectMediaElement(video);
+      connectedRef.current = true;
+    }
     video.currentTime = 0;
     void video.play();
-  }, [award]);
+  }, [visible]);
+
+  if (!visible) return null;
 
   return (
     <div

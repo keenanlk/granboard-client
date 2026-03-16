@@ -7,7 +7,10 @@ import {
   buildHitCommand,
   buildPersistentNumbersCommand,
   Colors,
+  LED_COLOR_ORANGE,
+  LED_POSITIONS,
 } from "./GranboardLED.ts";
+import type { RGB } from "./GranboardLED.ts";
 import { useGranboardStore } from "../store/useGranboardStore.ts";
 
 /**
@@ -32,12 +35,12 @@ export function startRemoveDartsCountdown(durationMs: number): void {
   const intervalMs = Math.floor(durationMs / steps);
   let remaining = [...REMOVE_DARTS_ORDER];
 
-  void board.sendCommand(buildPersistentNumbersCommand(remaining, 0x05));
+  void board.sendCommand(buildPersistentNumbersCommand(remaining, LED_COLOR_ORANGE));
 
   removeDartsTimer = setInterval(() => {
     remaining = remaining.slice(1);
     void board.sendCommand(
-      remaining.length > 0 ? buildPersistentNumbersCommand(remaining, 0x05) : buildClearCommand(),
+      remaining.length > 0 ? buildPersistentNumbersCommand(remaining, LED_COLOR_ORANGE) : buildClearCommand(),
     );
     if (remaining.length === 0) {
       clearInterval(removeDartsTimer!);
@@ -45,6 +48,53 @@ export function startRemoveDartsCountdown(durationMs: number): void {
     }
   }, intervalMs);
 }
+
+/** Dart numbers sorted clockwise by LED ring position. */
+const RING_ORDER = Array.from({ length: 20 }, (_, i) => i + 1)
+  .sort((a, b) => LED_POSITIONS[a] - LED_POSITIONS[b]);
+
+function lerpColor(a: RGB, b: RGB, t: number): RGB {
+  return {
+    r: Math.round(a.r + (b.r - a.r) * t),
+    g: Math.round(a.g + (b.g - a.g) * t),
+    b: Math.round(a.b + (b.b - a.b) * t),
+  };
+}
+
+let sweepTimer: ReturnType<typeof setInterval> | null = null;
+
+function startSweep(): void {
+  const board = useGranboardStore.getState().board;
+  if (!board) return;
+
+  if (sweepTimer !== null) {
+    clearInterval(sweepTimer);
+    sweepTimer = null;
+  }
+
+  const stepMs = 60;
+  let step = 0;
+
+  sweepTimer = setInterval(() => {
+    if (step >= RING_ORDER.length) {
+      clearInterval(sweepTimer!);
+      sweepTimer = null;
+      // Finish with a blink
+      void board.sendCommand(buildBlinkCommand(Colors.GREEN, 0x14));
+      return;
+    }
+
+    const dartNumber = RING_ORDER[step];
+    const t = step / (RING_ORDER.length - 1);
+    const color = lerpColor(Colors.RED, Colors.GREEN, t);
+    void board.sendCommand(buildHitCommand(dartNumber, 1, color));
+    step++;
+  }, stepMs);
+}
+
+gameEventBus.on("game_start", () => {
+  startSweep();
+});
 
 gameEventBus.on("dart_hit", ({ segment }) => {
   const board = useGranboardStore.getState().board;
@@ -73,7 +123,6 @@ gameEventBus.on("open_numbers", ({ numbers }) => {
     const board = useGranboardStore.getState().board;
     if (!board) return;
     // 20-byte direct state command — persistent, no timeout
-    // colorByte 0x05 = orange (adjust if board uses a different palette index)
-    void board.sendCommand(buildPersistentNumbersCommand(numbers, 0x05));
+    void board.sendCommand(buildPersistentNumbersCommand(numbers, LED_COLOR_ORANGE));
   }, 700);
 });

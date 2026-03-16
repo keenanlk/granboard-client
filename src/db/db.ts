@@ -81,7 +81,10 @@ export async function dbGetAllPlayers(): Promise<PlayerRecord[]> {
 
 export async function dbAddPlayer(name: string): Promise<PlayerRecord> {
   const db = await getDB();
-  const player: PlayerRecord = { id: crypto.randomUUID(), name, createdAt: Date.now() };
+  const id = typeof crypto.randomUUID === "function"
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+  const player: PlayerRecord = { id, name, createdAt: Date.now() };
   await db.add("players", player);
   return player;
 }

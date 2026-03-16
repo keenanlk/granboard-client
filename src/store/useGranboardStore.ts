@@ -41,9 +41,9 @@ export const useGranboardStore = create<GranboardState>((set, get) => ({
     try {
       const board = await Granboard.TryAutoReconnect();
       set({ board, status: "connected" });
-    } catch (error) {
-      console.error("Auto-reconnect failed:", error);
-      // Only revert if nothing else (e.g. mock) connected while we were scanning
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : JSON.stringify(err);
+      console.warn("[BLE] Auto-reconnect failed:", msg, err);
       if (get().status !== "connected") {
         set({ status: "disconnected" });
       }

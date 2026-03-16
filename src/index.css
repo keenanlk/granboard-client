@@ -1,9 +1,17 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Beon";
+  src: url("/fonts/Beon-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
-  --sal: env(safe-area-inset-left, 0px);
+  --sal: 0px;
   --sar: env(safe-area-inset-right, 0px);
 }
 
@@ -50,22 +58,36 @@ html, body, #root {
 
 /* Game accent context classes — applied to GameShell root div */
 .game-x01 {
+  --sal: 0px;
   --color-game-accent: theme(--color-red-500);
   --color-game-accent-dim: theme(--color-red-950);
   --color-game-accent-glow: rgba(239, 68, 68, 0.5);
   --color-game-accent-text: #fff;
 }
 .game-cricket {
+  --sal: 0px;
   --color-game-accent: theme(--color-green-400);
   --color-game-accent-dim: theme(--color-green-950);
   --color-game-accent-glow: rgba(34, 197, 94, 0.5);
   --color-game-accent-text: #fff;
 }
 .game-highscore {
+  --sal: 0px;
   --color-game-accent: theme(--color-yellow-400);
   --color-game-accent-dim: theme(--color-yellow-950);
   --color-game-accent-glow: rgba(234, 179, 8, 0.5);
   --color-game-accent-text: #000;
+}
+
+/* Grid background for game screens — fades out toward center */
+.game-x01,
+.game-cricket,
+.game-highscore {
+  background-image:
+    radial-gradient(ellipse at center, transparent 20%, rgba(0, 0, 0, 0.6) 100%),
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
 }
 
 @layer components {
@@ -98,10 +120,10 @@ html, body, #root {
   /* Buttons */
   .btn-primary {
     width: 100%;
-    padding: 1rem;
+    padding: clamp(0.75rem, 1.5vh, 1.25rem);
     border-radius: 0.75rem;
     font-weight: 900;
-    font-size: 1.5rem;
+    font-size: clamp(1.25rem, 2.5vw, 2.25rem);
     text-transform: uppercase;
     background-color: var(--color-game-accent);
     color: var(--color-game-accent-text);
@@ -182,8 +204,8 @@ html, body, #root {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: clamp(0.5rem, 1.5vh, 1.25rem) 0.25rem;
-    padding-bottom: calc(var(--sab) + clamp(0.5rem, 1.5vh, 1.25rem));
+    padding: clamp(0.375rem, 1.5vh, 1rem) 0.25rem;
+    padding-bottom: calc(var(--sab) + clamp(0.375rem, 1.5vh, 1rem));
     transition: all 0.3s;
   }
   .player-strip-cell[data-active="true"] {
@@ -200,11 +222,11 @@ html, body, #root {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: clamp(1.75rem, 4vh, 3.5rem);
-    border-radius: 0.25rem;
+    height: clamp(2.25rem, 5vh, 4.5rem);
+    border-radius: 0.375rem;
     border-width: 1px;
     transition: all 0.2s;
-    margin: 0 1px;
+    margin: 0 2px;
   }
   .history-dart-cell[data-state="empty"] { border-color: transparent; background: transparent; }
   .history-dart-cell[data-state="next"] { border-color: var(--color-game-accent); border-style: dashed; background-color: var(--color-surface-raised); }
@@ -221,4 +243,77 @@ html, body, #root {
     background-color: var(--color-game-accent);
     box-shadow: var(--shadow-glow-sm);
   }
+}
+
+/* ── Neon bot character animations ── */
+
+/* Tier 1 — Flicker: broken neon tube sputtering */
+.neon-flicker {
+  animation: neon-flicker-kf 3s infinite;
+}
+@keyframes neon-flicker-kf {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.3; }
+  22% { opacity: 0.6; }
+}
+
+/* Tier 2 — Glow: soft steady pulse */
+.neon-glow {
+  animation: neon-glow-kf 4s ease-in-out infinite;
+}
+@keyframes neon-glow-kf {
+  0%, 100% { opacity: 0.7; filter: brightness(0.85); }
+  50% { opacity: 1; filter: brightness(1.1); }
+}
+
+/* Tier 3 — Buzz: humming vibration */
+.neon-buzz {
+  animation: neon-buzz-kf 2.5s ease-in-out infinite;
+}
+@keyframes neon-buzz-kf {
+  0%, 100% { opacity: 0.85; filter: brightness(1); }
+  25% { opacity: 1; filter: brightness(1.15); }
+  50% { opacity: 0.9; filter: brightness(1.05); }
+  75% { opacity: 1; filter: brightness(1.2); }
+}
+
+/* Tier 4 — Flash: marquee pulse */
+.neon-flash {
+  animation: neon-flash-kf 2s ease-in-out infinite;
+}
+@keyframes neon-flash-kf {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.4); }
+}
+
+/* Tier 5 — Volt: electric crackle */
+.neon-volt {
+  animation: neon-volt-kf 1.5s infinite;
+}
+@keyframes neon-volt-kf {
+  0%, 100% { filter: brightness(1); }
+  10% { filter: brightness(1.6); }
+  12% { filter: brightness(0.9); }
+  14% { filter: brightness(1.4); }
+  50% { filter: brightness(1.1); }
+  80% { filter: brightness(1.3); }
+  82% { filter: brightness(0.95); }
+}
+
+/* Tier 6 — Blaze: intense glow throb */
+.neon-blaze {
+  animation: neon-blaze-kf 1.8s ease-in-out infinite;
+}
+@keyframes neon-blaze-kf {
+  0%, 100% { filter: brightness(1.1); }
+  50% { filter: brightness(1.5); }
+}
+
+/* Tier 7 — Nova: radiant explosion pulse */
+.neon-nova {
+  animation: neon-nova-kf 2s ease-in-out infinite;
+}
+@keyframes neon-nova-kf {
+  0%, 100% { filter: brightness(1.2) saturate(1.2); }
+  50% { filter: brightness(1.8) saturate(1.5); }
 }

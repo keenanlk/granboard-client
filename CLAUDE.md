@@ -12,6 +12,7 @@ Do not invent rules from memory when a rule file exists.
 - Add or update tests for every rule change.
 - If a game rule is ambiguous, flag it in code comments or docs instead of guessing.
 - Prefer shared rule utilities over per-game duplicated logic.
+- Before making rules to the game logic, ask the user if the change is ok.
 
 ## Important paths
 - Rules docs: `/docs/game-rules`

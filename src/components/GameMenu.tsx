@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { Menu, Undo2, Volume2 } from "lucide-react";
+import { Menu, Undo2, Volume2, LogOut } from "lucide-react";
 import { setVolume } from "../sound/sounds";
+import { DevBoardMenuButton, DevBoardPanel } from "./DevBoard.tsx";
 
 interface GameMenuProps {
   onUndo: () => void;
   undoDisabled: boolean;
+  onExit: () => void;
 }
 
-export function GameMenu({ onUndo, undoDisabled }: GameMenuProps) {
+export function GameMenu({ onUndo, undoDisabled, onExit }: GameMenuProps) {
   const [open, setOpen] = useState(false);
+  const [boardOpen, setBoardOpen] = useState(false);
   const [volume, setVolumeState] = useState(
     parseFloat(localStorage.getItem("app-volume") ?? "1"),
   );
@@ -16,13 +19,17 @@ export function GameMenu({ onUndo, undoDisabled }: GameMenuProps) {
 
   useEffect(() => {
     if (!open) return;
-    function handleMouseDown(e: MouseEvent) {
+    function handleOutsideTap(e: Event) {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleMouseDown);
-    return () => document.removeEventListener("mousedown", handleMouseDown);
+    document.addEventListener("mousedown", handleOutsideTap);
+    document.addEventListener("touchstart", handleOutsideTap);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideTap);
+      document.removeEventListener("touchstart", handleOutsideTap);
+    };
   }, [open]);
 
   function handleUndo() {
@@ -30,24 +37,24 @@ export function GameMenu({ onUndo, undoDisabled }: GameMenuProps) {
     setOpen(false);
   }
 
-  function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const v = parseFloat(e.target.value);
+  function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement> | React.FormEvent<HTMLInputElement>) {
+    const v = parseFloat((e.target as HTMLInputElement).value);
     setVolumeState(v);
     setVolume(v);
   }
 
   return (
-    <div className="relative w-16 flex justify-end" ref={panelRef}>
+    <div className="relative shrink-0" ref={panelRef}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="btn-ghost w-16 flex items-center justify-end"
+        className="p-2 text-zinc-400 hover:text-white transition-colors"
         aria-label="Menu"
       >
         <Menu size={22} />
       </button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-3 z-50 bg-surface-raised border border-border-default rounded-2xl shadow-2xl overflow-hidden min-w-[200px]">
+        <div className="fixed top-12 right-4 z-50 bg-surface-raised border border-border-default rounded-2xl shadow-2xl overflow-hidden min-w-[220px]">
           {/* Undo */}
           <button
             onClick={handleUndo}
@@ -72,12 +79,35 @@ export function GameMenu({ onUndo, undoDisabled }: GameMenuProps) {
               max={1}
               step={0.01}
               value={volume}
+              onInput={handleVolumeChange}
               onChange={handleVolumeChange}
               className="w-full h-2 rounded-full accent-[var(--color-game-accent)] cursor-pointer"
             />
           </div>
+
+          <div className="h-px bg-border-default" />
+
+          {/* Mock Board — dev only */}
+          {import.meta.env.DEV && (
+            <>
+              <DevBoardMenuButton onActivate={() => { setBoardOpen(true); setOpen(false); }} />
+              <div className="h-px bg-border-default" />
+            </>
+          )}
+
+          {/* Exit */}
+          <button
+            onClick={() => { setOpen(false); onExit(); }}
+            className="w-full flex items-center gap-3 px-5 py-4 text-left text-base font-semibold uppercase tracking-wide text-red-400 hover:text-red-300 hover:bg-surface-overlay transition-colors"
+          >
+            <LogOut size={18} />
+            Exit Game
+          </button>
         </div>
       )}
+
+      {/* Floating board panel — persists outside dropdown (dev only) */}
+      {import.meta.env.DEV && boardOpen && <DevBoardPanel onClose={() => setBoardOpen(false)} />}
     </div>
   );
 }

@@ -10,7 +10,7 @@ function makeMarks(overrides: Partial<Record<number, number>> = {}): Record<15|1
 }
 
 function makePlayer(name: string, marks: Record<number, number>, score = 0): CricketPlayer {
-  return { name, marks, score, totalDartsThrown: 0, totalMarksEarned: 0 };
+  return { name, marks, score, totalDartsThrown: 0, totalMarksEarned: 0, rounds: [] };
 }
 
 // tripleFor: segment IDs for standard numbers (SegmentID = (n-1)*4+1)

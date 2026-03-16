@@ -1,3 +1,6 @@
+import type { SetProgress } from "../lib/setTypes.ts";
+import { getSetWinner } from "../lib/setTypes.ts";
+
 interface PlayerResult {
   name: string;
   isWinner: boolean;
@@ -8,37 +11,145 @@ interface PlayerResult {
 interface ResultsOverlayProps {
   playerResults: PlayerResult[];
   onExit: () => void;
+  onRematch?: () => void;
+  setProgress?: SetProgress;
+  onNextLeg?: () => void;
 }
 
-const RANK_MEDAL = ["🥇", "🥈", "🥉"];
+function SetScoreline({ setProgress }: { setProgress: SetProgress }) {
+  const wins = new Map<string, number>();
+  for (const r of setProgress.legResults) {
+    wins.set(r.winnerName, (wins.get(r.winnerName) ?? 0) + 1);
+  }
 
-export function ResultsOverlay({ playerResults, onExit }: ResultsOverlayProps) {
+  return (
+    <div className="flex items-center justify-center gap-6">
+      {setProgress.playerNames.map((name, i) => (
+        <div key={name} className="flex items-center gap-3">
+          {i > 0 && <span className="text-zinc-700 font-bold" style={{ fontSize: "clamp(1rem, 3vh, 2rem)" }}>–</span>}
+          <div className="flex flex-col items-center">
+            <span
+              className="font-black tabular-nums text-white"
+              style={{ fontSize: "clamp(1.5rem, 5vh, 3.5rem)" }}
+            >
+              {wins.get(name) ?? 0}
+            </span>
+            <span
+              className="text-zinc-500 font-bold uppercase tracking-wider truncate max-w-28"
+              style={{ fontSize: "clamp(0.55rem, 1.2vh, 0.85rem)" }}
+            >
+              {name}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function ResultsOverlay({ playerResults, onExit, onRematch, setProgress, onNextLeg }: ResultsOverlayProps) {
   const winners = playerResults.filter((p) => p.isWinner);
   const losers = playerResults.filter((p) => !p.isWinner);
   const isTie = winners.length > 1;
 
-  return (
-    <div className="absolute inset-0 z-10 bg-zinc-950/97 flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="shrink-0 pt-10 pb-4 flex flex-col items-center gap-1">
-        <p className="text-zinc-500 text-xs uppercase tracking-[0.25em]">Game Over</p>
-        <p className="font-black text-sm uppercase tracking-widest text-[var(--color-game-accent)]">
-          {isTie ? "It's a Tie!" : "Winner"}
-        </p>
-      </div>
+  const isInSet = !!setProgress;
 
-      {/* Winner(s) */}
-      <div className="shrink-0 flex flex-col items-center px-6 pb-6 gap-3">
+  // Include the current leg's winner in the set progress for scoreline + winner calculation
+  const effectiveSetProgress = isInSet && winners.length === 1
+    ? {
+        ...setProgress,
+        legResults: [
+          ...setProgress.legResults,
+          { winnerName: winners[0].name, winnerIndex: setProgress.playerNames.indexOf(winners[0].name) },
+        ],
+      }
+    : setProgress;
+
+  const format = isInSet ? (setProgress.totalLegs === 3 ? "bo3" as const : "bo5" as const) : "bo3" as const;
+  const setWinner = effectiveSetProgress ? getSetWinner(effectiveSetProgress.legResults, format) : null;
+  const isSetComplete = !!setWinner;
+
+  const headline = isSetComplete
+    ? "Set Winner!"
+    : isTie
+      ? "It's a Tie!"
+      : isInSet
+        ? "Leg Winner"
+        : "Winner";
+
+  return (
+    <div className="absolute inset-0 z-10 bg-zinc-950 flex flex-col overflow-hidden">
+      {/* Content — vertically centered */}
+      <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-6 gap-2">
+
+        {/* Subtitle: leg info or "Game Over" */}
+        <p
+          className="uppercase tracking-[0.3em] font-normal"
+          style={{
+            fontFamily: "Beon, sans-serif",
+            fontSize: "clamp(0.6rem, 1.6vh, 1rem)",
+            color: isInSet && !isSetComplete ? "#60a5fa" : "var(--color-content-muted)",
+            textShadow: isInSet && !isSetComplete
+              ? "0 0 10px rgba(96,165,250,0.5)"
+              : "0 0 8px rgba(255,255,255,0.1)",
+          }}
+        >
+          {isInSet && !isSetComplete
+            ? `Leg ${setProgress.currentLeg} of ${setProgress.totalLegs}`
+            : isSetComplete
+              ? "Set Complete"
+              : "Game Over"}
+        </p>
+
+        {/* Headline */}
+        <p
+          className="font-normal uppercase tracking-widest"
+          style={{
+            fontFamily: "Beon, sans-serif",
+            fontSize: "clamp(1.25rem, 4.5vh, 3rem)",
+            color: "var(--color-game-accent)",
+            textShadow: "0 0 15px var(--color-game-accent), 0 0 40px var(--color-game-accent-glow)",
+          }}
+        >
+          {headline}
+        </p>
+
+        {/* Set scoreline (compact, inline) */}
+        {isInSet && effectiveSetProgress && <SetScoreline setProgress={effectiveSetProgress} />}
+
+        {/* Winner name */}
         {winners.map((p) => (
-          <div key={p.name} className="flex flex-col items-center gap-2 w-full">
-            <p className="text-5xl font-black text-white leading-none">{p.name}</p>
-            <div className="flex gap-3 flex-wrap justify-center">
+          <div key={p.name} className="flex flex-col items-center gap-2">
+            <p
+              className="font-normal leading-none"
+              style={{
+                fontFamily: "Beon, sans-serif",
+                fontSize: "clamp(2rem, 8vh, 5rem)",
+                color: "#fff",
+                textShadow: "0 0 15px var(--color-game-accent), 0 0 40px var(--color-game-accent), 0 0 80px var(--color-game-accent-glow)",
+              }}
+            >
+              {p.name}
+            </p>
+            {/* Winner stats — horizontal row */}
+            <div className="flex items-baseline justify-center" style={{ gap: "clamp(1.5rem, 3vw, 3rem)" }}>
               {p.stats.map((s) => (
                 <div key={s.label} className="flex flex-col items-center">
-                  <span className="font-black text-xl tabular-nums leading-none text-[var(--color-game-accent)]">
+                  <span
+                    className="font-normal tabular-nums leading-none"
+                    style={{
+                      fontFamily: "Beon, sans-serif",
+                      fontSize: "clamp(1rem, 3.5vh, 2.5rem)",
+                      color: "var(--color-game-accent)",
+                      textShadow: "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)",
+                    }}
+                  >
                     {s.value}
                   </span>
-                  <span className="text-zinc-600 text-[10px] uppercase tracking-wider">
+                  <span
+                    className="uppercase tracking-wider"
+                    style={{ fontSize: "clamp(0.45rem, 1vh, 0.75rem)", color: "var(--color-content-faint)", marginTop: "2px" }}
+                  >
                     {s.label}
                   </span>
                 </div>
@@ -46,44 +157,60 @@ export function ResultsOverlay({ playerResults, onExit }: ResultsOverlayProps) {
             </div>
           </div>
         ))}
-      </div>
 
-      {/* Divider */}
-      {losers.length > 0 && (
-        <div className="shrink-0 mx-6 border-t border-zinc-800" />
-      )}
-
-      {/* Losers */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3 min-h-0">
-        {losers.map((p) => (
-          <div key={p.name} className="flex items-center gap-3">
-            <span className="text-xl shrink-0 w-8 text-center">
-              {RANK_MEDAL[p.rank - 1] ?? `${p.rank}.`}
-            </span>
-            <div className="flex-1 min-w-0">
-              <p className="text-zinc-300 font-black text-base uppercase tracking-wide truncate">
-                {p.name}
-              </p>
-              <div className="flex gap-3 flex-wrap mt-0.5">
+        {/* Losers — compact inline below a thin divider */}
+        {losers.length > 0 && (
+          <div className="w-full max-w-md flex flex-col items-center gap-2 mt-2">
+            <div className="w-full border-t border-zinc-800" />
+            {losers.map((p) => (
+              <div key={p.name} className="flex items-baseline gap-3">
+                <span
+                  className="text-zinc-400 font-bold uppercase tracking-wide"
+                  style={{ fontSize: "clamp(0.7rem, 1.6vh, 1.1rem)" }}
+                >
+                  {p.name}
+                </span>
                 {p.stats.map((s) => (
-                  <span key={s.label} className="text-zinc-500 text-xs tabular-nums">
+                  <span key={s.label} className="text-zinc-600 tabular-nums" style={{ fontSize: "clamp(0.6rem, 1.3vh, 0.9rem)" }}>
                     {s.value} <span className="text-zinc-700">{s.label}</span>
                   </span>
                 ))}
               </div>
-            </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
 
-      {/* Back to Menu */}
+      {/* Actions — pinned to bottom */}
       <div
-        className="shrink-0 px-6 py-6"
-        style={{ paddingBottom: "calc(var(--sab) + 1.5rem)" }}
+        className="shrink-0 px-6 py-4 flex gap-3"
+        style={{ paddingBottom: "calc(var(--sab) + 1rem)" }}
       >
-        <button onClick={onExit} className="btn-primary tracking-widest">
-          Back to Menu
+        <button
+          onClick={onExit}
+          className="btn-primary flex-1 tracking-widest bg-zinc-800 text-zinc-300 border border-zinc-700"
+          style={{ fontFamily: "Beon, sans-serif", fontWeight: "normal" }}
+        >
+          Menu
         </button>
+        {isInSet && !isSetComplete && onNextLeg && (
+          <button
+            onClick={onNextLeg}
+            className="btn-primary flex-1 tracking-widest"
+            style={{ fontFamily: "Beon, sans-serif", fontWeight: "normal" }}
+          >
+            Next Leg
+          </button>
+        )}
+        {!isInSet && onRematch && (
+          <button
+            onClick={onRematch}
+            className="btn-primary flex-1 tracking-widest"
+            style={{ fontFamily: "Beon, sans-serif", fontWeight: "normal" }}
+          >
+            Rematch
+          </button>
+        )}
       </div>
     </div>
   );

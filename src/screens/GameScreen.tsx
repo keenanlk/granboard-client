@@ -1,98 +1,41 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useGameStore, type X01Options } from "../store/useGameStore.ts";
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { detectAward } from "../lib/awards.ts";
-import type { AwardType } from "../lib/awards.ts";
 import { X01Controller } from "../controllers/X01Controller.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
+import { useAwardDetection } from "../hooks/useAwardDetection.ts";
 import { GameShell } from "../components/GameShell.tsx";
 import { Bot } from "../bot/Bot.ts";
 import type { BotSkill } from "../bot/Bot.ts";
+import { getBotCharacter } from "../bot/botCharacters.ts";
 import { CreateSegment } from "../board/Dartboard.ts";
 import { gameLogger } from "../lib/GameLogger.ts";
-
-interface HistoryRowDart {
-  value: number;
-  shortName: string;
-  state: "scored" | "miss" | "bust";
-}
-
-function HistoryRow({
-  roundNum,
-  darts,
-  totalDarts,
-  readyToSwitch,
-  isCurrent,
-}: {
-  roundNum: number;
-  darts: HistoryRowDart[];
-  totalDarts: number;
-  readyToSwitch: boolean;
-  isCurrent: boolean;
-}) {
-  return (
-    <div
-      className={`grid items-center shrink-0 rounded px-0.5 py-0.5 transition-colors duration-200 ${
-        isCurrent ? "bg-surface-raised" : ""
-      }`}
-      style={{ gridTemplateColumns: "1.75rem 1fr 1fr 1fr" }}
-    >
-      <span className={`text-[clamp(0.6rem,1vw,1rem)] font-bold tabular-nums text-center leading-none ${
-        isCurrent ? "text-[var(--color-game-accent)]" : "text-content-faint"
-      }`}>
-        R{roundNum}
-      </span>
-      {[0, 1, 2].map((j) => {
-        const d = darts[j];
-        const isNextSlot = isCurrent && j === totalDarts && !readyToSwitch;
-        const cellState = d ? d.state : isNextSlot ? "next" : "empty";
-        return (
-          <div key={j} className="history-dart-cell" data-state={cellState}>
-            {d ? (
-              <>
-                <span className={`text-[clamp(0.65rem,1.1vw,1.25rem)] font-black leading-none tabular-nums ${
-                  d.state === "bust" ? "text-state-bust" :
-                  d.state === "scored" ? "text-white" : "text-zinc-600"
-                }`}>{d.value}</span>
-                <span className={`text-[clamp(0.55rem,0.9vw,1rem)] font-bold uppercase leading-none ${
-                  d.state === "bust" ? "text-state-bust" :
-                  d.state === "scored" ? "text-[var(--color-game-accent)]" : "text-zinc-700"
-                }`}>{d.shortName}</span>
-              </>
-            ) : isNextSlot ? (
-              <span className="text-[var(--color-game-accent)] text-[clamp(0.6rem,1vw,1rem)] font-black opacity-50">{j + 1}</span>
-            ) : (
-              <span className="text-content-faint text-[clamp(0.6rem,1vw,1rem)]">·</span>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function playerTextSizes(n: number): { name: string; score: string; stat: string } {
-  // Scale with viewport width; denominator shrinks as player count grows
-  const div = n <= 2 ? 1 : n <= 4 ? 1.4 : n <= 6 ? 2 : 2.8;
-  return {
-    name:  `clamp(${(0.7  / div).toFixed(2)}rem, ${(1.8  / div).toFixed(2)}vw, ${(1.5  / div).toFixed(2)}rem)`,
-    score: `clamp(${(1.5  / div).toFixed(2)}rem, ${(4.0  / div).toFixed(2)}vw, ${(4.0  / div).toFixed(2)}rem)`,
-    stat:  `clamp(${(0.65 / div).toFixed(2)}rem, ${(1.4  / div).toFixed(2)}vw, ${(1.25 / div).toFixed(2)}rem)`,
-  };
-}
+import { GameMenu } from "../components/GameMenu.tsx";
+import { HistoryRow } from "../components/HistoryRow.tsx";
+import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
+import { playerTextSizes } from "../lib/playerTextSizes.ts";
+import type { SetProgress, SetConfig, LegResult } from "../lib/setTypes.ts";
 
 interface GameScreenProps {
   x01Options: X01Options;
   playerNames: string[];
   playerIds: (string | null)[];
   botSkills: (BotSkill | null)[];
+  restoredState?: unknown;
   onExit: () => void;
+  onRematch: () => void;
+  setProgress?: SetProgress;
+  onNextLeg?: () => void;
+  setConfig?: SetConfig;
+  legResults?: LegResult[];
+  currentLegIndex?: number;
 }
 
-export function GameScreen({ x01Options, playerNames, playerIds, botSkills, onExit }: GameScreenProps) {
-  const { players, currentPlayerIndex, currentRoundDarts, isBust, winner, startGame, undoLastDart } =
+export function GameScreen({ x01Options, playerNames, playerIds, botSkills, restoredState, onExit, onRematch, setProgress, onNextLeg, setConfig, legResults, currentLegIndex }: GameScreenProps) {
+  const { players, currentPlayerIndex, currentRoundDarts, isBust, winner, undoStack, startGame, undoLastDart } =
     useGameStore();
 
   const { handleNextTurn, isTransitioning, countdown } = useGameSession({
@@ -120,7 +63,18 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, onEx
     },
     winner: winner ? [winner] : null,
     getFinalScores: () => useGameStore.getState().players.map((p) => p.score),
-    onInit: () => startGame(x01Options, playerNames),
+    getSerializableState: () => useGameStore.getState().getSerializableState(),
+    onInit: () => {
+      if (restoredState) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        useGameStore.getState().restoreState(restoredState as any);
+      } else {
+        startGame(x01Options, playerNames);
+      }
+    },
+    setConfig,
+    legResults,
+    currentLegIndex,
   });
 
   // Build bot map once per game session — indices match the player array.
@@ -163,19 +117,21 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, onEx
   const needsDouble = x01Options.doubleIn && !currentPlayer?.opened;
   const textSizes = playerTextSizes(n);
 
-  const [pendingAward, setPendingAward] = useState<AwardType | null>(null);
-  useEffect(() => {
-    if (!readyToSwitch || isBust) return;
-    const award = detectAward(currentRoundDarts);
-    if (award) setPendingAward(award);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readyToSwitch]);
+  const [pendingAward, dismissAward] = useAwardDetection(
+    readyToSwitch && !isBust && !winner,
+    () => detectAward(currentRoundDarts),
+  );
 
   return (
     <GameShell
       gameClass="game-x01"
       title={
         <>
+          {setProgress && (
+            <span className="text-blue-400 text-[10px] font-bold uppercase tracking-widest">
+              Leg {setProgress.currentLeg}/{setProgress.totalLegs}
+            </span>
+          )}
           <span className="font-black text-[var(--color-game-accent)] text-2xl tracking-widest">
             {x01Options.startingScore}
           </span>
@@ -185,21 +141,27 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, onEx
               x01Options.doubleIn && "Double In",
               x01Options.doubleOut && "Double Out",
               x01Options.masterOut && "Master Out",
-            ].filter(Boolean).join(" · ") || "Straight Out"}
+            ].filter(Boolean).join(" \u00B7 ") || "Straight Out"}
           </span>
         </>
       }
       onExit={onExit}
       onUndo={undoLastDart}
-      undoDisabled={!!winner || isCurrentBot || (currentRoundDarts.length === 0 && players.every((p) => p.rounds.length === 0))}
+      undoDisabled={!!winner || isCurrentBot || undoStack.length === 0}
       isTransitioning={isTransitioning}
       countdown={countdown}
       nextPlayerName={nextPlayer?.name}
+      onNextTurn={handleNextTurn}
+      showNextTurn={readyToSwitch}
+      hasWinner={!!winner}
       overlays={
         <>
-          {winner && (
+          {winner && !pendingAward && (
             <ResultsOverlay
               onExit={onExit}
+              onRematch={setProgress ? undefined : onRematch}
+              setProgress={setProgress}
+              onNextLeg={onNextLeg}
               playerResults={players
                 .slice()
                 .sort((a, b) => a.score - b.score)
@@ -222,7 +184,7 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, onEx
             />
           )}
           {pendingAward && (
-            <AwardOverlay award={pendingAward} onDismiss={() => setPendingAward(null)} />
+            <AwardOverlay award={pendingAward} onDismiss={dismissAward} />
           )}
         </>
       }
@@ -234,7 +196,13 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, onEx
         <div className="flex-1 flex flex-col min-w-0 min-h-0 px-4 py-2">
           <div className="flex items-center gap-2 shrink-0">
             <span className="glow-dot" />
-            <span className="text-[var(--color-game-accent)] font-black uppercase tracking-widest text-[clamp(1rem,2vw,2.5rem)]">
+            <span
+              className={`font-black uppercase tracking-widest text-[clamp(1rem,2vw,2.5rem)] ${isCurrentBot ? getBotCharacter(botSkills[currentPlayerIndex]!).animationClass : ""}`}
+              style={isCurrentBot
+                ? { fontFamily: "Beon, sans-serif", color: getBotCharacter(botSkills[currentPlayerIndex]!).color, textShadow: `0 0 12px ${getBotCharacter(botSkills[currentPlayerIndex]!).glow}` }
+                : { color: "var(--color-game-accent)" }
+              }
+            >
               {currentPlayer?.name}
             </span>
             {(isBust || needsDouble) && (
@@ -252,9 +220,10 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, onEx
               </span>
             )}
             <span
-              className={`font-black tabular-nums leading-none select-none ${
-                isBust ? "text-state-bust" : "text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.15)]"
-              } text-[clamp(7rem,16vw,40rem)]`}
+              className={`font-normal tabular-nums leading-none select-none text-[clamp(7rem,20vw,45rem)] ${
+                isBust ? "text-state-bust" : ""
+              }`}
+              style={{ fontFamily: "Beon, sans-serif", ...(!isBust ? { color: "var(--color-game-accent)", textShadow: "0 0 20px var(--color-game-accent), 0 0 60px var(--color-game-accent), 0 0 100px var(--color-game-accent-glow), 0 0 150px var(--color-game-accent-glow)" } : {}) }}
             >
               {currentPlayer?.score ?? ""}
             </span>
@@ -262,20 +231,34 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, onEx
 
         </div>
 
-        {/* Right: history grid + Next Turn button */}
+        {/* Right: game info + history grid */}
         <div className="flex flex-col shrink-0 border-l border-border-default min-h-0" style={{ width: "clamp(12rem, 16vw, 22rem)" }}>
-
-          {/* Column headers */}
-          <div className="grid shrink-0 px-1 pt-1.5 pb-0.5" style={{ gridTemplateColumns: "1.75rem 1fr 1fr 1fr" }}>
-            <span />
-            {["D1","D2","D3"].map((h) => (
-              <span key={h} className="text-[clamp(0.6rem,1vw,1rem)] text-content-faint font-bold uppercase text-center">{h}</span>
-            ))}
+          {/* Game title + menu */}
+          <div className="shrink-0 px-2 py-2 flex items-center border-b border-border-default" style={{ paddingTop: "calc(var(--sat) + 0.5rem)" }}>
+            <div className="flex-1 flex flex-col items-center">
+              {setProgress && (
+                <span className="text-blue-400 text-[clamp(0.5rem,0.8vw,0.7rem)] font-bold uppercase tracking-widest">
+                  Leg {setProgress.currentLeg}/{setProgress.totalLegs}
+                </span>
+              )}
+              <span className="font-black text-[var(--color-game-accent)] text-[clamp(0.8rem,1.3vw,1.25rem)] tracking-widest tabular-nums">
+                {x01Options.startingScore}
+              </span>
+              <span className="text-zinc-600 text-[clamp(0.5rem,0.8vw,0.7rem)] uppercase tracking-widest">
+                {[
+                  x01Options.splitBull && "Split",
+                  x01Options.doubleIn && "DblIn",
+                  x01Options.doubleOut && "DblOut",
+                  x01Options.masterOut && "MstrOut",
+                ].filter(Boolean).join(" · ") || "Straight"}
+              </span>
+            </div>
+            <GameMenu onUndo={undoLastDart} undoDisabled={!!winner || isCurrentBot || undoStack.length === 0} onExit={onExit} />
           </div>
-          <div className="shrink-0 border-t border-border-default mx-1 mb-1" />
+
 
           {/* Rows: current round (live) + completed rounds newest-first */}
-          <div className="flex-1 flex flex-col min-h-0 overflow-hidden px-1 gap-1">
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden px-1 gap-1.5 pt-1">
             <HistoryRow
               roundNum={(currentPlayer?.rounds?.length ?? 0) + 1}
               darts={currentRoundDarts.map((thrown, j) => ({
@@ -307,43 +290,8 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, onEx
             })}
           </div>
 
-          {/* Next Turn button */}
-          <div className="relative shrink-0 p-2" style={{ height: "clamp(5rem, 12vh, 9rem)" }}>
-            {readyToSwitch && !winner && (
-              <span
-                className="absolute inset-2 rounded-xl opacity-20 animate-ping"
-                style={{ backgroundColor: "var(--color-game-accent)" }}
-              />
-            )}
-            {isCurrentBot ? (
-              <div className="w-full h-full rounded-xl bg-surface-raised border-2 border-purple-900 flex flex-col items-center justify-center gap-1 opacity-70">
-                <span className="text-state-bot text-[10px] uppercase tracking-widest font-black">CPU</span>
-                <span className="text-purple-600 text-base animate-pulse">···</span>
-              </div>
-            ) : (
-              <button
-                onClick={handleNextTurn}
-                disabled={!!winner}
-                className={`relative w-full h-full rounded-xl font-black text-[clamp(0.75rem,1.25vw,1.5rem)] uppercase tracking-widest transition-all duration-200 flex flex-col items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  readyToSwitch
-                    ? "text-[var(--color-game-accent-text)]"
-                    : "bg-surface-raised border-2 border-border-default text-content-faint"
-                }`}
-                style={readyToSwitch ? {
-                  backgroundColor: "var(--color-game-accent)",
-                  boxShadow: "var(--shadow-glow-md)",
-                } : undefined}
-              >
-                {readyToSwitch && isBust && (
-                  <span className="text-[10px] text-state-bust font-black uppercase">Bust</span>
-                )}
-                <span className="text-center leading-tight px-1">
-                  {readyToSwitch && nextPlayer ? nextPlayer.name : "Next"}
-                </span>
-                <span className="text-base">→</span>
-              </button>
-            )}
-          </div>
+          {/* Bot thinking indicator */}
+          {isCurrentBot && <BotThinkingIndicator skill={botSkills[currentPlayerIndex]!} />}
         </div>
       </div>
 
@@ -368,7 +316,13 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, onEx
               data-active={String(isActive)}
               style={i === 0 ? { paddingLeft: "var(--sal)" } : undefined}
             >
-              <span style={{ fontSize: textSizes.name }} className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
+              <span
+                style={{
+                  fontSize: textSizes.name,
+                  ...(botSkills[i] != null ? { fontFamily: "Beon, sans-serif", color: getBotCharacter(botSkills[i]!).color, textShadow: isActive ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}` : "none" } : {}),
+                }}
+                className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${botSkills[i] != null ? getBotCharacter(botSkills[i]!).animationClass : isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+              >
                 {player.name}
               </span>
               <span style={{ fontSize: textSizes.score }} className={`font-black tabular-nums leading-tight transition-colors duration-300 ${isActive ? "text-content-primary" : "text-content-muted"}`}>

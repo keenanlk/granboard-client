@@ -595,7 +595,7 @@ describe("undoLastDart", () => {
     expect(store().players[0].score).toBe(501);
   });
 
-  it("cross-turn: reverts to previous player when current turn has no darts", () => {
+  it("cross-turn: reverts step by step back to previous player", () => {
     store().startGame(
       { startingScore: 501, splitBull: false, doubleOut: false, masterOut: false, doubleIn: false },
       ["Alice", "Bob"],
@@ -603,12 +603,19 @@ describe("undoLastDart", () => {
     store().addDart(s20); // Alice: 481
     store().addDart(t20); // Alice: 421
     store().nextTurn();   // Bob's turn
-    // Bob hasn't thrown yet — undo should revert to Alice's turn
+    // Undo 1: back to Alice's turn with 2 darts (state before nextTurn)
     store().undoLastDart();
-    expect(store().currentPlayerIndex).toBe(0); // back to Alice
+    expect(store().currentPlayerIndex).toBe(0);
+    expect(store().currentRoundDarts).toHaveLength(2);
+    expect(store().players[0].score).toBe(421);
+    // Undo 2: back to Alice's turn with 1 dart
+    store().undoLastDart();
+    expect(store().currentRoundDarts).toHaveLength(1);
+    expect(store().players[0].score).toBe(481);
+    // Undo 3: back to initial state
+    store().undoLastDart();
     expect(store().currentRoundDarts).toHaveLength(0);
-    expect(store().players[0].score).toBe(501); // Alice's score restored
-    expect(store().players[0].rounds).toHaveLength(0); // round removed
+    expect(store().players[0].score).toBe(501);
     expect(store().players[0].totalDartsThrown).toBe(0);
   });
 
@@ -619,10 +626,16 @@ describe("undoLastDart", () => {
     );
     store().addDart(t20); // Alice: bust (20 restored)
     store().nextTurn();   // Bob's turn
-    store().undoLastDart(); // back to Alice
+    // Undo 1: back to Alice's busted state (before nextTurn)
+    store().undoLastDart();
     expect(store().currentPlayerIndex).toBe(0);
-    expect(store().players[0].score).toBe(20); // bust round: score = 0, restores to 20
-    expect(store().players[0].rounds).toHaveLength(0);
+    expect(store().players[0].score).toBe(20);
+    expect(store().isBust).toBe(true);
+    // Undo 2: back before the bust dart
+    store().undoLastDart();
+    expect(store().players[0].score).toBe(20);
+    expect(store().isBust).toBe(false);
+    expect(store().currentRoundDarts).toHaveLength(0);
   });
 
   it("restores double-in opened state on undo back past opening dart", () => {

@@ -1,33 +1,34 @@
 import type { ReactNode } from "react";
 import { TurnDelayOverlay } from "./TurnDelayOverlay.tsx";
-import { GameMenu } from "./GameMenu.tsx";
 
-interface GameShellProps {
+export interface GameShellProps {
   gameClass: "game-x01" | "game-cricket" | "game-highscore";
-  /** Center of the header (title, subtitle, etc.) */
-  title: ReactNode;
-  onExit: () => void;
-  onUndo: () => void;
-  undoDisabled: boolean;
+  title?: ReactNode;
+  onExit?: () => void;
+  onUndo?: () => void;
+  undoDisabled?: boolean;
   /** From useGameSession */
   isTransitioning: boolean;
   countdown: number;
   nextPlayerName?: string;
   /** Winner overlay, game-specific banners, award overlays, etc. */
   overlays?: ReactNode;
+  /** Floating next-turn button */
+  onNextTurn?: () => void;
+  showNextTurn?: boolean;
+  hasWinner?: boolean;
   children: ReactNode;
 }
 
 export function GameShell({
   gameClass,
-  title,
-  onExit,
-  onUndo,
-  undoDisabled,
   isTransitioning,
   countdown,
   nextPlayerName,
   overlays,
+  onNextTurn,
+  showNextTurn,
+  hasWinner,
   children,
 }: GameShellProps) {
   return (
@@ -42,22 +43,27 @@ export function GameShell({
       {/* Game-specific overlays: winner, award, playoff banner, etc. */}
       {overlays}
 
-      <header
-        className="flex items-center justify-between pb-3 bg-surface-sunken border-b-2 border-[var(--color-game-accent)] shrink-0"
-        style={{
-          paddingTop: "calc(var(--sat) + 0.75rem)",
-          paddingLeft: "calc(var(--sal) + 1.5rem)",
-          paddingRight: "1.5rem",
-        }}
-      >
-        <button onClick={onExit} className="btn-ghost w-16">
-          ← Exit
-        </button>
-        <div className="flex flex-col items-center">{title}</div>
-        <GameMenu onUndo={onUndo} undoDisabled={undoDisabled} />
-      </header>
 
       {children}
+
+      {/* Floating next-turn button — bottom right, only visible when ready */}
+      {showNextTurn && !hasWinner && !isTransitioning && onNextTurn && (
+        <button
+          onClick={onNextTurn}
+          className="fixed z-30 rounded-2xl font-black uppercase tracking-widest text-[var(--color-game-accent-text)] flex items-center justify-center gap-2 transition-all duration-200"
+          style={{
+            bottom: "calc(var(--sab) + clamp(1rem, 2vh, 1.5rem))",
+            right: "clamp(1rem, 2vw, 2rem)",
+            padding: "clamp(0.75rem, 1.5vh, 1.25rem) clamp(1.5rem, 3vw, 2.5rem)",
+            fontSize: "clamp(0.875rem, 1.5vw, 1.25rem)",
+            backgroundColor: "var(--color-game-accent)",
+            boxShadow: "var(--shadow-glow-lg), 0 4px 20px rgba(0,0,0,0.5)",
+          }}
+        >
+          <span>{nextPlayerName ?? "Next"}</span>
+          <span>→</span>
+        </button>
+      )}
     </div>
   );
 }

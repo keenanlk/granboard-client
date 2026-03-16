@@ -1,12 +1,17 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.nlc.darts",
+  appId: "com.keenankaufman.nlcdarts",
   appName: "NLC Darts",
   webDir: "dist",
   ios: {
     // Scroll is disabled — this is a fullscreen game UI
     scrollEnabled: false,
+  },
+  // DEV ONLY — remove before production build
+  server: {
+    url: "http://192.168.40.151:5173",
+    cleartext: true,
   },
   plugins: {
     BluetoothLe: {
