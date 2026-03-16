@@ -39,7 +39,7 @@ npm run sim -- --mode highscore --hs-rounds 8
 │              │   next_turn, open_numbers)            │
 ├──────────────┼──────────────────────────────────────┤
 │  Controllers │        LED / Sound Effects           │
-│  (input →    │  (ledEffects.ts, sounds.ts)          │
+│  (input →    │  (ledEffects.ts, soundEffects.ts)     │
 │   store +    │                                      │
 │   events)    │                                      │
 ├──────────────┴──────────────────────────────────────┤
@@ -102,6 +102,9 @@ Standard Cricket on targets 20, 19, 18, 17, 16, 15, and Bull.
 |--------|-------------|
 | `singleBull` | Both bull zones = 1 mark (on) vs inner = 2, outer = 1 (off) |
 | `roundLimit` | Max rounds before highest score wins (0 = unlimited, default 20) |
+| `cutThroat` | Cut-Throat mode: points go to opponents, lowest score wins |
+
+**Cut-Throat variant:** In Cut-Throat Cricket, the scoring model is inverted — extra marks beyond 3 add points to each opponent who hasn't closed that target, rather than to the thrower. The goal is to close all targets while keeping your own score as low as possible. The winner is the first player to close all 7 targets with the lowest (or tied-lowest) score.
 
 **Scoring rules:**
 - Marks cap at 3 per target
@@ -280,6 +283,8 @@ type GameEventMap = {
 - `open_numbers` — 20-byte persistent command (700ms delay after hit animation)
 - Remove-darts countdown — ring depletion animation
 
+**Sound effects** (`src/sound/soundEffects.ts`) listen on the same event bus, parallel to LED effects. For X01/High Score darts, sound is based on segment type (single, double, triple, bull). For Cricket darts, sound is based on `effectiveMarks` — the combined closing + scoring marks — so a triple that only closes 1 mark and scores 2 extras still plays the triple sound. Darts with zero effective marks (off-target or fully closed) play a plain hit sound.
+
 ## Database & Stats (`src/db/`)
 
 IndexedDB (database: `NLCDartsDB`) with two object stores:
@@ -340,6 +345,7 @@ src/
 │   └── highScoreEngine.ts  High Score rules & scoring
 ├── bot/              AI opponents
 │   ├── Bot.ts              Orchestrator class
+│   ├── botCharacters.ts    Named bot personalities & skill configs
 │   ├── throwSimulator.ts   Gaussian throw physics (Box-Muller)
 │   ├── x01Strategy.ts      X01 target picker
 │   ├── x01OutChart.ts      Soft-tip checkout lookup table
@@ -352,7 +358,11 @@ src/
 │   ├── GranboardLED.ts     LED command builders
 │   ├── ledEffects.ts       Event bus → LED side effects
 │   └── MockGranboard.ts    Test double
+├── sound/            Audio feedback
+│   ├── sounds.ts           Low-level audio playback
+│   └── soundEffects.ts     Event bus → sound side effects
 ├── store/            Zustand state management
+│   ├── createGameStore.ts       Shared store factory
 │   ├── useGameStore.ts          X01 state
 │   ├── useCricketStore.ts       Cricket state
 │   ├── useHighScoreStore.ts     High Score state
@@ -373,17 +383,46 @@ src/
 ├── lib/              Utilities
 │   ├── awards.ts              Award detection
 │   ├── GameLogger.ts          JSONL game logging
+│   ├── playerTextSizes.ts     Dynamic text sizing helpers
 │   ├── sessionPersistence.ts  localStorage save/load/clear
-│   └── sounds.ts              Sound effects
+│   └── setTypes.ts            Set game type definitions
 ├── screens/          Game screen components
+│   ├── HomeScreen.tsx
+│   ├── GameSetupScreen.tsx
+│   ├── SetSetupScreen.tsx
+│   ├── GameScreen.tsx
+│   ├── CricketScreen.tsx
+│   ├── HighScoreScreen.tsx
+│   ├── PracticeScreen.tsx
+│   └── PlayersScreen.tsx
 ├── components/       Reusable UI components
+│   ├── AwardOverlay.tsx
+│   ├── BotSelectOverlay.tsx
+│   ├── BotThinkingIndicator.tsx
+│   ├── CricketMarksOverlay.tsx
+│   ├── DevBoard.tsx
+│   ├── GameMenu.tsx
+│   ├── GameShell.tsx
+│   ├── HistoryRow.tsx
+│   ├── PlayerSelectStep.tsx
+│   ├── ResultsOverlay.tsx
+│   └── TurnDelayOverlay.tsx
 ├── hooks/            Custom React hooks
+│   ├── useAwardDetection.ts
+│   ├── useBoardWiring.ts
+│   ├── useBotTurn.ts
+│   ├── useGameSession.ts
+│   └── useTurnDelay.ts
 └── App.tsx           Root component
 
 scripts/
-└── botSim.ts         Bot skill calibration CLI
+├── botSim.ts         Bot skill calibration CLI
+└── buildIos.mjs      iOS build helper
 
 docs/
+├── index.html        Docs site landing page
+├── privacy.html      Privacy policy
+├── support.html      Support page
 └── game-rules/       Authoritative rule documents
 ```
 
