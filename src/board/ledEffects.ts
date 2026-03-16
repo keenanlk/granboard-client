@@ -96,9 +96,12 @@ gameEventBus.on("game_start", () => {
   startSweep();
 });
 
-gameEventBus.on("dart_hit", ({ segment }) => {
+gameEventBus.on("dart_hit", ({ segment, effectiveMarks }) => {
   const board = useGranboardStore.getState().board;
   if (!board) return;
+
+  // In cricket, skip LED effects for darts that don't score or earn marks
+  if (effectiveMarks === 0) return;
 
   if (segment.Section === SegmentSection.BULL) {
     void board.sendCommand(buildBlinkCommand(Colors.LIGHT_BLUE, 0x0a));

@@ -5,6 +5,8 @@ import Capacitor
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Keep the screen awake during gameplay
+        application.isIdleTimerDisabled = true
         return true
     }
 
