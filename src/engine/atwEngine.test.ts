@@ -410,7 +410,7 @@ describe("full sequence", () => {
     for (let i = 0; i < 20; i++) {
       const targetNum = ATW_SEQUENCE[i];
       // Create the segment for the current target
-      const segId = (targetNum - 1) * 4; // INNER_N for number N
+      const segId = ((targetNum - 1) * 4) as SegmentID; // INNER_N for number N
       addDart(CreateSegment(segId));
       nextTurn();
     }

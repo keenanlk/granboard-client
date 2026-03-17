@@ -11,7 +11,7 @@
     "cap:ios": "npm run cap:sync && cap open ios",
     "dev:ios": "cap run ios --livereload --external",
     "build:ios": "node scripts/buildIos.mjs",
-    "lint": "eslint . && tsc && prettier --check .",
+    "lint": "eslint . && tsc -b && prettier --check .",
     "format": "prettier --write .",
     "test": "vitest run",
     "preview": "vite preview",
