@@ -1,6 +1,6 @@
 interface PracticeScreenProps {
   onBack: () => void;
-  onSelectGame: (game: "highscore" | "atw") => void;
+  onSelectGame: (game: "highscore" | "atw" | "tictactoe") => void;
 }
 
 const PRACTICE_GAMES = [
@@ -17,6 +17,13 @@ const PRACTICE_GAMES = [
     description: "Hit 1–20 then Bull",
     color: "#38bdf8",
     glow: "rgba(56, 189, 248, 0.5)",
+  },
+  {
+    id: "tictactoe" as const,
+    name: "Tic Tac Toe",
+    description: "Claim 3 in a row",
+    color: "#fb923c",
+    glow: "rgba(251, 146, 60, 0.5)",
   },
 ];
 

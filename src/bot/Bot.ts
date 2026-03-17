@@ -3,6 +3,7 @@ import { x01PickTarget } from "./x01Strategy.ts";
 import { cricketPickTarget } from "./cricketStrategy.ts";
 import { highScorePickTarget } from "./highScoreStrategy.ts";
 import { atwPickTarget } from "./atwStrategy.ts";
+import { ticTacToePickTarget } from "./ticTacToeStrategy.ts";
 import type { SegmentID } from "../board/Dartboard.ts";
 import type { X01Options } from "../store/useGameStore.ts";
 import type { CricketPlayer, CricketTarget } from "../store/useCricketStore.ts";
@@ -89,6 +90,30 @@ export class Bot {
     onThrow?: (target: SegmentID, actual: SegmentID) => void,
   ): SegmentID {
     const target = atwPickTarget(currentTarget);
+    const actual = simulateThrow(target, this.sigma);
+    onThrow?.(target, actual);
+    return actual;
+  }
+
+  /**
+   * Pick a target for Tic Tac Toe and simulate a throw.
+   * Returns the SegmentID where the dart actually lands (may miss target).
+   */
+  throwTicTacToe(
+    grid: number[],
+    owner: (0 | 1 | null)[],
+    myIndex: number,
+    myMarks: number[],
+    opponentMarks: number[],
+    onThrow?: (target: SegmentID, actual: SegmentID) => void,
+  ): SegmentID {
+    const target = ticTacToePickTarget(
+      grid,
+      owner,
+      myIndex,
+      myMarks,
+      opponentMarks,
+    );
     const actual = simulateThrow(target, this.sigma);
     onThrow?.(target, actual);
     return actual;

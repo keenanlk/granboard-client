@@ -361,33 +361,37 @@ export function CricketScreen({
         className="flex-1 flex min-h-0"
         style={{ paddingLeft: "var(--sal)" }}
       >
-        {/* Marks scoreboard — column-based layout with continuous borders */}
+        {/* Marks scoreboard — single grid with explicit rows for alignment */}
         <div
           className="flex-1 min-h-0 min-w-0 grid"
           style={{
             gridTemplateColumns: `repeat(${leftPlayers.length}, minmax(0, 1fr)) ${numColWidth} repeat(${rightPlayers.length}, minmax(0, 1fr))`,
+            gridTemplateRows: `repeat(${CRICKET_TARGETS.length}, minmax(0, 1fr))`,
             maxWidth: `${(n + 1) * 5}rem`,
             margin: "0 auto",
           }}
         >
-          {/* Left side player columns — marks aligned right toward center */}
-          {leftIndices.map((pi) => (
-            <div
-              key={`left-${pi}`}
-              className="flex flex-col min-h-0 border-r border-solid transition-colors duration-200"
-              style={{
-                borderColor:
-                  pi === currentPlayerIndex
-                    ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
-                    : "var(--color-border-subtle)",
-              }}
-            >
-              {CRICKET_TARGETS.map((target) => {
-                const allClosed = isNumberClosedByAll(players, target);
-                return (
+          {/* Render all cells row by row so grid alignment is guaranteed */}
+          {CRICKET_TARGETS.map((target, row) => {
+            const allClosed = isNumberClosedByAll(players, target);
+            const openForCurrent =
+              !allClosed && (currentPlayer?.marks[target] ?? 0) >= 3;
+            const rowOpacity = allClosed ? "opacity-40" : "";
+
+            return (
+              <div key={target} className="contents">
+                {/* Left player marks */}
+                {leftIndices.map((pi) => (
                   <div
-                    key={target}
-                    className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}
+                    key={`left-${pi}-${target}`}
+                    className={`flex justify-center items-center border-r border-solid transition-all duration-200 ${rowOpacity}`}
+                    style={{
+                      gridRow: row + 1,
+                      borderColor:
+                        pi === currentPlayerIndex
+                          ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
+                          : "var(--color-border-subtle)",
+                    }}
                   >
                     <MarksIcon
                       marks={players[pi]?.marks[target] ?? 0}
@@ -395,24 +399,15 @@ export function CricketScreen({
                       sizeClass={iconSize}
                     />
                   </div>
-                );
-              })}
-            </div>
-          ))}
+                ))}
 
-          {/* Center — target labels */}
-          <div className="flex flex-col min-h-0">
-            {CRICKET_TARGETS.map((target) => {
-              const allClosed = isNumberClosedByAll(players, target);
-              const openForCurrent =
-                !allClosed && (currentPlayer?.marks[target] ?? 0) >= 3;
-              return (
+                {/* Center target label */}
                 <div
-                  key={target}
-                  className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}
+                  className={`flex justify-center items-center transition-opacity duration-200 ${rowOpacity}`}
+                  style={{ gridRow: row + 1 }}
                 >
                   <span
-                    className={`font-normal tabular-nums leading-none whitespace-nowrap text-[clamp(1rem,5vh,3rem)] transition-colors duration-200`}
+                    className="font-normal tabular-nums leading-none whitespace-nowrap text-[clamp(1rem,5vh,3rem)] transition-colors duration-200"
                     style={{
                       fontFamily: "Beon, sans-serif",
                       color:
@@ -429,28 +424,19 @@ export function CricketScreen({
                     {targetLabel(target)}
                   </span>
                 </div>
-              );
-            })}
-          </div>
 
-          {/* Right side player columns — marks aligned left toward center */}
-          {rightIndices.map((pi) => (
-            <div
-              key={`right-${pi}`}
-              className="flex flex-col min-h-0 border-l border-solid transition-colors duration-200"
-              style={{
-                borderColor:
-                  pi === currentPlayerIndex
-                    ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
-                    : "var(--color-border-subtle)",
-              }}
-            >
-              {CRICKET_TARGETS.map((target) => {
-                const allClosed = isNumberClosedByAll(players, target);
-                return (
+                {/* Right player marks */}
+                {rightIndices.map((pi) => (
                   <div
-                    key={target}
-                    className={`flex-1 flex justify-center items-center transition-opacity duration-200 ${allClosed ? "opacity-40" : ""}`}
+                    key={`right-${pi}-${target}`}
+                    className={`flex justify-center items-center border-l border-solid transition-all duration-200 ${rowOpacity}`}
+                    style={{
+                      gridRow: row + 1,
+                      borderColor:
+                        pi === currentPlayerIndex
+                          ? "color-mix(in oklch, var(--color-game-accent) 70%, transparent)"
+                          : "var(--color-border-subtle)",
+                    }}
                   >
                     <MarksIcon
                       marks={players[pi]?.marks[target] ?? 0}
@@ -458,10 +444,10 @@ export function CricketScreen({
                       sizeClass={iconSize}
                     />
                   </div>
-                );
-              })}
-            </div>
-          ))}
+                ))}
+              </div>
+            );
+          })}
         </div>
 
         {/* Right: game info + round history — wider when fewer players */}

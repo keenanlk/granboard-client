@@ -21,6 +21,7 @@ Do not invent rules from memory when a rule file exists.
 
 - Rules docs: `/docs/game-rules`
 - Adding a new game mode: `/docs/adding-a-game-mode.md` — follow this checklist when creating a new game
+- Board types: `src/board/Dartboard.ts` — `Segment` interface uses PascalCase properties (Value, ShortName, Type, etc.)
 
 ## Linting
 

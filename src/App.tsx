@@ -5,6 +5,7 @@ import { GameScreen } from "./screens/GameScreen.tsx";
 import { CricketScreen } from "./screens/CricketScreen.tsx";
 import { HighScoreScreen } from "./screens/HighScoreScreen.tsx";
 import { ATWScreen } from "./screens/ATWScreen.tsx";
+import { TicTacToeScreen } from "./screens/TicTacToeScreen.tsx";
 import { PlayersScreen } from "./screens/PlayersScreen.tsx";
 import { PracticeScreen } from "./screens/PracticeScreen.tsx";
 import { SetSetupScreen } from "./screens/SetSetupScreen.tsx";
@@ -15,6 +16,7 @@ import {
 } from "./store/useCricketStore.ts";
 import type { HighScoreOptions } from "./store/useHighScoreStore.ts";
 import type { ATWOptions } from "./store/useATWStore.ts";
+import type { TicTacToeOptions } from "./store/useTicTacToeStore.ts";
 import type { BotSkill } from "./bot/Bot.ts";
 import { useGranboardStore } from "./store/useGranboardStore.ts";
 import { useBoardWiring } from "./hooks/useBoardWiring.ts";
@@ -38,7 +40,10 @@ type Screen =
   | { name: "home" }
   | { name: "players" }
   | { name: "practice" }
-  | { name: "setup"; game: "x01" | "cricket" | "highscore" | "atw" }
+  | {
+      name: "setup";
+      game: "x01" | "cricket" | "highscore" | "atw" | "tictactoe";
+    }
   | { name: "set-setup" }
   | {
       name: "game";
@@ -71,6 +76,14 @@ type Screen =
       playerIds: (string | null)[];
       botSkills: (BotSkill | null)[];
       restoredState?: unknown;
+    }
+  | {
+      name: "tictactoe";
+      options: TicTacToeOptions;
+      playerNames: string[];
+      playerIds: (string | null)[];
+      botSkills: (BotSkill | null)[];
+      restoredState?: unknown;
     };
 
 function formatTimeAgo(savedAt: number): string {
@@ -98,7 +111,9 @@ function ResumePrompt({
         ? "Cricket"
         : session.gameType === "atw"
           ? "Around the World"
-          : "High Score";
+          : session.gameType === "tictactoe"
+            ? "Tic Tac Toe"
+            : "High Score";
   const playerList = session.playerNames.join(", ");
   const [timeLabel] = useState(() => formatTimeAgo(session.savedAt));
 
@@ -154,6 +169,8 @@ function App() {
     } else if (screen.name === "highscore") {
       setScreen({ ...screen, restoredState: undefined });
     } else if (screen.name === "atw") {
+      setScreen({ ...screen, restoredState: undefined });
+    } else if (screen.name === "tictactoe") {
       setScreen({ ...screen, restoredState: undefined });
     }
     setRematchKey((k) => k + 1);
@@ -375,6 +392,15 @@ function App() {
         botSkills,
         restoredState: gameState,
       });
+    } else if (gameType === "tictactoe") {
+      setScreen({
+        name: "tictactoe",
+        options: options as TicTacToeOptions,
+        playerNames,
+        playerIds,
+        botSkills,
+        restoredState: gameState,
+      });
     }
     setPendingResume(null);
   }
@@ -471,6 +497,21 @@ function App() {
     );
   }
 
+  if (screen.name === "tictactoe") {
+    return (
+      <TicTacToeScreen
+        key={rematchKey}
+        options={screen.options}
+        playerNames={screen.playerNames}
+        playerIds={screen.playerIds}
+        botSkills={screen.botSkills}
+        restoredState={screen.restoredState}
+        onExit={() => setScreen({ name: "home" })}
+        onRematch={handleRematch}
+      />
+    );
+  }
+
   if (screen.name === "setup") {
     return (
       <GameSetupScreen
@@ -484,6 +525,7 @@ function App() {
           cricketOptions,
           highScoreOptions,
           atwOptions,
+          tictactoeOptions,
         ) => {
           if (screen.game === "x01" && x01Options) {
             setScreen({
@@ -513,6 +555,14 @@ function App() {
             setScreen({
               name: "atw",
               options: atwOptions,
+              playerNames,
+              playerIds,
+              botSkills,
+            });
+          } else if (screen.game === "tictactoe" && tictactoeOptions) {
+            setScreen({
+              name: "tictactoe",
+              options: tictactoeOptions,
               playerNames,
               playerIds,
               botSkills,

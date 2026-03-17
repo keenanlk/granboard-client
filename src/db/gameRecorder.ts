@@ -10,13 +10,13 @@ export type { RecordedDart };
 export class GameRecorder {
   private rounds: RoundRecord[] = [];
   private roundCounters: number[];
-  private gameType: "x01" | "cricket" | "highscore" | "atw";
+  private gameType: "x01" | "cricket" | "highscore" | "atw" | "tictactoe";
   private playerNames: string[];
   private playerIds: (string | null)[];
   private options: unknown;
 
   constructor(
-    gameType: "x01" | "cricket" | "highscore" | "atw",
+    gameType: "x01" | "cricket" | "highscore" | "atw" | "tictactoe",
     playerNames: string[],
     playerIds: (string | null)[],
     options: unknown,

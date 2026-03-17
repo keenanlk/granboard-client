@@ -94,11 +94,13 @@ export function ResultsOverlay({
 
   const headline = isSetComplete
     ? "Set Winner!"
-    : isTie
-      ? "It's a Tie!"
-      : isInSet
-        ? "Leg Winner"
-        : "Winner";
+    : winners.length === 0
+      ? "Cat's Game"
+      : isTie
+        ? "It's a Tie!"
+        : isInSet
+          ? "Leg Winner"
+          : "Winner";
 
   return (
     <div className="absolute inset-0 z-10 bg-zinc-950 flex flex-col overflow-hidden">

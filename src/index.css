@@ -87,12 +87,20 @@ body,
   --color-game-accent-glow: rgba(56, 189, 248, 0.5);
   --color-game-accent-text: #fff;
 }
+.game-tictactoe {
+  --sal: 0px;
+  --color-game-accent: theme(--color-orange-400);
+  --color-game-accent-dim: theme(--color-orange-950);
+  --color-game-accent-glow: rgba(251, 146, 60, 0.5);
+  --color-game-accent-text: #fff;
+}
 
 /* Grid background for game screens — fades out toward center */
 .game-x01,
 .game-cricket,
 .game-highscore,
-.game-atw {
+.game-atw,
+.game-tictactoe {
   background-image:
     radial-gradient(
       ellipse at center,

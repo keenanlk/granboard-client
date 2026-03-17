@@ -1,8 +1,19 @@
-# NLC Darts
+<p align="center">
+  <img src="public/nlc-darts-512.png" alt="NLC Darts" width="120" />
+</p>
 
-A custom scoring app for GranBoard electronic dartboards. Supports X01, Cricket, and High Score with BLE connectivity, LED effects, bot opponents, and player statistics.
+<h1 align="center">NLC Darts</h1>
 
-**Stack:** Vite + React + TypeScript + Tailwind CSS v4 + Zustand + Capacitor (iOS/web)
+<p align="center">
+  A custom scoring app for GranBoard electronic dartboards.<br/>
+  Supports X01, Cricket, High Score, Around the World, and Tic Tac Toe with BLE connectivity, LED effects, bot opponents, and player statistics.
+</p>
+
+<p align="center">
+  <strong>Vite</strong> &middot; <strong>React</strong> &middot; <strong>TypeScript</strong> &middot; <strong>Tailwind CSS v4</strong> &middot; <strong>Zustand</strong> &middot; <strong>Capacitor</strong>
+</p>
+
+---
 
 ## Getting Started
 
@@ -36,7 +47,7 @@ npm run sim -- --mode highscore --hs-rounds 8
 | **Controllers**       | Board input → store updates + event emission         |
 | **Event Bus**         | dart_hit, bust, game_won, next_turn, open_numbers    |
 | **Side Effects**      | LED animations, sound effects                        |
-| **Pure Game Engines** | x01Engine, cricketEngine, highScoreEngine, atwEngine |
+| **Pure Game Engines** | x01Engine, cricketEngine, highScoreEngine, atwEngine, ticTacToeEngine |
 | **Board / BLE Layer** | Granboard, Dartboard, GranboardLED                   |
 | **Bot AI System**     | throwSimulator, strategies, BoardGeometry            |
 | **Persistence**       | IndexedDB (players, game sessions, stats)            |
@@ -241,6 +252,7 @@ Each game mode has a Zustand store that wraps its pure engine:
 | `useCricketStore`       | `cricketEngine`   | Cricket game state + actions          |
 | `useHighScoreStore`     | `highScoreEngine` | High Score game state + actions       |
 | `useATWStore`           | `atwEngine`       | Around the World game state + actions |
+| `useTicTacToeStore`     | `ticTacToeEngine`  | Tic Tac Toe game state + actions      |
 | `useGranboardStore`     | —                 | BLE connection state                  |
 | `usePlayerProfileStore` | —                 | Player profiles (IndexedDB-backed)    |
 
@@ -330,97 +342,22 @@ npm run sim -- --mode highscore --hs-rounds 8  # High Score, 8 rounds
 
 ```
 src/
-├── engine/           Pure game logic (no dependencies on React/stores)
-│   ├── GameEngine.ts       Interface contract
-│   ├── x01Engine.ts        X01 rules & scoring
-│   ├── cricketEngine.ts    Cricket rules & scoring
-│   ├── highScoreEngine.ts  High Score rules & scoring
-│   └── atwEngine.ts        Around the World rules & scoring
-├── bot/              AI opponents
-│   ├── Bot.ts              Orchestrator class
-│   ├── botCharacters.ts    Named bot personalities & skill configs
-│   ├── throwSimulator.ts   Gaussian throw physics (Box-Muller)
-│   ├── x01Strategy.ts      X01 target picker
-│   ├── x01OutChart.ts      Soft-tip checkout lookup table
-│   ├── cricketStrategy.ts  Cricket target picker (3-mode weighted)
-│   ├── highScoreStrategy.ts
-│   └── atwStrategy.ts      Around the World target picker
-├── board/            Hardware abstraction
-│   ├── Dartboard.ts        Segment ID/type/section constants
-│   ├── BoardGeometry.ts    Physical layout, coordinate mapping
-│   ├── Granboard.ts        BLE connection (Capacitor + Web Bluetooth)
-│   ├── GranboardLED.ts     LED command builders
-│   ├── ledEffects.ts       Event bus → LED side effects
-│   └── MockGranboard.ts    Test double
-├── sound/            Audio feedback
-│   ├── sounds.ts           Low-level audio playback
-│   └── soundEffects.ts     Event bus → sound side effects
-├── store/            Zustand state management
-│   ├── createGameStore.ts       Shared store factory
-│   ├── useGameStore.ts          X01 state
-│   ├── useCricketStore.ts       Cricket state
-│   ├── useHighScoreStore.ts     High Score state
-│   ├── useATWStore.ts           Around the World state
-│   ├── useGranboardStore.ts     BLE connection state
-│   └── usePlayerProfileStore.ts Player profiles
-├── controllers/      Game input → store + events
-│   ├── GameController.ts        Interface & registry
-│   ├── X01Controller.ts
-│   ├── CricketController.ts
-│   ├── HighScoreController.ts
-│   └── ATWController.ts
-├── events/           Typed event system
-│   ├── GameEvents.ts        Event type definitions
-│   └── gameEventBus.ts      Event emitter instance
-├── db/               IndexedDB persistence
-│   ├── db.ts               Schema & CRUD
-│   ├── gameRecorder.ts     Session recording
-│   └── playerStats.ts      Statistics computation
-├── lib/              Utilities
-│   ├── awards.ts              Award detection
-│   ├── GameLogger.ts          JSONL game logging
-│   ├── playerTextSizes.ts     Dynamic text sizing helpers
-│   ├── sessionPersistence.ts  localStorage save/load/clear
-│   └── setTypes.ts            Set game type definitions
-├── screens/          Game screen components
-│   ├── HomeScreen.tsx
-│   ├── GameSetupScreen.tsx
-│   ├── SetSetupScreen.tsx
-│   ├── GameScreen.tsx
-│   ├── CricketScreen.tsx
-│   ├── HighScoreScreen.tsx
-│   ├── ATWScreen.tsx
-│   ├── PracticeScreen.tsx
-│   └── PlayersScreen.tsx
-├── components/       Reusable UI components
-│   ├── AwardOverlay.tsx
-│   ├── BotSelectOverlay.tsx
-│   ├── BotThinkingIndicator.tsx
-│   ├── CricketMarksOverlay.tsx
-│   ├── DevBoard.tsx
-│   ├── GameMenu.tsx
-│   ├── GameShell.tsx
-│   ├── HistoryRow.tsx
-│   ├── PlayerSelectStep.tsx
-│   ├── ResultsOverlay.tsx
-│   └── TurnDelayOverlay.tsx
-├── hooks/            Custom React hooks
-│   ├── useAwardDetection.ts
-│   ├── useBoardWiring.ts
-│   ├── useBotTurn.ts
-│   ├── useGameSession.ts
-│   └── useTurnDelay.ts
-└── App.tsx           Root component
+├── engine/        Pure game logic — one per game mode + shared interface
+├── bot/           AI opponents — throw simulator, strategies, characters
+├── board/         Hardware — BLE connection, segment encoding, LED commands
+├── sound/         Audio feedback via event bus
+├── store/         Zustand stores — one per game mode + BLE + player profiles
+├── controllers/   Board input → store updates + event emission
+├── events/        Typed event bus (dart_hit, bust, game_won, etc.)
+├── db/            IndexedDB persistence — players, game sessions, stats
+├── lib/           Utilities — awards, session persistence, text sizing
+├── screens/       Full-page game screen components
+├── components/    Reusable UI (overlays, menus, player strip)
+├── hooks/         Custom React hooks (bot turns, board wiring, sessions)
+└── App.tsx        Root component + routing
 
-scripts/
-├── botSim.ts         Bot skill calibration CLI
-└── buildIos.mjs      iOS build helper
-
-docs/
-├── index.html        Docs site landing page
-├── privacy.html      Privacy policy
-├── support.html      Support page
-└── game-rules/       Authoritative rule documents
+scripts/           Bot simulator CLI + iOS build helper
+docs/              Landing page, privacy policy, game rule documents
 ```
 
 ## Game Rules

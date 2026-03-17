@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { DEFAULT_X01_OPTIONS, type X01Options } from "../store/useGameStore.ts";
 import {
   DEFAULT_CRICKET_OPTIONS,
@@ -10,6 +10,10 @@ import {
 } from "../store/useHighScoreStore.ts";
 import { DEFAULT_ATW_OPTIONS, type ATWOptions } from "../store/useATWStore.ts";
 import {
+  DEFAULT_TICTACTOE_OPTIONS,
+  type TicTacToeOptions,
+} from "../store/useTicTacToeStore.ts";
+import {
   PlayerSelectStep,
   BotSkill,
   type RosterEntry,
@@ -19,7 +23,7 @@ import type { BotSkill as BotSkillType } from "../bot/Bot.ts";
 export type { BotSkillType };
 
 interface GameSetupScreenProps {
-  game: "x01" | "cricket" | "highscore" | "atw";
+  game: "x01" | "cricket" | "highscore" | "atw" | "tictactoe";
   onStart: (
     players: string[],
     playerIds: (string | null)[],
@@ -28,6 +32,7 @@ interface GameSetupScreenProps {
     cricketOptions?: CricketOptions,
     highScoreOptions?: HighScoreOptions,
     atwOptions?: ATWOptions,
+    tictactoeOptions?: TicTacToeOptions,
   ) => void;
   onBack: () => void;
 }
@@ -35,25 +40,94 @@ interface GameSetupScreenProps {
 const ROUND_OPTIONS = [8, 10, 15] as const;
 const CRICKET_ROUND_OPTIONS = [15, 20, 25, 0] as const;
 const ATW_ROUND_OPTIONS = [0, 15, 20, 25] as const;
+const TTT_ROUND_OPTIONS = [15, 20, 25, 0] as const;
+
+// ---------------------------------------------------------------------------
+// Persist last-used setup per game mode
+// ---------------------------------------------------------------------------
+
+const SETUP_STORAGE_KEY = "nlc-last-setup";
+
+interface PersistedSetup {
+  roster: RosterEntry[];
+  x01Options: X01Options;
+  cricketOptions: CricketOptions;
+  highScoreOptions: HighScoreOptions;
+  atwOptions: ATWOptions;
+  tttOptions: TicTacToeOptions;
+}
+
+function loadLastSetup(): Partial<PersistedSetup> | null {
+  try {
+    const raw = localStorage.getItem(SETUP_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as Partial<PersistedSetup>;
+  } catch {
+    return null;
+  }
+}
+
+function saveLastSetup(setup: PersistedSetup): void {
+  try {
+    localStorage.setItem(SETUP_STORAGE_KEY, JSON.stringify(setup));
+  } catch {
+    // Silently fail
+  }
+}
+
+const DEFAULT_ROSTER: RosterEntry[] = [
+  { id: null, name: "Player 1" },
+  { id: null, name: "Player 2" },
+];
 
 export function GameSetupScreen({
   game,
   onStart,
   onBack,
 }: GameSetupScreenProps) {
+  const [saved] = useState(() => loadLastSetup());
   const [step, setStep] = useState<1 | 2>(1);
-  const [roster, setRoster] = useState<RosterEntry[]>([
-    { id: null, name: "Player 1" },
-    { id: null, name: "Player 2" },
-  ]);
-  const [x01Options, setX01Options] = useState<X01Options>(DEFAULT_X01_OPTIONS);
+  const [roster, setRoster] = useState<RosterEntry[]>(
+    saved?.roster ?? DEFAULT_ROSTER,
+  );
+  const [x01Options, setX01Options] = useState<X01Options>(
+    saved?.x01Options ?? DEFAULT_X01_OPTIONS,
+  );
   const [cricketOptions, setCricketOptions] = useState<CricketOptions>(
-    DEFAULT_CRICKET_OPTIONS,
+    saved?.cricketOptions ?? DEFAULT_CRICKET_OPTIONS,
   );
   const [highScoreOptions, setHighScoreOptions] = useState<HighScoreOptions>(
-    DEFAULT_HIGHSCORE_OPTIONS,
+    saved?.highScoreOptions ?? DEFAULT_HIGHSCORE_OPTIONS,
   );
-  const [atwOptions, setAtwOptions] = useState<ATWOptions>(DEFAULT_ATW_OPTIONS);
+  const [atwOptions, setAtwOptions] = useState<ATWOptions>(
+    saved?.atwOptions ?? DEFAULT_ATW_OPTIONS,
+  );
+  const [tttOptions, setTttOptions] = useState<TicTacToeOptions>(
+    saved?.tttOptions ?? DEFAULT_TICTACTOE_OPTIONS,
+  );
+
+  const persistAndStart = useCallback(
+    (...args: Parameters<typeof onStart>) => {
+      saveLastSetup({
+        roster,
+        x01Options,
+        cricketOptions,
+        highScoreOptions,
+        atwOptions,
+        tttOptions,
+      });
+      onStart(...args);
+    },
+    [
+      roster,
+      x01Options,
+      cricketOptions,
+      highScoreOptions,
+      atwOptions,
+      tttOptions,
+      onStart,
+    ],
+  );
 
   const setX01Option = <K extends keyof X01Options>(
     key: K,
@@ -74,7 +148,9 @@ export function GameSetupScreen({
         ? "Cricket"
         : game === "atw"
           ? "Around the World"
-          : "High Score";
+          : game === "tictactoe"
+            ? "Tic Tac Toe"
+            : "High Score";
   const gameClass =
     game === "x01"
       ? "game-x01"
@@ -82,7 +158,9 @@ export function GameSetupScreen({
         ? "game-cricket"
         : game === "atw"
           ? "game-atw"
-          : "game-highscore";
+          : game === "tictactoe"
+            ? "game-tictactoe"
+            : "game-highscore";
 
   const handleBack = () => (step === 2 ? setStep(1) : onBack());
 
@@ -335,6 +413,39 @@ export function GameSetupScreen({
               </div>
             )}
 
+            {game === "tictactoe" && (
+              <div
+                className="flex gap-3 w-full justify-center"
+                style={{ maxHeight: "min(100%, 320px)" }}
+              >
+                <button
+                  onClick={() => {
+                    const idx = TTT_ROUND_OPTIONS.indexOf(
+                      tttOptions.roundLimit as (typeof TTT_ROUND_OPTIONS)[number],
+                    );
+                    const next =
+                      TTT_ROUND_OPTIONS[(idx + 1) % TTT_ROUND_OPTIONS.length];
+                    setTttOptions((prev) => ({
+                      ...prev,
+                      roundLimit: next,
+                    }));
+                  }}
+                  className="option-card min-h-[80px] max-h-[160px] flex-1 max-w-xs"
+                  data-active="true"
+                >
+                  <span className="font-black text-2xl text-[var(--color-game-accent)]">
+                    {tttOptions.roundLimit === 0 ? "∞" : tttOptions.roundLimit}
+                  </span>
+                  <span className="text-sm font-bold text-center text-content-primary">
+                    {tttOptions.roundLimit === 0 ? "No Limit" : "Round Limit"}
+                  </span>
+                  <span className="text-xs text-content-muted text-center leading-tight">
+                    Tap to change
+                  </span>
+                </button>
+              </div>
+            )}
+
             {game === "atw" && (
               <div
                 className="flex gap-3 w-full justify-center"
@@ -403,7 +514,7 @@ export function GameSetupScreen({
                   <button
                     key={score}
                     onClick={() =>
-                      onStart(
+                      persistAndStart(
                         roster.map((r) => r.name),
                         roster.map((r) => r.id),
                         roster.map((r) =>
@@ -425,7 +536,7 @@ export function GameSetupScreen({
             ) : game === "cricket" ? (
               <button
                 onClick={() =>
-                  onStart(
+                  persistAndStart(
                     roster.map((r) => r.name),
                     roster.map((r) => r.id),
                     roster.map((r) =>
@@ -445,7 +556,7 @@ export function GameSetupScreen({
             ) : game === "highscore" ? (
               <button
                 onClick={() =>
-                  onStart(
+                  persistAndStart(
                     roster.map((r) => r.name),
                     roster.map((r) => r.id),
                     roster.map((r) =>
@@ -461,10 +572,10 @@ export function GameSetupScreen({
               >
                 Start — {highScoreOptions.rounds} Rounds
               </button>
-            ) : (
+            ) : game === "atw" ? (
               <button
                 onClick={() =>
-                  onStart(
+                  persistAndStart(
                     roster.map((r) => r.name),
                     roster.map((r) => r.id),
                     roster.map((r) =>
@@ -482,6 +593,30 @@ export function GameSetupScreen({
                 Start ATW
                 {atwOptions.roundLimit > 0
                   ? ` — ${atwOptions.roundLimit} Rounds`
+                  : ""}
+              </button>
+            ) : (
+              <button
+                onClick={() =>
+                  persistAndStart(
+                    roster.map((r) => r.name),
+                    roster.map((r) => r.id),
+                    roster.map((r) =>
+                      r.isBot ? (r.botSkill ?? BotSkill.Intermediate) : null,
+                    ),
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    tttOptions,
+                  )
+                }
+                disabled={roster.length === 0}
+                className="btn-primary rounded-2xl text-2xl"
+              >
+                Start Tic Tac Toe
+                {tttOptions.roundLimit > 0
+                  ? ` — ${tttOptions.roundLimit} Rounds`
                   : ""}
               </button>
             )}

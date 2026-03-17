@@ -27,7 +27,7 @@ export interface RoundRecord {
 
 export interface GameSessionRecord {
   id: string;
-  gameType: "x01" | "cricket" | "highscore" | "atw";
+  gameType: "x01" | "cricket" | "highscore" | "atw" | "tictactoe";
   playedAt: number;
   options: unknown;
   participants: {

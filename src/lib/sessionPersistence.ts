@@ -2,7 +2,7 @@ import type { BotSkill } from "../bot/Bot.ts";
 import type { SetConfig, LegResult } from "./setTypes.ts";
 
 export interface PersistedSession {
-  gameType: "x01" | "cricket" | "highscore" | "atw";
+  gameType: "x01" | "cricket" | "highscore" | "atw" | "tictactoe";
   options: unknown;
   playerNames: string[];
   playerIds: (string | null)[];
