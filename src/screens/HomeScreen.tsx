@@ -38,6 +38,7 @@ export function HomeScreen({
   const { status, errorMessage, connect, disconnect, connectMock } =
     useGranboardStore();
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressFired = useRef(false);
 
   const isConnected = status === "connected";
   const isConnecting = status === "connecting";
@@ -51,10 +52,21 @@ export function HomeScreen({
 
   const startLongPress = useCallback(() => {
     clearLongPress();
+    longPressFired.current = false;
     longPressTimer.current = setTimeout(() => {
+      longPressFired.current = true;
       connectMock();
     }, LONG_PRESS_MS);
   }, [clearLongPress, connectMock]);
+
+  const handleClick = useCallback(() => {
+    if (longPressFired.current) {
+      longPressFired.current = false;
+      return;
+    }
+    if (isConnected) disconnect();
+    else if (!isConnecting) connect();
+  }, [isConnected, isConnecting, connect, disconnect]);
 
   return (
     <div
@@ -96,9 +108,7 @@ export function HomeScreen({
 
         <div className="flex items-center gap-3">
           <button
-            onClick={
-              isConnected ? disconnect : isConnecting ? undefined : connect
-            }
+            onClick={handleClick}
             disabled={isConnecting}
             onMouseDown={
               !isConnected && !isConnecting ? startLongPress : undefined
