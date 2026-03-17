@@ -143,9 +143,7 @@ export function ticTacToePickTarget(
     let openLines = 0;
     for (const line of WIN_LINES) {
       if (!line.includes(i)) continue;
-      const blocked = line.some(
-        (c) => board[c] !== null && board[c] !== me,
-      );
+      const blocked = line.some((c) => board[c] !== null && board[c] !== me);
       if (!blocked) openLines++;
     }
 

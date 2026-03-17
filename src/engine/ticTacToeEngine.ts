@@ -27,7 +27,9 @@ export interface TicTacToePlayer {
   name: string;
   marks: number[]; // 9 entries, 0–4 per grid cell
   claimed: number[]; // grid indices this player owns
-  rounds: { darts: { shortName: string; marksAdded: number; value: number }[] }[];
+  rounds: {
+    darts: { shortName: string; marksAdded: number; value: number }[];
+  }[];
 }
 
 export interface TicTacToeState {

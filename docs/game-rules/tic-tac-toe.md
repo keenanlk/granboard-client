@@ -25,13 +25,13 @@ Claim three squares in a row on a 3×3 grid by marking dart numbers. The center 
 
 A player claims a square by accumulating **4 marks** on that square's number.
 
-| Hit          | Marks |
-| ------------ | ----- |
-| Single       | 1     |
-| Double       | 2     |
-| Triple       | 3     |
-| Outer Bull   | 1     |
-| Inner Bull   | 2     |
+| Hit        | Marks |
+| ---------- | ----- |
+| Single     | 1     |
+| Double     | 2     |
+| Triple     | 3     |
+| Outer Bull | 1     |
+| Inner Bull | 2     |
 
 - Once a player reaches 4 marks on a number, they **claim** that square.
 - Extra marks beyond 4 are **ignored** (no overflow or bonus).
@@ -81,6 +81,7 @@ A line is "blocked" for a player if the opponent has claimed at least one square
 Configurable round limit options: **15, 20, 25, or unlimited (0)**.
 
 If the round limit is reached and no player has three in a row:
+
 - The game ends with no winner (Cat's game).
 
 ---
@@ -96,22 +97,26 @@ Grid (randomly assigned):
 ```
 
 **Round 1 — Player X:**
+
 - T17 → 3 marks on 17
 - S17 → 4 marks on 17 → **X claims square 0**
 - S5 → 1 mark on 5
 
 **Round 1 — Player O:**
+
 - T5 → 3 marks on 5
 - S5 → Player X already has 1 mark; O gets 3 marks on 5 (wait — this is TTT, separate marks per player)
 
 Note: Each player has their **own** mark count per square. A square is claimed by the first player to reach 4 marks on it.
 
 **Round 1 — Player O:**
+
 - DBULL → 2 marks on Bull
 - DBULL → 4 marks on Bull → **O claims center (square 4)**
 - S17 → 17 is locked by X, no effect
 
 **Round 2 — Player X:**
+
 - T12 → 3 marks on 12
 - S12 → 4 marks on 12 → **X claims square 2**
 - S8 → 1 mark on 8

@@ -24,6 +24,7 @@ Ask the user to confirm the rules before proceeding.
 Create `/src/engine/<game>Engine.ts`. Implements `GameEngine<TState, TOptions>` from `./GameEngine.ts`.
 
 Required exports:
+
 - Options interface with configurable settings
 - State interface with all game data (players, round, darts, winners)
 - ThrownDart interface for per-dart metadata
@@ -34,6 +35,7 @@ Required exports:
 Four methods: `startGame`, `addDart`, `undoLastDart`, `nextTurn` — all pure functions, no side effects.
 
 Key guards:
+
 - `addDart`: return unchanged if winners set, 3 darts thrown, or player finished
 - `nextTurn`: handle round records, player rotation, round increment, win detection, round limit
 
@@ -44,6 +46,7 @@ Follow existing engines (e.g. `highScoreEngine.ts`) as a pattern.
 Create `/src/engine/<game>Engine.test.ts` using vitest, `CreateSegment`, `SegmentID`.
 
 Cover at minimum:
+
 - Initialization (correct defaults)
 - Hit vs miss detection
 - Advancement / scoring logic
@@ -77,9 +80,11 @@ export const use<Game>Store = createGameStore(<game>Engine, DEFAULT_STATE);
 ## Step 5: Bot Strategy
 
 Create `/src/bot/<game>Strategy.ts`:
+
 - Export a targeting function: `function <game>PickTarget(...gameContext): SegmentID`
 
 Then add a `throw<Game>` method to `/src/bot/Bot.ts`:
+
 - Import the strategy
 - Call `simulateThrow(target, this.sigma)` and return the result
 - Accept an optional `onThrow` callback for logging
@@ -106,12 +111,14 @@ Create `/src/screens/<Game>Screen.tsx` following `HighScoreScreen.tsx` pattern.
 Props: `options`, `playerNames`, `playerIds`, `botSkills`, `restoredState?`, `onExit`, `onRematch`, `setProgress?`, `onNextLeg?`, `setConfig?`, `legResults?`, `currentLegIndex?`
 
 Required hooks:
+
 - `use<Game>Store()` — read state
 - `useGameSession()` — game lifecycle, turn delay, recording, persistence
 - `useBotTurn()` — bot automation
 - `useAwardDetection()` — if awards are supported
 
 Required UI:
+
 - `GameShell` wrapper with gameClass, transition/countdown, next-turn button, overlays
 - `ResultsOverlay` in overlays
 - `GameMenu` (undo + exit)
@@ -120,6 +127,7 @@ Required UI:
 - All text readable from 8 feet away (big, bold typography)
 
 Bot integration:
+
 - `useMemo` to build `bots: Map<number, Bot>` from `botSkills`
 - `useCallback` for `getThrow` that reads live store state
 - `useBotTurn({ bots, currentPlayerIndex, dartsThrown, isBust, hasWinner, isTransitioning, onNextTurn, getThrow })`
@@ -130,16 +138,17 @@ Bot integration:
 
 Add the new game type string to these union types:
 
-| File | Location | Change |
-|------|----------|--------|
-| `src/db/db.ts` | `GameSessionRecord.gameType` | Add `\| "<game>"` |
-| `src/db/gameRecorder.ts` | `gameType` field + constructor param | Add `\| "<game>"` (2 places) |
-| `src/lib/sessionPersistence.ts` | `PersistedSession.gameType` | Add `\| "<game>"` |
-| `src/hooks/useGameSession.ts` | `gameType` param | Add `\| "<game>"` |
+| File                            | Location                             | Change                       |
+| ------------------------------- | ------------------------------------ | ---------------------------- |
+| `src/db/db.ts`                  | `GameSessionRecord.gameType`         | Add `\| "<game>"`            |
+| `src/db/gameRecorder.ts`        | `gameType` field + constructor param | Add `\| "<game>"` (2 places) |
+| `src/lib/sessionPersistence.ts` | `PersistedSession.gameType`          | Add `\| "<game>"`            |
+| `src/hooks/useGameSession.ts`   | `gameType` param                     | Add `\| "<game>"`            |
 
 ## Step 9: Routing & Navigation
 
 In `src/App.tsx`:
+
 - Import screen component and store/options types
 - Add screen variant to `Screen` type union
 - Add `handleRematch` case
@@ -152,6 +161,7 @@ In `src/App.tsx`:
 ## Step 10: Setup Screen
 
 In `src/screens/GameSetupScreen.tsx`:
+
 - Import options type and defaults
 - Add to `game` prop union
 - Add options to `onStart` callback
@@ -170,8 +180,9 @@ Ask the user which category the game belongs to.
 ## Step 12: CSS Theme
 
 In `src/index.css`, add a `.game-<name>` class:
+
 ```css
-.game-<name> {
+.game-<name > {
   --sal: 0px;
   --color-game-accent: theme(--color-<color>-400);
   --color-game-accent-dim: theme(--color-<color>-950);
@@ -187,6 +198,7 @@ In `src/components/GameShell.tsx`, add `"game-<name>"` to the `gameClass` prop t
 ## Step 13: README
 
 Update `README.md`:
+
 - Architecture Overview table — add engine to Pure Game Engines row
 - State Management table — add new store/engine row
 
