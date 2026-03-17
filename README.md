@@ -29,17 +29,17 @@ npm run sim -- --mode highscore --hs-rounds 8
 
 ## Architecture Overview
 
-| Layer | Details |
-|-------|---------|
-| **UI Layer** | Screens, Components, Hooks |
-| **Zustand Stores** | Per-game state + BLE connection + profiles |
-| **Controllers** | Board input → store updates + event emission |
-| **Event Bus** | dart_hit, bust, game_won, next_turn, open_numbers |
-| **Side Effects** | LED animations, sound effects |
+| Layer                 | Details                                              |
+| --------------------- | ---------------------------------------------------- |
+| **UI Layer**          | Screens, Components, Hooks                           |
+| **Zustand Stores**    | Per-game state + BLE connection + profiles           |
+| **Controllers**       | Board input → store updates + event emission         |
+| **Event Bus**         | dart_hit, bust, game_won, next_turn, open_numbers    |
+| **Side Effects**      | LED animations, sound effects                        |
 | **Pure Game Engines** | x01Engine, cricketEngine, highScoreEngine, atwEngine |
-| **Board / BLE Layer** | Granboard, Dartboard, GranboardLED |
-| **Bot AI System** | throwSimulator, strategies, BoardGeometry |
-| **Persistence** | IndexedDB (players, game sessions, stats) |
+| **Board / BLE Layer** | Granboard, Dartboard, GranboardLED                   |
+| **Bot AI System**     | throwSimulator, strategies, BoardGeometry            |
+| **Persistence**       | IndexedDB (players, game sessions, stats)            |
 
 Data flows **down** (engines are pure, no dependencies on UI or stores) and events flow **up** through the event bus.
 
@@ -235,14 +235,14 @@ Byte layout: `[0]` command type, `[1-3]` primary RGB, `[4-6]` secondary RGB, `[1
 
 Each game mode has a Zustand store that wraps its pure engine:
 
-| Store                   | Engine            | Purpose                            |
-| ----------------------- | ----------------- | ---------------------------------- |
-| `useGameStore`          | `x01Engine`       | X01 game state + actions           |
-| `useCricketStore`       | `cricketEngine`   | Cricket game state + actions       |
-| `useHighScoreStore`     | `highScoreEngine` | High Score game state + actions    |
+| Store                   | Engine            | Purpose                               |
+| ----------------------- | ----------------- | ------------------------------------- |
+| `useGameStore`          | `x01Engine`       | X01 game state + actions              |
+| `useCricketStore`       | `cricketEngine`   | Cricket game state + actions          |
+| `useHighScoreStore`     | `highScoreEngine` | High Score game state + actions       |
 | `useATWStore`           | `atwEngine`       | Around the World game state + actions |
-| `useGranboardStore`     | —                 | BLE connection state               |
-| `usePlayerProfileStore` | —                 | Player profiles (IndexedDB-backed) |
+| `useGranboardStore`     | —                 | BLE connection state                  |
+| `usePlayerProfileStore` | —                 | Player profiles (IndexedDB-backed)    |
 
 Stores call engine methods (pure functions), merge the `Partial<TState>` result into state, then controllers emit events for side effects.
 
