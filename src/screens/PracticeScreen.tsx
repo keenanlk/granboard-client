@@ -1,6 +1,6 @@
 interface PracticeScreenProps {
   onBack: () => void;
-  onSelectGame: (game: "highscore") => void;
+  onSelectGame: (game: "highscore" | "atw") => void;
 }
 
 const PRACTICE_GAMES = [
@@ -10,6 +10,13 @@ const PRACTICE_GAMES = [
     description: "Most points wins",
     color: "#facc15",
     glow: "rgba(250, 204, 21, 0.5)",
+  },
+  {
+    id: "atw" as const,
+    name: "Around the World",
+    description: "Hit 1–20 then Bull",
+    color: "#38bdf8",
+    glow: "rgba(56, 189, 248, 0.5)",
   },
 ];
 

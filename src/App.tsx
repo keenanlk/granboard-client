@@ -4,6 +4,7 @@ import { GameSetupScreen } from "./screens/GameSetupScreen.tsx";
 import { GameScreen } from "./screens/GameScreen.tsx";
 import { CricketScreen } from "./screens/CricketScreen.tsx";
 import { HighScoreScreen } from "./screens/HighScoreScreen.tsx";
+import { ATWScreen } from "./screens/ATWScreen.tsx";
 import { PlayersScreen } from "./screens/PlayersScreen.tsx";
 import { PracticeScreen } from "./screens/PracticeScreen.tsx";
 import { SetSetupScreen } from "./screens/SetSetupScreen.tsx";
@@ -13,6 +14,7 @@ import {
   type CricketOptions,
 } from "./store/useCricketStore.ts";
 import type { HighScoreOptions } from "./store/useHighScoreStore.ts";
+import type { ATWOptions } from "./store/useATWStore.ts";
 import type { BotSkill } from "./bot/Bot.ts";
 import { useGranboardStore } from "./store/useGranboardStore.ts";
 import { useBoardWiring } from "./hooks/useBoardWiring.ts";
@@ -36,7 +38,7 @@ type Screen =
   | { name: "home" }
   | { name: "players" }
   | { name: "practice" }
-  | { name: "setup"; game: "x01" | "cricket" | "highscore" }
+  | { name: "setup"; game: "x01" | "cricket" | "highscore" | "atw" }
   | { name: "set-setup" }
   | {
       name: "game";
@@ -57,6 +59,14 @@ type Screen =
   | {
       name: "highscore";
       options: HighScoreOptions;
+      playerNames: string[];
+      playerIds: (string | null)[];
+      botSkills: (BotSkill | null)[];
+      restoredState?: unknown;
+    }
+  | {
+      name: "atw";
+      options: ATWOptions;
       playerNames: string[];
       playerIds: (string | null)[];
       botSkills: (BotSkill | null)[];
@@ -86,7 +96,9 @@ function ResumePrompt({
       ? "X01"
       : session.gameType === "cricket"
         ? "Cricket"
-        : "High Score";
+        : session.gameType === "atw"
+          ? "Around the World"
+          : "High Score";
   const playerList = session.playerNames.join(", ");
   const [timeLabel] = useState(() => formatTimeAgo(session.savedAt));
 
@@ -140,6 +152,8 @@ function App() {
     } else if (screen.name === "cricket") {
       setScreen({ ...screen, restoredState: undefined });
     } else if (screen.name === "highscore") {
+      setScreen({ ...screen, restoredState: undefined });
+    } else if (screen.name === "atw") {
       setScreen({ ...screen, restoredState: undefined });
     }
     setRematchKey((k) => k + 1);
@@ -352,6 +366,15 @@ function App() {
         botSkills,
         restoredState: gameState,
       });
+    } else if (gameType === "atw") {
+      setScreen({
+        name: "atw",
+        options: options as ATWOptions,
+        playerNames,
+        playerIds,
+        botSkills,
+        restoredState: gameState,
+      });
     }
     setPendingResume(null);
   }
@@ -433,6 +456,21 @@ function App() {
     );
   }
 
+  if (screen.name === "atw") {
+    return (
+      <ATWScreen
+        key={rematchKey}
+        options={screen.options}
+        playerNames={screen.playerNames}
+        playerIds={screen.playerIds}
+        botSkills={screen.botSkills}
+        restoredState={screen.restoredState}
+        onExit={() => setScreen({ name: "home" })}
+        onRematch={handleRematch}
+      />
+    );
+  }
+
   if (screen.name === "setup") {
     return (
       <GameSetupScreen
@@ -445,6 +483,7 @@ function App() {
           x01Options,
           cricketOptions,
           highScoreOptions,
+          atwOptions,
         ) => {
           if (screen.game === "x01" && x01Options) {
             setScreen({
@@ -466,6 +505,14 @@ function App() {
             setScreen({
               name: "highscore",
               options: highScoreOptions,
+              playerNames,
+              playerIds,
+              botSkills,
+            });
+          } else if (screen.game === "atw" && atwOptions) {
+            setScreen({
+              name: "atw",
+              options: atwOptions,
               playerNames,
               playerIds,
               botSkills,

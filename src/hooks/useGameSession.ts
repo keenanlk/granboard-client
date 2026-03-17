@@ -48,7 +48,7 @@ export function useGameSession({
   currentLegIndex,
   shouldSkipDelay,
 }: {
-  gameType: "x01" | "cricket" | "highscore";
+  gameType: "x01" | "cricket" | "highscore" | "atw";
   playerNames: string[];
   playerIds: (string | null)[];
   botSkills?: (BotSkill | null)[];
