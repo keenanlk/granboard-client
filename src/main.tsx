@@ -9,6 +9,19 @@ createRoot(document.getElementById("root")!).render(
   </StrictMode>,
 );
 
+// Disable right-click context menu except on text inputs/textareas with a selection
+document.addEventListener("contextmenu", (e) => {
+  const target = e.target as HTMLElement;
+  if (
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLTextAreaElement
+  ) {
+    // Allow context menu on text inputs only when text is selected
+    if (target.selectionStart !== target.selectionEnd) return;
+  }
+  e.preventDefault();
+});
+
 // Register service worker only in production on web (not in dev or Capacitor)
 if (
   import.meta.env.PROD &&

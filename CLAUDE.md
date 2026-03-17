@@ -20,6 +20,7 @@ Do not invent rules from memory when a rule file exists.
 ## Important paths
 
 - Rules docs: `/docs/game-rules`
+- Adding a new game mode: `/docs/adding-a-game-mode.md` — follow this checklist when creating a new game
 
 ## Linting
 

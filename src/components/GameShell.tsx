@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { TurnDelayOverlay } from "./TurnDelayOverlay.tsx";
 
 export interface GameShellProps {
-  gameClass: "game-x01" | "game-cricket" | "game-highscore";
+  gameClass: "game-x01" | "game-cricket" | "game-highscore" | "game-atw";
   title?: ReactNode;
   onExit?: () => void;
   onUndo?: () => void;

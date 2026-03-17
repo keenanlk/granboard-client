@@ -8,6 +8,7 @@ import {
   DEFAULT_HIGHSCORE_OPTIONS,
   type HighScoreOptions,
 } from "../store/useHighScoreStore.ts";
+import { DEFAULT_ATW_OPTIONS, type ATWOptions } from "../store/useATWStore.ts";
 import {
   PlayerSelectStep,
   BotSkill,
@@ -18,7 +19,7 @@ import type { BotSkill as BotSkillType } from "../bot/Bot.ts";
 export type { BotSkillType };
 
 interface GameSetupScreenProps {
-  game: "x01" | "cricket" | "highscore";
+  game: "x01" | "cricket" | "highscore" | "atw";
   onStart: (
     players: string[],
     playerIds: (string | null)[],
@@ -26,12 +27,14 @@ interface GameSetupScreenProps {
     x01Options?: X01Options,
     cricketOptions?: CricketOptions,
     highScoreOptions?: HighScoreOptions,
+    atwOptions?: ATWOptions,
   ) => void;
   onBack: () => void;
 }
 
 const ROUND_OPTIONS = [8, 10, 15] as const;
 const CRICKET_ROUND_OPTIONS = [15, 20, 25, 0] as const;
+const ATW_ROUND_OPTIONS = [0, 15, 20, 25] as const;
 
 export function GameSetupScreen({
   game,
@@ -50,6 +53,7 @@ export function GameSetupScreen({
   const [highScoreOptions, setHighScoreOptions] = useState<HighScoreOptions>(
     DEFAULT_HIGHSCORE_OPTIONS,
   );
+  const [atwOptions, setAtwOptions] = useState<ATWOptions>(DEFAULT_ATW_OPTIONS);
 
   const setX01Option = <K extends keyof X01Options>(
     key: K,
@@ -64,13 +68,21 @@ export function GameSetupScreen({
     });
 
   const title =
-    game === "x01" ? "X01" : game === "cricket" ? "Cricket" : "High Score";
+    game === "x01"
+      ? "X01"
+      : game === "cricket"
+        ? "Cricket"
+        : game === "atw"
+          ? "Around the World"
+          : "High Score";
   const gameClass =
     game === "x01"
       ? "game-x01"
       : game === "cricket"
         ? "game-cricket"
-        : "game-highscore";
+        : game === "atw"
+          ? "game-atw"
+          : "game-highscore";
 
   const handleBack = () => (step === 2 ? setStep(1) : onBack());
 
@@ -322,6 +334,39 @@ export function GameSetupScreen({
                 </button>
               </div>
             )}
+
+            {game === "atw" && (
+              <div
+                className="flex gap-3 w-full justify-center"
+                style={{ maxHeight: "min(100%, 320px)" }}
+              >
+                <button
+                  onClick={() => {
+                    const idx = ATW_ROUND_OPTIONS.indexOf(
+                      atwOptions.roundLimit as (typeof ATW_ROUND_OPTIONS)[number],
+                    );
+                    const next =
+                      ATW_ROUND_OPTIONS[(idx + 1) % ATW_ROUND_OPTIONS.length];
+                    setAtwOptions((prev) => ({
+                      ...prev,
+                      roundLimit: next,
+                    }));
+                  }}
+                  className="option-card min-h-[80px] max-h-[160px] flex-1 max-w-xs"
+                  data-active="true"
+                >
+                  <span className="font-black text-2xl text-[var(--color-game-accent)]">
+                    {atwOptions.roundLimit === 0 ? "∞" : atwOptions.roundLimit}
+                  </span>
+                  <span className="text-sm font-bold text-center text-content-primary">
+                    {atwOptions.roundLimit === 0 ? "No Limit" : "Round Limit"}
+                  </span>
+                  <span className="text-xs text-content-muted text-center leading-tight">
+                    Tap to change
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
 
           <div
@@ -397,7 +442,7 @@ export function GameSetupScreen({
                   ? "Start Cut-Throat"
                   : "Start Cricket"}
               </button>
-            ) : (
+            ) : game === "highscore" ? (
               <button
                 onClick={() =>
                   onStart(
@@ -415,6 +460,29 @@ export function GameSetupScreen({
                 className="btn-primary rounded-2xl text-2xl"
               >
                 Start — {highScoreOptions.rounds} Rounds
+              </button>
+            ) : (
+              <button
+                onClick={() =>
+                  onStart(
+                    roster.map((r) => r.name),
+                    roster.map((r) => r.id),
+                    roster.map((r) =>
+                      r.isBot ? (r.botSkill ?? BotSkill.Intermediate) : null,
+                    ),
+                    undefined,
+                    undefined,
+                    undefined,
+                    atwOptions,
+                  )
+                }
+                disabled={roster.length === 0}
+                className="btn-primary rounded-2xl text-2xl"
+              >
+                Start ATW
+                {atwOptions.roundLimit > 0
+                  ? ` — ${atwOptions.roundLimit} Rounds`
+                  : ""}
               </button>
             )}
           </div>

@@ -29,34 +29,17 @@ npm run sim -- --mode highscore --hs-rounds 8
 
 ## Architecture Overview
 
-```
-┌─────────────────────────────────────────────────────┐
-│                     UI Layer                        │
-│  Screens → Components → Hooks                      │
-├──────────────┬──────────────────────────────────────┤
-│  Zustand     │        Event Bus                     │
-│  Stores      │  (dart_hit, bust, game_won,          │
-│              │   next_turn, open_numbers)            │
-├──────────────┼──────────────────────────────────────┤
-│  Controllers │        LED / Sound Effects           │
-│  (input →    │  (ledEffects.ts, soundEffects.ts)     │
-│   store +    │                                      │
-│   events)    │                                      │
-├──────────────┴──────────────────────────────────────┤
-│              Pure Game Engines                      │
-│  x01Engine  ·  cricketEngine  ·  highScoreEngine    │
-├─────────────────────────────────────────────────────┤
-│              Board / BLE Layer                      │
-│  Granboard (Capacitor BLE / Web Bluetooth)          │
-│  Dartboard (segment encoding) · GranboardLED        │
-├─────────────────────────────────────────────────────┤
-│              Bot AI System                          │
-│  throwSimulator · strategies · BoardGeometry        │
-├─────────────────────────────────────────────────────┤
-│              Persistence                            │
-│  IndexedDB (players, game sessions, stats)          │
-└─────────────────────────────────────────────────────┘
-```
+| Layer | Details |
+|-------|---------|
+| **UI Layer** | Screens, Components, Hooks |
+| **Zustand Stores** | Per-game state + BLE connection + profiles |
+| **Controllers** | Board input → store updates + event emission |
+| **Event Bus** | dart_hit, bust, game_won, next_turn, open_numbers |
+| **Side Effects** | LED animations, sound effects |
+| **Pure Game Engines** | x01Engine, cricketEngine, highScoreEngine, atwEngine |
+| **Board / BLE Layer** | Granboard, Dartboard, GranboardLED |
+| **Bot AI System** | throwSimulator, strategies, BoardGeometry |
+| **Persistence** | IndexedDB (players, game sessions, stats) |
 
 Data flows **down** (engines are pure, no dependencies on UI or stores) and events flow **up** through the event bus.
 
@@ -257,6 +240,7 @@ Each game mode has a Zustand store that wraps its pure engine:
 | `useGameStore`          | `x01Engine`       | X01 game state + actions           |
 | `useCricketStore`       | `cricketEngine`   | Cricket game state + actions       |
 | `useHighScoreStore`     | `highScoreEngine` | High Score game state + actions    |
+| `useATWStore`           | `atwEngine`       | Around the World game state + actions |
 | `useGranboardStore`     | —                 | BLE connection state               |
 | `usePlayerProfileStore` | —                 | Player profiles (IndexedDB-backed) |
 
@@ -350,7 +334,8 @@ src/
 │   ├── GameEngine.ts       Interface contract
 │   ├── x01Engine.ts        X01 rules & scoring
 │   ├── cricketEngine.ts    Cricket rules & scoring
-│   └── highScoreEngine.ts  High Score rules & scoring
+│   ├── highScoreEngine.ts  High Score rules & scoring
+│   └── atwEngine.ts        Around the World rules & scoring
 ├── bot/              AI opponents
 │   ├── Bot.ts              Orchestrator class
 │   ├── botCharacters.ts    Named bot personalities & skill configs
@@ -358,7 +343,8 @@ src/
 │   ├── x01Strategy.ts      X01 target picker
 │   ├── x01OutChart.ts      Soft-tip checkout lookup table
 │   ├── cricketStrategy.ts  Cricket target picker (3-mode weighted)
-│   └── highScoreStrategy.ts
+│   ├── highScoreStrategy.ts
+│   └── atwStrategy.ts      Around the World target picker
 ├── board/            Hardware abstraction
 │   ├── Dartboard.ts        Segment ID/type/section constants
 │   ├── BoardGeometry.ts    Physical layout, coordinate mapping
@@ -374,13 +360,15 @@ src/
 │   ├── useGameStore.ts          X01 state
 │   ├── useCricketStore.ts       Cricket state
 │   ├── useHighScoreStore.ts     High Score state
+│   ├── useATWStore.ts           Around the World state
 │   ├── useGranboardStore.ts     BLE connection state
 │   └── usePlayerProfileStore.ts Player profiles
 ├── controllers/      Game input → store + events
 │   ├── GameController.ts        Interface & registry
 │   ├── X01Controller.ts
 │   ├── CricketController.ts
-│   └── HighScoreController.ts
+│   ├── HighScoreController.ts
+│   └── ATWController.ts
 ├── events/           Typed event system
 │   ├── GameEvents.ts        Event type definitions
 │   └── gameEventBus.ts      Event emitter instance
@@ -401,6 +389,7 @@ src/
 │   ├── GameScreen.tsx
 │   ├── CricketScreen.tsx
 │   ├── HighScoreScreen.tsx
+│   ├── ATWScreen.tsx
 │   ├── PracticeScreen.tsx
 │   └── PlayersScreen.tsx
 ├── components/       Reusable UI components
