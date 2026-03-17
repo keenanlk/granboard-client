@@ -9,7 +9,9 @@ import buzzerSrc from "../assets/sounds/buzzer.mp3";
 
 let _volume = parseFloat(localStorage.getItem("app-volume") ?? "1");
 
-export function getVolume(): number { return _volume; }
+export function getVolume(): number {
+  return _volume;
+}
 
 // Web Audio API context + gain node for iOS volume control
 // (iOS ignores HTMLAudioElement.volume — only GainNode works)
@@ -41,8 +43,12 @@ function makeSound(src: string): Sound {
   fetch(src)
     .then((res) => res.arrayBuffer())
     .then((arr) => getAudioContext().decodeAudioData(arr))
-    .then((decoded) => { buffer = decoded; })
-    .catch(() => { /* silent — sound just won't play */ });
+    .then((decoded) => {
+      buffer = decoded;
+    })
+    .catch(() => {
+      /* silent — sound just won't play */
+    });
 
   return {
     play() {

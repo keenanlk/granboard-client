@@ -39,7 +39,12 @@ export function DevBoardMenuButton({ onActivate }: { onActivate: () => void }) {
 export function DevBoardPanel({ onClose }: { onClose: () => void }) {
   const { board, disconnect } = useGranboardStore();
   const [pos, setPos] = useState({ x: 20, y: 60 });
-  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
+  const dragRef = useRef<{
+    startX: number;
+    startY: number;
+    origX: number;
+    origY: number;
+  } | null>(null);
 
   const mock = board instanceof MockGranboard ? board : null;
   if (!mock) return null;
@@ -49,7 +54,12 @@ export function DevBoardPanel({ onClose }: { onClose: () => void }) {
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    dragRef.current = { startX: e.clientX, startY: e.clientY, origX: pos.x, origY: pos.y };
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      origX: pos.x,
+      origY: pos.y,
+    };
     const onMove = (ev: MouseEvent) => {
       if (!dragRef.current) return;
       setPos({
@@ -68,7 +78,12 @@ export function DevBoardPanel({ onClose }: { onClose: () => void }) {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     const t = e.touches[0];
-    dragRef.current = { startX: t.clientX, startY: t.clientY, origX: pos.x, origY: pos.y };
+    dragRef.current = {
+      startX: t.clientX,
+      startY: t.clientY,
+      origX: pos.x,
+      origY: pos.y,
+    };
   };
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!dragRef.current) return;
@@ -78,7 +93,9 @@ export function DevBoardPanel({ onClose }: { onClose: () => void }) {
       y: dragRef.current.origY + (t.clientY - dragRef.current.startY),
     });
   };
-  const handleTouchEnd = () => { dragRef.current = null; };
+  const handleTouchEnd = () => {
+    dragRef.current = null;
+  };
 
   return (
     <div
@@ -98,7 +115,10 @@ export function DevBoardPanel({ onClose }: { onClose: () => void }) {
         </span>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => { disconnect(); onClose(); }}
+            onClick={() => {
+              disconnect();
+              onClose();
+            }}
             className="text-zinc-600 hover:text-red-400 text-[10px] uppercase tracking-wider font-mono"
           >
             Disconnect
@@ -141,9 +161,24 @@ export function DevBoardPanel({ onClose }: { onClose: () => void }) {
 
         {/* Special segments */}
         <div className="flex gap-1 border-t border-zinc-800 pt-2">
-          <button onClick={() => hit(SegmentID.BULL)} className="flex-1 py-1 rounded bg-red-900 hover:bg-red-700 text-red-300 font-black">BULL</button>
-          <button onClick={() => hit(SegmentID.DBL_BULL)} className="flex-1 py-1 rounded bg-red-800 hover:bg-red-600 text-red-200 font-black">DBULL</button>
-          <button onClick={() => hit(SegmentID.MISS)} className="flex-1 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-500 font-black">MISS</button>
+          <button
+            onClick={() => hit(SegmentID.BULL)}
+            className="flex-1 py-1 rounded bg-red-900 hover:bg-red-700 text-red-300 font-black"
+          >
+            BULL
+          </button>
+          <button
+            onClick={() => hit(SegmentID.DBL_BULL)}
+            className="flex-1 py-1 rounded bg-red-800 hover:bg-red-600 text-red-200 font-black"
+          >
+            DBULL
+          </button>
+          <button
+            onClick={() => hit(SegmentID.MISS)}
+            className="flex-1 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-500 font-black"
+          >
+            MISS
+          </button>
         </div>
 
         {/* Next Turn + Log */}
@@ -176,14 +211,20 @@ export function DevBoard() {
     <>
       <button
         onClick={() => {
-          if (!mock) { connectMock(); setOpen(true); }
-          else setOpen((o) => !o);
+          if (!mock) {
+            connectMock();
+            setOpen(true);
+          } else setOpen((o) => !o);
         }}
         className="px-3 py-1.5 rounded-lg bg-zinc-800 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 transition-colors font-mono text-xs select-none"
       >
         🎯 {mock ? (open ? "Hide Board" : "Show Board") : "Mock Board"}
       </button>
-      {mock && !open && <span className="ml-2 text-[10px] text-emerald-500 font-mono">● mock</span>}
+      {mock && !open && (
+        <span className="ml-2 text-[10px] text-emerald-500 font-mono">
+          ● mock
+        </span>
+      )}
       {mock && open && <DevBoardPanel onClose={() => setOpen(false)} />}
     </>
   );

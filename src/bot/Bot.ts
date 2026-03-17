@@ -2,6 +2,7 @@ import { BotSkill, simulateThrow } from "./throwSimulator.ts";
 import { x01PickTarget } from "./x01Strategy.ts";
 import { cricketPickTarget } from "./cricketStrategy.ts";
 import { highScorePickTarget } from "./highScoreStrategy.ts";
+import { atwPickTarget } from "./atwStrategy.ts";
 import type { SegmentID } from "../board/Dartboard.ts";
 import type { X01Options } from "../store/useGameStore.ts";
 import type { CricketPlayer, CricketTarget } from "../store/useCricketStore.ts";
@@ -74,6 +75,20 @@ export class Bot {
     onThrow?: (target: SegmentID, actual: SegmentID) => void,
   ): SegmentID {
     const target = highScorePickTarget(splitBull);
+    const actual = simulateThrow(target, this.sigma);
+    onThrow?.(target, actual);
+    return actual;
+  }
+
+  /**
+   * Pick a target for Around the World and simulate a throw.
+   * Returns the SegmentID where the dart actually lands (may miss target).
+   */
+  throwATW(
+    currentTarget: number,
+    onThrow?: (target: SegmentID, actual: SegmentID) => void,
+  ): SegmentID {
+    const target = atwPickTarget(currentTarget);
     const actual = simulateThrow(target, this.sigma);
     onThrow?.(target, actual);
     return actual;

@@ -1,6 +1,6 @@
 interface PracticeScreenProps {
   onBack: () => void;
-  onSelectGame: (game: "highscore") => void;
+  onSelectGame: (game: "highscore" | "atw") => void;
 }
 
 const PRACTICE_GAMES = [
@@ -11,11 +11,21 @@ const PRACTICE_GAMES = [
     color: "#facc15",
     glow: "rgba(250, 204, 21, 0.5)",
   },
+  {
+    id: "atw" as const,
+    name: "Around the World",
+    description: "Hit 1–20 then Bull",
+    color: "#38bdf8",
+    glow: "rgba(56, 189, 248, 0.5)",
+  },
 ];
 
 export function PracticeScreen({ onBack, onSelectGame }: PracticeScreenProps) {
   return (
-    <div className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden" style={{ paddingLeft: "var(--sal)" }}>
+    <div
+      className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden"
+      style={{ paddingLeft: "var(--sal)" }}
+    >
       <header
         className="flex items-center justify-between px-6 pb-3 shrink-0 bg-zinc-950"
         style={{ paddingTop: "calc(var(--sat) + 0.75rem)" }}
@@ -51,8 +61,14 @@ export function PracticeScreen({ onBack, onSelectGame }: PracticeScreenProps) {
               onClick={() => onSelectGame(game.id)}
               className="w-full rounded-2xl px-6 text-left transition-all duration-150 flex flex-col justify-center bg-zinc-900 border-2 border-zinc-800"
               style={{ borderColor: undefined }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = game.color; e.currentTarget.style.boxShadow = `0 0 12px ${game.glow}`; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = ""; e.currentTarget.style.boxShadow = ""; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = game.color;
+                e.currentTarget.style.boxShadow = `0 0 12px ${game.glow}`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "";
+                e.currentTarget.style.boxShadow = "";
+              }}
             >
               <p
                 className="text-4xl tracking-tight font-normal"

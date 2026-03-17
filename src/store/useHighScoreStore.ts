@@ -1,8 +1,15 @@
 import { createGameStore } from "./createGameStore.ts";
-import { highScoreEngine, type HighScoreState } from "../engine/highScoreEngine.ts";
+import {
+  highScoreEngine,
+  type HighScoreState,
+} from "../engine/highScoreEngine.ts";
 
 // Re-export types so existing imports from this module continue to work.
-export type { HighScoreOptions, HighScoreThrownDart, HighScorePlayer } from "../engine/highScoreEngine.ts";
+export type {
+  HighScoreOptions,
+  HighScoreThrownDart,
+  HighScorePlayer,
+} from "../engine/highScoreEngine.ts";
 export { DEFAULT_HIGHSCORE_OPTIONS } from "../engine/highScoreEngine.ts";
 
 const DEFAULT_STATE: HighScoreState = {
@@ -16,4 +23,7 @@ const DEFAULT_STATE: HighScoreState = {
   playoffDarts: [],
 };
 
-export const useHighScoreStore = createGameStore(highScoreEngine, DEFAULT_STATE);
+export const useHighScoreStore = createGameStore(
+  highScoreEngine,
+  DEFAULT_STATE,
+);

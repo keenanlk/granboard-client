@@ -135,11 +135,21 @@ class GameLogger {
     // (e.g. .claude/logs/) and save directly there without a browser download.
     if ("showSaveFilePicker" in window) {
       try {
-        const handle = await (window as Window & { showSaveFilePicker: (opts: unknown) => Promise<FileSystemFileHandle> })
-          .showSaveFilePicker({
-            suggestedName: filename,
-            types: [{ description: "JSON Lines", accept: { "application/jsonl": [".jsonl"] } }],
-          });
+        const handle = await (
+          window as Window & {
+            showSaveFilePicker: (
+              opts: unknown,
+            ) => Promise<FileSystemFileHandle>;
+          }
+        ).showSaveFilePicker({
+          suggestedName: filename,
+          types: [
+            {
+              description: "JSON Lines",
+              accept: { "application/jsonl": [".jsonl"] },
+            },
+          ],
+        });
         const writable = await handle.createWritable();
         await writable.write(content);
         await writable.close();

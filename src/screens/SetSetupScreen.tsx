@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { DEFAULT_X01_OPTIONS, type X01Options } from "../engine/x01Engine.ts";
 import { DEFAULT_CRICKET_OPTIONS } from "../engine/cricketEngine.ts";
-import { PlayerSelectStep, BotSkill, type RosterEntry } from "../components/PlayerSelectStep.tsx";
+import {
+  PlayerSelectStep,
+  BotSkill,
+  type RosterEntry,
+} from "../components/PlayerSelectStep.tsx";
 import type { BotSkill as BotSkillType } from "../bot/Bot.ts";
-import type { SetConfig, SetFormat, LegConfig, ThrowOrder } from "../lib/setTypes.ts";
+import type {
+  SetConfig,
+  SetFormat,
+  LegConfig,
+  ThrowOrder,
+} from "../lib/setTypes.ts";
 import { legCount } from "../lib/setTypes.ts";
 
 interface SetSetupScreenProps {
@@ -55,11 +64,17 @@ function LegOptionsEditor({
     if (gameType === "x01") {
       onChange({ gameType: "x01", x01Options: { ...DEFAULT_X01_OPTIONS } });
     } else {
-      onChange({ gameType: "cricket", cricketOptions: { ...DEFAULT_CRICKET_OPTIONS } });
+      onChange({
+        gameType: "cricket",
+        cricketOptions: { ...DEFAULT_CRICKET_OPTIONS },
+      });
     }
   };
 
-  const setX01Option = <K extends keyof X01Options>(key: K, value: X01Options[K]) => {
+  const setX01Option = <K extends keyof X01Options>(
+    key: K,
+    value: X01Options[K],
+  ) => {
     const prev = leg.x01Options ?? DEFAULT_X01_OPTIONS;
     const next = { ...prev, [key]: value };
     if (key === "doubleOut" && value) next.masterOut = false;
@@ -76,14 +91,22 @@ function LegOptionsEditor({
           className="option-card flex-1 py-2"
           data-active={String(leg.gameType === "x01")}
         >
-          <span className={`font-black text-lg ${leg.gameType === "x01" ? "text-red-500" : "text-content-muted"}`}>X01</span>
+          <span
+            className={`font-black text-lg ${leg.gameType === "x01" ? "text-red-500" : "text-content-muted"}`}
+          >
+            X01
+          </span>
         </button>
         <button
           onClick={() => setGameType("cricket")}
           className="option-card flex-1 py-2"
           data-active={String(leg.gameType === "cricket")}
         >
-          <span className={`font-black text-lg ${leg.gameType === "cricket" ? "text-green-400" : "text-content-muted"}`}>Cricket</span>
+          <span
+            className={`font-black text-lg ${leg.gameType === "cricket" ? "text-green-400" : "text-content-muted"}`}
+          >
+            Cricket
+          </span>
         </button>
       </div>
 
@@ -94,23 +117,36 @@ function LegOptionsEditor({
             {([301, 501, 701] as const).map((score) => (
               <button
                 key={score}
-                onClick={() => onChange({ ...leg, x01Options: { ...(leg.x01Options ?? DEFAULT_X01_OPTIONS), startingScore: score } })}
+                onClick={() =>
+                  onChange({
+                    ...leg,
+                    x01Options: {
+                      ...(leg.x01Options ?? DEFAULT_X01_OPTIONS),
+                      startingScore: score,
+                    },
+                  })
+                }
                 className="option-card flex-1 py-2"
-                data-active={String((leg.x01Options ?? DEFAULT_X01_OPTIONS).startingScore === score)}
+                data-active={String(
+                  (leg.x01Options ?? DEFAULT_X01_OPTIONS).startingScore ===
+                    score,
+                )}
               >
-                <span className={`font-black text-xl ${(leg.x01Options ?? DEFAULT_X01_OPTIONS).startingScore === score ? "text-red-500" : "text-content-muted"}`}>
+                <span
+                  className={`font-black text-xl ${(leg.x01Options ?? DEFAULT_X01_OPTIONS).startingScore === score ? "text-red-500" : "text-content-muted"}`}
+                >
                   {score}
                 </span>
               </button>
             ))}
           </div>
           <div className="grid grid-cols-4 gap-2">
-            {([
+            {[
               { key: "splitBull" as const, label: "Split Bull" },
               { key: "doubleOut" as const, label: "Dbl Out" },
               { key: "masterOut" as const, label: "Master Out" },
               { key: "doubleIn" as const, label: "Dbl In" },
-            ]).map(({ key, label }) => {
+            ].map(({ key, label }) => {
               const opts = leg.x01Options ?? DEFAULT_X01_OPTIONS;
               return (
                 <button
@@ -119,10 +155,16 @@ function LegOptionsEditor({
                   className="option-card py-2"
                   data-active={String(opts[key])}
                 >
-                  <span className={`text-sm font-black ${opts[key] ? "text-red-500" : "text-content-faint"}`}>
+                  <span
+                    className={`text-sm font-black ${opts[key] ? "text-red-500" : "text-content-faint"}`}
+                  >
                     {opts[key] ? "ON" : "OFF"}
                   </span>
-                  <span className={`text-[11px] font-bold ${opts[key] ? "text-content-primary" : "text-zinc-400"}`}>{label}</span>
+                  <span
+                    className={`text-[11px] font-bold ${opts[key] ? "text-content-primary" : "text-zinc-400"}`}
+                  >
+                    {label}
+                  </span>
                 </button>
               );
             })}
@@ -138,14 +180,23 @@ function LegOptionsEditor({
               return (
                 <button
                   key={r}
-                  onClick={() => onChange({ ...leg, cricketOptions: { ...opts, roundLimit: r } })}
+                  onClick={() =>
+                    onChange({
+                      ...leg,
+                      cricketOptions: { ...opts, roundLimit: r },
+                    })
+                  }
                   className="option-card flex-1 py-2"
                   data-active={String(opts.roundLimit === r)}
                 >
-                  <span className={`font-black text-lg ${opts.roundLimit === r ? "text-green-400" : "text-content-muted"}`}>
+                  <span
+                    className={`font-black text-lg ${opts.roundLimit === r ? "text-green-400" : "text-content-muted"}`}
+                  >
                     {r === 0 ? "\u221E" : r}
                   </span>
-                  <span className={`text-[10px] font-bold ${opts.roundLimit === r ? "text-content-primary" : "text-zinc-500"}`}>
+                  <span
+                    className={`text-[10px] font-bold ${opts.roundLimit === r ? "text-content-primary" : "text-zinc-500"}`}
+                  >
                     {r === 0 ? "No Limit" : "Rounds"}
                   </span>
                 </button>
@@ -156,30 +207,52 @@ function LegOptionsEditor({
             <button
               onClick={() => {
                 const opts = leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS;
-                onChange({ ...leg, cricketOptions: { ...opts, singleBull: !opts.singleBull } });
+                onChange({
+                  ...leg,
+                  cricketOptions: { ...opts, singleBull: !opts.singleBull },
+                });
               }}
               className="option-card py-2"
-              data-active={String((leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).singleBull)}
+              data-active={String(
+                (leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).singleBull,
+              )}
             >
-              <span className={`text-sm font-black ${(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).singleBull ? "text-green-400" : "text-content-faint"}`}>
-                {(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).singleBull ? "ON" : "OFF"}
+              <span
+                className={`text-sm font-black ${(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).singleBull ? "text-green-400" : "text-content-faint"}`}
+              >
+                {(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).singleBull
+                  ? "ON"
+                  : "OFF"}
               </span>
-              <span className={`text-xs font-bold ${(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).singleBull ? "text-content-primary" : "text-zinc-400"}`}>
+              <span
+                className={`text-xs font-bold ${(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).singleBull ? "text-content-primary" : "text-zinc-400"}`}
+              >
                 Split Bull
               </span>
             </button>
             <button
               onClick={() => {
                 const opts = leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS;
-                onChange({ ...leg, cricketOptions: { ...opts, cutThroat: !opts.cutThroat } });
+                onChange({
+                  ...leg,
+                  cricketOptions: { ...opts, cutThroat: !opts.cutThroat },
+                });
               }}
               className="option-card py-2"
-              data-active={String((leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).cutThroat)}
+              data-active={String(
+                (leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).cutThroat,
+              )}
             >
-              <span className={`text-sm font-black ${(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).cutThroat ? "text-green-400" : "text-content-faint"}`}>
-                {(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).cutThroat ? "ON" : "OFF"}
+              <span
+                className={`text-sm font-black ${(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).cutThroat ? "text-green-400" : "text-content-faint"}`}
+              >
+                {(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).cutThroat
+                  ? "ON"
+                  : "OFF"}
               </span>
-              <span className={`text-xs font-bold ${(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).cutThroat ? "text-content-primary" : "text-zinc-400"}`}>
+              <span
+                className={`text-xs font-bold ${(leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS).cutThroat ? "text-content-primary" : "text-zinc-400"}`}
+              >
                 Cut-Throat
               </span>
             </button>
@@ -213,7 +286,10 @@ export function SetSetupScreen({ onStart, onBack }: SetSetupScreenProps) {
     setLegs((prev) => {
       if (prev.length === count) return prev;
       if (prev.length < count) {
-        return [...prev, ...Array.from({ length: count - prev.length }, defaultLeg)];
+        return [
+          ...prev,
+          ...Array.from({ length: count - prev.length }, defaultLeg),
+        ];
       }
       return prev.slice(0, count);
     });
@@ -239,14 +315,30 @@ export function SetSetupScreen({ onStart, onBack }: SetSetupScreenProps) {
       { format, legs, throwOrder },
       roster.map((r) => r.name),
       roster.map((r) => r.id),
-      roster.map((r) => (r.isBot ? (r.botSkill ?? BotSkill.Intermediate) : null)),
+      roster.map((r) =>
+        r.isBot ? (r.botSkill ?? BotSkill.Intermediate) : null,
+      ),
     );
   };
 
-  const stepLabel = step === "legs" ? "Legs" : step === "editLeg" ? `Leg ${(editingLegIndex ?? 0) + 1}` : "Players";
+  const stepLabel =
+    step === "legs"
+      ? "Legs"
+      : step === "editLeg"
+        ? `Leg ${(editingLegIndex ?? 0) + 1}`
+        : "Players";
 
   return (
-    <div className="screen-root game-x01" style={{ "--color-game-accent": "oklch(0.65 0.2 260)", "--color-game-accent-dim": "oklch(0.25 0.1 260)", "--color-game-accent-glow": "rgba(96, 130, 255, 0.5)" } as React.CSSProperties}>
+    <div
+      className="screen-root game-x01"
+      style={
+        {
+          "--color-game-accent": "oklch(0.65 0.2 260)",
+          "--color-game-accent-dim": "oklch(0.25 0.1 260)",
+          "--color-game-accent-glow": "rgba(96, 130, 255, 0.5)",
+        } as React.CSSProperties
+      }
+    >
       {/* Header */}
       <header
         className="flex items-center justify-between px-6 pb-3 border-b border-border-default shrink-0"
@@ -284,8 +376,10 @@ export function SetSetupScreen({ onStart, onBack }: SetSetupScreenProps) {
       {/* Step: Legs */}
       {step === "legs" && (
         <>
-          <div className="flex-1 min-h-0 flex flex-col pr-5 py-3 gap-2 overflow-hidden"
-              style={{ paddingLeft: "1.25rem" }}>
+          <div
+            className="flex-1 min-h-0 flex flex-col pr-5 py-3 gap-2 overflow-hidden"
+            style={{ paddingLeft: "1.25rem" }}
+          >
             {/* Format + throw order */}
             <div className="flex gap-2 shrink-0">
               {(["bo3", "bo5"] as const).map((f) => (
@@ -295,17 +389,23 @@ export function SetSetupScreen({ onStart, onBack }: SetSetupScreenProps) {
                   className="option-card flex-1 py-2"
                   data-active={String(format === f)}
                 >
-                  <span className={`font-black text-xl ${format === f ? "text-blue-400" : "text-content-muted"}`}>
+                  <span
+                    className={`font-black text-xl ${format === f ? "text-blue-400" : "text-content-muted"}`}
+                  >
                     Best of {f === "bo3" ? 3 : 5}
                   </span>
                 </button>
               ))}
               <button
-                onClick={() => setThrowOrder(throwOrder === "loser" ? "alternate" : "loser")}
+                onClick={() =>
+                  setThrowOrder(throwOrder === "loser" ? "alternate" : "loser")
+                }
                 className="option-card flex-1 py-2"
                 data-active="true"
               >
-                <span className="text-[10px] font-bold text-content-muted uppercase tracking-wider">Throw Order</span>
+                <span className="text-[10px] font-bold text-content-muted uppercase tracking-wider">
+                  Throw Order
+                </span>
                 <span className="font-black text-base text-blue-400">
                   {throwOrder === "loser" ? "Loser First" : "Alternate"}
                 </span>
@@ -326,10 +426,16 @@ export function SetSetupScreen({ onStart, onBack }: SetSetupScreenProps) {
                   <span className="text-blue-400 font-black text-sm">
                     Leg {i + 1}
                   </span>
-                  <span className={`font-black text-3xl ${leg.gameType === "x01" ? "text-red-500" : "text-green-400"}`}>
-                    {leg.gameType === "x01" ? (leg.x01Options ?? DEFAULT_X01_OPTIONS).startingScore : "Cricket"}
+                  <span
+                    className={`font-black text-3xl ${leg.gameType === "x01" ? "text-red-500" : "text-green-400"}`}
+                  >
+                    {leg.gameType === "x01"
+                      ? (leg.x01Options ?? DEFAULT_X01_OPTIONS).startingScore
+                      : "Cricket"}
                   </span>
-                  <p className="text-zinc-500 text-xs text-center truncate w-full">{legSummary(leg)}</p>
+                  <p className="text-zinc-500 text-xs text-center truncate w-full">
+                    {legSummary(leg)}
+                  </p>
                 </button>
               ))}
             </div>
@@ -339,7 +445,10 @@ export function SetSetupScreen({ onStart, onBack }: SetSetupScreenProps) {
             className="shrink-0 px-5 pt-3 border-t border-border-default bg-surface-sunken"
             style={{ paddingBottom: "calc(var(--sab) + 0.75rem)" }}
           >
-            <button onClick={() => setStep("players")} className="btn-primary rounded-2xl text-2xl">
+            <button
+              onClick={() => setStep("players")}
+              className="btn-primary rounded-2xl text-2xl"
+            >
               Next →
             </button>
           </div>
@@ -348,8 +457,10 @@ export function SetSetupScreen({ onStart, onBack }: SetSetupScreenProps) {
 
       {/* Step: Edit single leg */}
       {step === "editLeg" && editingLegIndex !== null && (
-        <div className="flex-1 min-h-0 flex flex-col items-center justify-center pr-5 py-4 overflow-y-auto"
-            style={{ paddingLeft: "1.25rem" }}>
+        <div
+          className="flex-1 min-h-0 flex flex-col items-center justify-center pr-5 py-4 overflow-y-auto"
+          style={{ paddingLeft: "1.25rem" }}
+        >
           <div className="w-full max-w-md">
             <LegOptionsEditor
               leg={legs[editingLegIndex]}
@@ -366,8 +477,10 @@ export function SetSetupScreen({ onStart, onBack }: SetSetupScreenProps) {
       {/* Step: Players */}
       {step === "players" && (
         <>
-          <div className="flex-1 min-h-0 flex flex-col pr-5 py-3 gap-2 overflow-hidden"
-              style={{ paddingLeft: "1.25rem" }}>
+          <div
+            className="flex-1 min-h-0 flex flex-col pr-5 py-3 gap-2 overflow-hidden"
+            style={{ paddingLeft: "1.25rem" }}
+          >
             <PlayerSelectStep roster={roster} onChange={setRoster} />
           </div>
 

@@ -1,17 +1,22 @@
-import { dbSaveSession, type GameSessionRecord, type RecordedDart, type RoundRecord } from "./db.ts";
+import {
+  dbSaveSession,
+  type GameSessionRecord,
+  type RecordedDart,
+  type RoundRecord,
+} from "./db.ts";
 
 export type { RecordedDart };
 
 export class GameRecorder {
   private rounds: RoundRecord[] = [];
   private roundCounters: number[];
-  private gameType: "x01" | "cricket" | "highscore";
+  private gameType: "x01" | "cricket" | "highscore" | "atw";
   private playerNames: string[];
   private playerIds: (string | null)[];
   private options: unknown;
 
   constructor(
-    gameType: "x01" | "cricket" | "highscore",
+    gameType: "x01" | "cricket" | "highscore" | "atw",
     playerNames: string[],
     playerIds: (string | null)[],
     options: unknown,
@@ -42,9 +47,10 @@ export class GameRecorder {
     if (!hasNamedPlayer) return;
 
     const session: GameSessionRecord = {
-      id: typeof crypto.randomUUID === "function"
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+      id:
+        typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
       gameType: this.gameType,
       playedAt: Date.now(),
       options: this.options,

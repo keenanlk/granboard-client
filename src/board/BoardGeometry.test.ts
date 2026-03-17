@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { segmentCenter, coordToSegmentId, CLOCKWISE_NUMBERS } from "./BoardGeometry.ts";
+import {
+  segmentCenter,
+  coordToSegmentId,
+  CLOCKWISE_NUMBERS,
+} from "./BoardGeometry.ts";
 import { SegmentID } from "./Dartboard.ts";
 
 // ---------------------------------------------------------------------------

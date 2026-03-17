@@ -1,4 +1,9 @@
-import { SegmentID, SegmentSection, SegmentType, type Segment } from "../board/Dartboard.ts";
+import {
+  SegmentID,
+  SegmentSection,
+  SegmentType,
+  type Segment,
+} from "../board/Dartboard.ts";
 import type { GameEngine } from "./GameEngine.ts";
 
 export const CRICKET_TARGETS = [20, 19, 18, 17, 16, 15, 25] as const;
@@ -22,9 +27,9 @@ export const DEFAULT_CRICKET_OPTIONS: CricketOptions = {
 export interface CricketThrownDart {
   segment: Segment;
   target: CricketTarget | null; // null = not a valid cricket target
-  marksAdded: number;           // marks added toward closing (≤3 cap); used for undo
-  marksEarned: number;          // raw physical marks from the dart (1/2/3); used for animation
-  effectiveMarks: number;       // marks that counted: closing marks + scoring extras; used for totalMarksEarned / undo
+  marksAdded: number; // marks added toward closing (≤3 cap); used for undo
+  marksEarned: number; // raw physical marks from the dart (1/2/3); used for animation
+  effectiveMarks: number; // marks that counted: closing marks + scoring extras; used for totalMarksEarned / undo
   pointsScored: number;
   /** Cut-throat only: which opponents received points (for undo). */
   pointsDistributed?: { playerIndex: number; points: number }[];
@@ -75,14 +80,17 @@ function getCricketTargetAndMarks(
   singleBull: boolean,
 ): { target: CricketTarget | null; marksEarned: number } {
   if (segment.Section === SegmentSection.BULL) {
-    const marksEarned = segment.ID === SegmentID.DBL_BULL && !singleBull ? 2 : 1;
+    const marksEarned =
+      segment.ID === SegmentID.DBL_BULL && !singleBull ? 2 : 1;
     return { target: 25, marksEarned };
   }
   if (segment.Section >= 15 && segment.Section <= 20) {
     const marksEarned =
-      segment.Type === SegmentType.Triple ? 3
-      : segment.Type === SegmentType.Double ? 2
-      : 1;
+      segment.Type === SegmentType.Triple
+        ? 3
+        : segment.Type === SegmentType.Double
+          ? 2
+          : 1;
     return { target: segment.Section as CricketTarget, marksEarned };
   }
   return { target: null, marksEarned: 0 };
@@ -101,7 +109,11 @@ function calcPointsFromExtras(
   players: CricketPlayer[],
   currentPlayerIndex: number,
   cutThroat: boolean,
-): { scoringExtras: number; pointsScored: number; pointsDistributed?: { playerIndex: number; points: number }[] } {
+): {
+  scoringExtras: number;
+  pointsScored: number;
+  pointsDistributed?: { playerIndex: number; points: number }[];
+} {
   if (extraMarks === 0) return { scoringExtras: 0, pointsScored: 0 };
   const faceValue = target === 25 ? 25 : target;
   const perMark = extraMarks * faceValue;
@@ -116,7 +128,11 @@ function calcPointsFromExtras(
     });
     if (distributed.length === 0) return { scoringExtras: 0, pointsScored: 0 };
     const totalDistributed = distributed.reduce((sum, d) => sum + d.points, 0);
-    return { scoringExtras: extraMarks, pointsScored: totalDistributed, pointsDistributed: distributed };
+    return {
+      scoringExtras: extraMarks,
+      pointsScored: totalDistributed,
+      pointsDistributed: distributed,
+    };
   }
 
   const anyOpponentOpen = players.some(
@@ -148,10 +164,14 @@ function checkCricketWinner(
 
   if (cutThroat) {
     // Cut-throat: lowest score wins when all closed
-    const leadsAll = allPlayers.every((p, i) => i === currentIndex || player.score <= p.score);
+    const leadsAll = allPlayers.every(
+      (p, i) => i === currentIndex || player.score <= p.score,
+    );
     if (allClosed && leadsAll) return player.name;
   } else {
-    const leadsAll = allPlayers.every((p, i) => i === currentIndex || player.score >= p.score);
+    const leadsAll = allPlayers.every(
+      (p, i) => i === currentIndex || player.score >= p.score,
+    );
     if (allClosed && leadsAll) return player.name;
   }
 
@@ -200,14 +220,24 @@ export class CricketEngine implements GameEngine<CricketState, CricketOptions> {
     const { currentPlayerIndex: ci, players, options } = state;
     const player = players[ci];
 
-    const { target, marksEarned } = getCricketTargetAndMarks(segment, options.singleBull);
+    const { target, marksEarned } = getCricketTargetAndMarks(
+      segment,
+      options.singleBull,
+    );
     const currentMarks = target !== null ? player.marks[target] : 0;
-    const marksToAdd = target !== null ? Math.min(marksEarned, 3 - currentMarks) : 0;
+    const marksToAdd =
+      target !== null ? Math.min(marksEarned, 3 - currentMarks) : 0;
     const extraMarks = marksEarned - marksToAdd;
 
     const { scoringExtras, pointsScored, pointsDistributed } =
       target !== null
-        ? calcPointsFromExtras(target, extraMarks, players, ci, options.cutThroat)
+        ? calcPointsFromExtras(
+            target,
+            extraMarks,
+            players,
+            ci,
+            options.cutThroat,
+          )
         : { scoringExtras: 0, pointsScored: 0, pointsDistributed: undefined };
 
     const effectiveMarks = marksToAdd + scoringExtras;
@@ -235,10 +265,20 @@ export class CricketEngine implements GameEngine<CricketState, CricketOptions> {
       return p;
     });
 
-    const winner = checkCricketWinner(newPlayers[ci], newPlayers, ci, options.cutThroat);
+    const winner = checkCricketWinner(
+      newPlayers[ci],
+      newPlayers,
+      ci,
+      options.cutThroat,
+    );
 
     const dart: CricketThrownDart = {
-      segment, target, marksAdded: marksToAdd, marksEarned, effectiveMarks, pointsScored,
+      segment,
+      target,
+      marksAdded: marksToAdd,
+      marksEarned,
+      effectiveMarks,
+      pointsScored,
       ...(pointsDistributed ? { pointsDistributed } : {}),
     };
 
@@ -261,14 +301,20 @@ export class CricketEngine implements GameEngine<CricketState, CricketOptions> {
         if (i === state.currentPlayerIndex) {
           const newMarks =
             last.target !== null
-              ? { ...p.marks, [last.target]: p.marks[last.target] - last.marksAdded }
+              ? {
+                  ...p.marks,
+                  [last.target]: p.marks[last.target] - last.marksAdded,
+                }
               : p.marks;
           return {
             ...p,
             marks: newMarks,
             score: isCutThroat ? p.score : p.score - last.pointsScored,
             totalDartsThrown: Math.max(0, p.totalDartsThrown - 1),
-            totalMarksEarned: Math.max(0, p.totalMarksEarned - last.effectiveMarks),
+            totalMarksEarned: Math.max(
+              0,
+              p.totalMarksEarned - last.effectiveMarks,
+            ),
           };
         }
         // Cut-throat: reverse points distributed to opponents
@@ -285,8 +331,14 @@ export class CricketEngine implements GameEngine<CricketState, CricketOptions> {
   nextTurn(state: CricketState): Partial<CricketState> {
     if (state.winner) return state;
 
-    const roundScore = state.currentRoundDarts.reduce((sum, d) => sum + d.pointsScored, 0);
-    const roundMarks = state.currentRoundDarts.reduce((sum, d) => sum + d.effectiveMarks, 0);
+    const roundScore = state.currentRoundDarts.reduce(
+      (sum, d) => sum + d.pointsScored,
+      0,
+    );
+    const roundMarks = state.currentRoundDarts.reduce(
+      (sum, d) => sum + d.effectiveMarks,
+      0,
+    );
     const roundRecord: CricketRound = {
       score: roundScore,
       marksEarned: roundMarks,
@@ -303,10 +355,16 @@ export class CricketEngine implements GameEngine<CricketState, CricketOptions> {
 
     const isLastPlayer = state.currentPlayerIndex === state.players.length - 1;
     const nextPlayerIndex = isLastPlayer ? 0 : state.currentPlayerIndex + 1;
-    const nextRound = isLastPlayer ? state.currentRound + 1 : state.currentRound;
+    const nextRound = isLastPlayer
+      ? state.currentRound + 1
+      : state.currentRound;
 
     // Round limit reached after the last player finishes
-    if (isLastPlayer && state.options.roundLimit > 0 && state.currentRound >= state.options.roundLimit) {
+    if (
+      isLastPlayer &&
+      state.options.roundLimit > 0 &&
+      state.currentRound >= state.options.roundLimit
+    ) {
       const bestScore = state.options.cutThroat
         ? Math.min(...updatedPlayers.map((p) => p.score))
         : Math.max(...updatedPlayers.map((p) => p.score));

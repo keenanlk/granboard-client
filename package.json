@@ -1,7 +1,7 @@
 {
   "name": "nlc-darts",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "repository": "https://github.com/keenanlk/granboard-client.git",
   "scripts": {
@@ -11,10 +11,12 @@
     "cap:ios": "npm run cap:sync && cap open ios",
     "dev:ios": "cap run ios --livereload --external",
     "build:ios": "node scripts/buildIos.mjs",
-    "lint": "eslint . && tsc",
+    "lint": "eslint . && tsc && prettier --check .",
+    "format": "prettier --write .",
     "test": "vitest run",
     "preview": "vite preview",
-    "sim": "tsx scripts/botSim.ts"
+    "sim": "tsx scripts/botSim.ts",
+    "bump": "node scripts/version.mjs"
   },
   "dependencies": {
     "@capacitor-community/bluetooth-le": "^6.0.0",

@@ -134,7 +134,10 @@ function runX01(bots: [Bot, Bot], stats: [BotStats, BotStats]): void {
 const CRICKET_ROUND_LIMIT = parseInt(arg("--cricket-rounds", "20"), 10);
 
 function runCricket(bots: [Bot, Bot], stats: [BotStats, BotStats]): void {
-  const cricketOpts = { ...DEFAULT_CRICKET_OPTIONS, roundLimit: CRICKET_ROUND_LIMIT };
+  const cricketOpts = {
+    ...DEFAULT_CRICKET_OPTIONS,
+    roundLimit: CRICKET_ROUND_LIMIT,
+  };
   let state: CricketState = cricketEngine.startGame(cricketOpts, [
     bots[0].name,
     bots[1].name,
@@ -158,7 +161,8 @@ function runCricket(bots: [Bot, Bot], stats: [BotStats, BotStats]): void {
   for (let i = 0; i < 2; i++) {
     const player = state.players[i];
     if (player.totalDartsThrown > 0) {
-      stats[i].ppdSum += (player.totalMarksEarned / player.totalDartsThrown) * 3;
+      stats[i].ppdSum +=
+        (player.totalMarksEarned / player.totalDartsThrown) * 3;
       stats[i].ppdCount++;
     }
     if (bots[i].name === state.winner) stats[i].wins++;
@@ -197,13 +201,13 @@ function runHighScore(bots: [Bot, Bot], stats: [BotStats, BotStats]): void {
 // ── Skill groups ──────────────────────────────────────────────────────────────
 
 const GROUPS: Array<{ label: string; skill: BotSkill }> = [
-  { label: "BEGINNER",     skill: BotSkill.Beginner },
+  { label: "BEGINNER", skill: BotSkill.Beginner },
   { label: "INTERMEDIATE", skill: BotSkill.Intermediate },
-  { label: "CLUB",         skill: BotSkill.Club },
-  { label: "COUNTY",       skill: BotSkill.County },
-  { label: "ADVANCED",     skill: BotSkill.Advanced },
-  { label: "SEMIPRO",      skill: BotSkill.SemiPro },
-  { label: "PRO",          skill: BotSkill.Pro },
+  { label: "CLUB", skill: BotSkill.Club },
+  { label: "COUNTY", skill: BotSkill.County },
+  { label: "ADVANCED", skill: BotSkill.Advanced },
+  { label: "SEMIPRO", skill: BotSkill.SemiPro },
+  { label: "PRO", skill: BotSkill.Pro },
 ];
 
 // ── Run ───────────────────────────────────────────────────────────────────────
@@ -216,36 +220,47 @@ function runSection(mode: RunMode): void {
     x01Options.doubleOut && "DoubleOut",
     x01Options.masterOut && "MasterOut",
     x01Options.splitBull && "SplitBull",
-  ].filter(Boolean).join(", ");
+  ]
+    .filter(Boolean)
+    .join(", ");
 
   const sectionLabel =
-    mode === "x01"      ? `X01 (${x01StartingScore}${x01Flags ? `, ${x01Flags}` : ""})` :
-    mode === "highscore" ? `High Score (${HS_ROUNDS} rounds)` :
-                           "Cricket";
+    mode === "x01"
+      ? `X01 (${x01StartingScore}${x01Flags ? `, ${x01Flags}` : ""})`
+      : mode === "highscore"
+        ? `High Score (${HS_ROUNDS} rounds)`
+        : "Cricket";
 
   const metric = mode === "cricket" ? "MPR" : "PPD";
   const metricDesc = mode === "cricket" ? "marks per round" : "points per dart";
 
   console.log(`\n${"═".repeat(72)}`);
-  console.log(`  ${sectionLabel} — ${GAMES.toLocaleString()} games per skill group`);
+  console.log(
+    `  ${sectionLabel} — ${GAMES.toLocaleString()} games per skill group`,
+  );
   console.log(`  Metric: ${metric} (${metricDesc})`);
   console.log(`${"═".repeat(72)}\n`);
 
   const colW = [16, 12, 12, 16, 10, 10];
   const line = "─".repeat(colW.reduce((a, b) => a + b) + colW.length * 2);
 
-  console.log([
-    "SKILL".padEnd(colW[0]),
-    `BOT A ${metric}`.padStart(colW[1]),
-    `BOT B ${metric}`.padStart(colW[2]),
-    `COMBINED ${metric}`.padStart(colW[3]),
-    "BOT A W%".padStart(colW[4]),
-    "BOT B W%".padStart(colW[5]),
-  ].join("  "));
+  console.log(
+    [
+      "SKILL".padEnd(colW[0]),
+      `BOT A ${metric}`.padStart(colW[1]),
+      `BOT B ${metric}`.padStart(colW[2]),
+      `COMBINED ${metric}`.padStart(colW[3]),
+      "BOT A W%".padStart(colW[4]),
+      "BOT B W%".padStart(colW[5]),
+    ].join("  "),
+  );
   console.log(line);
 
   for (const { label, skill } of GROUPS) {
-    const bots: [Bot, Bot] = [new Bot(`${label}_A`, skill), new Bot(`${label}_B`, skill)];
+    const bots: [Bot, Bot] = [
+      new Bot(`${label}_A`, skill),
+      new Bot(`${label}_B`, skill),
+    ];
     const stats: [BotStats, BotStats] = [emptyStats(), emptyStats()];
 
     for (let i = 0; i < GAMES; i++) {
@@ -256,17 +271,21 @@ function runSection(mode: RunMode): void {
 
     const winPct = (wins: number) => `${((wins / GAMES) * 100).toFixed(1)}%`;
 
-    console.log([
-      label.padEnd(colW[0]),
-      avgPPD(stats[0]).padStart(colW[1]),
-      avgPPD(stats[1]).padStart(colW[2]),
-      combinedPPD(stats[0], stats[1]).padStart(colW[3]),
-      winPct(stats[0].wins).padStart(colW[4]),
-      winPct(stats[1].wins).padStart(colW[5]),
-    ].join("  "));
+    console.log(
+      [
+        label.padEnd(colW[0]),
+        avgPPD(stats[0]).padStart(colW[1]),
+        avgPPD(stats[1]).padStart(colW[2]),
+        combinedPPD(stats[0], stats[1]).padStart(colW[3]),
+        winPct(stats[0].wins).padStart(colW[4]),
+        winPct(stats[1].wins).padStart(colW[5]),
+      ].join("  "),
+    );
   }
 
-  console.log(`\n  (${(GAMES * 2).toLocaleString()} ${metric} samples per skill level)`);
+  console.log(
+    `\n  (${(GAMES * 2).toLocaleString()} ${metric} samples per skill level)`,
+  );
 }
 
 // Default: run X01 and Cricket. Pass --mode highscore to run that instead.

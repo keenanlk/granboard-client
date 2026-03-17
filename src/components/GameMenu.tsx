@@ -42,7 +42,9 @@ export function GameMenu({ onUndo, undoDisabled, onExit }: GameMenuProps) {
     setOpen(false);
   }
 
-  function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement> | React.FormEvent<HTMLInputElement>) {
+  function handleVolumeChange(
+    e: React.ChangeEvent<HTMLInputElement> | React.FormEvent<HTMLInputElement>,
+  ) {
     const v = parseFloat((e.target as HTMLInputElement).value);
     setVolumeState(v);
     setVolume(v);
@@ -95,14 +97,22 @@ export function GameMenu({ onUndo, undoDisabled, onExit }: GameMenuProps) {
           {/* Mock Board — only in dev or when connected to mock */}
           {showMockBoard && (
             <>
-              <DevBoardMenuButton onActivate={() => { setBoardOpen(true); setOpen(false); }} />
+              <DevBoardMenuButton
+                onActivate={() => {
+                  setBoardOpen(true);
+                  setOpen(false);
+                }}
+              />
               <div className="h-px bg-border-default" />
             </>
           )}
 
           {/* Exit */}
           <button
-            onClick={() => { setOpen(false); onExit(); }}
+            onClick={() => {
+              setOpen(false);
+              onExit();
+            }}
             className="w-full flex items-center gap-3 px-5 py-4 text-left text-base font-semibold uppercase tracking-wide text-red-400 hover:text-red-300 hover:bg-surface-overlay transition-colors"
           >
             <LogOut size={18} />
@@ -112,7 +122,9 @@ export function GameMenu({ onUndo, undoDisabled, onExit }: GameMenuProps) {
       )}
 
       {/* Floating board panel */}
-      {showMockBoard && boardOpen && <DevBoardPanel onClose={() => setBoardOpen(false)} />}
+      {showMockBoard && boardOpen && (
+        <DevBoardPanel onClose={() => setBoardOpen(false)} />
+      )}
     </div>
   );
 }

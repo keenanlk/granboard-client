@@ -110,7 +110,10 @@ async function getBleClient() {
 }
 
 async function connectCapacitor(deviceId?: string): Promise<void> {
-  console.log("[BLE] connectCapacitor start", deviceId ? `(saved: ${deviceId})` : "(scan)");
+  console.log(
+    "[BLE] connectCapacitor start",
+    deviceId ? `(saved: ${deviceId})` : "(scan)",
+  );
   const BleClient = await getBleClient();
   if (!bleInitialized) {
     console.log("[BLE] Initializing BleClient...");
@@ -124,7 +127,8 @@ async function connectCapacitor(deviceId?: string): Promise<void> {
     // Plugin requires getDevices() before connect() for known device IDs
     console.log("[BLE] Retrieving known device...");
     const known = await BleClient.getDevices([deviceId]);
-    if (known.length === 0) throw new Error("Saved device not found via getDevices.");
+    if (known.length === 0)
+      throw new Error("Saved device not found via getDevices.");
     device = known[0];
     console.log("[BLE] Known device retrieved:", device.deviceId);
   } else {
@@ -149,7 +153,10 @@ async function connectCapacitor(deviceId?: string): Promise<void> {
     (s) => s.uuid.toLowerCase() === SERVICE_UUID.toLowerCase(),
   );
   if (!service) throw new Error("GranBoard service not found.");
-  console.log("[BLE] Service found, characteristics:", service.characteristics.length);
+  console.log(
+    "[BLE] Service found, characteristics:",
+    service.characteristics.length,
+  );
 
   const notifyChar = service.characteristics.find((c) => c.properties.notify);
   const writeChar =
@@ -161,7 +168,12 @@ async function connectCapacitor(deviceId?: string): Promise<void> {
     throw new Error("Required BLE characteristics not found.");
 
   capWriteCharUUID = writeChar.uuid;
-  console.log("[BLE] Write char:", capWriteCharUUID, "Notify char:", notifyChar.uuid);
+  console.log(
+    "[BLE] Write char:",
+    capWriteCharUUID,
+    "Notify char:",
+    notifyChar.uuid,
+  );
 
   await BleClient.startNotifications(
     device.deviceId,
@@ -269,7 +281,12 @@ export class Granboard {
 
   public static async TryAutoReconnect(): Promise<Granboard> {
     const savedId = localStorage.getItem(DEVICE_ID_KEY) ?? undefined;
-    console.log("[BLE] TryAutoReconnect — platform:", isNative ? "native" : "web", "savedId:", savedId ?? "none");
+    console.log(
+      "[BLE] TryAutoReconnect — platform:",
+      isNative ? "native" : "web",
+      "savedId:",
+      savedId ?? "none",
+    );
     if (isNative) {
       if (!savedId) throw new Error("No previously paired device.");
       await connectCapacitor(savedId);

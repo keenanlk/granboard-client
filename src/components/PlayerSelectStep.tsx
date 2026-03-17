@@ -7,7 +7,7 @@ import { BotSelectOverlay } from "./BotSelectOverlay.tsx";
 export { BotSkill };
 
 export interface RosterEntry {
-  id: string | null;  // null = guest or bot
+  id: string | null; // null = guest or bot
   name: string;
   isBot?: boolean;
   botSkill?: BotSkill;
@@ -28,16 +28,29 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [editingName, setEditingName] = useState<number | null>(null);
   // Bot select overlay: "add" = adding new bot, number = editing existing bot at that index
-  const [botSelectMode, setBotSelectMode] = useState<"add" | number | null>(null);
+  const [botSelectMode, setBotSelectMode] = useState<"add" | number | null>(
+    null,
+  );
   // Touch drag state
-  const touchStartRef = useRef<{ x: number; y: number; index: number; timer: ReturnType<typeof setTimeout> | null } | null>(null);
+  const touchStartRef = useRef<{
+    x: number;
+    y: number;
+    index: number;
+    timer: ReturnType<typeof setTimeout> | null;
+  } | null>(null);
   const [touchDragging, setTouchDragging] = useState(false);
-  const [touchPos, setTouchPos] = useState<{ x: number; y: number } | null>(null);
+  const [touchPos, setTouchPos] = useState<{ x: number; y: number } | null>(
+    null,
+  );
   const gridRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
-  const inGameIds = new Set(roster.map((r) => r.id).filter(Boolean) as string[]);
+  const inGameIds = new Set(
+    roster.map((r) => r.id).filter(Boolean) as string[],
+  );
 
   const toggleSaved = (id: string, name: string) => {
     if (inGameIds.has(id)) {
@@ -62,8 +75,11 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
   const handleBotSelect = (skill: BotSkill) => {
     const character = getBotCharacter(skill);
     if (botSelectMode === "add") {
-      const sameName = roster.filter((r) => r.isBot && r.name.startsWith(character.name)).length;
-      const name = sameName > 0 ? `${character.name} ${sameName + 1}` : character.name;
+      const sameName = roster.filter(
+        (r) => r.isBot && r.name.startsWith(character.name),
+      ).length;
+      const name =
+        sameName > 0 ? `${character.name} ${sameName + 1}` : character.name;
       onChange([...roster, { id: null, name, isBot: true, botSkill: skill }]);
     } else if (typeof botSelectMode === "number") {
       setSkill(botSelectMode, skill);
@@ -84,12 +100,23 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
     const oldEntry = roster[index];
     // Auto-rename if the name is still a default character name (not manually edited)
     const allNames = getAllCharacters().map((c) => c.character.name);
-    const isDefaultName = allNames.some((n) => oldEntry.name === n || oldEntry.name.match(new RegExp(`^${n} \\d+$`)));
-    const sameName = roster.filter((r, i) => i !== index && r.isBot && r.name.startsWith(character.name)).length;
+    const isDefaultName = allNames.some(
+      (n) =>
+        oldEntry.name === n || oldEntry.name.match(new RegExp(`^${n} \\d+$`)),
+    );
+    const sameName = roster.filter(
+      (r, i) => i !== index && r.isBot && r.name.startsWith(character.name),
+    ).length;
     const newName = isDefaultName
-      ? (sameName > 0 ? `${character.name} ${sameName + 1}` : character.name)
+      ? sameName > 0
+        ? `${character.name} ${sameName + 1}`
+        : character.name
       : oldEntry.name;
-    onChange(roster.map((r, i) => (i === index ? { ...r, botSkill: skill, name: newName } : r)));
+    onChange(
+      roster.map((r, i) =>
+        i === index ? { ...r, botSkill: skill, name: newName } : r,
+      ),
+    );
   };
 
   const handleCreatePlayer = async () => {
@@ -118,7 +145,8 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
     e.dataTransfer.effectAllowed = "move";
     // Use a transparent image so native drag preview is hidden
     const img = new Image();
-    img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+    img.src =
+      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     e.dataTransfer.setDragImage(img, 0, 0);
   };
 
@@ -146,7 +174,12 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
       setDragIndex(index);
       setTouchPos({ x: touch.clientX, y: touch.clientY });
     }, 200);
-    touchStartRef.current = { x: touch.clientX, y: touch.clientY, index, timer };
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      index,
+      timer,
+    };
   };
 
   // Attach touchmove with { passive: false } so preventDefault works
@@ -191,44 +224,75 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
   const dragEntry = dragIndex !== null ? roster[dragIndex] : null;
 
   return (
-    <div className="flex flex-1 min-h-0" style={{ gap: "clamp(0.75rem,1.5vw,1.5rem)" }}>
-
+    <div
+      className="flex flex-1 min-h-0"
+      style={{ gap: "clamp(0.75rem,1.5vw,1.5rem)" }}
+    >
       {/* Touch drag floating preview */}
-      {touchDragging && dragEntry && touchPos && (() => {
-        const dragBotChar = dragEntry.isBot ? getBotCharacter(dragEntry.botSkill ?? BotSkill.Intermediate) : null;
-        return (
-          <div
-            className="fixed z-[100] pointer-events-none rounded-xl border-2 px-4 py-3 bg-surface-raised/90 backdrop-blur-sm shadow-2xl flex flex-col items-center gap-1"
-            style={{
-              left: touchPos.x - 60,
-              top: touchPos.y - 30,
-              minWidth: 120,
-              borderColor: dragBotChar ? dragBotChar.color : "var(--color-game-accent)",
-              boxShadow: dragBotChar ? `0 0 16px ${dragBotChar.glow}` : "0 0 16px var(--color-game-accent-glow)",
-            }}
-          >
-            <span
-              className={`font-bold text-sm ${dragBotChar ? dragBotChar.animationClass : ""}`}
-              style={dragBotChar ? { color: dragBotChar.color } : { color: "white" }}
+      {touchDragging &&
+        dragEntry &&
+        touchPos &&
+        (() => {
+          const dragBotChar = dragEntry.isBot
+            ? getBotCharacter(dragEntry.botSkill ?? BotSkill.Intermediate)
+            : null;
+          return (
+            <div
+              className="fixed z-[100] pointer-events-none rounded-xl border-2 px-4 py-3 bg-surface-raised/90 backdrop-blur-sm shadow-2xl flex flex-col items-center gap-1"
+              style={{
+                left: touchPos.x - 60,
+                top: touchPos.y - 30,
+                minWidth: 120,
+                borderColor: dragBotChar
+                  ? dragBotChar.color
+                  : "var(--color-game-accent)",
+                boxShadow: dragBotChar
+                  ? `0 0 16px ${dragBotChar.glow}`
+                  : "0 0 16px var(--color-game-accent-glow)",
+              }}
             >
-              {dragEntry.name}
-            </span>
-            {dragBotChar && (
-              <span className="text-[9px] font-black" style={{ color: dragBotChar.color, opacity: 0.6 }}>{dragBotChar.label}</span>
-            )}
-          </div>
-        );
-      })()}
+              <span
+                className={`font-bold text-sm ${dragBotChar ? dragBotChar.animationClass : ""}`}
+                style={
+                  dragBotChar
+                    ? { color: dragBotChar.color }
+                    : { color: "white" }
+                }
+              >
+                {dragEntry.name}
+              </span>
+              {dragBotChar && (
+                <span
+                  className="text-[9px] font-black"
+                  style={{ color: dragBotChar.color, opacity: 0.6 }}
+                >
+                  {dragBotChar.label}
+                </span>
+              )}
+            </div>
+          );
+        })()}
 
       {/* Left: saved player pool */}
-      <div className="flex flex-col gap-[clamp(0.5rem,1vh,1rem)] shrink-0 min-h-0" style={{ width: "clamp(10rem,15vw,18rem)" }}>
-        <p className="text-content-muted uppercase tracking-widest font-bold shrink-0" style={{ fontSize: "clamp(0.65rem,1vw,1rem)" }}>
+      <div
+        className="flex flex-col gap-[clamp(0.5rem,1vh,1rem)] shrink-0 min-h-0"
+        style={{ width: "clamp(10rem,15vw,18rem)" }}
+      >
+        <p
+          className="text-content-muted uppercase tracking-widest font-bold shrink-0"
+          style={{ fontSize: "clamp(0.65rem,1vw,1rem)" }}
+        >
           Saved Players
         </p>
 
         <div className="flex-1 flex flex-col gap-[clamp(0.25rem,0.5vh,0.5rem)] overflow-y-auto min-h-0">
           {loaded && players.length === 0 && !creating && (
-            <p className="text-content-faint italic" style={{ fontSize: "clamp(0.75rem,1.2vw,1.25rem)" }}>No saved players yet</p>
+            <p
+              className="text-content-faint italic"
+              style={{ fontSize: "clamp(0.75rem,1.2vw,1.25rem)" }}
+            >
+              No saved players yet
+            </p>
           )}
           {players.map((p) => {
             const active = inGameIds.has(p.id);
@@ -244,15 +308,26 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
                 }`}
                 style={{
                   fontSize: "clamp(0.8rem,1.3vw,1.5rem)",
-                  padding: "clamp(0.375rem,0.8vh,0.75rem) clamp(0.5rem,1vw,1rem)",
-                  ...(active ? {
-                    borderColor: "var(--color-game-accent)",
-                    backgroundColor: "color-mix(in oklch, var(--color-game-accent-dim) 60%, transparent)",
-                  } : {}),
+                  padding:
+                    "clamp(0.375rem,0.8vh,0.75rem) clamp(0.5rem,1vw,1rem)",
+                  ...(active
+                    ? {
+                        borderColor: "var(--color-game-accent)",
+                        backgroundColor:
+                          "color-mix(in oklch, var(--color-game-accent-dim) 60%, transparent)",
+                      }
+                    : {}),
                 }}
               >
                 <span className="flex-1 truncate">{p.name}</span>
-                {active && <span className="shrink-0" style={{ fontSize: "clamp(0.7rem,1vw,1.25rem)" }}>✓</span>}
+                {active && (
+                  <span
+                    className="shrink-0"
+                    style={{ fontSize: "clamp(0.7rem,1vw,1.25rem)" }}
+                  >
+                    ✓
+                  </span>
+                )}
               </button>
             );
           })}
@@ -270,12 +345,18 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
               }}
               placeholder="Player name"
               className="flex-1 min-w-0 bg-surface-raised border border-border-subtle rounded-xl text-white focus:outline-none focus:border-border-default"
-              style={{ fontSize: "clamp(0.8rem,1.3vw,1.5rem)", padding: "clamp(0.375rem,0.8vh,0.75rem) clamp(0.5rem,1vw,1rem)" }}
+              style={{
+                fontSize: "clamp(0.8rem,1.3vw,1.5rem)",
+                padding: "clamp(0.375rem,0.8vh,0.75rem) clamp(0.5rem,1vw,1rem)",
+              }}
             />
             <button
               onClick={handleCreatePlayer}
               className="rounded-xl font-black text-[var(--color-game-accent)] shrink-0"
-              style={{ fontSize: "clamp(0.8rem,1.3vw,1.5rem)", padding: "clamp(0.375rem,0.8vh,0.75rem) clamp(0.5rem,1vw,1rem)" }}
+              style={{
+                fontSize: "clamp(0.8rem,1.3vw,1.5rem)",
+                padding: "clamp(0.375rem,0.8vh,0.75rem) clamp(0.5rem,1vw,1rem)",
+              }}
             >
               ✓
             </button>
@@ -284,7 +365,10 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
           <button
             onClick={() => setCreating(true)}
             className="shrink-0 w-full rounded-xl border border-dashed border-border-subtle text-content-muted hover:text-content-secondary hover:border-border-default font-bold transition-colors"
-            style={{ fontSize: "clamp(0.75rem,1.2vw,1.25rem)", padding: "clamp(0.375rem,0.8vh,0.75rem) 0" }}
+            style={{
+              fontSize: "clamp(0.75rem,1.2vw,1.25rem)",
+              padding: "clamp(0.375rem,0.8vh,0.75rem) 0",
+            }}
           >
             + New Player
           </button>
@@ -292,17 +376,25 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
       </div>
 
       {/* Right: current game roster as 2-row grid */}
-      <div className="flex-1 flex flex-col min-h-0" style={{ gap: "clamp(0.375rem,0.8vh,0.75rem)" }}>
-
+      <div
+        className="flex-1 flex flex-col min-h-0"
+        style={{ gap: "clamp(0.375rem,0.8vh,0.75rem)" }}
+      >
         <div
           ref={gridRef}
           className="flex-1 min-h-0 grid overflow-hidden"
-          style={{ gridTemplateColumns: `repeat(${Math.ceil(Math.max(roster.length, 2) / 2)}, minmax(0, 1fr))`, gridTemplateRows: "minmax(0, 1fr) minmax(0, 1fr)", gap: "clamp(0.375rem,0.5vw,0.75rem)" }}
+          style={{
+            gridTemplateColumns: `repeat(${Math.ceil(Math.max(roster.length, 2) / 2)}, minmax(0, 1fr))`,
+            gridTemplateRows: "minmax(0, 1fr) minmax(0, 1fr)",
+            gap: "clamp(0.375rem,0.5vw,0.75rem)",
+          }}
         >
           {roster.map((entry, i) => {
             const isDragging = dragIndex === i;
             const isOver = dragOverIndex === i && dragIndex !== i;
-            const botChar = entry.isBot ? getBotCharacter(entry.botSkill ?? BotSkill.Intermediate) : null;
+            const botChar = entry.isBot
+              ? getBotCharacter(entry.botSkill ?? BotSkill.Intermediate)
+              : null;
             const handleCardClick = () => {
               if (touchDragging) return;
               if (editingName === i) return;
@@ -321,30 +413,48 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
                 onDragOver={(e) => handleDragOver(e, i)}
                 onDrop={() => handleDrop(i)}
                 onDragEnd={handleDragEnd}
-                onTouchStart={(e) => { if (editingName !== i) handleTouchStart(i, e); }}
-
+                onTouchStart={(e) => {
+                  if (editingName !== i) handleTouchStart(i, e);
+                }}
                 onTouchEnd={handleTouchEnd}
                 onClick={handleCardClick}
                 className={`relative rounded-xl border-2 flex flex-col items-center justify-center gap-1 p-2 transition-all duration-150 select-none ${
-                  editingName === i ? "cursor-text" : "cursor-grab active:cursor-grabbing"
+                  editingName === i
+                    ? "cursor-text"
+                    : "cursor-grab active:cursor-grabbing"
                 } ${
-                  !entry.isBot && !entry.id ? "border-border-subtle bg-surface-raised" : ""
+                  !entry.isBot && !entry.id
+                    ? "border-border-subtle bg-surface-raised"
+                    : ""
                 } ${isDragging ? "opacity-30 scale-95" : ""} ${isOver ? "scale-105 shadow-lg" : ""}`}
                 style={{
                   ...(botChar
-                    ? { borderColor: botChar.color, backgroundColor: botChar.dim, boxShadow: `0 0 8px ${botChar.glow}` }
+                    ? {
+                        borderColor: botChar.color,
+                        backgroundColor: botChar.dim,
+                        boxShadow: `0 0 8px ${botChar.glow}`,
+                      }
                     : entry.id
                       ? {
                           borderColor: "var(--color-game-accent)",
-                          backgroundColor: "color-mix(in oklch, var(--color-game-accent-dim) 60%, transparent)",
+                          backgroundColor:
+                            "color-mix(in oklch, var(--color-game-accent-dim) 60%, transparent)",
                         }
                       : undefined),
-                  ...(isOver ? { borderColor: "#fff", boxShadow: "0 0 16px var(--color-game-accent-glow)" } : {}),
+                  ...(isOver
+                    ? {
+                        borderColor: "#fff",
+                        boxShadow: "0 0 16px var(--color-game-accent-glow)",
+                      }
+                    : {}),
                 }}
               >
                 {/* Remove button — top right corner */}
                 <button
-                  onClick={(e) => { e.stopPropagation(); removeFromRoster(i); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFromRoster(i);
+                  }}
                   onTouchStart={(e) => e.stopPropagation()}
                   onPointerDown={(e) => e.stopPropagation()}
                   className="absolute top-1 right-1.5 text-zinc-600 hover:text-red-400 transition-colors leading-none z-10"
@@ -354,7 +464,10 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
                 </button>
 
                 {/* Player number — top left */}
-                <span className="absolute top-1 left-2 font-black tabular-nums leading-none text-white/15" style={{ fontSize: "clamp(0.8rem,1.5vw,1.75rem)" }}>
+                <span
+                  className="absolute top-1 left-2 font-black tabular-nums leading-none text-white/15"
+                  style={{ fontSize: "clamp(0.8rem,1.5vw,1.75rem)" }}
+                >
                   {i + 1}
                 </span>
 
@@ -365,7 +478,10 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
                     value={entry.name}
                     onChange={(e) => renameEntry(i, e.target.value)}
                     onBlur={() => setEditingName(null)}
-                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === "Escape") setEditingName(null); }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === "Escape")
+                        setEditingName(null);
+                    }}
                     onClick={(e) => e.stopPropagation()}
                     onPointerDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
@@ -377,13 +493,18 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
                     className={`font-bold text-center truncate max-w-full leading-tight ${botChar ? botChar.animationClass : ""} ${entry.id && !entry.isBot ? "text-[var(--color-game-accent)]" : "text-white"}`}
                     style={{
                       fontSize: "clamp(0.875rem,1.8vw,2rem)",
-                      ...(botChar ? { fontFamily: "Beon, sans-serif", color: botChar.color, textShadow: `0 0 8px ${botChar.glow}` } : {}),
+                      ...(botChar
+                        ? {
+                            fontFamily: "Beon, sans-serif",
+                            color: botChar.color,
+                            textShadow: `0 0 8px ${botChar.glow}`,
+                          }
+                        : {}),
                     }}
                   >
                     {entry.name}
                   </span>
                 )}
-
               </div>
             );
           })}
@@ -395,7 +516,10 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
             <button
               onClick={addGuest}
               className="flex-1 rounded-xl border border-dashed border-border-subtle text-content-muted hover:text-content-secondary hover:border-border-default font-bold transition-colors"
-              style={{ fontSize: "clamp(0.75rem,1.2vw,1.25rem)", padding: "clamp(0.375rem,0.8vh,0.75rem) 0" }}
+              style={{
+                fontSize: "clamp(0.75rem,1.2vw,1.25rem)",
+                padding: "clamp(0.375rem,0.8vh,0.75rem) 0",
+              }}
             >
               + Guest
             </button>
@@ -419,7 +543,11 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
       {/* Bot select overlay */}
       {botSelectMode !== null && (
         <BotSelectOverlay
-          currentSkill={typeof botSelectMode === "number" ? (roster[botSelectMode]?.botSkill ?? null) : null}
+          currentSkill={
+            typeof botSelectMode === "number"
+              ? (roster[botSelectMode]?.botSkill ?? null)
+              : null
+          }
           onSelect={handleBotSelect}
           onCancel={() => setBotSelectMode(null)}
         />

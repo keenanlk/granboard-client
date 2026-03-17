@@ -90,7 +90,10 @@ export function getBotCharacter(skill: BotSkill): BotCharacter {
 }
 
 /** Get all characters in tier order (lowest to highest) */
-export function getAllCharacters(): Array<{ skill: BotSkill; character: BotCharacter }> {
+export function getAllCharacters(): Array<{
+  skill: BotSkill;
+  character: BotCharacter;
+}> {
   return [
     { skill: Skills.Beginner, character: CHARACTERS[Skills.Beginner] },
     { skill: Skills.Intermediate, character: CHARACTERS[Skills.Intermediate] },

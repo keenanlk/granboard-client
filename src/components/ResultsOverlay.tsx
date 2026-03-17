@@ -26,7 +26,14 @@ function SetScoreline({ setProgress }: { setProgress: SetProgress }) {
     <div className="flex items-center justify-center gap-6">
       {setProgress.playerNames.map((name, i) => (
         <div key={name} className="flex items-center gap-3">
-          {i > 0 && <span className="text-zinc-700 font-bold" style={{ fontSize: "clamp(1rem, 3vh, 2rem)" }}>–</span>}
+          {i > 0 && (
+            <span
+              className="text-zinc-700 font-bold"
+              style={{ fontSize: "clamp(1rem, 3vh, 2rem)" }}
+            >
+              –
+            </span>
+          )}
           <div className="flex flex-col items-center">
             <span
               className="font-black tabular-nums text-white"
@@ -47,7 +54,13 @@ function SetScoreline({ setProgress }: { setProgress: SetProgress }) {
   );
 }
 
-export function ResultsOverlay({ playerResults, onExit, onRematch, setProgress, onNextLeg }: ResultsOverlayProps) {
+export function ResultsOverlay({
+  playerResults,
+  onExit,
+  onRematch,
+  setProgress,
+  onNextLeg,
+}: ResultsOverlayProps) {
   const winners = playerResults.filter((p) => p.isWinner);
   const losers = playerResults.filter((p) => !p.isWinner);
   const isTie = winners.length > 1;
@@ -55,18 +68,28 @@ export function ResultsOverlay({ playerResults, onExit, onRematch, setProgress, 
   const isInSet = !!setProgress;
 
   // Include the current leg's winner in the set progress for scoreline + winner calculation
-  const effectiveSetProgress = isInSet && winners.length === 1
-    ? {
-        ...setProgress,
-        legResults: [
-          ...setProgress.legResults,
-          { winnerName: winners[0].name, winnerIndex: setProgress.playerNames.indexOf(winners[0].name) },
-        ],
-      }
-    : setProgress;
+  const effectiveSetProgress =
+    isInSet && winners.length === 1
+      ? {
+          ...setProgress,
+          legResults: [
+            ...setProgress.legResults,
+            {
+              winnerName: winners[0].name,
+              winnerIndex: setProgress.playerNames.indexOf(winners[0].name),
+            },
+          ],
+        }
+      : setProgress;
 
-  const format = isInSet ? (setProgress.totalLegs === 3 ? "bo3" as const : "bo5" as const) : "bo3" as const;
-  const setWinner = effectiveSetProgress ? getSetWinner(effectiveSetProgress.legResults, format) : null;
+  const format = isInSet
+    ? setProgress.totalLegs === 3
+      ? ("bo3" as const)
+      : ("bo5" as const)
+    : ("bo3" as const);
+  const setWinner = effectiveSetProgress
+    ? getSetWinner(effectiveSetProgress.legResults, format)
+    : null;
   const isSetComplete = !!setWinner;
 
   const headline = isSetComplete
@@ -81,17 +104,20 @@ export function ResultsOverlay({ playerResults, onExit, onRematch, setProgress, 
     <div className="absolute inset-0 z-10 bg-zinc-950 flex flex-col overflow-hidden">
       {/* Content — vertically centered */}
       <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-6 gap-2">
-
         {/* Subtitle: leg info or "Game Over" */}
         <p
           className="uppercase tracking-[0.3em] font-normal"
           style={{
             fontFamily: "Beon, sans-serif",
             fontSize: "clamp(0.6rem, 1.6vh, 1rem)",
-            color: isInSet && !isSetComplete ? "#60a5fa" : "var(--color-content-muted)",
-            textShadow: isInSet && !isSetComplete
-              ? "0 0 10px rgba(96,165,250,0.5)"
-              : "0 0 8px rgba(255,255,255,0.1)",
+            color:
+              isInSet && !isSetComplete
+                ? "#60a5fa"
+                : "var(--color-content-muted)",
+            textShadow:
+              isInSet && !isSetComplete
+                ? "0 0 10px rgba(96,165,250,0.5)"
+                : "0 0 8px rgba(255,255,255,0.1)",
           }}
         >
           {isInSet && !isSetComplete
@@ -108,14 +134,17 @@ export function ResultsOverlay({ playerResults, onExit, onRematch, setProgress, 
             fontFamily: "Beon, sans-serif",
             fontSize: "clamp(1.25rem, 4.5vh, 3rem)",
             color: "var(--color-game-accent)",
-            textShadow: "0 0 15px var(--color-game-accent), 0 0 40px var(--color-game-accent-glow)",
+            textShadow:
+              "0 0 15px var(--color-game-accent), 0 0 40px var(--color-game-accent-glow)",
           }}
         >
           {headline}
         </p>
 
         {/* Set scoreline (compact, inline) */}
-        {isInSet && effectiveSetProgress && <SetScoreline setProgress={effectiveSetProgress} />}
+        {isInSet && effectiveSetProgress && (
+          <SetScoreline setProgress={effectiveSetProgress} />
+        )}
 
         {/* Winner name */}
         {winners.map((p) => (
@@ -126,13 +155,17 @@ export function ResultsOverlay({ playerResults, onExit, onRematch, setProgress, 
                 fontFamily: "Beon, sans-serif",
                 fontSize: "clamp(2rem, 8vh, 5rem)",
                 color: "#fff",
-                textShadow: "0 0 15px var(--color-game-accent), 0 0 40px var(--color-game-accent), 0 0 80px var(--color-game-accent-glow)",
+                textShadow:
+                  "0 0 15px var(--color-game-accent), 0 0 40px var(--color-game-accent), 0 0 80px var(--color-game-accent-glow)",
               }}
             >
               {p.name}
             </p>
             {/* Winner stats — horizontal row */}
-            <div className="flex items-baseline justify-center" style={{ gap: "clamp(1.5rem, 3vw, 3rem)" }}>
+            <div
+              className="flex items-baseline justify-center"
+              style={{ gap: "clamp(1.5rem, 3vw, 3rem)" }}
+            >
               {p.stats.map((s) => (
                 <div key={s.label} className="flex flex-col items-center">
                   <span
@@ -141,14 +174,19 @@ export function ResultsOverlay({ playerResults, onExit, onRematch, setProgress, 
                       fontFamily: "Beon, sans-serif",
                       fontSize: "clamp(1rem, 3.5vh, 2.5rem)",
                       color: "var(--color-game-accent)",
-                      textShadow: "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)",
+                      textShadow:
+                        "0 0 10px var(--color-game-accent), 0 0 30px var(--color-game-accent-glow)",
                     }}
                   >
                     {s.value}
                   </span>
                   <span
                     className="uppercase tracking-wider"
-                    style={{ fontSize: "clamp(0.45rem, 1vh, 0.75rem)", color: "var(--color-content-faint)", marginTop: "2px" }}
+                    style={{
+                      fontSize: "clamp(0.45rem, 1vh, 0.75rem)",
+                      color: "var(--color-content-faint)",
+                      marginTop: "2px",
+                    }}
                   >
                     {s.label}
                   </span>
@@ -171,7 +209,11 @@ export function ResultsOverlay({ playerResults, onExit, onRematch, setProgress, 
                   {p.name}
                 </span>
                 {p.stats.map((s) => (
-                  <span key={s.label} className="text-zinc-600 tabular-nums" style={{ fontSize: "clamp(0.6rem, 1.3vh, 0.9rem)" }}>
+                  <span
+                    key={s.label}
+                    className="text-zinc-600 tabular-nums"
+                    style={{ fontSize: "clamp(0.6rem, 1.3vh, 0.9rem)" }}
+                  >
                     {s.value} <span className="text-zinc-700">{s.label}</span>
                   </span>
                 ))}

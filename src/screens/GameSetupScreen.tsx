@@ -8,6 +8,7 @@ import {
   DEFAULT_HIGHSCORE_OPTIONS,
   type HighScoreOptions,
 } from "../store/useHighScoreStore.ts";
+import { DEFAULT_ATW_OPTIONS, type ATWOptions } from "../store/useATWStore.ts";
 import {
   PlayerSelectStep,
   BotSkill,
@@ -18,7 +19,7 @@ import type { BotSkill as BotSkillType } from "../bot/Bot.ts";
 export type { BotSkillType };
 
 interface GameSetupScreenProps {
-  game: "x01" | "cricket" | "highscore";
+  game: "x01" | "cricket" | "highscore" | "atw";
   onStart: (
     players: string[],
     playerIds: (string | null)[],
@@ -26,12 +27,14 @@ interface GameSetupScreenProps {
     x01Options?: X01Options,
     cricketOptions?: CricketOptions,
     highScoreOptions?: HighScoreOptions,
+    atwOptions?: ATWOptions,
   ) => void;
   onBack: () => void;
 }
 
 const ROUND_OPTIONS = [8, 10, 15] as const;
 const CRICKET_ROUND_OPTIONS = [15, 20, 25, 0] as const;
+const ATW_ROUND_OPTIONS = [0, 15, 20, 25] as const;
 
 export function GameSetupScreen({
   game,
@@ -50,6 +53,7 @@ export function GameSetupScreen({
   const [highScoreOptions, setHighScoreOptions] = useState<HighScoreOptions>(
     DEFAULT_HIGHSCORE_OPTIONS,
   );
+  const [atwOptions, setAtwOptions] = useState<ATWOptions>(DEFAULT_ATW_OPTIONS);
 
   const setX01Option = <K extends keyof X01Options>(
     key: K,
@@ -63,15 +67,22 @@ export function GameSetupScreen({
       return next;
     });
 
-
   const title =
-    game === "x01" ? "X01" : game === "cricket" ? "Cricket" : "High Score";
+    game === "x01"
+      ? "X01"
+      : game === "cricket"
+        ? "Cricket"
+        : game === "atw"
+          ? "Around the World"
+          : "High Score";
   const gameClass =
     game === "x01"
       ? "game-x01"
       : game === "cricket"
         ? "game-cricket"
-        : "game-highscore";
+        : game === "atw"
+          ? "game-atw"
+          : "game-highscore";
 
   const handleBack = () => (step === 2 ? setStep(1) : onBack());
 
@@ -119,8 +130,10 @@ export function GameSetupScreen({
       {/* Step 1 — Options */}
       {step === 1 && (
         <>
-          <div className="flex-1 min-h-0 flex flex-col items-center justify-center pr-5 py-4 gap-3 overflow-hidden"
-              style={{ paddingLeft: "1.25rem" }}>
+          <div
+            className="flex-1 min-h-0 flex flex-col items-center justify-center pr-5 py-4 gap-3 overflow-hidden"
+            style={{ paddingLeft: "1.25rem" }}
+          >
             {game === "x01" && (
               <div
                 className="grid grid-cols-3 gap-3 w-full"
@@ -128,10 +141,26 @@ export function GameSetupScreen({
               >
                 {(
                   [
-                    { key: "splitBull" as const, label: "Split Bull", desc: "Outer bull scores 25" },
-                    { key: "doubleOut" as const, label: "Double Out", desc: "Finish on a double" },
-                    { key: "masterOut" as const, label: "Master Out", desc: "Finish on double, triple, or bull" },
-                    { key: "doubleIn" as const, label: "Double In", desc: "Open on a double" },
+                    {
+                      key: "splitBull" as const,
+                      label: "Split Bull",
+                      desc: "Outer bull scores 25",
+                    },
+                    {
+                      key: "doubleOut" as const,
+                      label: "Double Out",
+                      desc: "Finish on a double",
+                    },
+                    {
+                      key: "masterOut" as const,
+                      label: "Master Out",
+                      desc: "Finish on double, triple, or bull",
+                    },
+                    {
+                      key: "doubleIn" as const,
+                      label: "Double In",
+                      desc: "Open on a double",
+                    },
                   ] as const
                 ).map(({ key, label, desc }) => (
                   <button
@@ -140,10 +169,14 @@ export function GameSetupScreen({
                     className="option-card min-h-[80px] max-h-[160px]"
                     data-active={String(x01Options[key])}
                   >
-                    <span className={`text-xl font-black ${x01Options[key] ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
+                    <span
+                      className={`text-xl font-black ${x01Options[key] ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                    >
                       {x01Options[key] ? "ON" : "OFF"}
                     </span>
-                    <span className={`text-sm font-bold text-center leading-tight ${x01Options[key] ? "text-content-primary" : "text-zinc-400"}`}>
+                    <span
+                      className={`text-sm font-bold text-center leading-tight ${x01Options[key] ? "text-content-primary" : "text-zinc-400"}`}
+                    >
                       {label}
                     </span>
                     <span className="text-xs text-content-muted text-center leading-tight">
@@ -162,18 +195,30 @@ export function GameSetupScreen({
                 {/* Round limit — cycles through options */}
                 <button
                   onClick={() => {
-                    const idx = CRICKET_ROUND_OPTIONS.indexOf(cricketOptions.roundLimit as typeof CRICKET_ROUND_OPTIONS[number]);
-                    const next = CRICKET_ROUND_OPTIONS[(idx + 1) % CRICKET_ROUND_OPTIONS.length];
-                    setCricketOptions((prev) => ({ ...prev, roundLimit: next }));
+                    const idx = CRICKET_ROUND_OPTIONS.indexOf(
+                      cricketOptions.roundLimit as (typeof CRICKET_ROUND_OPTIONS)[number],
+                    );
+                    const next =
+                      CRICKET_ROUND_OPTIONS[
+                        (idx + 1) % CRICKET_ROUND_OPTIONS.length
+                      ];
+                    setCricketOptions((prev) => ({
+                      ...prev,
+                      roundLimit: next,
+                    }));
                   }}
                   className="option-card min-h-[80px] max-h-[160px] flex-1 max-w-xs"
                   data-active="true"
                 >
                   <span className="font-black text-2xl text-[var(--color-game-accent)]">
-                    {cricketOptions.roundLimit === 0 ? "∞" : cricketOptions.roundLimit}
+                    {cricketOptions.roundLimit === 0
+                      ? "∞"
+                      : cricketOptions.roundLimit}
                   </span>
                   <span className="text-sm font-bold text-center text-content-primary">
-                    {cricketOptions.roundLimit === 0 ? "No Limit" : "Round Limit"}
+                    {cricketOptions.roundLimit === 0
+                      ? "No Limit"
+                      : "Round Limit"}
                   </span>
                   <span className="text-xs text-content-muted text-center leading-tight">
                     Tap to change
@@ -181,14 +226,23 @@ export function GameSetupScreen({
                 </button>
                 {/* Cut-Throat toggle */}
                 <button
-                  onClick={() => setCricketOptions((prev) => ({ ...prev, cutThroat: !prev.cutThroat }))}
+                  onClick={() =>
+                    setCricketOptions((prev) => ({
+                      ...prev,
+                      cutThroat: !prev.cutThroat,
+                    }))
+                  }
                   className="option-card min-h-[80px] max-h-[160px] flex-1 max-w-xs"
                   data-active={String(cricketOptions.cutThroat)}
                 >
-                  <span className={`text-xl font-black ${cricketOptions.cutThroat ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
+                  <span
+                    className={`text-xl font-black ${cricketOptions.cutThroat ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                  >
                     {cricketOptions.cutThroat ? "ON" : "OFF"}
                   </span>
-                  <span className={`text-sm font-bold text-center leading-tight ${cricketOptions.cutThroat ? "text-content-primary" : "text-zinc-400"}`}>
+                  <span
+                    className={`text-sm font-bold text-center leading-tight ${cricketOptions.cutThroat ? "text-content-primary" : "text-zinc-400"}`}
+                  >
                     Cut-Throat
                   </span>
                   <span className="text-xs text-content-muted text-center leading-tight">
@@ -206,8 +260,11 @@ export function GameSetupScreen({
                 {/* Rounds — cycles through options */}
                 <button
                   onClick={() => {
-                    const idx = ROUND_OPTIONS.indexOf(highScoreOptions.rounds as typeof ROUND_OPTIONS[number]);
-                    const next = ROUND_OPTIONS[(idx + 1) % ROUND_OPTIONS.length];
+                    const idx = ROUND_OPTIONS.indexOf(
+                      highScoreOptions.rounds as (typeof ROUND_OPTIONS)[number],
+                    );
+                    const next =
+                      ROUND_OPTIONS[(idx + 1) % ROUND_OPTIONS.length];
                     setHighScoreOptions((prev) => ({ ...prev, rounds: next }));
                   }}
                   className="option-card min-h-[80px] max-h-[160px]"
@@ -235,10 +292,14 @@ export function GameSetupScreen({
                   className="option-card min-h-[80px] max-h-[160px]"
                   data-active={String(highScoreOptions.tieRule === "playoff")}
                 >
-                  <span className={`text-xl font-black ${highScoreOptions.tieRule === "playoff" ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
+                  <span
+                    className={`text-xl font-black ${highScoreOptions.tieRule === "playoff" ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                  >
                     {highScoreOptions.tieRule === "playoff" ? "ON" : "OFF"}
                   </span>
-                  <span className={`text-sm font-bold text-center ${highScoreOptions.tieRule === "playoff" ? "text-content-primary" : "text-zinc-400"}`}>
+                  <span
+                    className={`text-sm font-bold text-center ${highScoreOptions.tieRule === "playoff" ? "text-content-primary" : "text-zinc-400"}`}
+                  >
                     One-Dart Playoff
                   </span>
                   <span className="text-xs text-content-muted text-center leading-tight">
@@ -257,14 +318,51 @@ export function GameSetupScreen({
                   className="option-card min-h-[80px] max-h-[160px]"
                   data-active={String(highScoreOptions.splitBull)}
                 >
-                  <span className={`text-xl font-black ${highScoreOptions.splitBull ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}>
+                  <span
+                    className={`text-xl font-black ${highScoreOptions.splitBull ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                  >
                     {highScoreOptions.splitBull ? "ON" : "OFF"}
                   </span>
-                  <span className={`text-sm font-bold text-center ${highScoreOptions.splitBull ? "text-content-primary" : "text-zinc-400"}`}>
+                  <span
+                    className={`text-sm font-bold text-center ${highScoreOptions.splitBull ? "text-content-primary" : "text-zinc-400"}`}
+                  >
                     Split Bull
                   </span>
                   <span className="text-xs text-content-muted text-center leading-tight">
                     Outer bull scores 25
+                  </span>
+                </button>
+              </div>
+            )}
+
+            {game === "atw" && (
+              <div
+                className="flex gap-3 w-full justify-center"
+                style={{ maxHeight: "min(100%, 320px)" }}
+              >
+                <button
+                  onClick={() => {
+                    const idx = ATW_ROUND_OPTIONS.indexOf(
+                      atwOptions.roundLimit as (typeof ATW_ROUND_OPTIONS)[number],
+                    );
+                    const next =
+                      ATW_ROUND_OPTIONS[(idx + 1) % ATW_ROUND_OPTIONS.length];
+                    setAtwOptions((prev) => ({
+                      ...prev,
+                      roundLimit: next,
+                    }));
+                  }}
+                  className="option-card min-h-[80px] max-h-[160px] flex-1 max-w-xs"
+                  data-active="true"
+                >
+                  <span className="font-black text-2xl text-[var(--color-game-accent)]">
+                    {atwOptions.roundLimit === 0 ? "∞" : atwOptions.roundLimit}
+                  </span>
+                  <span className="text-sm font-bold text-center text-content-primary">
+                    {atwOptions.roundLimit === 0 ? "No Limit" : "Round Limit"}
+                  </span>
+                  <span className="text-xs text-content-muted text-center leading-tight">
+                    Tap to change
                   </span>
                 </button>
               </div>
@@ -288,8 +386,10 @@ export function GameSetupScreen({
       {/* Step 2 — Players */}
       {step === 2 && (
         <>
-          <div className="flex-1 min-h-0 flex flex-col pr-5 py-3 gap-2 overflow-hidden"
-              style={{ paddingLeft: "1.25rem" }}>
+          <div
+            className="flex-1 min-h-0 flex flex-col pr-5 py-3 gap-2 overflow-hidden"
+            style={{ paddingLeft: "1.25rem" }}
+          >
             <PlayerSelectStep roster={roster} onChange={setRoster} />
           </div>
 
@@ -338,9 +438,11 @@ export function GameSetupScreen({
                 disabled={roster.length === 0}
                 className="btn-primary rounded-2xl text-2xl"
               >
-                {cricketOptions.cutThroat ? "Start Cut-Throat" : "Start Cricket"}
+                {cricketOptions.cutThroat
+                  ? "Start Cut-Throat"
+                  : "Start Cricket"}
               </button>
-            ) : (
+            ) : game === "highscore" ? (
               <button
                 onClick={() =>
                   onStart(
@@ -358,6 +460,29 @@ export function GameSetupScreen({
                 className="btn-primary rounded-2xl text-2xl"
               >
                 Start — {highScoreOptions.rounds} Rounds
+              </button>
+            ) : (
+              <button
+                onClick={() =>
+                  onStart(
+                    roster.map((r) => r.name),
+                    roster.map((r) => r.id),
+                    roster.map((r) =>
+                      r.isBot ? (r.botSkill ?? BotSkill.Intermediate) : null,
+                    ),
+                    undefined,
+                    undefined,
+                    undefined,
+                    atwOptions,
+                  )
+                }
+                disabled={roster.length === 0}
+                className="btn-primary rounded-2xl text-2xl"
+              >
+                Start ATW
+                {atwOptions.roundLimit > 0
+                  ? ` — ${atwOptions.roundLimit} Rounds`
+                  : ""}
               </button>
             )}
           </div>

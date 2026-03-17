@@ -10,7 +10,11 @@ interface BotSelectOverlayProps {
   onCancel: () => void;
 }
 
-export function BotSelectOverlay({ currentSkill, onSelect, onCancel }: BotSelectOverlayProps) {
+export function BotSelectOverlay({
+  currentSkill,
+  onSelect,
+  onCancel,
+}: BotSelectOverlayProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
       <div className="flex flex-col items-center gap-6 w-full max-w-3xl px-6">
@@ -29,7 +33,9 @@ export function BotSelectOverlay({ currentSkill, onSelect, onCancel }: BotSelect
                   isActive ? "scale-105" : "hover:scale-[1.03]"
                 }`}
                 style={{
-                  borderColor: isActive ? character.color : `color-mix(in oklch, ${character.color} 40%, transparent)`,
+                  borderColor: isActive
+                    ? character.color
+                    : `color-mix(in oklch, ${character.color} 40%, transparent)`,
                   backgroundColor: character.dim,
                   boxShadow: isActive
                     ? `0 0 24px ${character.glow}, inset 0 0 20px ${character.dim}`
@@ -57,7 +63,10 @@ export function BotSelectOverlay({ currentSkill, onSelect, onCancel }: BotSelect
                 {isActive && (
                   <span
                     className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: character.color, boxShadow: `0 0 8px ${character.glow}` }}
+                    style={{
+                      backgroundColor: character.color,
+                      boxShadow: `0 0 8px ${character.glow}`,
+                    }}
                   />
                 )}
               </button>

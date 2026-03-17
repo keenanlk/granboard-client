@@ -34,9 +34,30 @@ interface GameScreenProps {
   currentLegIndex?: number;
 }
 
-export function GameScreen({ x01Options, playerNames, playerIds, botSkills, restoredState, onExit, onRematch, setProgress, onNextLeg, setConfig, legResults, currentLegIndex }: GameScreenProps) {
-  const { players, currentPlayerIndex, currentRoundDarts, isBust, winner, undoStack, startGame, undoLastDart } =
-    useGameStore();
+export function GameScreen({
+  x01Options,
+  playerNames,
+  playerIds,
+  botSkills,
+  restoredState,
+  onExit,
+  onRematch,
+  setProgress,
+  onNextLeg,
+  setConfig,
+  legResults,
+  currentLegIndex,
+}: GameScreenProps) {
+  const {
+    players,
+    currentPlayerIndex,
+    currentRoundDarts,
+    isBust,
+    winner,
+    undoStack,
+    startGame,
+    undoLastDart,
+  } = useGameStore();
 
   const { handleNextTurn, isTransitioning, countdown } = useGameSession({
     gameType: "x01",
@@ -46,7 +67,8 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
     options: x01Options,
     createController: () => new X01Controller(),
     extractRound: () => {
-      const { currentPlayerIndex, currentRoundDarts, isBust } = useGameStore.getState();
+      const { currentPlayerIndex, currentRoundDarts, isBust } =
+        useGameStore.getState();
       const roundTotal = currentRoundDarts
         .filter((d) => d.scored)
         .reduce((sum, d) => sum + d.segment.Value, 0);
@@ -90,11 +112,19 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
 
   // Reads live store state at throw time — stable, no component deps.
   const getThrow = useCallback((bot: Bot) => {
-    const { players: ps, x01Options: opts, currentPlayerIndex: ci } = useGameStore.getState();
+    const {
+      players: ps,
+      x01Options: opts,
+      currentPlayerIndex: ci,
+    } = useGameStore.getState();
     const p = ps[ci];
-    return CreateSegment(bot.throwX01(p.score, opts, p.opened, (target, actual) => {
-      gameLogger.logDart(bot.name, target, actual, { remainingScore: p.score });
-    }));
+    return CreateSegment(
+      bot.throwX01(p.score, opts, p.opened, (target, actual) => {
+        gameLogger.logDart(bot.name, target, actual, {
+          remainingScore: p.score,
+        });
+      }),
+    );
   }, []);
 
   useBotTurn({
@@ -110,7 +140,9 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
 
   const n = players.length;
   const currentPlayer = players[currentPlayerIndex];
-  const roundTotal = currentRoundDarts.filter((d) => d.scored).reduce((sum, d) => sum + d.segment.Value, 0);
+  const roundTotal = currentRoundDarts
+    .filter((d) => d.scored)
+    .reduce((sum, d) => sum + d.segment.Value, 0);
   const readyToSwitch = currentRoundDarts.length === 3 || isBust;
   const nextPlayerIndex = (currentPlayerIndex + 1) % players.length;
   const nextPlayer = players[nextPlayerIndex];
@@ -141,7 +173,9 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
               x01Options.doubleIn && "Double In",
               x01Options.doubleOut && "Double Out",
               x01Options.masterOut && "Master Out",
-            ].filter(Boolean).join(" \u00B7 ") || "Straight Out"}
+            ]
+              .filter(Boolean)
+              .join(" \u00B7 ") || "Straight Out"}
           </span>
         </>
       }
@@ -169,7 +203,10 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
                   const ppd =
                     p.totalDartsThrown === 0
                       ? "0.00"
-                      : ((x01Options.startingScore - p.score) / p.totalDartsThrown).toFixed(2);
+                      : (
+                          (x01Options.startingScore - p.score) /
+                          p.totalDartsThrown
+                        ).toFixed(2);
                   return {
                     name: p.name,
                     isWinner: p.name === winner,
@@ -190,23 +227,33 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
       }
     >
       {/* Main area */}
-      <div className="flex-1 flex min-h-0" style={{ paddingLeft: "var(--sal)" }}>
-
+      <div
+        className="flex-1 flex min-h-0"
+        style={{ paddingLeft: "var(--sal)" }}
+      >
         {/* Left: active player score */}
         <div className="flex-1 flex flex-col min-w-0 min-h-0 px-4 py-2">
           <div className="flex items-center gap-2 shrink-0">
             <span className="glow-dot" />
             <span
               className={`font-black uppercase tracking-widest text-[clamp(1rem,2vw,2.5rem)] ${isCurrentBot ? getBotCharacter(botSkills[currentPlayerIndex]!).animationClass : ""}`}
-              style={isCurrentBot
-                ? { fontFamily: "Beon, sans-serif", color: getBotCharacter(botSkills[currentPlayerIndex]!).color, textShadow: `0 0 12px ${getBotCharacter(botSkills[currentPlayerIndex]!).glow}` }
-                : { color: "var(--color-game-accent)" }
+              style={
+                isCurrentBot
+                  ? {
+                      fontFamily: "Beon, sans-serif",
+                      color: getBotCharacter(botSkills[currentPlayerIndex]!)
+                        .color,
+                      textShadow: `0 0 12px ${getBotCharacter(botSkills[currentPlayerIndex]!).glow}`,
+                    }
+                  : { color: "var(--color-game-accent)" }
               }
             >
               {currentPlayer?.name}
             </span>
             {(isBust || needsDouble) && (
-              <span className={`uppercase tracking-widest font-black text-[clamp(0.75rem,1.5vw,1.75rem)] ${isBust ? "text-state-bust" : "text-state-warning"}`}>
+              <span
+                className={`uppercase tracking-widest font-black text-[clamp(0.75rem,1.5vw,1.75rem)] ${isBust ? "text-state-bust" : "text-state-warning"}`}
+              >
                 · {isBust ? "BUST!" : "Need ×"}
               </span>
             )}
@@ -215,7 +262,9 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
           {/* Big score */}
           <div className="flex-1 flex flex-col items-center justify-center min-h-0">
             {(isBust || (roundTotal > 0 && !isBust)) && (
-              <span className={`font-black leading-none mb-2 text-[clamp(1.25rem,2.5vw,3rem)] ${isBust ? "text-state-bust uppercase tracking-widest" : "text-[var(--color-game-accent)]"}`}>
+              <span
+                className={`font-black leading-none mb-2 text-[clamp(1.25rem,2.5vw,3rem)] ${isBust ? "text-state-bust uppercase tracking-widest" : "text-[var(--color-game-accent)]"}`}
+              >
                 {isBust ? "BUST" : `−${roundTotal}`}
               </span>
             )}
@@ -223,18 +272,32 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
               className={`font-normal tabular-nums leading-none select-none text-[clamp(7rem,20vw,45rem)] ${
                 isBust ? "text-state-bust" : ""
               }`}
-              style={{ fontFamily: "Beon, sans-serif", ...(!isBust ? { color: "var(--color-game-accent)", textShadow: "0 0 20px var(--color-game-accent), 0 0 60px var(--color-game-accent), 0 0 100px var(--color-game-accent-glow), 0 0 150px var(--color-game-accent-glow)" } : {}) }}
+              style={{
+                fontFamily: "Beon, sans-serif",
+                ...(!isBust
+                  ? {
+                      color: "var(--color-game-accent)",
+                      textShadow:
+                        "0 0 20px var(--color-game-accent), 0 0 60px var(--color-game-accent), 0 0 100px var(--color-game-accent-glow), 0 0 150px var(--color-game-accent-glow)",
+                    }
+                  : {}),
+              }}
             >
               {currentPlayer?.score ?? ""}
             </span>
           </div>
-
         </div>
 
         {/* Right: game info + history grid */}
-        <div className="flex flex-col shrink-0 border-l border-border-default min-h-0" style={{ width: "clamp(12rem, 16vw, 22rem)" }}>
+        <div
+          className="flex flex-col shrink-0 border-l border-border-default min-h-0"
+          style={{ width: "clamp(12rem, 16vw, 22rem)" }}
+        >
           {/* Game title + menu */}
-          <div className="shrink-0 px-2 py-2 flex items-center border-b border-border-default" style={{ paddingTop: "calc(var(--sat) + 0.5rem)" }}>
+          <div
+            className="shrink-0 px-2 py-2 flex items-center border-b border-border-default"
+            style={{ paddingTop: "calc(var(--sat) + 0.5rem)" }}
+          >
             <div className="flex-1 flex flex-col items-center">
               {setProgress && (
                 <span className="text-blue-400 text-[clamp(0.5rem,0.8vw,0.7rem)] font-bold uppercase tracking-widest">
@@ -250,12 +313,17 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
                   x01Options.doubleIn && "DblIn",
                   x01Options.doubleOut && "DblOut",
                   x01Options.masterOut && "MstrOut",
-                ].filter(Boolean).join(" · ") || "Straight"}
+                ]
+                  .filter(Boolean)
+                  .join(" · ") || "Straight"}
               </span>
             </div>
-            <GameMenu onUndo={undoLastDart} undoDisabled={!!winner || isCurrentBot || undoStack.length === 0} onExit={onExit} />
+            <GameMenu
+              onUndo={undoLastDart}
+              undoDisabled={!!winner || isCurrentBot || undoStack.length === 0}
+              onExit={onExit}
+            />
           </div>
-
 
           {/* Rows: current round (live) + completed rounds newest-first */}
           <div className="flex-1 flex flex-col min-h-0 overflow-hidden px-1 gap-1.5 pt-1">
@@ -264,8 +332,12 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
               darts={currentRoundDarts.map((thrown, j) => ({
                 value: thrown.segment.Value,
                 shortName: thrown.segment.ShortName,
-                state: (!thrown.scored && isBust && j === currentRoundDarts.length - 1) ? "bust"
-                  : thrown.scored ? "scored" : "miss",
+                state:
+                  !thrown.scored && isBust && j === currentRoundDarts.length - 1
+                    ? "bust"
+                    : thrown.scored
+                      ? "scored"
+                      : "miss",
               }))}
               totalDarts={currentRoundDarts.length}
               readyToSwitch={readyToSwitch}
@@ -291,7 +363,9 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
           </div>
 
           {/* Bot thinking indicator */}
-          {isCurrentBot && <BotThinkingIndicator skill={botSkills[currentPlayerIndex]!} />}
+          {isCurrentBot && (
+            <BotThinkingIndicator skill={botSkills[currentPlayerIndex]!} />
+          )}
         </div>
       </div>
 
@@ -299,7 +373,9 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
       <div
         className="shrink-0 grid border-t-2 bg-surface-sunken transition-all duration-300"
         style={{
-          borderColor: readyToSwitch ? "var(--color-game-accent)" : "var(--color-border-default)",
+          borderColor: readyToSwitch
+            ? "var(--color-game-accent)"
+            : "var(--color-border-default)",
           gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))`,
         }}
       >
@@ -308,7 +384,10 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
           const ppd =
             player.totalDartsThrown === 0
               ? "0.00"
-              : ((x01Options.startingScore - player.score) / player.totalDartsThrown).toFixed(2);
+              : (
+                  (x01Options.startingScore - player.score) /
+                  player.totalDartsThrown
+                ).toFixed(2);
           return (
             <div
               key={i}
@@ -319,16 +398,30 @@ export function GameScreen({ x01Options, playerNames, playerIds, botSkills, rest
               <span
                 style={{
                   fontSize: textSizes.name,
-                  ...(botSkills[i] != null ? { fontFamily: "Beon, sans-serif", color: getBotCharacter(botSkills[i]!).color, textShadow: isActive ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}` : "none" } : {}),
+                  ...(botSkills[i] != null
+                    ? {
+                        fontFamily: "Beon, sans-serif",
+                        color: getBotCharacter(botSkills[i]!).color,
+                        textShadow: isActive
+                          ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}`
+                          : "none",
+                      }
+                    : {}),
                 }}
                 className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${botSkills[i] != null ? getBotCharacter(botSkills[i]!).animationClass : isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
               >
                 {player.name}
               </span>
-              <span style={{ fontSize: textSizes.score }} className={`font-black tabular-nums leading-tight transition-colors duration-300 ${isActive ? "text-content-primary" : "text-content-muted"}`}>
+              <span
+                style={{ fontSize: textSizes.score }}
+                className={`font-black tabular-nums leading-tight transition-colors duration-300 ${isActive ? "text-content-primary" : "text-content-muted"}`}
+              >
                 {player.score}
               </span>
-              <span style={{ fontSize: textSizes.stat }} className={`tabular-nums transition-colors duration-300 ${isActive ? "text-content-secondary" : "text-content-faint"}`}>
+              <span
+                style={{ fontSize: textSizes.stat }}
+                className={`tabular-nums transition-colors duration-300 ${isActive ? "text-content-secondary" : "text-content-faint"}`}
+              >
                 {ppd} ppd
               </span>
             </div>

@@ -4,17 +4,31 @@ import { GameSetupScreen } from "./screens/GameSetupScreen.tsx";
 import { GameScreen } from "./screens/GameScreen.tsx";
 import { CricketScreen } from "./screens/CricketScreen.tsx";
 import { HighScoreScreen } from "./screens/HighScoreScreen.tsx";
+import { ATWScreen } from "./screens/ATWScreen.tsx";
 import { PlayersScreen } from "./screens/PlayersScreen.tsx";
 import { PracticeScreen } from "./screens/PracticeScreen.tsx";
 import { SetSetupScreen } from "./screens/SetSetupScreen.tsx";
 import { useGameStore, type X01Options } from "./store/useGameStore.ts";
-import { useCricketStore, type CricketOptions } from "./store/useCricketStore.ts";
+import {
+  useCricketStore,
+  type CricketOptions,
+} from "./store/useCricketStore.ts";
 import type { HighScoreOptions } from "./store/useHighScoreStore.ts";
+import type { ATWOptions } from "./store/useATWStore.ts";
 import type { BotSkill } from "./bot/Bot.ts";
 import { useGranboardStore } from "./store/useGranboardStore.ts";
 import { useBoardWiring } from "./hooks/useBoardWiring.ts";
-import { loadSession, clearSession, type PersistedSession } from "./lib/sessionPersistence.ts";
-import type { SetConfig, SetState, LegResult, SetProgress } from "./lib/setTypes.ts";
+import {
+  loadSession,
+  clearSession,
+  type PersistedSession,
+} from "./lib/sessionPersistence.ts";
+import type {
+  SetConfig,
+  SetState,
+  LegResult,
+  SetProgress,
+} from "./lib/setTypes.ts";
 import { getSetWinner, legCount } from "./lib/setTypes.ts";
 // Side-effect imports — activate sound and LED event subscriptions
 import "./sound/soundEffects.ts";
@@ -24,19 +38,67 @@ type Screen =
   | { name: "home" }
   | { name: "players" }
   | { name: "practice" }
-  | { name: "setup"; game: "x01" | "cricket" | "highscore" }
+  | { name: "setup"; game: "x01" | "cricket" | "highscore" | "atw" }
   | { name: "set-setup" }
-  | { name: "game"; x01Options: X01Options; playerNames: string[]; playerIds: (string | null)[]; botSkills: (BotSkill | null)[]; restoredState?: unknown }
-  | { name: "cricket"; options: CricketOptions; playerNames: string[]; playerIds: (string | null)[]; botSkills: (BotSkill | null)[]; restoredState?: unknown }
-  | { name: "highscore"; options: HighScoreOptions; playerNames: string[]; playerIds: (string | null)[]; botSkills: (BotSkill | null)[]; restoredState?: unknown };
+  | {
+      name: "game";
+      x01Options: X01Options;
+      playerNames: string[];
+      playerIds: (string | null)[];
+      botSkills: (BotSkill | null)[];
+      restoredState?: unknown;
+    }
+  | {
+      name: "cricket";
+      options: CricketOptions;
+      playerNames: string[];
+      playerIds: (string | null)[];
+      botSkills: (BotSkill | null)[];
+      restoredState?: unknown;
+    }
+  | {
+      name: "highscore";
+      options: HighScoreOptions;
+      playerNames: string[];
+      playerIds: (string | null)[];
+      botSkills: (BotSkill | null)[];
+      restoredState?: unknown;
+    }
+  | {
+      name: "atw";
+      options: ATWOptions;
+      playerNames: string[];
+      playerIds: (string | null)[];
+      botSkills: (BotSkill | null)[];
+      restoredState?: unknown;
+    };
 
 function formatTimeAgo(savedAt: number): string {
   const ago = Math.round((Date.now() - savedAt) / 60000);
-  return ago < 1 ? "just now" : ago < 60 ? `${ago}m ago` : `${Math.round(ago / 60)}h ago`;
+  return ago < 1
+    ? "just now"
+    : ago < 60
+      ? `${ago}m ago`
+      : `${Math.round(ago / 60)}h ago`;
 }
 
-function ResumePrompt({ session, onResume, onNewGame }: { session: PersistedSession; onResume: () => void; onNewGame: () => void }) {
-  const gameLabel = session.gameType === "x01" ? "X01" : session.gameType === "cricket" ? "Cricket" : "High Score";
+function ResumePrompt({
+  session,
+  onResume,
+  onNewGame,
+}: {
+  session: PersistedSession;
+  onResume: () => void;
+  onNewGame: () => void;
+}) {
+  const gameLabel =
+    session.gameType === "x01"
+      ? "X01"
+      : session.gameType === "cricket"
+        ? "Cricket"
+        : session.gameType === "atw"
+          ? "Around the World"
+          : "High Score";
   const playerList = session.playerNames.join(", ");
   const [timeLabel] = useState(() => formatTimeAgo(session.savedAt));
 
@@ -44,13 +106,17 @@ function ResumePrompt({ session, onResume, onNewGame }: { session: PersistedSess
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
       <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-8 max-w-sm w-full mx-4 flex flex-col gap-6">
         <div className="flex flex-col gap-2 text-center">
-          <h2 className="text-2xl font-black text-white uppercase tracking-widest">Resume Game?</h2>
+          <h2 className="text-2xl font-black text-white uppercase tracking-widest">
+            Resume Game?
+          </h2>
           <p className="text-zinc-400 text-sm">
-            <span className="text-white font-bold">{gameLabel}</span> with {playerList}
+            <span className="text-white font-bold">{gameLabel}</span> with{" "}
+            {playerList}
           </p>
           {session.setConfig && (
             <p className="text-blue-400 text-xs font-bold uppercase tracking-widest">
-              Set Match \u2014 Leg {(session.currentLegIndex ?? 0) + 1}/{legCount(session.setConfig.format)}
+              Set Match \u2014 Leg {(session.currentLegIndex ?? 0) + 1}/
+              {legCount(session.setConfig.format)}
             </p>
           )}
           <p className="text-zinc-600 text-xs">{timeLabel}</p>
@@ -87,20 +153,24 @@ function App() {
       setScreen({ ...screen, restoredState: undefined });
     } else if (screen.name === "highscore") {
       setScreen({ ...screen, restoredState: undefined });
+    } else if (screen.name === "atw") {
+      setScreen({ ...screen, restoredState: undefined });
     }
     setRematchKey((k) => k + 1);
   }
 
-  const [pendingResume, setPendingResume] = useState<PersistedSession | null>(() => {
-    const session = loadSession();
-    if (session?.gameState) {
-      const state = session.gameState as Record<string, unknown>;
-      const hasWinner = state.winner != null || state.winners != null;
-      if (!hasWinner) return session;
-      clearSession();
-    }
-    return null;
-  });
+  const [pendingResume, setPendingResume] = useState<PersistedSession | null>(
+    () => {
+      const session = loadSession();
+      if (session?.gameState) {
+        const state = session.gameState as Record<string, unknown>;
+        const hasWinner = state.winner != null || state.winners != null;
+        if (!hasWinner) return session;
+        clearSession();
+      }
+      return null;
+    },
+  );
 
   useBoardWiring();
 
@@ -157,7 +227,12 @@ function App() {
     setRematchKey((k) => k + 1);
   }
 
-  function handleSetStart(config: SetConfig, playerNames: string[], playerIds: (string | null)[], botSkills: (BotSkill | null)[]) {
+  function handleSetStart(
+    config: SetConfig,
+    playerNames: string[],
+    playerIds: (string | null)[],
+    botSkills: (BotSkill | null)[],
+  ) {
     const state: SetState = {
       config,
       legResults: [],
@@ -198,9 +273,18 @@ function App() {
       // Loser throws first: rotate so the first non-winner is index 0
       const loserIndex = newPlayerNames.findIndex((_, i) => i !== winnerIndex);
       if (loserIndex > 0) {
-        newPlayerNames = [...newPlayerNames.slice(loserIndex), ...newPlayerNames.slice(0, loserIndex)];
-        newPlayerIds = [...newPlayerIds.slice(loserIndex), ...newPlayerIds.slice(0, loserIndex)];
-        newBotSkills = [...newBotSkills.slice(loserIndex), ...newBotSkills.slice(0, loserIndex)];
+        newPlayerNames = [
+          ...newPlayerNames.slice(loserIndex),
+          ...newPlayerNames.slice(0, loserIndex),
+        ];
+        newPlayerIds = [
+          ...newPlayerIds.slice(loserIndex),
+          ...newPlayerIds.slice(0, loserIndex),
+        ];
+        newBotSkills = [
+          ...newBotSkills.slice(loserIndex),
+          ...newBotSkills.slice(0, loserIndex),
+        ];
       }
     } else if (setMatch.config.throwOrder === "alternate") {
       // Alternate: rotate by 1 each leg
@@ -231,7 +315,17 @@ function App() {
 
   function handleResume() {
     if (!pendingResume) return;
-    const { gameType, options, playerNames, playerIds, botSkills, gameState, setConfig, legResults, currentLegIndex } = pendingResume;
+    const {
+      gameType,
+      options,
+      playerNames,
+      playerIds,
+      botSkills,
+      gameState,
+      setConfig,
+      legResults,
+      currentLegIndex,
+    } = pendingResume;
 
     // Restore set context if present
     if (setConfig) {
@@ -246,11 +340,41 @@ function App() {
     }
 
     if (gameType === "x01") {
-      setScreen({ name: "game", x01Options: options as X01Options, playerNames, playerIds, botSkills, restoredState: gameState });
+      setScreen({
+        name: "game",
+        x01Options: options as X01Options,
+        playerNames,
+        playerIds,
+        botSkills,
+        restoredState: gameState,
+      });
     } else if (gameType === "cricket") {
-      setScreen({ name: "cricket", options: options as CricketOptions, playerNames, playerIds, botSkills, restoredState: gameState });
+      setScreen({
+        name: "cricket",
+        options: options as CricketOptions,
+        playerNames,
+        playerIds,
+        botSkills,
+        restoredState: gameState,
+      });
     } else if (gameType === "highscore") {
-      setScreen({ name: "highscore", options: options as HighScoreOptions, playerNames, playerIds, botSkills, restoredState: gameState });
+      setScreen({
+        name: "highscore",
+        options: options as HighScoreOptions,
+        playerNames,
+        playerIds,
+        botSkills,
+        restoredState: gameState,
+      });
+    } else if (gameType === "atw") {
+      setScreen({
+        name: "atw",
+        options: options as ATWOptions,
+        playerNames,
+        playerIds,
+        botSkills,
+        restoredState: gameState,
+      });
     }
     setPendingResume(null);
   }
@@ -275,10 +399,14 @@ function App() {
         onExit={setMatch ? handleSetExit : () => setScreen({ name: "home" })}
         onRematch={handleRematch}
         setProgress={currentSetProgress}
-        onNextLeg={setMatch ? () => {
-          const winner = useGameStore.getState().winner;
-          if (winner) handleNextLeg(winner);
-        } : undefined}
+        onNextLeg={
+          setMatch
+            ? () => {
+                const winner = useGameStore.getState().winner;
+                if (winner) handleNextLeg(winner);
+              }
+            : undefined
+        }
         setConfig={setMatch?.config}
         legResults={setMatch?.legResults}
         currentLegIndex={setMatch?.currentLegIndex}
@@ -298,10 +426,14 @@ function App() {
         onExit={setMatch ? handleSetExit : () => setScreen({ name: "home" })}
         onRematch={handleRematch}
         setProgress={currentSetProgress}
-        onNextLeg={setMatch ? () => {
-          const winner = useCricketStore.getState().winner;
-          if (winner) handleNextLeg(winner);
-        } : undefined}
+        onNextLeg={
+          setMatch
+            ? () => {
+                const winner = useCricketStore.getState().winner;
+                if (winner) handleNextLeg(winner);
+              }
+            : undefined
+        }
         setConfig={setMatch?.config}
         legResults={setMatch?.legResults}
         currentLegIndex={setMatch?.currentLegIndex}
@@ -324,18 +456,67 @@ function App() {
     );
   }
 
+  if (screen.name === "atw") {
+    return (
+      <ATWScreen
+        key={rematchKey}
+        options={screen.options}
+        playerNames={screen.playerNames}
+        playerIds={screen.playerIds}
+        botSkills={screen.botSkills}
+        restoredState={screen.restoredState}
+        onExit={() => setScreen({ name: "home" })}
+        onRematch={handleRematch}
+      />
+    );
+  }
+
   if (screen.name === "setup") {
     return (
       <GameSetupScreen
         game={screen.game}
         onBack={() => setScreen({ name: "home" })}
-        onStart={(playerNames, playerIds, botSkills, x01Options, cricketOptions, highScoreOptions) => {
+        onStart={(
+          playerNames,
+          playerIds,
+          botSkills,
+          x01Options,
+          cricketOptions,
+          highScoreOptions,
+          atwOptions,
+        ) => {
           if (screen.game === "x01" && x01Options) {
-            setScreen({ name: "game", x01Options, playerNames, playerIds, botSkills });
+            setScreen({
+              name: "game",
+              x01Options,
+              playerNames,
+              playerIds,
+              botSkills,
+            });
           } else if (screen.game === "cricket" && cricketOptions) {
-            setScreen({ name: "cricket", options: cricketOptions, playerNames, playerIds, botSkills });
+            setScreen({
+              name: "cricket",
+              options: cricketOptions,
+              playerNames,
+              playerIds,
+              botSkills,
+            });
           } else if (screen.game === "highscore" && highScoreOptions) {
-            setScreen({ name: "highscore", options: highScoreOptions, playerNames, playerIds, botSkills });
+            setScreen({
+              name: "highscore",
+              options: highScoreOptions,
+              playerNames,
+              playerIds,
+              botSkills,
+            });
+          } else if (screen.game === "atw" && atwOptions) {
+            setScreen({
+              name: "atw",
+              options: atwOptions,
+              playerNames,
+              playerIds,
+              botSkills,
+            });
           }
         }}
       />

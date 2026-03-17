@@ -12,8 +12,8 @@ export interface PlayerRecord {
 export interface RecordedDart {
   value: number;
   shortName: string;
-  scored?: boolean;      // x01: whether the dart counted
-  marksEarned?: number;  // cricket: raw marks from this dart
+  scored?: boolean; // x01: whether the dart counted
+  marksEarned?: number; // cricket: raw marks from this dart
 }
 
 export interface RoundRecord {
@@ -27,7 +27,7 @@ export interface RoundRecord {
 
 export interface GameSessionRecord {
   id: string;
-  gameType: "x01" | "cricket" | "highscore";
+  gameType: "x01" | "cricket" | "highscore" | "atw";
   playedAt: number;
   options: unknown;
   participants: {
@@ -64,7 +64,9 @@ function getDB() {
       upgrade(db) {
         const playerStore = db.createObjectStore("players", { keyPath: "id" });
         playerStore.createIndex("by_name", "name");
-        const sessionStore = db.createObjectStore("game_sessions", { keyPath: "id" });
+        const sessionStore = db.createObjectStore("game_sessions", {
+          keyPath: "id",
+        });
         sessionStore.createIndex("by_playedAt", "playedAt");
       },
     });
@@ -81,9 +83,10 @@ export async function dbGetAllPlayers(): Promise<PlayerRecord[]> {
 
 export async function dbAddPlayer(name: string): Promise<PlayerRecord> {
   const db = await getDB();
-  const id = typeof crypto.randomUUID === "function"
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+  const id =
+    typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
   const player: PlayerRecord = { id, name, createdAt: Date.now() };
   await db.add("players", player);
   return player;
@@ -107,7 +110,9 @@ export async function dbSaveSession(session: GameSessionRecord): Promise<void> {
   await db.add("game_sessions", session);
 }
 
-export async function dbGetSessionsForPlayer(playerId: string): Promise<GameSessionRecord[]> {
+export async function dbGetSessionsForPlayer(
+  playerId: string,
+): Promise<GameSessionRecord[]> {
   const db = await getDB();
   const all = await db.getAllFromIndex("game_sessions", "by_playedAt");
   return all.filter((s) => s.participants.some((p) => p.playerId === playerId));

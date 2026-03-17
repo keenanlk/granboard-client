@@ -5,12 +5,34 @@ import type { CricketPlayer } from "../store/useCricketStore.ts";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function makeMarks(overrides: Partial<Record<number, number>> = {}): Record<15|16|17|18|19|20|25, number> {
-  return { 20: 0, 19: 0, 18: 0, 17: 0, 16: 0, 15: 0, 25: 0, ...overrides } as Record<15|16|17|18|19|20|25, number>;
+function makeMarks(
+  overrides: Partial<Record<number, number>> = {},
+): Record<15 | 16 | 17 | 18 | 19 | 20 | 25, number> {
+  return {
+    20: 0,
+    19: 0,
+    18: 0,
+    17: 0,
+    16: 0,
+    15: 0,
+    25: 0,
+    ...overrides,
+  } as Record<15 | 16 | 17 | 18 | 19 | 20 | 25, number>;
 }
 
-function makePlayer(name: string, marks: Record<number, number>, score = 0): CricketPlayer {
-  return { name, marks, score, totalDartsThrown: 0, totalMarksEarned: 0, rounds: [] };
+function makePlayer(
+  name: string,
+  marks: Record<number, number>,
+  score = 0,
+): CricketPlayer {
+  return {
+    name,
+    marks,
+    score,
+    totalDartsThrown: 0,
+    totalMarksEarned: 0,
+    rounds: [],
+  };
 }
 
 // tripleFor: segment IDs for standard numbers (SegmentID = (n-1)*4+1)
@@ -25,8 +47,8 @@ describe("CATCHUP mode (large deficit)", () => {
     // CPU owns 18 (can score), has 0 marks on 17 (potential denial).
     // Opponent has 17 closed (scoring on CPU) but CPU has no marks there yet.
     // Score gap: CPU 18, Opponent 228 → −210 → CATCHUP mode.
-    const cpuMarks = makeMarks({ 18: 3 });          // CPU closed 18, can score
-    const oppMarks = makeMarks({ 17: 3, 18: 0 });   // opp closed 17 (scoring), 18 open
+    const cpuMarks = makeMarks({ 18: 3 }); // CPU closed 18, can score
+    const oppMarks = makeMarks({ 17: 3, 18: 0 }); // opp closed 17 (scoring), 18 open
 
     const cpu = makePlayer("CPU", cpuMarks, 18);
     const opp = makePlayer("Human", oppMarks, 228);
@@ -144,8 +166,8 @@ describe("Only bull remaining", () => {
   it("targets bull when all other numbers are fully settled", () => {
     // Both players have 20,19,18,17,16,15 closed — only 25 remains open for CPU.
     const allClosed = makeMarks({ 20: 3, 19: 3, 18: 3, 17: 3, 16: 3, 15: 3 });
-    const cpuMarks  = { ...allClosed, 25: 0 };
-    const oppMarks  = { ...allClosed, 25: 3 };  // opp has bull closed too
+    const cpuMarks = { ...allClosed, 25: 0 };
+    const oppMarks = { ...allClosed, 25: 3 }; // opp has bull closed too
 
     const cpu = makePlayer("CPU", cpuMarks, 0);
     const opp = makePlayer("Human", oppMarks, 0);

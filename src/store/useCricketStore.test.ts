@@ -19,7 +19,11 @@ function store() {
   return useCricketStore.getState();
 }
 
-function start(singleBull = false, players = ["Alice", "Bob"], cutThroat = false) {
+function start(
+  singleBull = false,
+  players = ["Alice", "Bob"],
+  cutThroat = false,
+) {
   store().startGame({ singleBull, roundLimit: 0, cutThroat }, players);
 }
 
@@ -50,7 +54,9 @@ describe("startGame", () => {
   });
 
   it("supports single player", () => {
-    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, ["Solo"]);
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, [
+      "Solo",
+    ]);
     expect(store().players).toHaveLength(1);
   });
 });
@@ -234,7 +240,9 @@ describe("win condition", () => {
   });
 
   it("win in solo game when all targets closed", () => {
-    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, ["Solo"]);
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, [
+      "Solo",
+    ]);
     store().addDart(t20);
     store().addDart(t19);
     store().addDart(t18);
@@ -288,7 +296,9 @@ describe("win condition", () => {
   });
 
   it("wins when all closed and score >= all opponents", () => {
-    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, ["Solo"]);
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, [
+      "Solo",
+    ]);
     store().addDart(t20);
     store().addDart(t19);
     store().addDart(t18);
@@ -332,7 +342,9 @@ describe("undoLastDart", () => {
   });
 
   it("clears winner on undo", () => {
-    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, ["Solo"]);
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, [
+      "Solo",
+    ]);
     store().addDart(t20);
     store().addDart(t19);
     store().addDart(t18);
@@ -380,7 +392,9 @@ describe("nextTurn", () => {
   });
 
   it("does not advance turn after game won", () => {
-    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, ["Solo"]);
+    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: false }, [
+      "Solo",
+    ]);
     store().addDart(t20);
     store().addDart(t19);
     store().addDart(t18);
@@ -402,7 +416,10 @@ describe("nextTurn", () => {
 // ---------------------------------------------------------------------------
 describe("cut-throat cricket", () => {
   function startCT(players = ["Alice", "Bob"]) {
-    store().startGame({ singleBull: false, roundLimit: 0, cutThroat: true }, players);
+    store().startGame(
+      { singleBull: false, roundLimit: 0, cutThroat: true },
+      players,
+    );
   }
 
   it("points go to opponents, not self", () => {
@@ -547,7 +564,10 @@ describe("cut-throat cricket", () => {
   });
 
   it("round limit: lowest score wins", () => {
-    store().startGame({ singleBull: false, roundLimit: 1, cutThroat: true }, ["Alice", "Bob"]);
+    store().startGame({ singleBull: false, roundLimit: 1, cutThroat: true }, [
+      "Alice",
+      "Bob",
+    ]);
     // Alice closes 20 and scores on Bob
     store().addDart(t20);
     store().nextTurn(); // Alice's turn done
