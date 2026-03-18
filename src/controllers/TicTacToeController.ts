@@ -22,7 +22,12 @@ export class TicTacToeController implements GameController {
     if (after.currentRoundDarts.length === before.currentRoundDarts.length)
       return;
 
-    gameEventBus.emit("dart_hit", { segment });
+    const lastDart =
+      after.currentRoundDarts[after.currentRoundDarts.length - 1];
+    gameEventBus.emit("dart_hit", {
+      segment,
+      effectiveMarks: lastDart?.marksAdded ?? 0,
+    });
     emitOpenNumbers();
 
     // Check for win

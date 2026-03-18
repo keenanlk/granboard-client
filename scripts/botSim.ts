@@ -45,7 +45,7 @@ function arg(flag: string, fallback: string): string {
   return i !== -1 && argv[i + 1] ? argv[i + 1] : fallback;
 }
 
-const GAMES = parseInt(arg("--games", "1000"), 10);
+const GAMES = parseInt(arg("--games", "5000"), 10);
 const MODE = arg("--mode", "x01") as "x01" | "cricket" | "highscore";
 const HS_ROUNDS = parseInt(arg("--hs-rounds", "8"), 10);
 

@@ -17,6 +17,7 @@ import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { HistoryRow } from "../components/HistoryRow.tsx";
 import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
 import { gameEventBus } from "../events/gameEventBus.ts";
+import { playerTextSizes } from "../lib/playerTextSizes.ts";
 
 interface TicTacToeScreenProps {
   options: TicTacToeOptions;
@@ -121,6 +122,7 @@ export function TicTacToeScreen({
   });
 
   const n = players.length;
+  const textSizes = playerTextSizes(n);
   const currentPlayer = players[currentPlayerIndex];
   const readyToSwitch = currentRoundDarts.length === 3;
   const nextPlayerIndex = (currentPlayerIndex + 1) % n;
@@ -226,31 +228,63 @@ export function TicTacToeScreen({
         </>
       }
     >
+      {/* Mobile header — visible below md */}
+      <div
+        className="flex md:hidden items-center justify-between px-3 py-1.5 border-b border-border-default shrink-0"
+        style={{ paddingTop: "calc(var(--sat) + 0.25rem)" }}
+      >
+        <div className="flex flex-col">
+          <span className="font-black text-[var(--color-game-accent)] text-sm tracking-widest">
+            Tic Tac Toe
+          </span>
+          <span className="text-zinc-600 text-[0.6rem] uppercase tracking-widest">
+            Round {currentRound}
+            {options.roundLimit > 0 ? ` of ${options.roundLimit}` : ""}
+          </span>
+        </div>
+        <GameMenu
+          onUndo={undoLastDart}
+          undoDisabled={gameOver || isCurrentBot || undoStack.length === 0}
+          onExit={onExit}
+        />
+      </div>
+
       {/* Main area — grid + sidebar */}
       <div
         className="flex-1 flex min-h-0"
         style={{ paddingLeft: "var(--sal)" }}
       >
         {/* Left: TTT grid */}
-        <div className="flex-1 flex flex-col items-center justify-center min-w-0 min-h-0 px-4 py-2">
-          {/* Active player indicator */}
-          <div className="flex items-center gap-2 shrink-0 mb-3">
+        <div className="flex-1 relative flex items-center justify-center min-w-0 min-h-0 p-1">
+          {/* Active player indicator — top left overlay */}
+          <div
+            className="absolute top-0 left-0 flex items-center gap-2 z-10"
+            style={{
+              padding: "clamp(0.25rem, 0.5vh, 0.5rem) clamp(0.5rem, 1vw, 1rem)",
+            }}
+          >
             <span className="glow-dot" />
             <span
-              className={`font-black uppercase tracking-widest text-[clamp(1rem,2vw,2.5rem)] ${isCurrentBot ? getBotCharacter(botSkills[currentPlayerIndex]!).animationClass : ""}`}
-              style={
-                isCurrentBot
+              className={`font-black uppercase tracking-widest ${isCurrentBot ? getBotCharacter(botSkills[currentPlayerIndex]!).animationClass : ""}`}
+              style={{
+                fontSize: "clamp(0.85rem, min(1.8vw, 2.5vh), 1.75rem)",
+                ...(isCurrentBot
                   ? {
                       fontFamily: "Beon, sans-serif",
                       color: getBotCharacter(botSkills[currentPlayerIndex]!)
                         .color,
                       textShadow: `0 0 12px ${getBotCharacter(botSkills[currentPlayerIndex]!).glow}`,
                     }
-                  : { color: "var(--color-game-accent)" }
-              }
+                  : { color: "var(--color-game-accent)" }),
+              }}
             >
               {currentPlayer?.name}{" "}
-              <span className="text-[clamp(0.8rem,1.5vw,1.5rem)] opacity-60">
+              <span
+                className="opacity-60"
+                style={{
+                  fontSize: "clamp(0.6rem, min(1.2vw, 1.8vh), 1.25rem)",
+                }}
+              >
                 ({symbols[currentPlayerIndex]})
               </span>
             </span>
@@ -258,8 +292,12 @@ export function TicTacToeScreen({
 
           {/* 3x3 Grid */}
           <div
-            className="grid grid-cols-3 grid-rows-3 gap-2 w-full"
-            style={{ maxWidth: "min(80vh, 500px)" }}
+            className="grid grid-cols-3 grid-rows-3 gap-[clamp(4px,0.5vh,8px)]"
+            style={{
+              width: "min(100vh, 650px)",
+              height: "min(75vh, 500px)",
+              maxWidth: "100%",
+            }}
           >
             {grid.map((num, idx) => {
               const cellOwner = owner[idx];
@@ -271,15 +309,17 @@ export function TicTacToeScreen({
               return (
                 <div
                   key={idx}
-                  className={`relative rounded-xl border-2 flex flex-col items-center justify-center transition-all duration-300 ${
+                  data-testid={`cell-${idx}`}
+                  className={`relative rounded-xl border-2 flex items-center justify-center transition-all duration-300 ${
                     isWinCell
                       ? "border-[var(--color-game-accent)] bg-[var(--color-game-accent-dim)]"
-                      : cellOwner !== null
-                        ? "border-zinc-600 bg-zinc-800/50"
-                        : "border-zinc-700 bg-zinc-900"
+                      : cellOwner === 0
+                        ? "border-red-500/60 bg-red-950/40 animate-[pulse-red_2s_ease-in-out_infinite]"
+                        : cellOwner === 1
+                          ? "border-blue-500/60 bg-blue-950/40 animate-[pulse-blue_2s_ease-in-out_infinite]"
+                          : "border-zinc-700 bg-zinc-900"
                   }`}
                   style={{
-                    aspectRatio: "1",
                     boxShadow: isWinCell
                       ? "0 0 20px var(--color-game-accent-glow)"
                       : undefined,
@@ -287,14 +327,40 @@ export function TicTacToeScreen({
                 >
                   {/* Number label — hidden once claimed */}
                   {cellOwner === null && (
-                    <span
-                      className="font-black leading-none text-white"
-                      style={{
-                        fontSize: "clamp(1.5rem, 3.5vw, 3rem)",
-                      }}
-                    >
-                      {label}
-                    </span>
+                    <>
+                      <span
+                        className="font-black leading-none text-white"
+                        style={{
+                          fontSize: "clamp(2rem, min(7vw, 11vh), 5rem)",
+                        }}
+                      >
+                        {label}
+                      </span>
+                      {/* X marks — top edge */}
+                      <div
+                        className="absolute top-0 left-0 h-[clamp(6px,1vh,10px)] rounded-br transition-all duration-300"
+                        style={{
+                          width: `${(p0Marks / 4) * 100}%`,
+                          backgroundColor: "#ef4444",
+                          boxShadow:
+                            p0Marks > 0
+                              ? "0 0 8px rgba(239,68,68,0.7), 0 0 16px rgba(239,68,68,0.3)"
+                              : "none",
+                        }}
+                      />
+                      {/* O marks — bottom edge */}
+                      <div
+                        className="absolute bottom-0 left-0 h-[clamp(6px,1vh,10px)] rounded-tr transition-all duration-300"
+                        style={{
+                          width: `${(p1Marks / 4) * 100}%`,
+                          backgroundColor: "#3b82f6",
+                          boxShadow:
+                            p1Marks > 0
+                              ? "0 0 8px rgba(59,130,246,0.7), 0 0 16px rgba(59,130,246,0.3)"
+                              : "none",
+                        }}
+                      />
+                    </>
                   )}
 
                   {/* Claimed symbol (X or O) */}
@@ -302,7 +368,7 @@ export function TicTacToeScreen({
                     <span
                       className="font-black leading-none"
                       style={{
-                        fontSize: "clamp(4rem, 10vw, 9rem)",
+                        fontSize: "clamp(2rem, min(10vw, 12vh), 9rem)",
                         fontFamily: "Beon, sans-serif",
                         color: cellOwner === 0 ? "#ef4444" : "#3b82f6",
                         textShadow:
@@ -314,40 +380,40 @@ export function TicTacToeScreen({
                       {symbols[cellOwner]}
                     </span>
                   )}
-
-                  {/* Marks progress for both players (when not claimed) */}
-                  {cellOwner === null && (
-                    <div className="flex flex-col gap-1 mt-2">
-                      {[
-                        { marks: p0Marks, color: "#ef4444" },
-                        { marks: p1Marks, color: "#3b82f6" },
-                      ].map((p, pi) => (
-                        <div key={pi} className="flex gap-1 justify-center">
-                          {[0, 1, 2, 3].map((i) => (
-                            <div
-                              key={i}
-                              className="rounded-full transition-colors"
-                              style={{
-                                width: "clamp(8px, 1.4vw, 14px)",
-                                height: "clamp(8px, 1.4vw, 14px)",
-                                backgroundColor:
-                                  p.marks > i ? p.color : "#3f3f46",
-                              }}
-                            />
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               );
             })}
           </div>
+
+          {/* Mobile current round — visible below md */}
+          <div
+            className="flex md:hidden shrink-0 mt-1"
+            style={{ width: "min(100vh, 650px)", maxWidth: "100%" }}
+          >
+            <HistoryRow
+              roundNum={(currentPlayer?.rounds?.length ?? 0) + 1}
+              darts={currentRoundDarts.map((d) => ({
+                value: d.segment.Value,
+                shortName: d.segment.ShortName,
+                state: d.marksAdded > 0 ? "scored" : "miss",
+              }))}
+              totalDarts={currentRoundDarts.length}
+              readyToSwitch={readyToSwitch}
+              isCurrent={true}
+            />
+          </div>
+
+          {/* Mobile bot thinking indicator */}
+          {isCurrentBot && (
+            <div className="md:hidden">
+              <BotThinkingIndicator skill={botSkills[currentPlayerIndex]!} />
+            </div>
+          )}
         </div>
 
-        {/* Right sidebar: game info + dart history */}
+        {/* Right sidebar: game info + dart history — hidden on mobile */}
         <div
-          className="flex flex-col shrink-0 border-l border-border-default min-h-0"
+          className="hidden md:flex flex-col shrink-0 border-l border-border-default min-h-0"
           style={{ width: "clamp(12rem, 16vw, 22rem)" }}
         >
           {/* Game title + menu */}
@@ -425,31 +491,51 @@ export function TicTacToeScreen({
           return (
             <div
               key={i}
-              className="player-strip-cell border-r border-border-default last:border-r-0"
+              className="player-strip-cell border-r border-border-default last:border-r-0 !flex-row !items-center !gap-3"
               data-active={String(isActive)}
-              style={i === 0 ? { paddingLeft: "var(--sal)" } : undefined}
+              style={{
+                padding: "clamp(0.5rem, 2.5vh, 1.5rem) 0.5rem",
+                paddingBottom: "calc(var(--sab) + clamp(0.5rem, 2.5vh, 1.5rem))",
+                ...(i === 0 ? { paddingLeft: "var(--sal)" } : {}),
+              }}
             >
+              {/* Name + claimed stacked */}
+              <div className="flex flex-col items-center">
+                <span
+                  className={`font-black uppercase tracking-widest truncate max-w-full transition-colors duration-300 ${botSkills[i] != null ? getBotCharacter(botSkills[i]!).animationClass : isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                  style={{
+                    fontSize: `clamp(1rem, min(3.5vw, 4vh), 2.5rem)`,
+                    letterSpacing: "0.15em",
+                    ...(botSkills[i] != null
+                      ? {
+                          fontFamily: "Beon, sans-serif",
+                          color: getBotCharacter(botSkills[i]!).color,
+                          textShadow: isActive
+                            ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}`
+                            : "none",
+                        }
+                      : isActive
+                        ? {
+                            textShadow:
+                              "0 0 8px var(--color-game-accent-glow)",
+                          }
+                        : {}),
+                  }}
+                >
+                  {player.name}
+                </span>
+                <span
+                  className={`tabular-nums transition-colors duration-300 ${isActive ? "text-content-secondary" : "text-content-faint"}`}
+                  style={{ fontSize: textSizes.stat }}
+                >
+                  {player.claimed.length} claimed
+                </span>
+              </div>
+              {/* Symbol to the right */}
               <span
-                className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${botSkills[i] != null ? getBotCharacter(botSkills[i]!).animationClass : isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
+                className="font-black leading-none transition-colors duration-300"
                 style={{
-                  fontSize: "clamp(0.9rem, 1.5vw, 1.25rem)",
-                  ...(botSkills[i] != null
-                    ? {
-                        fontFamily: "Beon, sans-serif",
-                        color: getBotCharacter(botSkills[i]!).color,
-                        textShadow: isActive
-                          ? `0 0 8px ${getBotCharacter(botSkills[i]!).glow}`
-                          : "none",
-                      }
-                    : {}),
-                }}
-              >
-                {player.name}
-              </span>
-              <span
-                className={`font-black leading-tight transition-colors duration-300`}
-                style={{
-                  fontSize: "clamp(2rem, 5vw, 4rem)",
+                  fontSize: textSizes.score,
                   fontFamily: "Beon, sans-serif",
                   color: i === 0 ? "#ef4444" : "#3b82f6",
                   textShadow: isActive
@@ -461,12 +547,6 @@ export function TicTacToeScreen({
                 }}
               >
                 {symbols[i]}
-              </span>
-              <span
-                className={`tabular-nums transition-colors duration-300 ${isActive ? "text-content-secondary" : "text-content-faint"}`}
-                style={{ fontSize: "clamp(0.7rem, 1vw, 0.9rem)" }}
-              >
-                {player.claimed.length} claimed
               </span>
             </div>
           );

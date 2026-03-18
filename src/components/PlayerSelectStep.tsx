@@ -457,8 +457,12 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
                   }}
                   onTouchStart={(e) => e.stopPropagation()}
                   onPointerDown={(e) => e.stopPropagation()}
-                  className="absolute top-1 right-1.5 text-zinc-600 hover:text-red-400 transition-colors leading-none z-10"
-                  style={{ fontSize: "clamp(1rem,1.5vw,1.75rem)" }}
+                  className="absolute top-0 right-0 flex items-center justify-center text-zinc-500 hover:text-red-400 active:text-red-400 transition-colors leading-none z-10"
+                  style={{
+                    width: "clamp(2rem, 3vw, 2.75rem)",
+                    height: "clamp(2rem, 3vw, 2.75rem)",
+                    fontSize: "clamp(1.25rem, 2vw, 2rem)",
+                  }}
                 >
                   ×
                 </button>

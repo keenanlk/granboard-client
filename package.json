@@ -34,10 +34,14 @@
     "@types/react-dom": "^19.2.3",
     "@types/web-bluetooth": "^0.0.21",
     "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/browser": "^4.1.0",
+    "@vitest/browser-playwright": "^4.1.0",
+    "@vitest/ui": "^4.1.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "playwright": "^1.58.2",
     "prettier": "^3.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -49,6 +53,7 @@
     "vite-plugin-mcp": "^0.3.2",
     "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.1.0",
+    "vitest-browser-react": "^2.1.0",
     "zustand": "^5.0.11"
   }
 }

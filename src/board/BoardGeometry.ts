@@ -17,23 +17,21 @@ export const CLOCKWISE_NUMBERS = [
  * only the scoring surface and apply equally to soft-tip boards.
  */
 export const RING_RADII = {
-  innerBull: 6.35, // inner bull: 0–6.35mm
-  outerBull: 15.9, // outer bull: 6.35–15.9mm
-  innerSingle: 99.0, // inner single: 15.9–99mm
-  treble: 107.0, // treble ring: 99–107mm
-  outerSingle: 162.0, // outer single: 107–162mm
-  double: 170.0, // double ring: 162–170mm
-  // > 170mm = miss
+  innerBull: 8,
+  outerBull: 21,
+  innerSingle: 105,
+  treble: 124,
+  outerSingle: 177,
+  double: 195,
 } as const;
 
-// Midpoint radius of each zone — used as the aim point for strategy targeting.
 const ZONE_MID = {
   innerBull: 0,
-  outerBull: (6.35 + 15.9) / 2, // ≈11.1mm
-  innerSingle: (15.9 + 99.0) / 2, // ≈57.5mm
-  treble: (99.0 + 107.0) / 2, // 103mm
-  outerSingle: (107.0 + 162.0) / 2, // 134.5mm
-  double: (162.0 + 170.0) / 2, // 166mm
+  outerBull: (RING_RADII.innerBull + RING_RADII.outerBull) / 2, // 14.5mm
+  innerSingle: (RING_RADII.outerBull + RING_RADII.innerSingle) / 2, // 63.0mm
+  treble: (RING_RADII.innerSingle + RING_RADII.treble) / 2, // 114.5mm
+  outerSingle: (RING_RADII.treble + RING_RADII.outerSingle) / 2, // 150.5mm
+  double: (RING_RADII.outerSingle + RING_RADII.double) / 2, // 186.0mm
 } as const;
 
 /**
