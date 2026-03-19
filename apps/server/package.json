@@ -1,0 +1,25 @@
+{
+  "name": "@nlc-darts/server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts | pino-pretty",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@colyseus/core": "^0.16.24",
+    "@colyseus/ws-transport": "^0.16.5",
+    "@nlc-darts/engine": "workspace:*",
+    "@nlc-darts/logger": "workspace:*",
+    "@supabase/supabase-js": "^2.99.2",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.10.1",
+    "pino-pretty": "^13",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.3"
+  }
+}

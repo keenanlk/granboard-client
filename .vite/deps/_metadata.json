@@ -1,0 +1,73 @@
+{
+  "hash": "9dba21d7",
+  "configHash": "4962f421",
+  "lockfileHash": "caa5aa39",
+  "browserHash": "b1ef1fb5",
+  "optimized": {
+    "@capacitor-community/bluetooth-le": {
+      "src": "../../node_modules/@capacitor-community/bluetooth-le/dist/esm/index.js",
+      "file": "@capacitor-community_bluetooth-le.js",
+      "fileHash": "d17bf323",
+      "needsInterop": false
+    },
+    "@capacitor/core": {
+      "src": "../../node_modules/@capacitor/core/dist/index.js",
+      "file": "@capacitor_core.js",
+      "fileHash": "5d96e069",
+      "needsInterop": false
+    },
+    "@supabase/supabase-js": {
+      "src": "../../node_modules/@supabase/supabase-js/dist/index.mjs",
+      "file": "@supabase_supabase-js.js",
+      "fileHash": "278ac992",
+      "needsInterop": false
+    },
+    "idb": {
+      "src": "../../node_modules/idb/build/index.js",
+      "file": "idb.js",
+      "fileHash": "f903cbc3",
+      "needsInterop": false
+    },
+    "lucide-react": {
+      "src": "../../node_modules/lucide-react/dist/esm/lucide-react.js",
+      "file": "lucide-react.js",
+      "fileHash": "ff7f594f",
+      "needsInterop": false
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "76de316d",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "278ffd32",
+      "needsInterop": true
+    },
+    "zustand": {
+      "src": "../../node_modules/zustand/esm/index.mjs",
+      "file": "zustand.js",
+      "fileHash": "397837dd",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "web-J3KFB53V": {
+      "file": "web-J3KFB53V.js"
+    },
+    "chunk-CJKUUSXD": {
+      "file": "chunk-CJKUUSXD.js"
+    },
+    "chunk-PT3A4N6G": {
+      "file": "chunk-PT3A4N6G.js"
+    },
+    "chunk-VX2H6PUQ": {
+      "file": "chunk-VX2H6PUQ.js"
+    },
+    "chunk-G3PMV62Z": {
+      "file": "chunk-G3PMV62Z.js"
+    }
+  }
+}
