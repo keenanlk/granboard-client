@@ -10,10 +10,11 @@
     "./src/*": "./src/*"
   },
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.0",
     "typescript": "~5.9.3",
     "vitest": "^4.1.0"
   }

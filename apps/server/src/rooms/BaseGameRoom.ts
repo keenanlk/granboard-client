@@ -57,6 +57,7 @@ export abstract class BaseGameRoom<
     this.supabaseRoomId = roomId ?? null;
     this.gameOptions = this.parseOptions(options.gameOptions);
     this.gameState = this.engine.startGame(this.gameOptions, playerNames);
+    this.setState(this.gameState);
 
     this.log.info({ playerNames, playerCount: playerNames.length }, "Room created");
 
@@ -227,6 +228,7 @@ export abstract class BaseGameRoom<
 
   private broadcastState(): void {
     this.seq++;
+    this.setState(this.gameState);
     this.broadcast(ServerMessage.STATE_UPDATE, {
       state: this.getSerializableState(),
       seq: this.seq,

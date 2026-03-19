@@ -13,19 +13,19 @@
     "build:ios": "node scripts/buildIos.mjs",
     "lint": "eslint . && tsc -b && prettier --check .",
     "format": "prettier --write .",
-    "test": "vitest run",
+    "test": "COVERAGE_ONLY=1 vitest run --coverage",
     "preview": "vite preview",
     "sim": "tsx scripts/botSim.ts",
     "bump": "node scripts/version.mjs"
   },
   "dependencies": {
-    "@nlc-darts/engine": "workspace:*",
-    "@nlc-darts/logger": "workspace:*",
     "@capacitor-community/bluetooth-le": "^6.0.0",
     "@capacitor/core": "^6.0.0",
+    "@nlc-darts/engine": "workspace:*",
+    "@nlc-darts/logger": "workspace:*",
     "@supabase/supabase-js": "^2.99.2",
-    "idb": "^8.0.3",
     "colyseus.js": "^0.16.0",
+    "idb": "^8.0.3",
     "lucide-react": "^0.577.0"
   },
   "devDependencies": {
@@ -40,6 +40,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/browser": "^4.1.0",
     "@vitest/browser-playwright": "^4.1.0",
+    "@vitest/coverage-v8": "^4.1.0",
     "@vitest/ui": "^4.1.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",

@@ -5,13 +5,18 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "test": "turbo test",
+    "test": "turbo test && bash scripts/merge-coverage.sh",
     "lint": "turbo lint"
   },
   "devDependencies": {
+    "nyc": "^18.0.0",
     "turbo": "2.8.17"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "msgpackr-extract", "supabase"]
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "msgpackr-extract",
+      "supabase"
+    ]
   }
 }
