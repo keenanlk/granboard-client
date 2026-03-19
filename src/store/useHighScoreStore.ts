@@ -1,16 +1,6 @@
 import { createGameStore } from "./createGameStore.ts";
-import {
-  highScoreEngine,
-  type HighScoreState,
-} from "../engine/highScoreEngine.ts";
-
-// Re-export types so existing imports from this module continue to work.
-export type {
-  HighScoreOptions,
-  HighScoreThrownDart,
-  HighScorePlayer,
-} from "../engine/highScoreEngine.ts";
-export { DEFAULT_HIGHSCORE_OPTIONS } from "../engine/highScoreEngine.ts";
+import { highScoreEngine } from "../engine/highScoreEngine.ts";
+import type { HighScoreState } from "../engine/highScore.types.ts";
 
 const DEFAULT_STATE: HighScoreState = {
   options: { rounds: 8, tieRule: "stand", splitBull: false },

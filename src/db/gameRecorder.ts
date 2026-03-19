@@ -1,11 +1,9 @@
-import {
-  dbSaveSession,
-  type GameSessionRecord,
-  type RecordedDart,
-  type RoundRecord,
-} from "./db.ts";
-
-export type { RecordedDart };
+import { dbSaveSession } from "./db.ts";
+import type {
+  GameSessionRecord,
+  RecordedDart,
+  RoundRecord,
+} from "./db.types.ts";
 
 export class GameRecorder {
   private rounds: RoundRecord[] = [];

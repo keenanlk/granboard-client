@@ -19,21 +19,16 @@
  */
 
 import { Bot, BotSkill } from "../src/bot/Bot";
-import {
-  X01Engine,
-  type X01Options,
-  type X01State,
-} from "../src/engine/x01Engine";
-import {
-  CricketEngine,
-  DEFAULT_CRICKET_OPTIONS,
-  type CricketState,
-} from "../src/engine/cricketEngine";
-import {
-  HighScoreEngine,
-  type HighScoreOptions,
-  type HighScoreState,
-} from "../src/engine/highScoreEngine";
+import { X01Engine } from "../src/engine/x01Engine";
+import type { X01Options, X01State } from "../src/engine/x01.types";
+import { CricketEngine } from "../src/engine/cricketEngine";
+import { DEFAULT_CRICKET_OPTIONS } from "../src/engine/cricket.types";
+import type { CricketState } from "../src/engine/cricket.types";
+import { HighScoreEngine } from "../src/engine/highScoreEngine";
+import type {
+  HighScoreOptions,
+  HighScoreState,
+} from "../src/engine/highScore.types";
 import { CreateSegment } from "../src/board/Dartboard";
 
 // ── Argument parsing ──────────────────────────────────────────────────────────

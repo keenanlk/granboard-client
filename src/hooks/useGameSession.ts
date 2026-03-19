@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { setActiveController } from "../controllers/GameController.ts";
 import type { GameController } from "../controllers/GameController.ts";
 import { GameRecorder } from "../db/gameRecorder.ts";
-import type { RecordedDart } from "../db/gameRecorder.ts";
+import type { RecordedDart } from "../db/db.types.ts";
 import { useTurnDelay } from "./useTurnDelay.ts";
 import { Sounds } from "../sound/sounds.ts";
 import { gameLogger } from "../lib/GameLogger.ts";
@@ -47,6 +47,9 @@ export function useGameSession({
   legResults,
   currentLegIndex,
   shouldSkipDelay,
+  onTurnDelayStart,
+  online,
+  onBeforeNextTurn,
 }: {
   gameType: "x01" | "cricket" | "highscore" | "atw" | "tictactoe";
   playerNames: string[];
@@ -64,6 +67,12 @@ export function useGameSession({
   currentLegIndex?: number;
   /** If provided, called before triggering turn delay. Return true to skip the delay. */
   shouldSkipDelay?: () => boolean;
+  /** Called when the between-turn delay starts (for online broadcast) */
+  onTurnDelayStart?: () => void;
+  /** When true, uses shorter delay with no numeric countdown */
+  online?: boolean;
+  /** Called at the start of onNextTurn — use to dismiss awards/overlays */
+  onBeforeNextTurn?: () => void;
 }) {
   const controllerRef = useRef<GameController | null>(null);
   const recorderRef = useRef<GameRecorder | null>(null);
@@ -79,11 +88,15 @@ export function useGameSession({
   const getSerializableStateRef = useRef(getSerializableState);
   getSerializableStateRef.current = getSerializableState;
 
-  const { isTransitioning, countdown, triggerDelay } = useTurnDelay();
+  const { isTransitioning, countdown, triggerDelay } = useTurnDelay(online);
   const triggerDelayRef = useRef(triggerDelay);
   triggerDelayRef.current = triggerDelay;
   const shouldSkipDelayRef = useRef(shouldSkipDelay);
   shouldSkipDelayRef.current = shouldSkipDelay;
+  const onTurnDelayStartRef = useRef(onTurnDelayStart);
+  onTurnDelayStartRef.current = onTurnDelayStart;
+  const onBeforeNextTurnRef = useRef(onBeforeNextTurn);
+  onBeforeNextTurnRef.current = onBeforeNextTurn;
 
   // Reset saved guard when a new game starts
   useEffect(() => {
@@ -111,6 +124,7 @@ export function useGameSession({
 
     const origOnNextTurn = controller.onNextTurn.bind(controller);
     controller.onNextTurn = () => {
+      onBeforeNextTurnRef.current?.();
       const { playerIndex, darts, roundScore, busted } =
         extractRoundRef.current();
       if (darts.length > 0) {
@@ -127,6 +141,7 @@ export function useGameSession({
         persistSession();
       } else {
         setActiveController(null);
+        onTurnDelayStartRef.current?.();
         triggerDelayRef.current(() => {
           setActiveController(controller);
           origOnNextTurn();
@@ -199,5 +214,15 @@ export function useGameSession({
     }
   });
 
-  return { handleNextTurn, isTransitioning, countdown };
+  /** Trigger the turn delay overlay without going through the controller.
+   *  Used by remote players when they receive a turn_delay broadcast.
+   *  Intentionally ignores shouldSkipDelay — that only controls the
+   *  local turn flow, not delays triggered by the host. */
+  const triggerRemoteDelay = useCallback(() => {
+    triggerDelayRef.current(() => {
+      // No-op after delay — state will arrive via broadcast
+    });
+  }, []);
+
+  return { handleNextTurn, isTransitioning, countdown, triggerRemoteDelay };
 }

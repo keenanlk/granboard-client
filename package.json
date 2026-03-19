@@ -9,7 +9,7 @@
     "build": "tsc -b && vite build",
     "cap:sync": "npm run build && cap sync",
     "cap:ios": "npm run cap:sync && cap open ios",
-    "dev:ios": "cap run ios --livereload --external",
+    "dev:ios": "npm run build && cap run ios --livereload --external --target 00008150-00065C8222B8401C",
     "build:ios": "node scripts/buildIos.mjs",
     "lint": "eslint . && tsc -b && prettier --check .",
     "format": "prettier --write .",
@@ -21,6 +21,7 @@
   "dependencies": {
     "@capacitor-community/bluetooth-le": "^6.0.0",
     "@capacitor/core": "^6.0.0",
+    "@supabase/supabase-js": "^2.99.2",
     "idb": "^8.0.3",
     "lucide-react": "^0.577.0"
   },
@@ -45,6 +46,7 @@
     "prettier": "^3.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "supabase": "^2.81.3",
     "tailwindcss": "^4.2.1",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",

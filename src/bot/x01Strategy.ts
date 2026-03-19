@@ -1,5 +1,5 @@
 import { SegmentID } from "../board/Dartboard.ts";
-import type { X01Options } from "../store/useGameStore.ts";
+import type { X01Options } from "../engine/x01.types.ts";
 import { SINGLE_OUT_CHART } from "./x01OutChart.ts";
 
 /*

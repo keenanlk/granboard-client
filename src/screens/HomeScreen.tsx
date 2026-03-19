@@ -6,6 +6,7 @@ interface HomeScreenProps {
   onSetMatch: () => void;
   onPractice: () => void;
   onPlayers: () => void;
+  onOnline: () => void;
 }
 
 const GAMES = [
@@ -34,6 +35,7 @@ export function HomeScreen({
   onSetMatch,
   onPractice,
   onPlayers,
+  onOnline,
 }: HomeScreenProps) {
   const { status, errorMessage, connect, disconnect, connectMock } =
     useGranboardStore();
@@ -169,7 +171,7 @@ export function HomeScreen({
           </p>
         )}
 
-        <div className="flex-1 min-h-0 grid grid-cols-2 grid-rows-2 gap-3">
+        <div className="flex-1 min-h-0 grid grid-cols-3 grid-rows-2 gap-3">
           {GAMES.map((game) => (
             <button
               key={game.id}
@@ -260,6 +262,35 @@ export function HomeScreen({
             </p>
             <p className="text-zinc-500 text-sm mt-1 font-medium">
               Solo practice games
+            </p>
+          </button>
+
+          <button
+            onClick={onOnline}
+            className="w-full rounded-2xl px-6 text-left transition-all duration-150 flex flex-col justify-center bg-zinc-900 border-2 border-zinc-800"
+            style={{ borderColor: undefined }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "#f59e0b";
+              e.currentTarget.style.boxShadow = "0 0 12px rgba(245,158,11,0.5)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "";
+              e.currentTarget.style.boxShadow = "";
+            }}
+          >
+            <p
+              className="text-4xl tracking-tight font-normal"
+              style={{
+                fontFamily: "Beon, sans-serif",
+                color: "#f59e0b",
+                textShadow:
+                  "0 0 20px #f59e0b, 0 0 60px #f59e0b, 0 0 100px rgba(245,158,11,0.5)",
+              }}
+            >
+              Online
+            </p>
+            <p className="text-zinc-500 text-sm mt-1 font-medium">
+              Play against others
             </p>
           </button>
         </div>

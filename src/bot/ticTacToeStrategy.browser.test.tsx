@@ -42,7 +42,7 @@ import { useTicTacToeStore } from "../store/useTicTacToeStore.ts";
 import type {
   TicTacToeState,
   TicTacToePlayer,
-} from "../engine/ticTacToeEngine.ts";
+} from "../engine/ticTacToe.types.ts";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -54,9 +54,7 @@ interface CellSetup {
   p1Marks?: number;
 }
 
-function makePlayers(
-  cells: CellSetup[],
-): [TicTacToePlayer, TicTacToePlayer] {
+function makePlayers(cells: CellSetup[]): [TicTacToePlayer, TicTacToePlayer] {
   const p0: TicTacToePlayer = {
     name: "Human",
     marks: cells.map((c) => c.p0Marks ?? 0),
@@ -95,7 +93,9 @@ function buildRestoredState(
   };
 }
 
-function renderTTT(restoredState: TicTacToeState & { undoStack: TicTacToeState[] }) {
+function renderTTT(
+  restoredState: TicTacToeState & { undoStack: TicTacToeState[] },
+) {
   return render(
     <TicTacToeScreen
       options={{ roundLimit: 20, singleBull: false }}
@@ -154,7 +154,7 @@ describe("TicTacToe bot strategy (browser)", () => {
       [
         { owner: 1, p1Marks: 4 }, // cell 0: Bot owns
         { owner: 1, p1Marks: 4 }, // cell 1: Bot owns
-        { p1Marks: 3 },           // cell 2: 3 marks, needs 1 more
+        { p1Marks: 3 }, // cell 2: 3 marks, needs 1 more
         { owner: 0, p0Marks: 4 }, // cell 3: Human owns
         { owner: 0, p0Marks: 4 }, // cell 4: Human owns
         {},
@@ -178,7 +178,7 @@ describe("TicTacToe bot strategy (browser)", () => {
       [
         { owner: 0, p0Marks: 4 }, // cell 0: Human owns
         { owner: 0, p0Marks: 4 }, // cell 1: Human owns
-        { p1Marks: 3 },           // cell 2: blocking cell, 3 marks
+        { p1Marks: 3 }, // cell 2: blocking cell, 3 marks
         {},
         { owner: 1, p1Marks: 4 }, // cell 4: Bot owns center
         {},
@@ -207,7 +207,7 @@ describe("TicTacToe bot strategy (browser)", () => {
         {},
         {},
         { owner: 0, p0Marks: 4 }, // cell 7: Human
-        { p1Marks: 3 },           // cell 8: 3 marks, one more claims
+        { p1Marks: 3 }, // cell 8: 3 marks, one more claims
       ],
       1, // bot's turn
     );

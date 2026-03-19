@@ -1,7 +1,8 @@
 import type { Segment } from "../board/Dartboard.ts";
 import type { GameController } from "./GameController.ts";
 import { gameEventBus } from "../events/gameEventBus.ts";
-import { useCricketStore, CRICKET_TARGETS } from "../store/useCricketStore.ts";
+import { useCricketStore } from "../store/useCricketStore.ts";
+import { CRICKET_TARGETS } from "../engine/cricket.types.ts";
 
 function emitOpenNumbers(): void {
   const { players } = useCricketStore.getState();

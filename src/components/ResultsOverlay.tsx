@@ -1,5 +1,6 @@
 import type { SetProgress } from "../lib/setTypes.ts";
 import { getSetWinner } from "../lib/setTypes.ts";
+import type { RematchState } from "../hooks/useOnlineRematch.ts";
 
 interface PlayerResult {
   name: string;
@@ -14,6 +15,13 @@ interface ResultsOverlayProps {
   onRematch?: () => void;
   setProgress?: SetProgress;
   onNextLeg?: () => void;
+  /** Online rematch state — when set, replaces the simple Rematch button */
+  onlineRematch?: {
+    state: RematchState;
+    onRequest: () => void;
+    onAccept: () => void;
+    onDecline: () => void;
+  };
 }
 
 function SetScoreline({ setProgress }: { setProgress: SetProgress }) {
@@ -60,6 +68,7 @@ export function ResultsOverlay({
   onRematch,
   setProgress,
   onNextLeg,
+  onlineRematch,
 }: ResultsOverlayProps) {
   const winners = playerResults.filter((p) => p.isWinner);
   const losers = playerResults.filter((p) => !p.isWinner);
@@ -246,7 +255,43 @@ export function ResultsOverlay({
             Next Leg
           </button>
         )}
-        {!isInSet && onRematch && (
+        {!isInSet && onlineRematch && onlineRematch.state === "idle" && (
+          <button
+            onClick={onlineRematch.onRequest}
+            className="btn-primary flex-1 tracking-widest"
+            style={{ fontFamily: "Beon, sans-serif", fontWeight: "normal" }}
+          >
+            Rematch
+          </button>
+        )}
+        {!isInSet && onlineRematch && onlineRematch.state === "sent" && (
+          <button
+            disabled
+            className="btn-primary flex-1 tracking-widest opacity-60 cursor-default"
+            style={{ fontFamily: "Beon, sans-serif", fontWeight: "normal" }}
+          >
+            Waiting…
+          </button>
+        )}
+        {!isInSet && onlineRematch && onlineRematch.state === "received" && (
+          <>
+            <button
+              onClick={onlineRematch.onAccept}
+              className="btn-primary flex-1 tracking-widest bg-emerald-600 text-white"
+              style={{ fontFamily: "Beon, sans-serif", fontWeight: "normal" }}
+            >
+              Accept
+            </button>
+            <button
+              onClick={onlineRematch.onDecline}
+              className="btn-primary flex-1 tracking-widest bg-zinc-800 text-zinc-400 border border-zinc-700"
+              style={{ fontFamily: "Beon, sans-serif", fontWeight: "normal" }}
+            >
+              Decline
+            </button>
+          </>
+        )}
+        {!isInSet && !onlineRematch && onRematch && (
           <button
             onClick={onRematch}
             className="btn-primary flex-1 tracking-widest"

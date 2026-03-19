@@ -1,5 +1,5 @@
-import type { X01Options } from "../engine/x01Engine.ts";
-import type { CricketOptions } from "../engine/cricketEngine.ts";
+import type { X01Options } from "../engine/x01.types.ts";
+import type { CricketOptions } from "../engine/cricket.types.ts";
 import type { BotSkill } from "../bot/Bot.ts";
 
 export type SetFormat = "bo3" | "bo5";

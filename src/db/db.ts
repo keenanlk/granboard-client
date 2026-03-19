@@ -1,43 +1,6 @@
 import { openDB } from "idb";
 import type { DBSchema } from "idb";
-
-// ── Schema types ──────────────────────────────────────────────────────────────
-
-export interface PlayerRecord {
-  id: string;
-  name: string;
-  createdAt: number;
-}
-
-export interface RecordedDart {
-  value: number;
-  shortName: string;
-  scored?: boolean; // x01: whether the dart counted
-  marksEarned?: number; // cricket: raw marks from this dart
-}
-
-export interface RoundRecord {
-  playerIndex: number;
-  playerName: string;
-  playerId: string | null;
-  round: number;
-  darts: RecordedDart[];
-  roundScore: number;
-}
-
-export interface GameSessionRecord {
-  id: string;
-  gameType: "x01" | "cricket" | "highscore" | "atw" | "tictactoe";
-  playedAt: number;
-  options: unknown;
-  participants: {
-    playerId: string | null;
-    name: string;
-    finalScore: number;
-    isWinner: boolean;
-  }[];
-  rounds: RoundRecord[];
-}
+import type { GameSessionRecord, PlayerRecord } from "./db.types.ts";
 
 // ── IndexedDB schema ──────────────────────────────────────────────────────────
 

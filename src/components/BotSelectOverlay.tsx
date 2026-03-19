@@ -1,5 +1,5 @@
 import { getAllCharacters } from "../bot/botCharacters.ts";
-import type { BotSkill } from "../bot/throwSimulator.ts";
+import type { BotSkill } from "../bot/bot.types.ts";
 
 const ALL_CHARACTERS = getAllCharacters();
 

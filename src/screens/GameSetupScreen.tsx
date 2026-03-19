@@ -1,18 +1,14 @@
 import { useState, useCallback } from "react";
-import { DEFAULT_X01_OPTIONS, type X01Options } from "../store/useGameStore.ts";
-import {
-  DEFAULT_CRICKET_OPTIONS,
-  type CricketOptions,
-} from "../store/useCricketStore.ts";
-import {
-  DEFAULT_HIGHSCORE_OPTIONS,
-  type HighScoreOptions,
-} from "../store/useHighScoreStore.ts";
-import { DEFAULT_ATW_OPTIONS, type ATWOptions } from "../store/useATWStore.ts";
-import {
-  DEFAULT_TICTACTOE_OPTIONS,
-  type TicTacToeOptions,
-} from "../store/useTicTacToeStore.ts";
+import { DEFAULT_X01_OPTIONS } from "../engine/x01.types.ts";
+import type { X01Options } from "../engine/x01.types.ts";
+import { DEFAULT_CRICKET_OPTIONS } from "../engine/cricket.types.ts";
+import type { CricketOptions } from "../engine/cricket.types.ts";
+import { DEFAULT_HIGHSCORE_OPTIONS } from "../engine/highScore.types.ts";
+import type { HighScoreOptions } from "../engine/highScore.types.ts";
+import { DEFAULT_ATW_OPTIONS } from "../engine/atw.types.ts";
+import type { ATWOptions } from "../engine/atw.types.ts";
+import { DEFAULT_TICTACTOE_OPTIONS } from "../engine/ticTacToe.types.ts";
+import type { TicTacToeOptions } from "../engine/ticTacToe.types.ts";
 import {
   PlayerSelectStep,
   BotSkill,

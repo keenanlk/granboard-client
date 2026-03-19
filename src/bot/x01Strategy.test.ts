@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { x01PickTarget } from "./x01Strategy.ts";
 import { SegmentID } from "../board/Dartboard.ts";
-import type { X01Options } from "../store/useGameStore.ts";
+import type { X01Options } from "../engine/x01.types.ts";
 
 const base: X01Options = {
   startingScore: 501,

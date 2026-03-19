@@ -1,13 +1,6 @@
 import { createGameStore } from "./createGameStore.ts";
-import { atwEngine, type ATWState } from "../engine/atwEngine.ts";
-
-export type {
-  ATWOptions,
-  ATWThrownDart,
-  ATWPlayer,
-  ATWRound,
-} from "../engine/atwEngine.ts";
-export { ATW_SEQUENCE, DEFAULT_ATW_OPTIONS } from "../engine/atwEngine.ts";
+import { atwEngine } from "../engine/atwEngine.ts";
+import type { ATWState } from "../engine/atw.types.ts";
 
 const DEFAULT_STATE: ATWState = {
   options: { roundLimit: 0 },

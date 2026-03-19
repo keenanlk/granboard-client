@@ -1,36 +1,4 @@
-import type { GameSessionRecord } from "./db.ts";
-
-export interface X01Stats {
-  gamesPlayed: number;
-  wins: number;
-  ppd: number; // points per dart
-  avgRound: number; // average 3-dart score
-  bestRound: number; // best single round score
-}
-
-export interface CricketStats {
-  gamesPlayed: number;
-  wins: number;
-  mpr: number; // marks per round
-  avgRoundScore: number; // average points scored per round
-}
-
-export interface HighScoreStats {
-  gamesPlayed: number;
-  wins: number;
-  avgScore: number; // avg final game score
-  bestScore: number; // best single game score
-  avgRound: number; // avg round score
-  bestRound: number; // best single round
-}
-
-export interface PlayerStats {
-  x01: X01Stats;
-  cricket: CricketStats;
-  highscore: HighScoreStats;
-  totalGames: number;
-  totalWins: number;
-}
+import type { GameSessionRecord, PlayerStats } from "./db.types.ts";
 
 export function computePlayerStats(
   sessions: GameSessionRecord[],

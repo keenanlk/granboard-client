@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useCricketStore, CRICKET_TARGETS } from "./useCricketStore.ts";
+import { useCricketStore } from "./useCricketStore.ts";
+import { CRICKET_TARGETS } from "../engine/cricket.types.ts";
 import { CreateSegment, SegmentID } from "../board/Dartboard.ts";
 
 // Helpers — segments for cricket targets

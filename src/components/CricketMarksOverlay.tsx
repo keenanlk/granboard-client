@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { CricketThrownDart } from "../store/useCricketStore.ts";
+import type { CricketThrownDart } from "../engine/cricket.types.ts";
 
 interface Props {
   darts: CricketThrownDart[];

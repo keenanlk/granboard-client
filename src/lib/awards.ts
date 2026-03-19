@@ -1,6 +1,6 @@
 import type { Segment } from "../board/Dartboard.ts";
 import { SegmentID, SegmentSection, SegmentType } from "../board/Dartboard.ts";
-import type { CricketThrownDart } from "../store/useCricketStore.ts";
+import type { CricketThrownDart } from "../engine/cricket.types.ts";
 
 export type X01AwardType = "hattrick" | "ton80" | "highton" | "lowton";
 export type CricketAwardType =

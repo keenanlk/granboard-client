@@ -9,14 +9,13 @@ import { TicTacToeScreen } from "./screens/TicTacToeScreen.tsx";
 import { PlayersScreen } from "./screens/PlayersScreen.tsx";
 import { PracticeScreen } from "./screens/PracticeScreen.tsx";
 import { SetSetupScreen } from "./screens/SetSetupScreen.tsx";
-import { useGameStore, type X01Options } from "./store/useGameStore.ts";
-import {
-  useCricketStore,
-  type CricketOptions,
-} from "./store/useCricketStore.ts";
-import type { HighScoreOptions } from "./store/useHighScoreStore.ts";
-import type { ATWOptions } from "./store/useATWStore.ts";
-import type { TicTacToeOptions } from "./store/useTicTacToeStore.ts";
+import { useGameStore } from "./store/useGameStore.ts";
+import { useCricketStore } from "./store/useCricketStore.ts";
+import type { X01Options } from "./engine/x01.types.ts";
+import type { CricketOptions } from "./engine/cricket.types.ts";
+import type { HighScoreOptions } from "./engine/highScore.types.ts";
+import type { ATWOptions } from "./engine/atw.types.ts";
+import type { TicTacToeOptions } from "./engine/ticTacToe.types.ts";
 import type { BotSkill } from "./bot/Bot.ts";
 import { useGranboardStore } from "./store/useGranboardStore.ts";
 import { useBoardWiring } from "./hooks/useBoardWiring.ts";
@@ -32,6 +31,11 @@ import type {
   SetProgress,
 } from "./lib/setTypes.ts";
 import { getSetWinner, legCount } from "./lib/setTypes.ts";
+import { OnlineLobbyScreen } from "./screens/OnlineLobbyScreen.tsx";
+import { OnlineSetupScreen } from "./screens/OnlineSetupScreen.tsx";
+import { useOnlineStore } from "./store/useOnlineStore.ts";
+import type { OnlineGameType } from "./store/online.types.ts";
+import type { OnlineConfig } from "./store/useOnlineStore.ts";
 // Side-effect imports — activate sound and LED event subscriptions
 import "./sound/soundEffects.ts";
 import "./board/ledEffects.ts";
@@ -45,6 +49,15 @@ type Screen =
       game: "x01" | "cricket" | "highscore" | "atw" | "tictactoe";
     }
   | { name: "set-setup" }
+  | { name: "online-lobby" }
+  | {
+      name: "online-setup";
+      roomId: string;
+      isHost: boolean;
+      gameType: OnlineGameType;
+      hostName: string;
+      guestName: string;
+    }
   | {
       name: "game";
       x01Options: X01Options;
@@ -52,6 +65,7 @@ type Screen =
       playerIds: (string | null)[];
       botSkills: (BotSkill | null)[];
       restoredState?: unknown;
+      onlineConfig?: OnlineConfig;
     }
   | {
       name: "cricket";
@@ -60,6 +74,7 @@ type Screen =
       playerIds: (string | null)[];
       botSkills: (BotSkill | null)[];
       restoredState?: unknown;
+      onlineConfig?: OnlineConfig;
     }
   | {
       name: "highscore";
@@ -422,7 +437,16 @@ function App() {
         playerIds={screen.playerIds}
         botSkills={screen.botSkills}
         restoredState={screen.restoredState}
-        onExit={setMatch ? handleSetExit : () => setScreen({ name: "home" })}
+        onExit={
+          screen.onlineConfig
+            ? () => {
+                void useOnlineStore.getState().leaveRoom();
+                setScreen({ name: "online-lobby" });
+              }
+            : setMatch
+              ? handleSetExit
+              : () => setScreen({ name: "home" })
+        }
         onRematch={handleRematch}
         setProgress={currentSetProgress}
         onNextLeg={
@@ -436,6 +460,7 @@ function App() {
         setConfig={setMatch?.config}
         legResults={setMatch?.legResults}
         currentLegIndex={setMatch?.currentLegIndex}
+        onlineConfig={screen.onlineConfig}
       />
     );
   }
@@ -449,7 +474,16 @@ function App() {
         playerIds={screen.playerIds}
         botSkills={screen.botSkills}
         restoredState={screen.restoredState}
-        onExit={setMatch ? handleSetExit : () => setScreen({ name: "home" })}
+        onExit={
+          screen.onlineConfig
+            ? () => {
+                void useOnlineStore.getState().leaveRoom();
+                setScreen({ name: "online-lobby" });
+              }
+            : setMatch
+              ? handleSetExit
+              : () => setScreen({ name: "home" })
+        }
         onRematch={handleRematch}
         setProgress={currentSetProgress}
         onNextLeg={
@@ -463,6 +497,7 @@ function App() {
         setConfig={setMatch?.config}
         legResults={setMatch?.legResults}
         currentLegIndex={setMatch?.currentLegIndex}
+        onlineConfig={screen.onlineConfig}
       />
     );
   }
@@ -582,6 +617,86 @@ function App() {
     );
   }
 
+  if (screen.name === "online-lobby") {
+    return (
+      <OnlineLobbyScreen
+        onBack={() => setScreen({ name: "home" })}
+        onGameReady={(roomId, isHost) => {
+          const { currentRoom, displayName, opponentName } =
+            useOnlineStore.getState();
+          if (!currentRoom) return;
+          const myName = displayName ?? "Player";
+          const otherName = opponentName ?? "Opponent";
+          const hostName = isHost ? myName : otherName;
+          const guestName = isHost ? otherName : myName;
+          setScreen({
+            name: "online-setup",
+            roomId,
+            isHost,
+            gameType: currentRoom.game_type,
+            hostName,
+            guestName,
+          });
+        }}
+      />
+    );
+  }
+
+  if (screen.name === "online-setup") {
+    return (
+      <OnlineSetupScreen
+        gameType={screen.gameType}
+        hostName={screen.hostName}
+        guestName={screen.guestName}
+        isHost={screen.isHost}
+        onBack={() => {
+          void useOnlineStore.getState().leaveRoom();
+          setScreen({ name: "online-lobby" });
+        }}
+        onStart={(gameType, options) => {
+          const onlineConfig: OnlineConfig = {
+            roomId: screen.roomId,
+            isHost: screen.isHost,
+          };
+          if (gameType === "x01") {
+            setScreen({
+              name: "game",
+              x01Options: options as X01Options,
+              playerNames: [screen.hostName, screen.guestName],
+              playerIds: [null, null],
+              botSkills: [null, null],
+              onlineConfig,
+            });
+          } else if (gameType === "cricket") {
+            setScreen({
+              name: "cricket",
+              options: options as CricketOptions,
+              playerNames: [screen.hostName, screen.guestName],
+              playerIds: [null, null],
+              botSkills: [null, null],
+              onlineConfig,
+            });
+          }
+          // Host broadcasts game_started so guest navigates too
+          if (screen.isHost) {
+            const { roomChannel } = useOnlineStore.getState();
+            if (roomChannel) {
+              roomChannel.send({
+                type: "broadcast",
+                event: "game_started",
+                payload: {
+                  gameType,
+                  options,
+                  playerNames: [screen.hostName, screen.guestName],
+                },
+              });
+            }
+          }
+        }}
+      />
+    );
+  }
+
   if (screen.name === "practice") {
     return (
       <PracticeScreen
@@ -602,6 +717,7 @@ function App() {
         onSetMatch={() => setScreen({ name: "set-setup" })}
         onPractice={() => setScreen({ name: "practice" })}
         onPlayers={() => setScreen({ name: "players" })}
+        onOnline={() => setScreen({ name: "online-lobby" })}
       />
       {pendingResume && (
         <ResumePrompt

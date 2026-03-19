@@ -1,5 +1,5 @@
 import { SegmentID } from "../board/Dartboard.ts";
-import type { CricketPlayer, CricketTarget } from "../store/useCricketStore.ts";
+import type { CricketPlayer, CricketTarget } from "../engine/cricket.types.ts";
 
 // Cricket targets in closing order — 20 first (most scoring value), bull last.
 // Bull is last because scoring on it earns only 25/mark (less than T20=60) and

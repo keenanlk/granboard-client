@@ -1,10 +1,13 @@
-import { useCallback, useMemo } from "react";
-import { useGameStore, type X01Options } from "../store/useGameStore.ts";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useGameStore } from "../store/useGameStore.ts";
+import type { X01Options } from "../engine/x01.types.ts";
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { detectAward } from "../lib/awards.ts";
 import { X01Controller } from "../controllers/X01Controller.ts";
+import { guardForOnlineTurn } from "../controllers/OnlineTurnGuard.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
+import { useOnlineRematch } from "../hooks/useOnlineRematch.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
 import { useAwardDetection } from "../hooks/useAwardDetection.ts";
 import { GameShell } from "../components/GameShell.tsx";
@@ -12,12 +15,21 @@ import { Bot } from "../bot/Bot.ts";
 import type { BotSkill } from "../bot/Bot.ts";
 import { getBotCharacter } from "../bot/botCharacters.ts";
 import { CreateSegment } from "../board/Dartboard.ts";
+import type { SegmentID } from "../board/Dartboard.ts";
+import { x01PickTarget } from "../bot/x01Strategy.ts";
+import { DartboardSVG } from "../components/DartboardSVG.tsx";
 import { gameLogger } from "../lib/GameLogger.ts";
 import { GameMenu } from "../components/GameMenu.tsx";
 import { HistoryRow } from "../components/HistoryRow.tsx";
 import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
 import { playerTextSizes } from "../lib/playerTextSizes.ts";
 import type { SetProgress, SetConfig, LegResult } from "../lib/setTypes.ts";
+import type { OnlineConfig } from "../store/useOnlineStore.ts";
+import { useOnlineSync } from "../hooks/useOnlineSync.ts";
+import { OnlineRemoteController } from "../controllers/OnlineRemoteController.ts";
+import { useOnlineStore } from "../store/useOnlineStore.ts";
+import { OnlineIndicator } from "../components/OnlineIndicator.tsx";
+import { WaitingOverlay } from "../components/WaitingOverlay.tsx";
 
 interface GameScreenProps {
   x01Options: X01Options;
@@ -32,6 +44,7 @@ interface GameScreenProps {
   setConfig?: SetConfig;
   legResults?: LegResult[];
   currentLegIndex?: number;
+  onlineConfig?: OnlineConfig;
 }
 
 export function GameScreen({
@@ -47,6 +60,7 @@ export function GameScreen({
   setConfig,
   legResults,
   currentLegIndex,
+  onlineConfig,
 }: GameScreenProps) {
   const {
     players,
@@ -59,45 +73,126 @@ export function GameScreen({
     undoLastDart,
   } = useGameStore();
 
-  const { handleNextTurn, isTransitioning, countdown } = useGameSession({
-    gameType: "x01",
-    playerNames,
-    playerIds,
-    botSkills,
-    options: x01Options,
-    createController: () => new X01Controller(),
-    extractRound: () => {
-      const { currentPlayerIndex, currentRoundDarts, isBust } =
-        useGameStore.getState();
-      const roundTotal = currentRoundDarts
-        .filter((d) => d.scored)
-        .reduce((sum, d) => sum + d.segment.Value, 0);
-      return {
-        playerIndex: currentPlayerIndex,
-        darts: currentRoundDarts.map((d) => ({
-          value: d.segment.Value,
-          shortName: d.segment.ShortName,
-          scored: d.scored,
-        })),
-        roundScore: isBust ? 0 : roundTotal,
-        busted: isBust,
-      };
-    },
-    winner: winner ? [winner] : null,
-    getFinalScores: () => useGameStore.getState().players.map((p) => p.score),
+  const isOnlineRemote = !!onlineConfig && !onlineConfig.isHost;
+  const [opponentDisconnected, setOpponentDisconnected] = useState(false);
+  const [botBoard, setBotBoard] = useState<{
+    segment: SegmentID;
+    mode: "outline" | "fill";
+  } | null>(null);
+
+  // Refs for deferred callbacks — populated after hooks that define them
+  const broadcastTurnDelayRef = useRef<(() => void) | undefined>(undefined);
+  const dismissOverlaysRef = useRef<(() => void) | undefined>(undefined);
+
+  const { handleNextTurn, isTransitioning, countdown, triggerRemoteDelay } =
+    useGameSession({
+      gameType: "x01",
+      playerNames,
+      playerIds,
+      botSkills,
+      options: x01Options,
+      createController: () => {
+        if (isOnlineRemote) {
+          const { roomChannel } = useOnlineStore.getState();
+          return guardForOnlineTurn(
+            new OnlineRemoteController(roomChannel!),
+            1,
+            () => useGameStore.getState().currentPlayerIndex,
+          );
+        }
+        if (onlineConfig?.isHost) {
+          return guardForOnlineTurn(
+            new X01Controller(),
+            0,
+            () => useGameStore.getState().currentPlayerIndex,
+          );
+        }
+        return new X01Controller();
+      },
+      extractRound: () => {
+        const { currentPlayerIndex, currentRoundDarts, isBust } =
+          useGameStore.getState();
+        const roundTotal = currentRoundDarts
+          .filter((d) => d.scored)
+          .reduce((sum, d) => sum + d.segment.Value, 0);
+        return {
+          playerIndex: currentPlayerIndex,
+          darts: currentRoundDarts.map((d) => ({
+            value: d.segment.Value,
+            shortName: d.segment.ShortName,
+            scored: d.scored,
+          })),
+          roundScore: isBust ? 0 : roundTotal,
+          busted: isBust,
+        };
+      },
+      winner: winner ? [winner] : null,
+      getFinalScores: () => useGameStore.getState().players.map((p) => p.score),
+      getSerializableState: () =>
+        useGameStore.getState().getSerializableState(),
+      onInit: () => {
+        if (restoredState) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          useGameStore.getState().restoreState(restoredState as any);
+        } else {
+          startGame(x01Options, playerNames);
+        }
+      },
+      setConfig,
+      legResults,
+      currentLegIndex,
+      onTurnDelayStart: onlineConfig?.isHost
+        ? () => broadcastTurnDelayRef.current?.()
+        : undefined,
+      // Remote skips local delay — the host broadcasts turn_delay which
+      // triggers the remote's delay via triggerRemoteDelay()
+      shouldSkipDelay: isOnlineRemote ? () => true : undefined,
+      online: !!onlineConfig,
+      onBeforeNextTurn: () => dismissOverlaysRef.current?.(),
+    });
+
+  // Online sync — always called, no-op when onlineConfig is null
+  const { broadcastState, broadcastTurnDelay } = useOnlineSync({
+    onlineConfig: onlineConfig ?? null,
     getSerializableState: () => useGameStore.getState().getSerializableState(),
-    onInit: () => {
-      if (restoredState) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        useGameStore.getState().restoreState(restoredState as any);
-      } else {
-        startGame(x01Options, playerNames);
-      }
+    restoreState: (state) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      useGameStore.getState().restoreState(state as any),
+    onRemoteDartHit: (segment) => {
+      // Bypass the turn guard — host processes remote hits directly
+      // through an unguarded controller
+      new X01Controller().onDartHit(segment);
     },
-    setConfig,
-    legResults,
-    currentLegIndex,
+    onRemoteUndo: () => {
+      useGameStore.getState().undoLastDart();
+    },
+    onRemoteNextTurn: () => {
+      handleNextTurn();
+    },
+    onOpponentDisconnected: () => {
+      setOpponentDisconnected(true);
+    },
+    onTurnDelay: () => {
+      triggerRemoteDelay();
+    },
   });
+
+  // Keep broadcastTurnDelay ref in sync for the useGameSession callback
+  useEffect(() => {
+    broadcastTurnDelayRef.current = broadcastTurnDelay;
+  });
+
+  // Host: broadcast state after every store change
+  const broadcastRef = useRef(broadcastState);
+  useEffect(() => {
+    broadcastRef.current = broadcastState;
+  });
+  useEffect(() => {
+    if (!onlineConfig?.isHost) return;
+    return useGameStore.subscribe(() => {
+      broadcastRef.current();
+    });
+  }, [onlineConfig?.isHost]);
 
   // Build bot map once per game session — indices match the player array.
   const bots = useMemo(() => {
@@ -109,6 +204,10 @@ export function GameScreen({
   }, [botSkills, playerNames]);
 
   const isCurrentBot = bots.has(currentPlayerIndex);
+  const isOnlineOpponentTurn =
+    !!onlineConfig &&
+    !isCurrentBot &&
+    (onlineConfig.isHost ? currentPlayerIndex !== 0 : currentPlayerIndex !== 1);
 
   // Reads live store state at throw time — stable, no component deps.
   const getThrow = useCallback((bot: Bot) => {
@@ -123,6 +222,7 @@ export function GameScreen({
         gameLogger.logDart(bot.name, target, actual, {
           remainingScore: p.score,
         });
+        setBotBoard({ segment: actual, mode: "fill" });
       }),
     );
   }, []);
@@ -137,6 +237,63 @@ export function GameScreen({
     onNextTurn: handleNextTurn,
     getThrow,
   });
+
+  // Show bot dartboard overlay: outline on target before throw, fill on actual after throw.
+  // Clear board when bot is not active (use a 0ms timeout to avoid synchronous setState in effect).
+  useEffect(() => {
+    if (!isCurrentBot || !!winner || isTransitioning) {
+      const t = setTimeout(() => setBotBoard(null), 0);
+      return () => clearTimeout(t);
+    }
+    const dartsThrown = currentRoundDarts.length;
+    // After last dart or bust, keep fill state (set by getThrow) — don't override.
+    if (dartsThrown >= 3 || isBust) return;
+
+    // After a dart lands (fill set by getThrow), wait 800ms then show next target outline.
+    // For the first dart (dartsThrown=0), show outline immediately.
+    const delay = dartsThrown > 0 ? 800 : 0;
+    const t = setTimeout(() => {
+      const {
+        players: ps,
+        x01Options: opts,
+        currentPlayerIndex: ci,
+      } = useGameStore.getState();
+      const p = ps[ci];
+      if (!p) return;
+      const target = x01PickTarget(p.score, opts, p.opened);
+      setBotBoard({ segment: target, mode: "outline" });
+    }, delay);
+    return () => clearTimeout(t);
+  }, [
+    isCurrentBot,
+    currentPlayerIndex,
+    currentRoundDarts.length,
+    isBust,
+    winner,
+    isTransitioning,
+  ]);
+
+  // Online opponent dartboard overlay: fill on each dart hit, clear when not opponent's turn.
+  useEffect(() => {
+    if (!isOnlineOpponentTurn || !!winner || isTransitioning) {
+      const t = setTimeout(() => setBotBoard(null), 0);
+      return () => clearTimeout(t);
+    }
+    const dartsThrown = currentRoundDarts.length;
+    if (dartsThrown === 0) return;
+    const lastDart = currentRoundDarts[dartsThrown - 1];
+    const t = setTimeout(
+      () => setBotBoard({ segment: lastDart.segment.ID, mode: "fill" }),
+      0,
+    );
+    return () => clearTimeout(t);
+  }, [
+    isOnlineOpponentTurn,
+    currentRoundDarts.length,
+    winner,
+    isTransitioning,
+    currentRoundDarts,
+  ]);
 
   const n = players.length;
   const currentPlayer = players[currentPlayerIndex];
@@ -153,12 +310,30 @@ export function GameScreen({
     readyToSwitch && !isBust && !winner,
     () => detectAward(currentRoundDarts),
   );
+  useEffect(() => {
+    dismissOverlaysRef.current = dismissAward;
+  });
+
+  const { rematchState, requestRematch, acceptRematch, declineRematch } =
+    useOnlineRematch(onlineConfig);
+
+  // When both players accept rematch, trigger it
+  useEffect(() => {
+    if (rematchState === "accepted") onRematch();
+    if (rematchState === "declined") onExit();
+  }, [rematchState, onRematch, onExit]);
 
   return (
     <GameShell
       gameClass="game-x01"
       title={
         <>
+          {onlineConfig && (
+            <OnlineIndicator
+              isHost={onlineConfig.isHost}
+              connected={!opponentDisconnected}
+            />
+          )}
           {setProgress && (
             <span className="text-blue-400 text-[10px] font-bold uppercase tracking-widest">
               Leg {setProgress.currentLeg}/{setProgress.totalLegs}
@@ -190,12 +365,25 @@ export function GameScreen({
       hasWinner={!!winner}
       overlays={
         <>
+          {onlineConfig && opponentDisconnected && !winner && (
+            <WaitingOverlay message="Opponent disconnected" onCancel={onExit} />
+          )}
           {winner && !pendingAward && (
             <ResultsOverlay
               onExit={onExit}
-              onRematch={setProgress ? undefined : onRematch}
+              onRematch={onlineConfig || setProgress ? undefined : onRematch}
               setProgress={setProgress}
               onNextLeg={onNextLeg}
+              onlineRematch={
+                onlineConfig && !setProgress
+                  ? {
+                      state: rematchState,
+                      onRequest: requestRematch,
+                      onAccept: acceptRematch,
+                      onDecline: declineRematch,
+                    }
+                  : undefined
+              }
               playerResults={players
                 .slice()
                 .sort((a, b) => a.score - b.score)
@@ -228,9 +416,32 @@ export function GameScreen({
     >
       {/* Main area */}
       <div
-        className="flex-1 flex min-h-0"
+        className="flex-1 flex min-h-0 relative"
         style={{ paddingLeft: "var(--sal)" }}
       >
+        {/* Bot dartboard overlay — shows target (outline) and actual hit (fill) */}
+        {botBoard && (
+          <div
+            className="absolute z-10 pointer-events-none rounded-full"
+            style={{
+              bottom: "1rem",
+              left: "calc(var(--sal) + 1rem)",
+              width: "clamp(140px, 18vw, 280px)",
+              opacity: 0.85,
+              boxShadow:
+                "0 0 20px var(--color-game-accent-glow), 0 0 60px var(--color-game-accent-glow), inset 0 0 30px rgba(0,0,0,0.5)",
+              background:
+                "radial-gradient(circle, rgba(0,0,0,0.6) 60%, transparent 100%)",
+            }}
+          >
+            <DartboardSVG
+              className="w-full h-auto drop-shadow-[0_0_8px_var(--color-game-accent-glow)]"
+              highlightSegment={botBoard.segment}
+              highlightMode={botBoard.mode}
+              highlightColor="var(--color-game-accent)"
+            />
+          </div>
+        )}
         {/* Left: active player score */}
         <div className="flex-1 flex flex-col min-w-0 min-h-0 px-4 py-2">
           <div className="flex items-center gap-2 shrink-0">
@@ -269,7 +480,8 @@ export function GameScreen({
               </span>
             )}
             <span
-              className={`font-normal tabular-nums leading-none select-none text-[clamp(7rem,20vw,45rem)] ${
+              key={`${currentPlayerIndex}-${currentPlayer?.score}`}
+              className={`font-normal tabular-nums leading-none select-none score-animate text-[clamp(7rem,20vw,45rem)] ${
                 isBust ? "text-state-bust" : ""
               }`}
               style={{

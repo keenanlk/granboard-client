@@ -1,10 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import {
-  ticTacToeEngine,
-  DEFAULT_TICTACTOE_OPTIONS,
-  type TicTacToeState,
-  type TicTacToeOptions,
-} from "./ticTacToeEngine.ts";
+import { ticTacToeEngine } from "./ticTacToeEngine.ts";
+import { DEFAULT_TICTACTOE_OPTIONS } from "./ticTacToe.types.ts";
+import type { TicTacToeState, TicTacToeOptions } from "./ticTacToe.types.ts";
 import { CreateSegment, SegmentID } from "../board/Dartboard.ts";
 
 // Helpers — common segments

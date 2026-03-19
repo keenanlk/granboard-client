@@ -4,8 +4,8 @@ import {
   dbAddPlayer,
   dbDeletePlayer,
   dbRenamePlayer,
-  type PlayerRecord,
 } from "../db/db.ts";
+import type { PlayerRecord } from "../db/db.types.ts";
 
 interface PlayerProfileState {
   players: PlayerRecord[];

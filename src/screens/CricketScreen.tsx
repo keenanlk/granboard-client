@@ -1,10 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  useCricketStore,
-  CRICKET_TARGETS,
-  type CricketOptions,
-  type CricketTarget,
-} from "../store/useCricketStore.ts";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCricketStore } from "../store/useCricketStore.ts";
+import { CRICKET_TARGETS } from "../engine/cricket.types.ts";
+import type { CricketOptions, CricketTarget } from "../engine/cricket.types.ts";
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { detectCricketAward } from "../lib/awards.ts";
@@ -20,11 +17,22 @@ import type { BotSkill } from "../bot/Bot.ts";
 import { getBotCharacter } from "../bot/botCharacters.ts";
 import { GameMenu } from "../components/GameMenu.tsx";
 import { CreateSegment } from "../board/Dartboard.ts";
+import type { SegmentID } from "../board/Dartboard.ts";
+import { cricketPickTarget } from "../bot/cricketStrategy.ts";
+import { DartboardSVG } from "../components/DartboardSVG.tsx";
 import { gameLogger } from "../lib/GameLogger.ts";
 import { HistoryRow } from "../components/HistoryRow.tsx";
 import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
 import { playerTextSizes } from "../lib/playerTextSizes.ts";
 import type { SetProgress, SetConfig, LegResult } from "../lib/setTypes.ts";
+import type { OnlineConfig } from "../store/useOnlineStore.ts";
+import { useOnlineSync } from "../hooks/useOnlineSync.ts";
+import { OnlineRemoteController } from "../controllers/OnlineRemoteController.ts";
+import { useOnlineStore } from "../store/useOnlineStore.ts";
+import { guardForOnlineTurn } from "../controllers/OnlineTurnGuard.ts";
+import { useOnlineRematch } from "../hooks/useOnlineRematch.ts";
+import { OnlineIndicator } from "../components/OnlineIndicator.tsx";
+import { WaitingOverlay } from "../components/WaitingOverlay.tsx";
 
 interface CricketScreenProps {
   options: CricketOptions;
@@ -39,6 +47,7 @@ interface CricketScreenProps {
   setConfig?: SetConfig;
   legResults?: LegResult[];
   currentLegIndex?: number;
+  onlineConfig?: OnlineConfig;
 }
 
 function targetLabel(t: CricketTarget) {
@@ -130,6 +139,7 @@ export function CricketScreen({
   setConfig,
   legResults,
   currentLegIndex,
+  onlineConfig,
 }: CricketScreenProps) {
   const {
     players,
@@ -142,48 +152,122 @@ export function CricketScreen({
     undoStack,
   } = useCricketStore();
 
-  const { handleNextTurn, isTransitioning, countdown } = useGameSession({
-    gameType: "cricket",
-    playerNames,
-    playerIds,
-    botSkills,
-    options,
-    createController: () => new CricketController(),
-    extractRound: () => {
-      const { currentPlayerIndex, currentRoundDarts } =
-        useCricketStore.getState();
-      const roundScore = currentRoundDarts.reduce(
-        (sum, d) => sum + d.pointsScored,
-        0,
-      );
-      return {
-        playerIndex: currentPlayerIndex,
-        darts: currentRoundDarts.map((d) => ({
-          value: d.segment.Value,
-          shortName: d.segment.ShortName,
-          marksEarned: d.marksEarned,
-        })),
-        roundScore,
-      };
-    },
-    winner: winner ? [winner] : null,
-    getFinalScores: () =>
-      useCricketStore.getState().players.map((p) => p.score),
+  const isOnlineRemote = !!onlineConfig && !onlineConfig.isHost;
+  const [opponentDisconnected, setOpponentDisconnected] = useState(false);
+
+  // Refs for deferred callbacks — populated after hooks that define them
+  const broadcastTurnDelayRef = useRef<(() => void) | undefined>(undefined);
+  const dismissOverlaysRef = useRef<(() => void) | undefined>(undefined);
+
+  const { handleNextTurn, isTransitioning, countdown, triggerRemoteDelay } =
+    useGameSession({
+      gameType: "cricket",
+      playerNames,
+      playerIds,
+      botSkills,
+      options,
+      createController: () => {
+        if (isOnlineRemote) {
+          const { roomChannel } = useOnlineStore.getState();
+          return guardForOnlineTurn(
+            new OnlineRemoteController(roomChannel!),
+            1,
+            () => useCricketStore.getState().currentPlayerIndex,
+          );
+        }
+        if (onlineConfig?.isHost) {
+          return guardForOnlineTurn(
+            new CricketController(),
+            0,
+            () => useCricketStore.getState().currentPlayerIndex,
+          );
+        }
+        return new CricketController();
+      },
+      extractRound: () => {
+        const { currentPlayerIndex, currentRoundDarts } =
+          useCricketStore.getState();
+        const roundScore = currentRoundDarts.reduce(
+          (sum, d) => sum + d.pointsScored,
+          0,
+        );
+        return {
+          playerIndex: currentPlayerIndex,
+          darts: currentRoundDarts.map((d) => ({
+            value: d.segment.Value,
+            shortName: d.segment.ShortName,
+            marksEarned: d.marksEarned,
+          })),
+          roundScore,
+        };
+      },
+      winner: winner ? [winner] : null,
+      getFinalScores: () =>
+        useCricketStore.getState().players.map((p) => p.score),
+      getSerializableState: () =>
+        useCricketStore.getState().getSerializableState(),
+      onInit: () => {
+        if (restoredState) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          useCricketStore.getState().restoreState(restoredState as any);
+        } else {
+          startGame(options, playerNames);
+        }
+        gameEventBus.emit("open_numbers", { numbers: [...CRICKET_TARGETS] });
+      },
+      setConfig,
+      legResults,
+      currentLegIndex,
+      onTurnDelayStart: onlineConfig?.isHost
+        ? () => broadcastTurnDelayRef.current?.()
+        : undefined,
+      shouldSkipDelay: isOnlineRemote ? () => true : undefined,
+      online: !!onlineConfig,
+      onBeforeNextTurn: () => dismissOverlaysRef.current?.(),
+    });
+
+  // Online sync — always called, no-op when onlineConfig is null
+  const { broadcastState, broadcastTurnDelay } = useOnlineSync({
+    onlineConfig: onlineConfig ?? null,
     getSerializableState: () =>
       useCricketStore.getState().getSerializableState(),
-    onInit: () => {
-      if (restoredState) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        useCricketStore.getState().restoreState(restoredState as any);
-      } else {
-        startGame(options, playerNames);
-      }
-      gameEventBus.emit("open_numbers", { numbers: [...CRICKET_TARGETS] });
+    restoreState: (state) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      useCricketStore.getState().restoreState(state as any),
+    onRemoteDartHit: (segment) => {
+      // Bypass the turn guard — host processes remote hits directly
+      new CricketController().onDartHit(segment);
     },
-    setConfig,
-    legResults,
-    currentLegIndex,
+    onRemoteUndo: () => {
+      useCricketStore.getState().undoLastDart();
+    },
+    onRemoteNextTurn: () => {
+      handleNextTurn();
+    },
+    onOpponentDisconnected: () => {
+      setOpponentDisconnected(true);
+    },
+    onTurnDelay: () => {
+      triggerRemoteDelay();
+    },
   });
+
+  // Keep broadcastTurnDelay ref in sync
+  useEffect(() => {
+    broadcastTurnDelayRef.current = broadcastTurnDelay;
+  });
+
+  // Host: broadcast state after every store change
+  const broadcastRef = useRef(broadcastState);
+  useEffect(() => {
+    broadcastRef.current = broadcastState;
+  });
+  useEffect(() => {
+    if (!onlineConfig?.isHost) return;
+    return useCricketStore.subscribe(() => {
+      broadcastRef.current();
+    });
+  }, [onlineConfig?.isHost]);
 
   const bots = useMemo(() => {
     const map = new Map<number, Bot>();
@@ -194,6 +278,15 @@ export function CricketScreen({
   }, [botSkills, playerNames]);
 
   const isCurrentBot = bots.has(currentPlayerIndex);
+  const isOnlineOpponentTurn =
+    !!onlineConfig &&
+    !isCurrentBot &&
+    (onlineConfig.isHost ? currentPlayerIndex !== 0 : currentPlayerIndex !== 1);
+
+  const [botBoard, setBotBoard] = useState<{
+    segment: SegmentID;
+    mode: "outline" | "fill";
+  } | null>(null);
 
   const getThrow = useCallback(
     (bot: Bot) => {
@@ -212,6 +305,7 @@ export function CricketScreen({
                 marks: p.marks,
               })),
             });
+            setBotBoard({ segment: actual, mode: "fill" });
           },
           options.cutThroat,
         ),
@@ -231,6 +325,56 @@ export function CricketScreen({
     getThrow,
   });
 
+  // Bot dartboard overlay: outline on target, fill on actual hit.
+  useEffect(() => {
+    if (!isCurrentBot || !!winner || isTransitioning) {
+      const t = setTimeout(() => setBotBoard(null), 0);
+      return () => clearTimeout(t);
+    }
+    const dartsThrown = currentRoundDarts.length;
+    if (dartsThrown >= 3) return;
+
+    const delay = dartsThrown > 0 ? 800 : 0;
+    const t = setTimeout(() => {
+      const { players: ps, currentPlayerIndex: ci } =
+        useCricketStore.getState();
+      const p = ps[ci];
+      if (!p) return;
+      const target = cricketPickTarget(p.marks, ps, ci, options.cutThroat);
+      setBotBoard({ segment: target, mode: "outline" });
+    }, delay);
+    return () => clearTimeout(t);
+  }, [
+    isCurrentBot,
+    currentPlayerIndex,
+    currentRoundDarts.length,
+    winner,
+    isTransitioning,
+    options.cutThroat,
+  ]);
+
+  // Online opponent dartboard overlay: fill on each dart hit, clear when not opponent's turn.
+  useEffect(() => {
+    if (!isOnlineOpponentTurn || !!winner || isTransitioning) {
+      const t = setTimeout(() => setBotBoard(null), 0);
+      return () => clearTimeout(t);
+    }
+    const dartsThrown = currentRoundDarts.length;
+    if (dartsThrown === 0) return;
+    const lastDart = currentRoundDarts[dartsThrown - 1];
+    const t = setTimeout(
+      () => setBotBoard({ segment: lastDart.segment.ID, mode: "fill" }),
+      0,
+    );
+    return () => clearTimeout(t);
+  }, [
+    isOnlineOpponentTurn,
+    currentRoundDarts.length,
+    winner,
+    isTransitioning,
+    currentRoundDarts,
+  ]);
+
   // Cricket has custom award detection (marks animation fallback)
   const [pendingAward, setPendingAward] = useState<AwardType | null>(null);
   const [showMarksAnimation, setShowMarksAnimation] = useState(false);
@@ -249,6 +393,21 @@ export function CricketScreen({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRoundDarts.length]);
+
+  useEffect(() => {
+    dismissOverlaysRef.current = () => {
+      setPendingAward(null);
+      setShowMarksAnimation(false);
+    };
+  });
+
+  const { rematchState, requestRematch, acceptRematch, declineRematch } =
+    useOnlineRematch(onlineConfig);
+
+  useEffect(() => {
+    if (rematchState === "accepted") onRematch();
+    if (rematchState === "declined") onExit();
+  }, [rematchState, onRematch, onExit]);
 
   const n = players.length;
   const readyToSwitch = currentRoundDarts.length === 3;
@@ -274,6 +433,12 @@ export function CricketScreen({
       gameClass="game-cricket"
       title={
         <>
+          {onlineConfig && (
+            <OnlineIndicator
+              isHost={onlineConfig.isHost}
+              connected={!opponentDisconnected}
+            />
+          )}
           {setProgress && (
             <span className="text-blue-400 text-[10px] font-bold uppercase tracking-widest">
               Leg {setProgress.currentLeg}/{setProgress.totalLegs}
@@ -310,12 +475,25 @@ export function CricketScreen({
       hasWinner={!!winner}
       overlays={
         <>
+          {onlineConfig && opponentDisconnected && !winner && (
+            <WaitingOverlay message="Opponent disconnected" onCancel={onExit} />
+          )}
           {winner && !pendingAward && (
             <ResultsOverlay
               onExit={onExit}
-              onRematch={setProgress ? undefined : onRematch}
+              onRematch={onlineConfig || setProgress ? undefined : onRematch}
               setProgress={setProgress}
               onNextLeg={onNextLeg}
+              onlineRematch={
+                onlineConfig && !setProgress
+                  ? {
+                      state: rematchState,
+                      onRequest: requestRematch,
+                      onAccept: acceptRematch,
+                      onDecline: declineRematch,
+                    }
+                  : undefined
+              }
               playerResults={players
                 .slice()
                 .sort((a, b) =>
@@ -358,9 +536,32 @@ export function CricketScreen({
     >
       {/* Main area */}
       <div
-        className="flex-1 flex min-h-0"
+        className="flex-1 flex min-h-0 relative"
         style={{ paddingLeft: "var(--sal)" }}
       >
+        {/* Bot dartboard overlay */}
+        {botBoard && (
+          <div
+            className="absolute z-10 pointer-events-none rounded-full"
+            style={{
+              bottom: "1rem",
+              left: "calc(var(--sal) + 1rem)",
+              width: "clamp(140px, 18vw, 280px)",
+              opacity: 0.85,
+              boxShadow:
+                "0 0 20px var(--color-game-accent-glow), 0 0 60px var(--color-game-accent-glow), inset 0 0 30px rgba(0,0,0,0.5)",
+              background:
+                "radial-gradient(circle, rgba(0,0,0,0.6) 60%, transparent 100%)",
+            }}
+          >
+            <DartboardSVG
+              className="w-full h-auto drop-shadow-[0_0_8px_var(--color-game-accent-glow)]"
+              highlightSegment={botBoard.segment}
+              highlightMode={botBoard.mode}
+              highlightColor="var(--color-game-accent)"
+            />
+          </div>
+        )}
         {/* Marks scoreboard — single grid with explicit rows for alignment */}
         <div
           className="flex-1 min-h-0 min-w-0 grid"

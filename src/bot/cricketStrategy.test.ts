@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { cricketPickTarget } from "./cricketStrategy.ts";
 import { SegmentID } from "../board/Dartboard.ts";
-import type { CricketPlayer } from "../store/useCricketStore.ts";
+import type { CricketPlayer } from "../engine/cricket.types.ts";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

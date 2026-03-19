@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useMemo } from "react";
-import {
-  useHighScoreStore,
-  type HighScoreOptions,
-} from "../store/useHighScoreStore.ts";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useHighScoreStore } from "../store/useHighScoreStore.ts";
+import type { HighScoreOptions } from "../engine/highScore.types.ts";
 import { HighScoreController } from "../controllers/HighScoreController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
@@ -12,6 +10,9 @@ import { Bot } from "../bot/Bot.ts";
 import type { BotSkill } from "../bot/Bot.ts";
 import { getBotCharacter } from "../bot/botCharacters.ts";
 import { CreateSegment } from "../board/Dartboard.ts";
+import type { SegmentID } from "../board/Dartboard.ts";
+import { highScorePickTarget } from "../bot/highScoreStrategy.ts";
+import { DartboardSVG } from "../components/DartboardSVG.tsx";
 import { gameLogger } from "../lib/GameLogger.ts";
 import { GameMenu } from "../components/GameMenu.tsx";
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
@@ -52,6 +53,8 @@ export function HighScoreScreen({
     undoStack,
   } = useHighScoreStore();
 
+  const dismissOverlaysRef = useRef<(() => void) | undefined>(undefined);
+
   const { handleNextTurn, isTransitioning, countdown } = useGameSession({
     gameType: "highscore",
     playerNames,
@@ -91,6 +94,7 @@ export function HighScoreScreen({
       const isFinalRound = s.currentRound === s.options.rounds;
       return isLast && isFinalRound;
     },
+    onBeforeNextTurn: () => dismissOverlaysRef.current?.(),
   });
 
   const n = players.length;
@@ -113,11 +117,17 @@ export function HighScoreScreen({
 
   const isCurrentBot = bots.has(currentPlayerIndex);
 
+  const [botBoard, setBotBoard] = useState<{
+    segment: SegmentID;
+    mode: "outline" | "fill";
+  } | null>(null);
+
   const getThrow = useCallback(
     (bot: Bot) => {
       return CreateSegment(
         bot.throwHighScore(options.splitBull, (target, actual) => {
           gameLogger.logDart(bot.name, target, actual, {});
+          setBotBoard({ segment: actual, mode: "fill" });
         }),
       );
     },
@@ -135,9 +145,36 @@ export function HighScoreScreen({
     getThrow,
   });
 
+  // Bot dartboard overlay: outline on target, fill on actual hit.
+  useEffect(() => {
+    if (!isCurrentBot || !!winners || isTransitioning) {
+      const t = setTimeout(() => setBotBoard(null), 0);
+      return () => clearTimeout(t);
+    }
+    const dartsThrown = currentRoundDarts.length;
+    if (dartsThrown >= 3) return;
+
+    const delay = dartsThrown > 0 ? 800 : 0;
+    const t = setTimeout(() => {
+      const target = highScorePickTarget(options.splitBull);
+      setBotBoard({ segment: target, mode: "outline" });
+    }, delay);
+    return () => clearTimeout(t);
+  }, [
+    isCurrentBot,
+    currentPlayerIndex,
+    currentRoundDarts.length,
+    winners,
+    isTransitioning,
+    options.splitBull,
+  ]);
+
   const [pendingAward, dismissAward] = useAwardDetection(readyToSwitch, () =>
     detectAward(currentRoundDarts),
   );
+  useEffect(() => {
+    dismissOverlaysRef.current = dismissAward;
+  });
 
   // Auto-advance when last player finishes last round (show results immediately)
   useEffect(() => {
@@ -228,9 +265,32 @@ export function HighScoreScreen({
     >
       {/* Main area */}
       <div
-        className="flex-1 flex min-h-0"
+        className="flex-1 flex min-h-0 relative"
         style={{ paddingLeft: "var(--sal)" }}
       >
+        {/* Bot dartboard overlay */}
+        {botBoard && (
+          <div
+            className="absolute z-10 pointer-events-none rounded-full"
+            style={{
+              bottom: "1rem",
+              left: "calc(var(--sal) + 1rem)",
+              width: "clamp(140px, 18vw, 280px)",
+              opacity: 0.85,
+              boxShadow:
+                "0 0 20px var(--color-game-accent-glow), 0 0 60px var(--color-game-accent-glow), inset 0 0 30px rgba(0,0,0,0.5)",
+              background:
+                "radial-gradient(circle, rgba(0,0,0,0.6) 60%, transparent 100%)",
+            }}
+          >
+            <DartboardSVG
+              className="w-full h-auto drop-shadow-[0_0_8px_var(--color-game-accent-glow)]"
+              highlightSegment={botBoard.segment}
+              highlightMode={botBoard.mode}
+              highlightColor="var(--color-game-accent)"
+            />
+          </div>
+        )}
         {/* Left: active player score */}
         <div className="flex-1 flex flex-col min-w-0 min-h-0 px-4 py-2">
           <div className="flex items-center gap-2 shrink-0">

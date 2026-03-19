@@ -3,8 +3,19 @@ import {
   segmentCenter,
   coordToSegmentId,
   CLOCKWISE_NUMBERS,
+  RING_RADII,
 } from "./BoardGeometry.ts";
 import { SegmentID } from "./Dartboard.ts";
+
+// Midpoints for each zone — used as "safe" test coordinates
+const MID = {
+  innerBull: RING_RADII.innerBull / 2,
+  outerBull: (RING_RADII.innerBull + RING_RADII.outerBull) / 2,
+  innerSingle: (RING_RADII.outerBull + RING_RADII.innerSingle) / 2,
+  treble: (RING_RADII.innerSingle + RING_RADII.treble) / 2,
+  outerSingle: (RING_RADII.treble + RING_RADII.outerSingle) / 2,
+  double: (RING_RADII.outerSingle + RING_RADII.double) / 2,
+};
 
 // ---------------------------------------------------------------------------
 // coordToSegmentId — bull zones
@@ -14,16 +25,18 @@ describe("coordToSegmentId — bull zones", () => {
     expect(coordToSegmentId(0, 0)).toBe(SegmentID.DBL_BULL);
   });
 
-  it("(0, 6) → DBL_BULL (within 6.35mm)", () => {
-    expect(coordToSegmentId(0, 6)).toBe(SegmentID.DBL_BULL);
+  it(`(0, ${MID.innerBull}) → DBL_BULL (within inner bull)`, () => {
+    expect(coordToSegmentId(0, MID.innerBull)).toBe(SegmentID.DBL_BULL);
   });
 
-  it("(0, 10) → BULL (between 6.35 and 15.9mm)", () => {
-    expect(coordToSegmentId(0, 10)).toBe(SegmentID.BULL);
+  it(`(0, ${MID.outerBull}) → BULL (in outer bull ring)`, () => {
+    expect(coordToSegmentId(0, MID.outerBull)).toBe(SegmentID.BULL);
   });
 
-  it("(0, 15.9) → BULL (at outer bull boundary)", () => {
-    expect(coordToSegmentId(0, 15.9)).toBe(SegmentID.BULL);
+  it(`(0, ${RING_RADII.outerBull - 0.1}) → BULL (at outer bull boundary)`, () => {
+    expect(coordToSegmentId(0, RING_RADII.outerBull - 0.1)).toBe(
+      SegmentID.BULL,
+    );
   });
 });
 
@@ -31,13 +44,13 @@ describe("coordToSegmentId — bull zones", () => {
 // coordToSegmentId — miss
 // ---------------------------------------------------------------------------
 describe("coordToSegmentId — miss", () => {
-  it("> 170mm → MISS", () => {
+  it(`> ${RING_RADII.double}mm → MISS`, () => {
     expect(coordToSegmentId(0, 200)).toBe(SegmentID.MISS);
     expect(coordToSegmentId(200, 0)).toBe(SegmentID.MISS);
   });
 
-  it("171mm → MISS (just outside double ring)", () => {
-    expect(coordToSegmentId(0, 171)).toBe(SegmentID.MISS);
+  it(`${RING_RADII.double + 1}mm → MISS (just outside double ring)`, () => {
+    expect(coordToSegmentId(0, RING_RADII.double + 1)).toBe(SegmentID.MISS);
   });
 });
 
@@ -45,20 +58,20 @@ describe("coordToSegmentId — miss", () => {
 // coordToSegmentId — sectors (number 20 at top)
 // ---------------------------------------------------------------------------
 describe("coordToSegmentId — number 20 sector (straight up)", () => {
-  it("inner single zone (50mm up) → INNER_20", () => {
-    expect(coordToSegmentId(0, 50)).toBe(SegmentID.INNER_20);
+  it("inner single zone → INNER_20", () => {
+    expect(coordToSegmentId(0, MID.innerSingle)).toBe(SegmentID.INNER_20);
   });
 
-  it("treble zone (103mm up) → TRP_20", () => {
-    expect(coordToSegmentId(0, 103)).toBe(SegmentID.TRP_20);
+  it("treble zone → TRP_20", () => {
+    expect(coordToSegmentId(0, MID.treble)).toBe(SegmentID.TRP_20);
   });
 
-  it("outer single zone (134mm up) → OUTER_20", () => {
-    expect(coordToSegmentId(0, 134)).toBe(SegmentID.OUTER_20);
+  it("outer single zone → OUTER_20", () => {
+    expect(coordToSegmentId(0, MID.outerSingle)).toBe(SegmentID.OUTER_20);
   });
 
-  it("double zone (166mm up) → DBL_20", () => {
-    expect(coordToSegmentId(0, 166)).toBe(SegmentID.DBL_20);
+  it("double zone → DBL_20", () => {
+    expect(coordToSegmentId(0, MID.double)).toBe(SegmentID.DBL_20);
   });
 });
 
@@ -69,22 +82,22 @@ describe("coordToSegmentId — sector boundaries", () => {
   it("sector boundary at 9° stays in sector 0 (number 20)", () => {
     // 8.9° is still sector 0
     const rad = (8.9 * Math.PI) / 180;
-    const x = 103 * Math.sin(rad);
-    const y = 103 * Math.cos(rad);
+    const x = MID.treble * Math.sin(rad);
+    const y = MID.treble * Math.cos(rad);
     expect(coordToSegmentId(x, y)).toBe(SegmentID.TRP_20);
   });
 
   it("just past 9° enters sector 1 (number 1)", () => {
     const rad = (9.1 * Math.PI) / 180;
-    const x = 103 * Math.sin(rad);
-    const y = 103 * Math.cos(rad);
+    const x = MID.treble * Math.sin(rad);
+    const y = MID.treble * Math.cos(rad);
     expect(coordToSegmentId(x, y)).toBe(SegmentID.TRP_1);
   });
 
   it("sector at -9° (351°) is still number 20", () => {
     const rad = (-8.9 * Math.PI) / 180;
-    const x = 103 * Math.sin(rad);
-    const y = 103 * Math.cos(rad);
+    const x = MID.treble * Math.sin(rad);
+    const y = MID.treble * Math.cos(rad);
     expect(coordToSegmentId(x, y)).toBe(SegmentID.TRP_20);
   });
 });
@@ -97,8 +110,8 @@ describe("coordToSegmentId — treble centers for all 20 numbers", () => {
     it(`sector ${sectorIdx} → TRP_${num}`, () => {
       const angleDeg = sectorIdx * 18;
       const rad = (angleDeg * Math.PI) / 180;
-      const x = 103 * Math.sin(rad); // 103mm = treble zone center
-      const y = 103 * Math.cos(rad);
+      const x = MID.treble * Math.sin(rad);
+      const y = MID.treble * Math.cos(rad);
       const expected = ((num - 1) * 4 + 1) as SegmentID; // TRP_N
       expect(coordToSegmentId(x, y)).toBe(expected);
     });

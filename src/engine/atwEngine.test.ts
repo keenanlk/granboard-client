@@ -1,13 +1,12 @@
 import { describe, it, expect, beforeEach } from "vitest";
+import { atwEngine } from "./atwEngine.ts";
 import {
-  atwEngine,
   ATW_SEQUENCE,
   BULL_INDEX,
   FINISHED_INDEX,
   DEFAULT_ATW_OPTIONS,
-  type ATWState,
-  type ATWOptions,
-} from "./atwEngine.ts";
+} from "./atw.types.ts";
+import type { ATWState, ATWOptions } from "./atw.types.ts";
 import { CreateSegment, SegmentID } from "../board/Dartboard.ts";
 
 // Helpers — common segments

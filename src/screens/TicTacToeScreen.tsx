@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useMemo } from "react";
-import {
-  useTicTacToeStore,
-  type TicTacToeOptions,
-} from "../store/useTicTacToeStore.ts";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTicTacToeStore } from "../store/useTicTacToeStore.ts";
+import type { TicTacToeOptions } from "../engine/ticTacToe.types.ts";
 import { TicTacToeController } from "../controllers/TicTacToeController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
@@ -11,6 +9,9 @@ import { Bot } from "../bot/Bot.ts";
 import type { BotSkill } from "../bot/Bot.ts";
 import { getBotCharacter } from "../bot/botCharacters.ts";
 import { CreateSegment } from "../board/Dartboard.ts";
+import type { SegmentID } from "../board/Dartboard.ts";
+import { ticTacToePickTarget } from "../bot/ticTacToeStrategy.ts";
+import { DartboardSVG } from "../components/DartboardSVG.tsx";
 import { gameLogger } from "../lib/GameLogger.ts";
 import { GameMenu } from "../components/GameMenu.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
@@ -140,6 +141,11 @@ export function TicTacToeScreen({
 
   const isCurrentBot = bots.has(currentPlayerIndex);
 
+  const [botBoard, setBotBoard] = useState<{
+    segment: SegmentID;
+    mode: "outline" | "fill";
+  } | null>(null);
+
   const getThrow = useCallback((bot: Bot) => {
     const s = useTicTacToeStore.getState();
     const myIdx = s.currentPlayerIndex;
@@ -153,6 +159,7 @@ export function TicTacToeScreen({
         s.players[oppIdx].marks,
         (target, actual) => {
           gameLogger.logDart(bot.name, target, actual, {});
+          setBotBoard({ segment: actual, mode: "fill" });
         },
       ),
     );
@@ -168,6 +175,38 @@ export function TicTacToeScreen({
     onNextTurn: handleNextTurn,
     getThrow,
   });
+
+  // Bot dartboard overlay: outline on target, fill on actual hit.
+  useEffect(() => {
+    if (!isCurrentBot || gameOver || isTransitioning) {
+      const t = setTimeout(() => setBotBoard(null), 0);
+      return () => clearTimeout(t);
+    }
+    const dartsThrown = currentRoundDarts.length;
+    if (dartsThrown >= 3) return;
+
+    const delay = dartsThrown > 0 ? 800 : 0;
+    const t = setTimeout(() => {
+      const s = useTicTacToeStore.getState();
+      const myIdx = s.currentPlayerIndex;
+      const oppIdx = myIdx === 0 ? 1 : 0;
+      const target = ticTacToePickTarget(
+        s.grid,
+        s.owner,
+        myIdx,
+        s.players[myIdx].marks,
+        s.players[oppIdx].marks,
+      );
+      setBotBoard({ segment: target, mode: "outline" });
+    }, delay);
+    return () => clearTimeout(t);
+  }, [
+    isCurrentBot,
+    currentPlayerIndex,
+    currentRoundDarts.length,
+    gameOver,
+    isTransitioning,
+  ]);
 
   // Auto-advance on cats game when all darts thrown
   useEffect(() => {
@@ -251,9 +290,32 @@ export function TicTacToeScreen({
 
       {/* Main area — grid + sidebar */}
       <div
-        className="flex-1 flex min-h-0"
+        className="flex-1 flex min-h-0 relative"
         style={{ paddingLeft: "var(--sal)" }}
       >
+        {/* Bot dartboard overlay */}
+        {botBoard && (
+          <div
+            className="absolute z-10 pointer-events-none rounded-full"
+            style={{
+              bottom: "1rem",
+              left: "calc(var(--sal) + 1rem)",
+              width: "clamp(140px, 18vw, 280px)",
+              opacity: 0.85,
+              boxShadow:
+                "0 0 20px var(--color-game-accent-glow), 0 0 60px var(--color-game-accent-glow), inset 0 0 30px rgba(0,0,0,0.5)",
+              background:
+                "radial-gradient(circle, rgba(0,0,0,0.6) 60%, transparent 100%)",
+            }}
+          >
+            <DartboardSVG
+              className="w-full h-auto drop-shadow-[0_0_8px_var(--color-game-accent-glow)]"
+              highlightSegment={botBoard.segment}
+              highlightMode={botBoard.mode}
+              highlightColor="var(--color-game-accent)"
+            />
+          </div>
+        )}
         {/* Left: TTT grid */}
         <div className="flex-1 relative flex items-center justify-center min-w-0 min-h-0 p-1">
           {/* Active player indicator — top left overlay */}
@@ -495,7 +557,8 @@ export function TicTacToeScreen({
               data-active={String(isActive)}
               style={{
                 padding: "clamp(0.5rem, 2.5vh, 1.5rem) 0.5rem",
-                paddingBottom: "calc(var(--sab) + clamp(0.5rem, 2.5vh, 1.5rem))",
+                paddingBottom:
+                  "calc(var(--sab) + clamp(0.5rem, 2.5vh, 1.5rem))",
                 ...(i === 0 ? { paddingLeft: "var(--sal)" } : {}),
               }}
             >
@@ -516,8 +579,7 @@ export function TicTacToeScreen({
                         }
                       : isActive
                         ? {
-                            textShadow:
-                              "0 0 8px var(--color-game-accent-glow)",
+                            textShadow: "0 0 8px var(--color-game-accent-glow)",
                           }
                         : {}),
                   }}

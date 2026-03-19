@@ -1,9 +1,6 @@
 import { createGameStore } from "./createGameStore.ts";
-import { x01Engine, type X01State } from "../engine/x01Engine.ts";
-
-// Re-export types so existing imports from this module continue to work.
-export type { X01Options, ThrownDart, Player } from "../engine/x01Engine.ts";
-export { DEFAULT_X01_OPTIONS } from "../engine/x01Engine.ts";
+import { x01Engine } from "../engine/x01Engine.ts";
+import type { X01State } from "../engine/x01.types.ts";
 
 const DEFAULT_STATE: X01State = {
   x01Options: {

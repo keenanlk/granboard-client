@@ -1,12 +1,13 @@
-import { BotSkill, simulateThrow } from "./throwSimulator.ts";
+import { BotSkill } from "./bot.types.ts";
+import { simulateThrow } from "./throwSimulator.ts";
 import { x01PickTarget } from "./x01Strategy.ts";
 import { cricketPickTarget } from "./cricketStrategy.ts";
 import { highScorePickTarget } from "./highScoreStrategy.ts";
 import { atwPickTarget } from "./atwStrategy.ts";
 import { ticTacToePickTarget } from "./ticTacToeStrategy.ts";
 import type { SegmentID } from "../board/Dartboard.ts";
-import type { X01Options } from "../store/useGameStore.ts";
-import type { CricketPlayer, CricketTarget } from "../store/useCricketStore.ts";
+import type { X01Options } from "../engine/x01.types.ts";
+import type { CricketPlayer, CricketTarget } from "../engine/cricket.types.ts";
 
 export { BotSkill };
 export type { BotSkill as BotSkillType };

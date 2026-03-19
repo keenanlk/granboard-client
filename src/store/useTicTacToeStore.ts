@@ -1,16 +1,6 @@
 import { createGameStore } from "./createGameStore.ts";
-import {
-  ticTacToeEngine,
-  type TicTacToeState,
-} from "../engine/ticTacToeEngine.ts";
-
-// Re-export types so consumers import from the store module.
-export type {
-  TicTacToeOptions,
-  TicTacToeThrownDart,
-  TicTacToePlayer,
-} from "../engine/ticTacToeEngine.ts";
-export { DEFAULT_TICTACTOE_OPTIONS } from "../engine/ticTacToeEngine.ts";
+import { ticTacToeEngine } from "../engine/ticTacToeEngine.ts";
+import type { TicTacToeState } from "../engine/ticTacToe.types.ts";
 
 const DEFAULT_STATE: TicTacToeState = {
   options: { roundLimit: 20, singleBull: false },

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { simulateThrow, BotSkill } from "./throwSimulator.ts";
+import { simulateThrow } from "./throwSimulator.ts";
+import { BotSkill } from "./bot.types.ts";
 import { SegmentID, CreateSegment } from "../board/Dartboard.ts";
 
 const VALID_IDS = new Set(Object.values(SegmentID));

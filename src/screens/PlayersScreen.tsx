@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { usePlayerProfileStore } from "../store/usePlayerProfileStore.ts";
 import { dbGetSessionsForPlayer } from "../db/db.ts";
-import type { GameSessionRecord, PlayerRecord } from "../db/db.ts";
+import type { GameSessionRecord, PlayerRecord } from "../db/db.types.ts";
 import { computePlayerStats } from "../db/playerStats.ts";
-import type { PlayerStats } from "../db/playerStats.ts";
+import type { PlayerStats } from "../db/db.types.ts";
 
 interface PlayersScreenProps {
   onBack: () => void;

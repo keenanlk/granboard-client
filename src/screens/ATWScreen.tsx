@@ -1,9 +1,7 @@
-import { useCallback, useEffect, useMemo } from "react";
-import {
-  useATWStore,
-  ATW_SEQUENCE,
-  type ATWOptions,
-} from "../store/useATWStore.ts";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useATWStore } from "../store/useATWStore.ts";
+import { ATW_SEQUENCE } from "../engine/atw.types.ts";
+import type { ATWOptions } from "../engine/atw.types.ts";
 import { ATWController } from "../controllers/ATWController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
@@ -12,6 +10,9 @@ import { Bot } from "../bot/Bot.ts";
 import type { BotSkill } from "../bot/Bot.ts";
 import { getBotCharacter } from "../bot/botCharacters.ts";
 import { CreateSegment } from "../board/Dartboard.ts";
+import type { SegmentID } from "../board/Dartboard.ts";
+import { atwPickTarget } from "../bot/atwStrategy.ts";
+import { DartboardSVG } from "../components/DartboardSVG.tsx";
 import { GameMenu } from "../components/GameMenu.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
@@ -107,12 +108,18 @@ export function ATWScreen({
 
   const isCurrentBot = bots.has(currentPlayerIndex);
 
+  const [botBoard, setBotBoard] = useState<{
+    segment: SegmentID;
+    mode: "outline" | "fill";
+  } | null>(null);
+
   const getThrow = useCallback((bot: Bot) => {
     const { players, currentPlayerIndex } = useATWStore.getState();
     const player = players[currentPlayerIndex];
     return CreateSegment(
       bot.throwATW(player.currentTarget, (target, actual) => {
         gameLogger.logDart(bot.name, target, actual, {});
+        setBotBoard({ segment: actual, mode: "fill" });
       }),
     );
   }, []);
@@ -127,6 +134,38 @@ export function ATWScreen({
     onNextTurn: handleNextTurn,
     getThrow,
   });
+
+  // Bot dartboard overlay: outline on target, fill on actual hit.
+  useEffect(() => {
+    if (
+      !isCurrentBot ||
+      !!winners ||
+      !!currentPlayer?.finished ||
+      isTransitioning
+    ) {
+      const t = setTimeout(() => setBotBoard(null), 0);
+      return () => clearTimeout(t);
+    }
+    const dartsThrown = currentRoundDarts.length;
+    if (dartsThrown >= 3) return;
+
+    const delay = dartsThrown > 0 ? 800 : 0;
+    const t = setTimeout(() => {
+      const { players: ps, currentPlayerIndex: ci } = useATWStore.getState();
+      const p = ps[ci];
+      if (!p) return;
+      const target = atwPickTarget(p.currentTarget);
+      setBotBoard({ segment: target, mode: "outline" });
+    }, delay);
+    return () => clearTimeout(t);
+  }, [
+    isCurrentBot,
+    currentPlayerIndex,
+    currentRoundDarts.length,
+    winners,
+    currentPlayer?.finished,
+    isTransitioning,
+  ]);
 
   // Auto-advance when player finishes on Bull (show result after brief delay)
   useEffect(() => {
@@ -176,9 +215,32 @@ export function ATWScreen({
     >
       {/* Main area */}
       <div
-        className="flex-1 flex min-h-0"
+        className="flex-1 flex min-h-0 relative"
         style={{ paddingLeft: "var(--sal)" }}
       >
+        {/* Bot dartboard overlay */}
+        {botBoard && (
+          <div
+            className="absolute z-10 pointer-events-none rounded-full"
+            style={{
+              bottom: "1rem",
+              left: "calc(var(--sal) + 1rem)",
+              width: "clamp(140px, 18vw, 280px)",
+              opacity: 0.85,
+              boxShadow:
+                "0 0 20px var(--color-game-accent-glow), 0 0 60px var(--color-game-accent-glow), inset 0 0 30px rgba(0,0,0,0.5)",
+              background:
+                "radial-gradient(circle, rgba(0,0,0,0.6) 60%, transparent 100%)",
+            }}
+          >
+            <DartboardSVG
+              className="w-full h-auto drop-shadow-[0_0_8px_var(--color-game-accent-glow)]"
+              highlightSegment={botBoard.segment}
+              highlightMode={botBoard.mode}
+              highlightColor="var(--color-game-accent)"
+            />
+          </div>
+        )}
         {/* Left: active player + current target */}
         <div className="flex-1 flex flex-col min-w-0 min-h-0 px-4 py-2">
           <div className="flex items-center gap-2 shrink-0">

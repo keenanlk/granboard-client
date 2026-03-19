@@ -1,5 +1,5 @@
-import type { BotSkill } from "./throwSimulator.ts";
-import { BotSkill as Skills } from "./throwSimulator.ts";
+import type { BotSkill } from "./bot.types.ts";
+import { BotSkill as Skills } from "./bot.types.ts";
 
 export interface BotCharacter {
   /** Display name shown on scoreboard */

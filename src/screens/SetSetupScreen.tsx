@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { DEFAULT_X01_OPTIONS, type X01Options } from "../engine/x01Engine.ts";
-import { DEFAULT_CRICKET_OPTIONS } from "../engine/cricketEngine.ts";
+import { DEFAULT_X01_OPTIONS } from "../engine/x01.types.ts";
+import type { X01Options } from "../engine/x01.types.ts";
+import { DEFAULT_CRICKET_OPTIONS } from "../engine/cricket.types.ts";
 import {
   PlayerSelectStep,
   BotSkill,
