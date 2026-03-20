@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import { BotSkill } from "@nlc-darts/engine";
 
 const mockStorage = new Map<string, string>();
 
@@ -139,7 +140,7 @@ describe("GameLogger", () => {
   });
 
   it("each entry is valid JSON (parse each line)", () => {
-    gameLogger.start("x01", ["Alice", "Bob"], [null, 10], {});
+    gameLogger.start("x01", ["Alice", "Bob"], [null, BotSkill.Pro], {});
     gameLogger.logDart("Alice", undefined, 20, { remaining: 481 });
     gameLogger.logDart("Bob", 60, 57, { remaining: 444 });
     gameLogger.logTurnEnd("Alice", 1, 20);
