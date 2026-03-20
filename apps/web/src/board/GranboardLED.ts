@@ -14,12 +14,14 @@
  *   [15]     flag (0x00 or 0x01)
  */
 
+/** An RGB color value (0-255 per channel). */
 export interface RGB {
   r: number;
   g: number;
   b: number;
 }
 
+/** Predefined RGB colors for LED commands. */
 export const Colors = {
   RED: { r: 255, g: 0, b: 0 },
   GREEN: { r: 0, g: 255, b: 0 },

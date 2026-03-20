@@ -33,6 +33,9 @@ function determineWinners(players: HighScorePlayer[]): string[] {
 // Engine class
 // ---------------------------------------------------------------------------
 
+/**
+ * Game engine for High Score mode implementing the GameEngine interface.
+ */
 export class HighScoreEngine implements GameEngine<
   HighScoreState,
   HighScoreOptions
@@ -135,4 +138,7 @@ export class HighScoreEngine implements GameEngine<
   }
 }
 
+/**
+ * Singleton instance of HighScoreEngine.
+ */
 export const highScoreEngine = new HighScoreEngine();

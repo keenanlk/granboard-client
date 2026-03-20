@@ -3,6 +3,7 @@ import type { Segment, GameEngine } from "@nlc-darts/engine";
 
 const UNDO_CAP = 12;
 
+/** Standard actions available on every game store. */
 export interface GameStoreActions<TState, TOptions> {
   startGame: (options: TOptions, playerNames: string[]) => void;
   addDart: (segment: Segment) => void;

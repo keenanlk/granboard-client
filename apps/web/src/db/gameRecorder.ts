@@ -8,6 +8,7 @@ import { logger } from "../lib/logger.ts";
 
 const log = logger.child({ module: "db" });
 
+/** Accumulates round data during a game and saves the session to IndexedDB when finished. */
 export class GameRecorder {
   private rounds: RoundRecord[] = [];
   private roundCounters: number[];

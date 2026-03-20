@@ -3,6 +3,7 @@ import { x01Engine, DEFAULT_X01_OPTIONS } from "@nlc-darts/engine";
 import { ServerMessage } from "../messages.js";
 import { BaseGameRoom } from "./BaseGameRoom.js";
 
+/** Colyseus room for X01 (301/501/etc.) dart games. */
 export class X01Room extends BaseGameRoom<X01State, X01Options> {
   protected engine = x01Engine;
 

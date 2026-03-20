@@ -64,6 +64,9 @@ function mapCurrentPlayer(
 // Engine class
 // ---------------------------------------------------------------------------
 
+/**
+ * Game engine for X01 (301/501/etc.) implementing the GameEngine interface.
+ */
 export class X01Engine implements GameEngine<X01State, X01Options> {
   startGame(options: X01Options, playerNames: string[]): X01State {
     return {
@@ -246,4 +249,7 @@ export class X01Engine implements GameEngine<X01State, X01Options> {
   }
 }
 
+/**
+ * Singleton instance of X01Engine.
+ */
 export const x01Engine = new X01Engine();

@@ -15,6 +15,7 @@ function emitOpenNumbers() {
   gameEventBus.emit("open_numbers", { numbers });
 }
 
+/** Controller for Tic-Tac-Toe game mode. */
 export class TicTacToeController implements GameController {
   onDartHit(segment: Segment): void {
     const before = useTicTacToeStore.getState();

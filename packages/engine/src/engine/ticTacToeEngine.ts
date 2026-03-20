@@ -99,6 +99,9 @@ function isCatsGame(owner: (0 | 1 | null)[]): boolean {
 // Engine
 // ---------------------------------------------------------------------------
 
+/**
+ * Game engine for Tic-Tac-Toe darts mode implementing the GameEngine interface.
+ */
 export class TicTacToeEngine implements GameEngine<
   TicTacToeState,
   TicTacToeOptions
@@ -285,4 +288,7 @@ export class TicTacToeEngine implements GameEngine<
   }
 }
 
+/**
+ * Singleton instance of TicTacToeEngine.
+ */
 export const ticTacToeEngine = new TicTacToeEngine();

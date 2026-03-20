@@ -8,6 +8,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
   logger.warn({}, "Supabase credentials not configured — result recording disabled");
 }
 
+/** Supabase admin client using the service-role key, or null when credentials are missing. */
 export const supabaseAdmin =
   supabaseUrl && supabaseServiceKey
     ? createClient(supabaseUrl, supabaseServiceKey)

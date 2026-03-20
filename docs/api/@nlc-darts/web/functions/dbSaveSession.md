@@ -1,0 +1,25 @@
+[**Documentation**](../../../README.md)
+
+***
+
+[Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / dbSaveSession
+
+# Function: dbSaveSession()
+
+> **dbSaveSession**(`session`): `Promise`\<`void`\>
+
+Defined in: [db/db.ts:97](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/db/db.ts#L97)
+
+Persist a completed game session to IndexedDB.
+
+## Parameters
+
+### session
+
+[`GameSessionRecord`](../../engine/src/db/db.types.ts/interfaces/GameSessionRecord.md)
+
+The game session record to save.
+
+## Returns
+
+`Promise`\<`void`\>

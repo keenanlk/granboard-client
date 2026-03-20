@@ -15,6 +15,7 @@ function emitOpenNumbers(): void {
   gameEventBus.emit("open_numbers", { numbers: openNumbers });
 }
 
+/** Controller for Cricket game mode. */
 export class CricketController implements GameController {
   onDartHit(segment: Segment): void {
     const before = useCricketStore.getState();

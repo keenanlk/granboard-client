@@ -2,12 +2,15 @@ import type { Segment } from "../board/Dartboard.ts";
 import { SegmentID, SegmentSection, SegmentType } from "../board/Dartboard.ts";
 import type { CricketThrownDart } from "../engine/cricket.types.ts";
 
+/** Award types available in X01 and High Score games. */
 export type X01AwardType = "hattrick" | "ton80" | "highton" | "lowton";
+/** Award types available in Cricket games. */
 export type CricketAwardType =
   | "hattrick"
   | "threeinbed"
   | "threeinblack"
   | "whitehorse";
+/** Union of all possible award types across game modes. */
 export type AwardType = X01AwardType | CricketAwardType;
 
 const CRICKET_NUMBER_SECTIONS = new Set([15, 16, 17, 18, 19, 20]);
@@ -71,7 +74,7 @@ export function detectCricketAward(
   return null;
 }
 
-// Alias used by X01 and HighScore screens
+/** Alias for {@link detectX01Award}, used by X01 and HighScore screens. */
 export function detectAward(
   darts: { segment: Segment }[],
 ): X01AwardType | null {

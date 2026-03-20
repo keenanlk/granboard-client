@@ -1,5 +1,6 @@
 import type { Segment } from "../board/Dartboard.ts";
 
+/** Configuration options for an X01 game (301, 501, 701). */
 export interface X01Options {
   startingScore: 301 | 501 | 701;
   /** When false (default), outer bull scores 50 same as double bull. When true, bulls are split (outer = 25, inner = 50). */
@@ -12,6 +13,7 @@ export interface X01Options {
   doubleIn: boolean;
 }
 
+/** Default X01 options: 501, no split bull, no double/master out, no double in. */
 export const DEFAULT_X01_OPTIONS: X01Options = {
   startingScore: 501,
   splitBull: false,
@@ -20,12 +22,14 @@ export const DEFAULT_X01_OPTIONS: X01Options = {
   doubleIn: false,
 };
 
+/** A single dart thrown during an X01 game. */
 export interface ThrownDart {
   segment: Segment;
   /** False for double-in pre-open throws or bust darts — entire turn was canceled. */
   scored: boolean;
 }
 
+/** A player's state in an X01 game. */
 export interface Player {
   name: string;
   score: number;
@@ -41,6 +45,7 @@ export interface Player {
   totalDartsThrown: number;
 }
 
+/** Complete mutable state for an X01 game in progress. */
 export interface X01State {
   x01Options: X01Options;
   players: Player[];

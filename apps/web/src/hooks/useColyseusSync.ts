@@ -14,10 +14,12 @@ const COLYSEUS_URL =
 /** Module-level room storage — survives StrictMode re-renders */
 let pendingRoom: Room | null = null;
 
+/** Store a pre-created Colyseus room so the hook can adopt it instead of creating a new one. */
 export function setPendingColyseusRoom(room: Room) {
   pendingRoom = room;
 }
 
+/** Options for the {@link useColyseusSync} hook. */
 interface UseColyseusSyncOptions {
   onlineConfig: OnlineConfig | null | undefined;
   restoreState: (state: unknown) => void;
@@ -26,6 +28,7 @@ interface UseColyseusSyncOptions {
   onTurnDelay?: () => void;
 }
 
+/** Return value from the {@link useColyseusSync} hook. */
 interface UseColyseusSyncReturn {
   room: Room | null;
   sendDart: (segmentId: number) => void;
@@ -40,6 +43,7 @@ let activeRoom: Room | null = null;
 let connectingTo: string | null = null; // guards async joinById
 let cleanupTimer: ReturnType<typeof setTimeout> | null = null;
 
+/** Manages a Colyseus room connection for online multiplayer state sync. */
 export function useColyseusSync({
   onlineConfig,
   restoreState,

@@ -1,5 +1,6 @@
 import type { Segment } from "@nlc-darts/engine";
 
+/** Map of game event names to their payload types. */
 export type GameEventMap = {
   dart_hit: { segment: Segment; effectiveMarks?: number };
   bust: Record<string, never>;

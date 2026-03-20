@@ -1,5 +1,6 @@
 import type { Segment } from "../board/Dartboard.ts";
 
+/** Configuration options for a High Score game. */
 export interface HighScoreOptions {
   rounds: number;
   /** If tied at end: "stand" = shared win, "playoff" = one-dart playoff */
@@ -8,23 +9,27 @@ export interface HighScoreOptions {
   splitBull: boolean;
 }
 
+/** Default High Score options: 8 rounds, ties stand, no split bull. */
 export const DEFAULT_HIGHSCORE_OPTIONS: HighScoreOptions = {
   rounds: 8,
   tieRule: "stand",
   splitBull: false,
 };
 
+/** A single dart thrown during a High Score game. */
 export interface HighScoreThrownDart {
   segment: Segment;
   value: number;
 }
 
+/** A player's state in a High Score game. */
 export interface HighScorePlayer {
   name: string;
   score: number;
   rounds: { score: number; darts: { value: number; shortName: string }[] }[];
 }
 
+/** Complete mutable state for a High Score game in progress. */
 export interface HighScoreState {
   options: HighScoreOptions;
   players: HighScorePlayer[];

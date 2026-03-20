@@ -11,6 +11,7 @@ import {
 import { ServerMessage } from "../messages.js";
 import { BaseGameRoom } from "./BaseGameRoom.js";
 
+/** Colyseus room for Cricket dart games. */
 export class CricketRoom extends BaseGameRoom<CricketState, CricketOptions> {
   protected engine = cricketEngine;
 

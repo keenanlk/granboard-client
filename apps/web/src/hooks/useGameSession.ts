@@ -17,6 +17,7 @@ import { gameLogger } from "../lib/GameLogger.ts";
 import { saveSession, clearSession } from "../lib/sessionPersistence.ts";
 import { gameEventBus } from "../events/gameEventBus.ts";
 
+/** Data extracted from the store at the end of a turn for recording. */
 export interface RoundExtract {
   playerIndex: number;
   darts: RecordedDart[];

@@ -26,4 +26,5 @@ class EventBus<EventMap extends Record<string, unknown>> {
   }
 }
 
+/** Singleton event bus for game events (dart hits, busts, wins, etc.). */
 export const gameEventBus = new EventBus<GameEventMap>();

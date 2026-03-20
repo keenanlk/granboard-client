@@ -1,6 +1,9 @@
 import type { BotSkill } from "./bot.types.ts";
 import { BotSkill as Skills } from "./bot.types.ts";
 
+/**
+ * Visual identity and metadata for a bot at a given skill level.
+ */
 export interface BotCharacter {
   /** Display name shown on scoreboard */
   name: string;

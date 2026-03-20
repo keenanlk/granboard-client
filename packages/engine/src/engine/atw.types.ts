@@ -5,18 +5,23 @@ export const ATW_SEQUENCE = [
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25,
 ] as const;
 
-export const BULL_INDEX = 20; // index of Bull in ATW_SEQUENCE
-export const FINISHED_INDEX = 21; // sentinel: player has finished
+/** Index of Bull in ATW_SEQUENCE. */
+export const BULL_INDEX = 20;
+/** Sentinel target index indicating a player has finished. */
+export const FINISHED_INDEX = 21;
 
+/** Configuration options for an Around the World game. */
 export interface ATWOptions {
   /** Maximum rounds. 0 = unlimited. Default: 0. */
   roundLimit: number;
 }
 
+/** Default ATW options: no round limit. */
 export const DEFAULT_ATW_OPTIONS: ATWOptions = {
   roundLimit: 0,
 };
 
+/** A single dart thrown during an Around the World game. */
 export interface ATWThrownDart {
   segment: Segment;
   /** true if the dart hit the current target */
@@ -27,12 +32,14 @@ export interface ATWThrownDart {
   previousTargetIndex: number;
 }
 
+/** Summary of a completed ATW round for one player. */
 export interface ATWRound {
   darts: { shortName: string; hit: boolean }[];
   startTargetIndex: number;
   endTargetIndex: number;
 }
 
+/** A player's state in an Around the World game. */
 export interface ATWPlayer {
   name: string;
   /** 0-20 = in progress, 21 = finished */
@@ -46,6 +53,7 @@ export interface ATWPlayer {
   totalDartsThrown: number;
 }
 
+/** Complete mutable state for an Around the World game in progress. */
 export interface ATWState {
   options: ATWOptions;
   players: ATWPlayer[];

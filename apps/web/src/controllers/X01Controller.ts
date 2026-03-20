@@ -6,6 +6,7 @@ import { logger } from "../lib/logger.ts";
 
 const log = logger.child({ module: "x01" });
 
+/** Controller for X01 (301/501/etc.) game mode. */
 export class X01Controller implements GameController {
   onDartHit(segment: Segment): void {
     const before = useGameStore.getState();

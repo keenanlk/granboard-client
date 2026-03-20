@@ -80,6 +80,9 @@ function furthestWinners(players: ATWPlayer[]): string[] {
 // Engine class
 // ---------------------------------------------------------------------------
 
+/**
+ * Game engine for Around the World (ATW) mode implementing the GameEngine interface.
+ */
 export class ATWEngine implements GameEngine<ATWState, ATWOptions> {
   startGame(options: ATWOptions, playerNames: string[]): ATWState {
     return {
@@ -260,4 +263,7 @@ export class ATWEngine implements GameEngine<ATWState, ATWOptions> {
   }
 }
 
+/**
+ * Singleton instance of ATWEngine.
+ */
 export const atwEngine = new ATWEngine();

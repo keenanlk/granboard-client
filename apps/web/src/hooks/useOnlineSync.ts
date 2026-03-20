@@ -17,6 +17,7 @@ const FORWARDED_EVENTS: (keyof GameEventMap)[] = [
   "open_numbers",
 ];
 
+/** Options for the {@link useOnlineSync} hook. */
 interface UseOnlineSyncOptions {
   /** Pass null/undefined for offline games — hook becomes a no-op */
   onlineConfig: OnlineConfig | null | undefined;

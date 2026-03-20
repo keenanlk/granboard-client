@@ -1,3 +1,4 @@
+/** Numeric identifiers for every dartboard segment (inner, outer, triple, double for 1–20, plus bull, miss, bust, reset). */
 export const SegmentID = {
   INNER_1: 0,
   TRP_1: 1,
@@ -85,8 +86,10 @@ export const SegmentID = {
   BUST: 83,
   RESET_BUTTON: 84,
 } as const;
+/** Union type of all valid segment ID values. */
 export type SegmentID = (typeof SegmentID)[keyof typeof SegmentID];
 
+/** Numbered sections of the dartboard (1–20, Bull, Other). */
 export const SegmentSection = {
   One: 1,
   Two: 2,
@@ -111,17 +114,21 @@ export const SegmentSection = {
   BULL: 25,
   Other: 26,
 } as const;
+/** Union type of all valid section values. */
 export type SegmentSection =
   (typeof SegmentSection)[keyof typeof SegmentSection];
 
+/** Multiplier ring type of a dartboard segment. */
 export const SegmentType = {
   Single: 1,
   Double: 2,
   Triple: 3,
   Other: 4,
 } as const;
+/** Union type of all valid segment type values. */
 export type SegmentType = (typeof SegmentType)[keyof typeof SegmentType];
 
+/** A single dartboard segment with its identity, type, section, point value, and display names. */
 export interface Segment {
   ID: SegmentID;
   Type: SegmentType;
@@ -131,6 +138,13 @@ export interface Segment {
   ShortName: string;
 }
 
+/**
+ * Converts a segment type to its display string.
+ *
+ * @param type - The segment type (Single, Double, Triple).
+ * @param shorthand - If true, returns "D"/"T"; otherwise "Double"/"Triple".
+ * @returns The display string, or empty string for singles.
+ */
 export const SegmentTypeToString = (type: SegmentType, shorthand: boolean) => {
   switch (type) {
     case SegmentType.Single:
@@ -144,6 +158,12 @@ export const SegmentTypeToString = (type: SegmentType, shorthand: boolean) => {
   }
 };
 
+/**
+ * Creates a full Segment object from a numeric segment ID.
+ *
+ * @param segmentId - The segment ID to resolve.
+ * @returns A fully populated Segment with type, section, value, and display names.
+ */
 export const CreateSegment = (segmentId: SegmentID): Segment => {
   if (segmentId < 80) {
     let Type: SegmentType;

@@ -148,6 +148,9 @@ function checkCricketWinner(
 // Engine class
 // ---------------------------------------------------------------------------
 
+/**
+ * Game engine for Cricket (standard, cut-throat, and single-bull variants) implementing the GameEngine interface.
+ */
 export class CricketEngine implements GameEngine<CricketState, CricketOptions> {
   startGame(options: CricketOptions, playerNames: string[]): CricketState {
     return {
@@ -338,4 +341,7 @@ export class CricketEngine implements GameEngine<CricketState, CricketOptions> {
   }
 }
 
+/**
+ * Singleton instance of CricketEngine.
+ */
 export const cricketEngine = new CricketEngine();

@@ -12,11 +12,16 @@ const INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 const RECONNECT_ALLOWANCE_MS = 30 * 1000; // 30 seconds
 const UNDO_CAP = 12;
 
+/** Options passed when creating a game room. */
 interface RoomCreateOptions {
+  /** Game-specific options blob, parsed by each room subclass. */
   gameOptions: unknown;
+  /** Display names for each player, ordered by seat index. */
   playerNames: string[];
+  /** Supabase user IDs for each player (null for guests). */
   playerIds: (string | null)[];
-  roomId?: string; // Supabase room ID for recording results
+  /** Supabase room ID used to record match results. */
+  roomId?: string;
 }
 
 /**
@@ -27,15 +32,24 @@ export abstract class BaseGameRoom<
   TState extends { currentPlayerIndex: number; winner: string | null },
   TOptions,
 > extends Room {
+  /** Game engine that drives state transitions for this room type. */
   protected abstract engine: GameEngine<TState, TOptions>;
+  /** Scoped logger instance for this room. */
   protected log!: Logger;
 
+  /** Current authoritative game state. */
   protected gameState!: TState;
+  /** Parsed game options for the current match. */
   protected gameOptions!: TOptions;
+  /** Stack of previous states used for undo support. */
   protected undoStack: TState[] = [];
-  protected playerMap = new Map<string, number>(); // sessionId → playerIndex
+  /** Maps Colyseus session IDs to player seat indices. */
+  protected playerMap = new Map<string, number>();
+  /** Ordered display names for each player. */
   protected playerNames: string[] = [];
+  /** Supabase user IDs for each player (null for guests). */
   protected playerIds: (string | null)[] = [];
+  /** Supabase room row ID for recording results, if available. */
   protected supabaseRoomId: string | null = null;
   private seq = 0;
   private inactivityTimer: ReturnType<typeof setTimeout> | null = null;

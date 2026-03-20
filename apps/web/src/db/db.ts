@@ -42,11 +42,18 @@ function getDB() {
 
 // ── Player CRUD ───────────────────────────────────────────────────────────────
 
+/** Retrieve all saved players from IndexedDB. */
 export async function dbGetAllPlayers(): Promise<PlayerRecord[]> {
   const db = await getDB();
   return db.getAll("players");
 }
 
+/**
+ * Create a new player record.
+ *
+ * @param name - Display name for the player.
+ * @returns The newly created player record.
+ */
 export async function dbAddPlayer(name: string): Promise<PlayerRecord> {
   const db = await getDB();
   const id =
@@ -58,11 +65,22 @@ export async function dbAddPlayer(name: string): Promise<PlayerRecord> {
   return player;
 }
 
+/**
+ * Delete a player by ID.
+ *
+ * @param id - Player record ID.
+ */
 export async function dbDeletePlayer(id: string): Promise<void> {
   const db = await getDB();
   await db.delete("players", id);
 }
 
+/**
+ * Rename an existing player.
+ *
+ * @param id - Player record ID.
+ * @param name - New display name.
+ */
 export async function dbRenamePlayer(id: string, name: string): Promise<void> {
   const db = await getDB();
   const player = await db.get("players", id);
@@ -71,12 +89,23 @@ export async function dbRenamePlayer(id: string, name: string): Promise<void> {
 
 // ── Session recording ─────────────────────────────────────────────────────────
 
+/**
+ * Persist a completed game session to IndexedDB.
+ *
+ * @param session - The game session record to save.
+ */
 export async function dbSaveSession(session: GameSessionRecord): Promise<void> {
   const db = await getDB();
   await db.add("game_sessions", session);
   log.info({ sessionId: session.id, gameType: session.gameType }, "Game session saved");
 }
 
+/**
+ * Retrieve all game sessions that include the given player.
+ *
+ * @param playerId - Player record ID to filter by.
+ * @returns Sessions ordered by play date.
+ */
 export async function dbGetSessionsForPlayer(
   playerId: string,
 ): Promise<GameSessionRecord[]> {

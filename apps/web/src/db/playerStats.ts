@@ -1,5 +1,12 @@
 import type { GameSessionRecord, PlayerStats } from "@nlc-darts/engine";
 
+/**
+ * Compute aggregate stats for a player across all their recorded sessions.
+ *
+ * @param sessions - Game session records to aggregate.
+ * @param playerId - The player to compute stats for.
+ * @returns Aggregated stats broken down by game type.
+ */
 export function computePlayerStats(
   sessions: GameSessionRecord[],
   playerId: string,

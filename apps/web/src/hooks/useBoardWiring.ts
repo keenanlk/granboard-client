@@ -14,6 +14,7 @@ function attachCallback(board: Granboard): void {
   });
 }
 
+/** Wires the Granboard BLE hit callback to the active game controller. */
 export function useBoardWiring(): void {
   useEffect(() => {
     // Wire board that is already connected

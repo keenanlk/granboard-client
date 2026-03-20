@@ -1,0 +1,11 @@
+{
+  "tsconfig": "./tsconfig.docs.json",
+  "skipErrorChecking": true,
+  "entryPoints": [
+    "src/messages.ts",
+    "src/supabaseAdmin.ts",
+    "src/rooms/BaseGameRoom.ts",
+    "src/rooms/X01Room.ts",
+    "src/rooms/CricketRoom.ts"
+  ]
+}

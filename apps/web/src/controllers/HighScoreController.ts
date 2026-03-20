@@ -6,6 +6,7 @@ import { logger } from "../lib/logger.ts";
 
 const log = logger.child({ module: "highscore" });
 
+/** Controller for High Score game mode. */
 export class HighScoreController implements GameController {
   onDartHit(segment: Segment): void {
     log.debug({ segment: segment.ShortName, value: segment.Value }, "Dart hit");

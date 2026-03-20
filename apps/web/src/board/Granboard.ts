@@ -232,6 +232,7 @@ async function connectWeb(deviceId?: string): Promise<void> {
 
 const isNative = Capacitor.isNativePlatform();
 
+/** BLE client for connecting to and communicating with a GranBoard dartboard. */
 export class Granboard {
   public segmentHitCallback?: (segment: Segment) => void;
 

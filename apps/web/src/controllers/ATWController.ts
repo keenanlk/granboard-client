@@ -19,6 +19,7 @@ function emitOpenNumbers(): void {
   gameEventBus.emit("open_numbers", { numbers });
 }
 
+/** Controller for Around the World game mode. */
 export class ATWController implements GameController {
   onDartHit(segment: Segment): void {
     const before = useATWStore.getState();

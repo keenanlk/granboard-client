@@ -1,8 +1,16 @@
+/** Whether a player is idle or currently in a game. */
 export type PlayerStatus = "online" | "in_game";
+
+/** Lifecycle status of a multiplayer room. */
 export type RoomStatus = "waiting" | "playing" | "finished" | "abandoned";
+
+/** Lifecycle status of a game invite. */
 export type InviteStatus = "pending" | "accepted" | "declined" | "expired";
+
+/** Game types supported in online multiplayer. */
 export type OnlineGameType = "x01" | "cricket" | "set";
 
+/** A player visible in the online lobby. */
 export interface OnlinePlayer {
   id: string;
   display_name: string;
@@ -10,6 +18,7 @@ export interface OnlinePlayer {
   last_seen: string;
 }
 
+/** A multiplayer game room record. */
 export interface Room {
   id: string;
   host_id: string;
@@ -20,6 +29,7 @@ export interface Room {
   created_at: string;
 }
 
+/** An invitation from one player to another to join a room. */
 export interface Invite {
   id: string;
   from_id: string;
