@@ -1,4 +1,5 @@
 {
   "tsconfig": "./tsconfig.docs.json",
-  "entryPoints": ["src/index.docs.ts"]
+  "entryPoints": ["src/index.docs.ts"],
+  "gitRevision": "main"
 }

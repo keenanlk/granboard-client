@@ -6,7 +6,7 @@
 
 # Interface: ATWPlayer
 
-Defined in: [engine/atw.types.ts:43](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L43)
+Defined in: [engine/atw.types.ts:43](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L43)
 
 A player's state in an Around the World game.
 
@@ -16,7 +16,7 @@ A player's state in an Around the World game.
 
 > **currentTarget**: `number`
 
-Defined in: [engine/atw.types.ts:48](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L48)
+Defined in: [engine/atw.types.ts:48](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L48)
 
 The current target number (1-20 or 25 for Bull)
 
@@ -26,7 +26,7 @@ The current target number (1-20 or 25 for Bull)
 
 > **finished**: `boolean`
 
-Defined in: [engine/atw.types.ts:49](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L49)
+Defined in: [engine/atw.types.ts:49](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L49)
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: [engine/atw.types.ts:49](https://github.com/keenanlk/granboard-clien
 
 > **finishedInRound**: `number` \| `null`
 
-Defined in: [engine/atw.types.ts:51](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L51)
+Defined in: [engine/atw.types.ts:51](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L51)
 
 The round in which this player finished (null if not finished)
 
@@ -44,7 +44,7 @@ The round in which this player finished (null if not finished)
 
 > **name**: `string`
 
-Defined in: [engine/atw.types.ts:44](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L44)
+Defined in: [engine/atw.types.ts:44](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L44)
 
 ***
 
@@ -52,7 +52,7 @@ Defined in: [engine/atw.types.ts:44](https://github.com/keenanlk/granboard-clien
 
 > **rounds**: [`ATWRound`](ATWRound.md)[]
 
-Defined in: [engine/atw.types.ts:52](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L52)
+Defined in: [engine/atw.types.ts:52](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L52)
 
 ***
 
@@ -60,7 +60,7 @@ Defined in: [engine/atw.types.ts:52](https://github.com/keenanlk/granboard-clien
 
 > **targetIndex**: `number`
 
-Defined in: [engine/atw.types.ts:46](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L46)
+Defined in: [engine/atw.types.ts:46](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L46)
 
 0-20 = in progress, 21 = finished
 
@@ -70,4 +70,4 @@ Defined in: [engine/atw.types.ts:46](https://github.com/keenanlk/granboard-clien
 
 > **totalDartsThrown**: `number`
 
-Defined in: [engine/atw.types.ts:53](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L53)
+Defined in: [engine/atw.types.ts:53](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L53)

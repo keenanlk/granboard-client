@@ -6,7 +6,7 @@
 
 # Interface: LegConfig
 
-Defined in: [lib/setTypes.ts:9](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/lib/setTypes.ts#L9)
+Defined in: [lib/setTypes.ts:9](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L9)
 
 Configuration for a single leg within a set.
 
@@ -16,7 +16,7 @@ Configuration for a single leg within a set.
 
 > `optional` **cricketOptions?**: [`CricketOptions`](../../../engine/cricket.types.ts/interfaces/CricketOptions.md)
 
-Defined in: [lib/setTypes.ts:12](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/lib/setTypes.ts#L12)
+Defined in: [lib/setTypes.ts:12](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L12)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/setTypes.ts:12](https://github.com/keenanlk/granboard-client/bl
 
 > **gameType**: `"x01"` \| `"cricket"`
 
-Defined in: [lib/setTypes.ts:10](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/lib/setTypes.ts#L10)
+Defined in: [lib/setTypes.ts:10](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L10)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [lib/setTypes.ts:10](https://github.com/keenanlk/granboard-client/bl
 
 > `optional` **x01Options?**: [`X01Options`](../../../engine/x01.types.ts/interfaces/X01Options.md)
 
-Defined in: [lib/setTypes.ts:11](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/lib/setTypes.ts#L11)
+Defined in: [lib/setTypes.ts:11](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L11)

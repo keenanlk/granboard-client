@@ -6,7 +6,7 @@
 
 # Interface: TicTacToeOptions
 
-Defined in: [engine/ticTacToe.types.ts:4](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L4)
+Defined in: [engine/ticTacToe.types.ts:4](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L4)
 
 Configuration options for a Tic-Tac-Toe darts game.
 
@@ -16,7 +16,7 @@ Configuration options for a Tic-Tac-Toe darts game.
 
 > **roundLimit**: `number`
 
-Defined in: [engine/ticTacToe.types.ts:5](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L5)
+Defined in: [engine/ticTacToe.types.ts:5](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L5)
 
 ***
 
@@ -24,4 +24,4 @@ Defined in: [engine/ticTacToe.types.ts:5](https://github.com/keenanlk/granboard-
 
 > **singleBull**: `boolean`
 
-Defined in: [engine/ticTacToe.types.ts:6](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L6)
+Defined in: [engine/ticTacToe.types.ts:6](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L6)

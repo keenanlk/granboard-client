@@ -8,7 +8,7 @@
 
 > `const` **RING\_RADII**: `object`
 
-Defined in: [board/BoardGeometry.ts:19](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/BoardGeometry.ts#L19)
+Defined in: [board/BoardGeometry.ts:19](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/BoardGeometry.ts#L19)
 
 Dartboard segment ring outer radii in mm, measured from bull center.
 

@@ -8,7 +8,7 @@
 
 > **buildPersistentNumbersCommand**(`dartNumbers`, `colorByte`): `number`[]
 
-Defined in: [board/GranboardLED.ts:150](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/GranboardLED.ts#L150)
+Defined in: [board/GranboardLED.ts:150](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/GranboardLED.ts#L150)
 
 Persistently light a set of dart numbers using the 20-byte direct state format
 (same format as buildClearCommand). Byte index n-1 = dart number n; non-zero

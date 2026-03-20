@@ -8,7 +8,7 @@
 
 > **x01PickTarget**(`score`, `opts`, `opened`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/x01Strategy.ts:42](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/x01Strategy.ts#L42)
+Defined in: [bot/x01Strategy.ts:42](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/x01Strategy.ts#L42)
 
 X01 targeting strategy: chooses the best SegmentID for a bot to aim at given the current score.
 

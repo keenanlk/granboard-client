@@ -6,7 +6,7 @@
 
 # Class: X01Engine
 
-Defined in: [engine/x01Engine.ts:70](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01Engine.ts#L70)
+Defined in: [engine/x01Engine.ts:70](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01Engine.ts#L70)
 
 Game engine for X01 (301/501/etc.) implementing the GameEngine interface.
 
@@ -30,7 +30,7 @@ Game engine for X01 (301/501/etc.) implementing the GameEngine interface.
 
 > **addDart**(`state`, `segment`): `Partial`\<[`X01State`](../../x01.types.ts/interfaces/X01State.md)\>
 
-Defined in: [engine/x01Engine.ts:90](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01Engine.ts#L90)
+Defined in: [engine/x01Engine.ts:90](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01Engine.ts#L90)
 
 Apply a dart throw. Returns only the fields that changed.
 
@@ -58,7 +58,7 @@ Apply a dart throw. Returns only the fields that changed.
 
 > **nextTurn**(`state`): `Partial`\<[`X01State`](../../x01.types.ts/interfaces/X01State.md)\>
 
-Defined in: [engine/x01Engine.ts:216](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01Engine.ts#L216)
+Defined in: [engine/x01Engine.ts:216](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01Engine.ts#L216)
 
 Commit the current player's turn and advance to the next player. Returns only the fields that changed.
 
@@ -82,7 +82,7 @@ Commit the current player's turn and advance to the next player. Returns only th
 
 > **startGame**(`options`, `playerNames`): [`X01State`](../../x01.types.ts/interfaces/X01State.md)
 
-Defined in: [engine/x01Engine.ts:71](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01Engine.ts#L71)
+Defined in: [engine/x01Engine.ts:71](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01Engine.ts#L71)
 
 Create fresh initial state for a new game.
 
@@ -110,7 +110,7 @@ Create fresh initial state for a new game.
 
 > **undoLastDart**(`state`): `Partial`\<[`X01State`](../../x01.types.ts/interfaces/X01State.md)\>
 
-Defined in: [engine/x01Engine.ts:156](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01Engine.ts#L156)
+Defined in: [engine/x01Engine.ts:156](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01Engine.ts#L156)
 
 Reverse the last dart thrown in the current turn. Returns only the fields that changed.
 

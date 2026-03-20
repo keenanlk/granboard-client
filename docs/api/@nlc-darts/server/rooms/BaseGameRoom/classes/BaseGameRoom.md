@@ -6,7 +6,7 @@
 
 # Abstract Class: BaseGameRoom\<TState, TOptions\>
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:31](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L31)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:31](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L31)
 
 Abstract base for all game rooms.
 Concrete subclasses provide the engine and game-specific helpers.
@@ -135,7 +135,7 @@ Intervals and timeouts are cleared when the room is disposed.
 
 > `abstract` `protected` **engine**: [`GameEngine`](../../../../engine/src/engine/GameEngine.ts/interfaces/GameEngine.md)\<`TState`, `TOptions`\>
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:36](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L36)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:36](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L36)
 
 Game engine that drives state transitions for this room type.
 
@@ -145,7 +145,7 @@ Game engine that drives state transitions for this room type.
 
 > `protected` **gameOptions**: `TOptions`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:43](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L43)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:43](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L43)
 
 Parsed game options for the current match.
 
@@ -155,7 +155,7 @@ Parsed game options for the current match.
 
 > `protected` **gameState**: `TState`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:41](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L41)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:41](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L41)
 
 Current authoritative game state.
 
@@ -177,7 +177,7 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 > `protected` **log**: [`Logger`](../../../../logger/interfaces/Logger.md)
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:38](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L38)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:38](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L38)
 
 Scoped logger instance for this room.
 
@@ -223,7 +223,7 @@ Frequency to send the room state to connected clients, in milliseconds.
 
 > `protected` **playerIds**: (`string` \| `null`)[] = `[]`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:51](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L51)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:51](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L51)
 
 Supabase user IDs for each player (null for guests).
 
@@ -233,7 +233,7 @@ Supabase user IDs for each player (null for guests).
 
 > `protected` **playerMap**: `Map`\<`string`, `number`\>
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:47](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L47)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:47](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L47)
 
 Maps Colyseus session IDs to player seat indices.
 
@@ -243,7 +243,7 @@ Maps Colyseus session IDs to player seat indices.
 
 > `protected` **playerNames**: `string`[] = `[]`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:49](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L49)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:49](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L49)
 
 Ordered display names for each player.
 
@@ -329,7 +329,7 @@ The state instance you provided to `setState()`.
 
 > `protected` **supabaseRoomId**: `string` \| `null` = `null`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:53](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L53)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:53](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L53)
 
 Supabase room row ID for recording results, if available.
 
@@ -339,7 +339,7 @@ Supabase room row ID for recording results, if available.
 
 > `protected` **undoStack**: `TState`[] = `[]`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:45](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L45)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:45](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L45)
 
 Stack of previous states used for undo support.
 
@@ -906,7 +906,7 @@ Promise<void>
 
 > `abstract` `protected` **emitGameEvents**(`state`, `segment`): `void`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:61](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L61)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:61](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L61)
 
 Subclass hook: generate game events after a dart is processed.
 
@@ -1089,7 +1089,7 @@ will be called with the data returned by `onCacheRoom`
 
 > **onCreate**(`options`): `void`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:66](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L66)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:66](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L66)
 
 #### Parameters
 
@@ -1111,7 +1111,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:66](https://github.com/keenan
 
 > **onDispose**(): `void`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:158](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L158)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:167](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L167)
 
 #### Returns
 
@@ -1127,7 +1127,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:158](https://github.com/keena
 
 > **onJoin**(`client`): `void`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:113](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L113)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:122](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L122)
 
 #### Parameters
 
@@ -1149,7 +1149,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:113](https://github.com/keena
 
 > **onLeave**(`client`, `code?`): `Promise`\<`void`\>
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:127](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L127)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:136](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L136)
 
 #### Parameters
 
@@ -1268,7 +1268,7 @@ process startup, with the data returned by the `onCacheRoom` method.
 
 > `protected` **onTurnChanged**(): `void`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:261](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L261)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:270](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L270)
 
 Subclass hook: called after nextTurn for game-specific events.
 
@@ -1319,7 +1319,7 @@ These methods will be wrapped by try/catch:
 
 > `abstract` `protected` **parseOptions**(`raw`): `TOptions`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:58](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/rooms/BaseGameRoom.ts#L58)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:58](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L58)
 
 Subclass hook: extract typed options from the raw create payload.
 

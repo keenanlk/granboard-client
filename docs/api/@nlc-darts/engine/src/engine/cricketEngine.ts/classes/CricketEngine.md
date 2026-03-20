@@ -6,7 +6,7 @@
 
 # Class: CricketEngine
 
-Defined in: [engine/cricketEngine.ts:154](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricketEngine.ts#L154)
+Defined in: [engine/cricketEngine.ts:154](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricketEngine.ts#L154)
 
 Game engine for Cricket (standard, cut-throat, and single-bull variants) implementing the GameEngine interface.
 
@@ -30,7 +30,7 @@ Game engine for Cricket (standard, cut-throat, and single-bull variants) impleme
 
 > **addDart**(`state`, `segment`): `Partial`\<[`CricketState`](../../cricket.types.ts/interfaces/CricketState.md)\>
 
-Defined in: [engine/cricketEngine.ts:173](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricketEngine.ts#L173)
+Defined in: [engine/cricketEngine.ts:173](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricketEngine.ts#L173)
 
 Apply a dart throw. Returns only the fields that changed.
 
@@ -58,7 +58,7 @@ Apply a dart throw. Returns only the fields that changed.
 
 > **nextTurn**(`state`): `Partial`\<[`CricketState`](../../cricket.types.ts/interfaces/CricketState.md)\>
 
-Defined in: [engine/cricketEngine.ts:287](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricketEngine.ts#L287)
+Defined in: [engine/cricketEngine.ts:287](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricketEngine.ts#L287)
 
 Commit the current player's turn and advance to the next player. Returns only the fields that changed.
 
@@ -82,7 +82,7 @@ Commit the current player's turn and advance to the next player. Returns only th
 
 > **startGame**(`options`, `playerNames`): [`CricketState`](../../cricket.types.ts/interfaces/CricketState.md)
 
-Defined in: [engine/cricketEngine.ts:155](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricketEngine.ts#L155)
+Defined in: [engine/cricketEngine.ts:155](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricketEngine.ts#L155)
 
 Create fresh initial state for a new game.
 
@@ -110,7 +110,7 @@ Create fresh initial state for a new game.
 
 > **undoLastDart**(`state`): `Partial`\<[`CricketState`](../../cricket.types.ts/interfaces/CricketState.md)\>
 
-Defined in: [engine/cricketEngine.ts:248](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricketEngine.ts#L248)
+Defined in: [engine/cricketEngine.ts:248](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricketEngine.ts#L248)
 
 Reverse the last dart thrown in the current turn. Returns only the fields that changed.
 

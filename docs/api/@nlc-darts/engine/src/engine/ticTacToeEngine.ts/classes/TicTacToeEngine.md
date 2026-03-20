@@ -6,7 +6,7 @@
 
 # Class: TicTacToeEngine
 
-Defined in: [engine/ticTacToeEngine.ts:105](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToeEngine.ts#L105)
+Defined in: [engine/ticTacToeEngine.ts:105](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToeEngine.ts#L105)
 
 Game engine for Tic-Tac-Toe darts mode implementing the GameEngine interface.
 
@@ -30,7 +30,7 @@ Game engine for Tic-Tac-Toe darts mode implementing the GameEngine interface.
 
 > **addDart**(`state`, `segment`): `Partial`\<[`TicTacToeState`](../../ticTacToe.types.ts/interfaces/TicTacToeState.md)\>
 
-Defined in: [engine/ticTacToeEngine.ts:129](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToeEngine.ts#L129)
+Defined in: [engine/ticTacToeEngine.ts:129](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToeEngine.ts#L129)
 
 Apply a dart throw. Returns only the fields that changed.
 
@@ -58,7 +58,7 @@ Apply a dart throw. Returns only the fields that changed.
 
 > **nextTurn**(`state`): `Partial`\<[`TicTacToeState`](../../ticTacToe.types.ts/interfaces/TicTacToeState.md)\>
 
-Defined in: [engine/ticTacToeEngine.ts:240](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToeEngine.ts#L240)
+Defined in: [engine/ticTacToeEngine.ts:240](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToeEngine.ts#L240)
 
 Commit the current player's turn and advance to the next player. Returns only the fields that changed.
 
@@ -82,7 +82,7 @@ Commit the current player's turn and advance to the next player. Returns only th
 
 > **startGame**(`options`, `playerNames`): [`TicTacToeState`](../../ticTacToe.types.ts/interfaces/TicTacToeState.md)
 
-Defined in: [engine/ticTacToeEngine.ts:109](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToeEngine.ts#L109)
+Defined in: [engine/ticTacToeEngine.ts:109](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToeEngine.ts#L109)
 
 Create fresh initial state for a new game.
 
@@ -110,7 +110,7 @@ Create fresh initial state for a new game.
 
 > **undoLastDart**(`state`): `Partial`\<[`TicTacToeState`](../../ticTacToe.types.ts/interfaces/TicTacToeState.md)\>
 
-Defined in: [engine/ticTacToeEngine.ts:199](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToeEngine.ts#L199)
+Defined in: [engine/ticTacToeEngine.ts:199](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToeEngine.ts#L199)
 
 Reverse the last dart thrown in the current turn. Returns only the fields that changed.
 

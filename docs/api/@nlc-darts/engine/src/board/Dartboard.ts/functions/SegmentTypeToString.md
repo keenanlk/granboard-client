@@ -8,7 +8,7 @@
 
 > **SegmentTypeToString**(`type`, `shorthand`): `""` \| `"D"` \| `"Double"` \| `"T"` \| `"Triple"`
 
-Defined in: [board/Dartboard.ts:148](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L148)
+Defined in: [board/Dartboard.ts:148](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L148)
 
 Converts a segment type to its display string.
 

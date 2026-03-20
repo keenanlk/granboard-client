@@ -6,7 +6,7 @@
 
 # Interface: Invite
 
-Defined in: [store/online.types.ts:33](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L33)
+Defined in: [store/online.types.ts:33](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L33)
 
 An invitation from one player to another to join a room.
 
@@ -16,7 +16,7 @@ An invitation from one player to another to join a room.
 
 > **created\_at**: `string`
 
-Defined in: [store/online.types.ts:41](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L41)
+Defined in: [store/online.types.ts:41](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L41)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [store/online.types.ts:41](https://github.com/keenanlk/granboard-cli
 
 > **expires\_at**: `string`
 
-Defined in: [store/online.types.ts:42](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L42)
+Defined in: [store/online.types.ts:42](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L42)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [store/online.types.ts:42](https://github.com/keenanlk/granboard-cli
 
 > **from\_id**: `string`
 
-Defined in: [store/online.types.ts:35](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L35)
+Defined in: [store/online.types.ts:35](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L35)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [store/online.types.ts:35](https://github.com/keenanlk/granboard-cli
 
 > `optional` **from\_name?**: `string`
 
-Defined in: [store/online.types.ts:44](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L44)
+Defined in: [store/online.types.ts:44](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L44)
 
 Joined from online_players for display
 
@@ -50,7 +50,7 @@ Joined from online_players for display
 
 > **game\_options**: `unknown`
 
-Defined in: [store/online.types.ts:39](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L39)
+Defined in: [store/online.types.ts:39](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L39)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [store/online.types.ts:39](https://github.com/keenanlk/granboard-cli
 
 > **game\_type**: [`OnlineGameType`](../type-aliases/OnlineGameType.md)
 
-Defined in: [store/online.types.ts:38](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L38)
+Defined in: [store/online.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L38)
 
 ***
 
@@ -66,7 +66,7 @@ Defined in: [store/online.types.ts:38](https://github.com/keenanlk/granboard-cli
 
 > **id**: `string`
 
-Defined in: [store/online.types.ts:34](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L34)
+Defined in: [store/online.types.ts:34](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L34)
 
 ***
 
@@ -74,7 +74,7 @@ Defined in: [store/online.types.ts:34](https://github.com/keenanlk/granboard-cli
 
 > **room\_id**: `string`
 
-Defined in: [store/online.types.ts:37](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L37)
+Defined in: [store/online.types.ts:37](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L37)
 
 ***
 
@@ -82,7 +82,7 @@ Defined in: [store/online.types.ts:37](https://github.com/keenanlk/granboard-cli
 
 > **status**: [`InviteStatus`](../type-aliases/InviteStatus.md)
 
-Defined in: [store/online.types.ts:40](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L40)
+Defined in: [store/online.types.ts:40](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L40)
 
 ***
 
@@ -90,4 +90,4 @@ Defined in: [store/online.types.ts:40](https://github.com/keenanlk/granboard-cli
 
 > **to\_id**: `string`
 
-Defined in: [store/online.types.ts:36](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L36)
+Defined in: [store/online.types.ts:36](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L36)

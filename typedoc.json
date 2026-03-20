@@ -10,5 +10,6 @@
   "excludeExternals": true,
   "githubPages": false,
   "hideGenerator": true,
-  "skipErrorChecking": true
+  "skipErrorChecking": true,
+  "gitRevision": "main"
 }

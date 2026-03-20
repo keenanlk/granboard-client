@@ -6,7 +6,7 @@
 
 # Class: CricketController
 
-Defined in: [controllers/CricketController.ts:19](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/CricketController.ts#L19)
+Defined in: [controllers/CricketController.ts:19](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/CricketController.ts#L19)
 
 Controller for Cricket game mode.
 
@@ -30,7 +30,7 @@ Controller for Cricket game mode.
 
 > **onDartHit**(`segment`): `void`
 
-Defined in: [controllers/CricketController.ts:20](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/CricketController.ts#L20)
+Defined in: [controllers/CricketController.ts:20](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/CricketController.ts#L20)
 
 Handle a dart landing on a board segment.
 
@@ -54,7 +54,7 @@ Handle a dart landing on a board segment.
 
 > **onNextTurn**(): `void`
 
-Defined in: [controllers/CricketController.ts:43](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/CricketController.ts#L43)
+Defined in: [controllers/CricketController.ts:43](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/CricketController.ts#L43)
 
 Advance to the next player's turn.
 

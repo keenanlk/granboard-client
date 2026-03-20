@@ -6,7 +6,7 @@
 
 # Class: ColyseusRemoteController
 
-Defined in: [controllers/ColyseusRemoteController.ts:10](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/ColyseusRemoteController.ts#L10)
+Defined in: [controllers/ColyseusRemoteController.ts:10](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/ColyseusRemoteController.ts#L10)
 
 Controller used by BOTH players in online mode (host and guest).
 With Colyseus, both players send actions to the server — the host's
@@ -22,7 +22,7 @@ only distinction is creating the room. The server owns all game state.
 
 > **new ColyseusRemoteController**(`room`): `ColyseusRemoteController`
 
-Defined in: [controllers/ColyseusRemoteController.ts:13](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/ColyseusRemoteController.ts#L13)
+Defined in: [controllers/ColyseusRemoteController.ts:13](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/ColyseusRemoteController.ts#L13)
 
 #### Parameters
 
@@ -40,7 +40,7 @@ Defined in: [controllers/ColyseusRemoteController.ts:13](https://github.com/keen
 
 > **onDartHit**(`segment`): `void`
 
-Defined in: [controllers/ColyseusRemoteController.ts:17](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/ColyseusRemoteController.ts#L17)
+Defined in: [controllers/ColyseusRemoteController.ts:17](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/ColyseusRemoteController.ts#L17)
 
 Handle a dart landing on a board segment.
 
@@ -64,7 +64,7 @@ Handle a dart landing on a board segment.
 
 > **onNextTurn**(): `void`
 
-Defined in: [controllers/ColyseusRemoteController.ts:21](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/ColyseusRemoteController.ts#L21)
+Defined in: [controllers/ColyseusRemoteController.ts:21](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/ColyseusRemoteController.ts#L21)
 
 Advance to the next player's turn.
 
@@ -82,7 +82,7 @@ Advance to the next player's turn.
 
 > **sendUndo**(): `void`
 
-Defined in: [controllers/ColyseusRemoteController.ts:25](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/ColyseusRemoteController.ts#L25)
+Defined in: [controllers/ColyseusRemoteController.ts:25](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/ColyseusRemoteController.ts#L25)
 
 #### Returns
 

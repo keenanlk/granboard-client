@@ -6,7 +6,7 @@
 
 # Interface: OnlinePlayer
 
-Defined in: [store/online.types.ts:14](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L14)
+Defined in: [store/online.types.ts:14](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L14)
 
 A player visible in the online lobby.
 
@@ -16,7 +16,7 @@ A player visible in the online lobby.
 
 > **display\_name**: `string`
 
-Defined in: [store/online.types.ts:16](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L16)
+Defined in: [store/online.types.ts:16](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L16)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [store/online.types.ts:16](https://github.com/keenanlk/granboard-cli
 
 > **id**: `string`
 
-Defined in: [store/online.types.ts:15](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L15)
+Defined in: [store/online.types.ts:15](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L15)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [store/online.types.ts:15](https://github.com/keenanlk/granboard-cli
 
 > **last\_seen**: `string`
 
-Defined in: [store/online.types.ts:18](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L18)
+Defined in: [store/online.types.ts:18](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L18)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [store/online.types.ts:18](https://github.com/keenanlk/granboard-cli
 
 > **status**: [`PlayerStatus`](../type-aliases/PlayerStatus.md)
 
-Defined in: [store/online.types.ts:17](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/store/online.types.ts#L17)
+Defined in: [store/online.types.ts:17](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L17)

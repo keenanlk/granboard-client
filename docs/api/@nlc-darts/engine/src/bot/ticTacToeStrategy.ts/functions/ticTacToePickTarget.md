@@ -8,7 +8,7 @@
 
 > **ticTacToePickTarget**(`grid`, `owner`, `myIndex`, `_myMarks`, `opponentMarks?`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/ticTacToeStrategy.ts:117](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/ticTacToeStrategy.ts#L117)
+Defined in: [bot/ticTacToeStrategy.ts:117](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/ticTacToeStrategy.ts#L117)
 
 ## Parameters
 

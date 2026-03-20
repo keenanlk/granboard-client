@@ -6,7 +6,7 @@
 
 # Class: TicTacToeController
 
-Defined in: [controllers/TicTacToeController.ts:19](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/TicTacToeController.ts#L19)
+Defined in: [controllers/TicTacToeController.ts:19](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/TicTacToeController.ts#L19)
 
 Controller for Tic-Tac-Toe game mode.
 
@@ -30,7 +30,7 @@ Controller for Tic-Tac-Toe game mode.
 
 > **onDartHit**(`segment`): `void`
 
-Defined in: [controllers/TicTacToeController.ts:20](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/TicTacToeController.ts#L20)
+Defined in: [controllers/TicTacToeController.ts:20](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/TicTacToeController.ts#L20)
 
 Handle a dart landing on a board segment.
 
@@ -54,7 +54,7 @@ Handle a dart landing on a board segment.
 
 > **onNextTurn**(): `void`
 
-Defined in: [controllers/TicTacToeController.ts:45](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/TicTacToeController.ts#L45)
+Defined in: [controllers/TicTacToeController.ts:45](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/TicTacToeController.ts#L45)
 
 Advance to the next player's turn.
 

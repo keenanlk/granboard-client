@@ -8,7 +8,7 @@
 
 > **getBotCharacter**(`skill`): [`BotCharacter`](../interfaces/BotCharacter.md)
 
-Defined in: [bot/botCharacters.ts:91](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/botCharacters.ts#L91)
+Defined in: [bot/botCharacters.ts:91](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/botCharacters.ts#L91)
 
 Get the neon character for a bot skill level
 

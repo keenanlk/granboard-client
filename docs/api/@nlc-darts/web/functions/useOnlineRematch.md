@@ -8,7 +8,7 @@
 
 > **useOnlineRematch**(`onlineConfig`): `object`
 
-Defined in: [hooks/useOnlineRematch.ts:16](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/hooks/useOnlineRematch.ts#L16)
+Defined in: [hooks/useOnlineRematch.ts:16](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useOnlineRematch.ts#L16)
 
 Manages the online rematch handshake via the room broadcast channel.
 Returns the current rematch state and actions.

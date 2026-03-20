@@ -8,7 +8,7 @@
 
 > **CreateSegment**(`segmentId`): [`Segment`](../interfaces/Segment.md)
 
-Defined in: [board/Dartboard.ts:167](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L167)
+Defined in: [board/Dartboard.ts:167](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L167)
 
 Creates a full Segment object from a numeric segment ID.
 

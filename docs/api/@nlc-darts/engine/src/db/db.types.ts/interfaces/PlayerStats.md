@@ -6,7 +6,7 @@
 
 # Interface: PlayerStats
 
-Defined in: [db/db.types.ts:69](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L69)
+Defined in: [db/db.types.ts:69](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L69)
 
 Combined per-game-type statistics and overall totals for a player.
 
@@ -16,7 +16,7 @@ Combined per-game-type statistics and overall totals for a player.
 
 > **cricket**: [`CricketStats`](CricketStats.md)
 
-Defined in: [db/db.types.ts:71](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L71)
+Defined in: [db/db.types.ts:71](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L71)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [db/db.types.ts:71](https://github.com/keenanlk/granboard-client/blo
 
 > **highscore**: [`HighScoreStats`](HighScoreStats.md)
 
-Defined in: [db/db.types.ts:72](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L72)
+Defined in: [db/db.types.ts:72](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L72)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [db/db.types.ts:72](https://github.com/keenanlk/granboard-client/blo
 
 > **totalGames**: `number`
 
-Defined in: [db/db.types.ts:73](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L73)
+Defined in: [db/db.types.ts:73](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L73)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [db/db.types.ts:73](https://github.com/keenanlk/granboard-client/blo
 
 > **totalWins**: `number`
 
-Defined in: [db/db.types.ts:74](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L74)
+Defined in: [db/db.types.ts:74](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L74)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [db/db.types.ts:74](https://github.com/keenanlk/granboard-client/blo
 
 > **x01**: [`X01Stats`](X01Stats.md)
 
-Defined in: [db/db.types.ts:70](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L70)
+Defined in: [db/db.types.ts:70](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L70)

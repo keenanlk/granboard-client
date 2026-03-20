@@ -8,7 +8,7 @@
 
 > **dbAddPlayer**(`name`): `Promise`\<[`PlayerRecord`](../../engine/src/db/db.types.ts/interfaces/PlayerRecord.md)\>
 
-Defined in: [db/db.ts:57](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/db/db.ts#L57)
+Defined in: [db/db.ts:57](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/db/db.ts#L57)
 
 Create a new player record.
 

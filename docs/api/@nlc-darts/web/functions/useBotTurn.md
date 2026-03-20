@@ -8,7 +8,7 @@
 
 > **useBotTurn**(`__namedParameters`): `void`
 
-Defined in: [hooks/useBotTurn.ts:20](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/hooks/useBotTurn.ts#L20)
+Defined in: [hooks/useBotTurn.ts:20](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useBotTurn.ts#L20)
 
 ## Parameters
 

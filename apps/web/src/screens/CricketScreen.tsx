@@ -40,6 +40,9 @@ import { setActiveController } from "../controllers/GameController.ts";
 import { useOnlineRematch } from "../hooks/useOnlineRematch.ts";
 import { OnlineIndicator } from "../components/OnlineIndicator.tsx";
 import { WaitingOverlay } from "../components/WaitingOverlay.tsx";
+import { useWebRTC } from "../hooks/useWebRTC.ts";
+import { CameraBackground } from "../components/CameraBackground.tsx";
+import { CameraPrompt } from "../components/CameraPrompt.tsx";
 
 interface CricketScreenProps {
   options: CricketOptions;
@@ -160,6 +163,8 @@ export function CricketScreen({
   } = useCricketStore();
 
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
+  const [cameraPromptShown, setCameraPromptShown] = useState(!!onlineConfig);
+  const [cameraEnabled, setCameraEnabled] = useState(false);
 
   // Refs for deferred callbacks — populated after hooks that define them
   const dismissOverlaysRef = useRef<(() => void) | undefined>(undefined);
@@ -251,6 +256,13 @@ export function CricketScreen({
       setActiveController(controller);
     }
   }, [room, onlineConfig]);
+
+  const localPlayerIndex = onlineConfig ? (onlineConfig.isHost ? 0 : 1) : 0;
+  const { localStream, remoteStream } = useWebRTC({
+    room,
+    isHost: onlineConfig?.isHost ?? false,
+    enabled: cameraEnabled,
+  });
 
   const bots = useMemo(() => {
     const map = new Map<number, Bot>();
@@ -458,6 +470,15 @@ export function CricketScreen({
       hasWinner={!!winner}
       overlays={
         <>
+          {cameraPromptShown && (
+            <CameraPrompt
+              onAccept={() => {
+                setCameraEnabled(true);
+                setCameraPromptShown(false);
+              }}
+              onSkip={() => setCameraPromptShown(false)}
+            />
+          )}
           {onlineConfig && opponentDisconnected && !winner && (
             <WaitingOverlay message="Opponent disconnected" onCancel={onExit} />
           )}
@@ -522,6 +543,15 @@ export function CricketScreen({
         className="flex-1 flex min-h-0 relative"
         style={{ paddingLeft: "var(--sal)" }}
       >
+        {/* Camera background — scoped to main content area */}
+        {onlineConfig && (localStream || remoteStream) && (
+          <CameraBackground
+            localStream={localStream}
+            remoteStream={remoteStream}
+            currentPlayerIndex={currentPlayerIndex}
+            localPlayerIndex={localPlayerIndex}
+          />
+        )}
         {/* Bot dartboard overlay */}
         {botBoard && (
           <div

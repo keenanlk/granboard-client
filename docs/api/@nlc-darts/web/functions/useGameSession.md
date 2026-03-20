@@ -8,7 +8,7 @@
 
 > **useGameSession**(`__namedParameters`): `object`
 
-Defined in: [hooks/useGameSession.ts:41](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/hooks/useGameSession.ts#L41)
+Defined in: [hooks/useGameSession.ts:41](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useGameSession.ts#L41)
 
 Shared session hook for all game modes.
 Handles: controller lifecycle, per-turn recording, turn delay (remove darts countdown),

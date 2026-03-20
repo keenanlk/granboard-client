@@ -8,7 +8,7 @@
 
 > **emptyMarks**(): `Record`\<[`CricketTarget`](../type-aliases/CricketTarget.md), `number`\>
 
-Defined in: [engine/cricket.types.ts:69](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L69)
+Defined in: [engine/cricket.types.ts:69](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L69)
 
 Creates a fresh marks record with all cricket targets set to zero.
 

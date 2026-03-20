@@ -6,7 +6,7 @@
 
 # Interface: ATWThrownDart
 
-Defined in: [engine/atw.types.ts:25](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L25)
+Defined in: [engine/atw.types.ts:25](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L25)
 
 A single dart thrown during an Around the World game.
 
@@ -16,7 +16,7 @@ A single dart thrown during an Around the World game.
 
 > **advanced**: `number`
 
-Defined in: [engine/atw.types.ts:30](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L30)
+Defined in: [engine/atw.types.ts:30](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L30)
 
 Number of positions advanced (0 if miss)
 
@@ -26,7 +26,7 @@ Number of positions advanced (0 if miss)
 
 > **hit**: `boolean`
 
-Defined in: [engine/atw.types.ts:28](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L28)
+Defined in: [engine/atw.types.ts:28](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L28)
 
 true if the dart hit the current target
 
@@ -36,7 +36,7 @@ true if the dart hit the current target
 
 > **previousTargetIndex**: `number`
 
-Defined in: [engine/atw.types.ts:32](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L32)
+Defined in: [engine/atw.types.ts:32](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L32)
 
 targetIndex before this dart was thrown (for undo)
 
@@ -46,4 +46,4 @@ targetIndex before this dart was thrown (for undo)
 
 > **segment**: [`Segment`](../../../board/Dartboard.ts/interfaces/Segment.md)
 
-Defined in: [engine/atw.types.ts:26](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L26)
+Defined in: [engine/atw.types.ts:26](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L26)

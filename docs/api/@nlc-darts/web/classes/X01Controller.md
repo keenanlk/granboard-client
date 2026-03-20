@@ -6,7 +6,7 @@
 
 # Class: X01Controller
 
-Defined in: [controllers/X01Controller.ts:10](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/X01Controller.ts#L10)
+Defined in: [controllers/X01Controller.ts:10](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/X01Controller.ts#L10)
 
 Controller for X01 (301/501/etc.) game mode.
 
@@ -30,7 +30,7 @@ Controller for X01 (301/501/etc.) game mode.
 
 > **onDartHit**(`segment`): `void`
 
-Defined in: [controllers/X01Controller.ts:11](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/X01Controller.ts#L11)
+Defined in: [controllers/X01Controller.ts:11](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/X01Controller.ts#L11)
 
 Handle a dart landing on a board segment.
 
@@ -54,7 +54,7 @@ Handle a dart landing on a board segment.
 
 > **onNextTurn**(): `void`
 
-Defined in: [controllers/X01Controller.ts:32](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/X01Controller.ts#L32)
+Defined in: [controllers/X01Controller.ts:32](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/X01Controller.ts#L32)
 
 Advance to the next player's turn.
 

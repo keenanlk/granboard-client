@@ -6,7 +6,7 @@
 
 # Interface: GameEngine\<TState, TOptions\>
 
-Defined in: [engine/GameEngine.ts:15](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/GameEngine.ts#L15)
+Defined in: [engine/GameEngine.ts:15](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/GameEngine.ts#L15)
 
 Contract every game engine must implement.
 
@@ -36,7 +36,7 @@ The game-specific options/config shape.
 
 > **addDart**(`state`, `segment`): `Partial`\<`TState`\>
 
-Defined in: [engine/GameEngine.ts:20](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/GameEngine.ts#L20)
+Defined in: [engine/GameEngine.ts:20](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/GameEngine.ts#L20)
 
 Apply a dart throw. Returns only the fields that changed.
 
@@ -60,7 +60,7 @@ Apply a dart throw. Returns only the fields that changed.
 
 > **nextTurn**(`state`): `Partial`\<`TState`\>
 
-Defined in: [engine/GameEngine.ts:26](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/GameEngine.ts#L26)
+Defined in: [engine/GameEngine.ts:26](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/GameEngine.ts#L26)
 
 Commit the current player's turn and advance to the next player. Returns only the fields that changed.
 
@@ -80,7 +80,7 @@ Commit the current player's turn and advance to the next player. Returns only th
 
 > **startGame**(`options`, `playerNames`): `TState`
 
-Defined in: [engine/GameEngine.ts:17](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/GameEngine.ts#L17)
+Defined in: [engine/GameEngine.ts:17](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/GameEngine.ts#L17)
 
 Create fresh initial state for a new game.
 
@@ -104,7 +104,7 @@ Create fresh initial state for a new game.
 
 > **undoLastDart**(`state`): `Partial`\<`TState`\>
 
-Defined in: [engine/GameEngine.ts:23](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/GameEngine.ts#L23)
+Defined in: [engine/GameEngine.ts:23](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/GameEngine.ts#L23)
 
 Reverse the last dart thrown in the current turn. Returns only the fields that changed.
 

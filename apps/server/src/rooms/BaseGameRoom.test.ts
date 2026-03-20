@@ -89,6 +89,8 @@ describe("BaseGameRoom", () => {
       expect(handlers.has("rematch_request")).toBe(true);
       expect(handlers.has("rematch_accept")).toBe(true);
       expect(handlers.has("rematch_decline")).toBe(true);
+      expect(handlers.has("webrtc_signal")).toBe(true);
+      expect(handlers.has("camera_status")).toBe(true);
     });
   });
 
@@ -172,6 +174,40 @@ describe("BaseGameRoom", () => {
       const broadcast = getBroadcast(room);
       const calls = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "rematch_decline");
       expect(calls.length).toBe(1);
+    });
+  });
+
+  describe("WebRTC signaling passthrough", () => {
+    it("broadcasts webrtc_signal to other clients with payload", () => {
+      const room = createRoom();
+      const client = mockClient();
+      (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client);
+
+      const handler = getHandler(room, "webrtc_signal");
+      const payload = { type: "offer", sdp: { type: "offer", sdp: "v=0..." } };
+      handler(client, payload);
+
+      const broadcast = getBroadcast(room);
+      const calls = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "webrtc_signal");
+      expect(calls.length).toBe(1);
+      expect(calls[0][1]).toEqual(payload);
+      expect(calls[0][2]).toEqual({ except: client });
+    });
+
+    it("broadcasts camera_status to other clients with payload", () => {
+      const room = createRoom();
+      const client = mockClient();
+      (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client);
+
+      const handler = getHandler(room, "camera_status");
+      const payload = { enabled: true };
+      handler(client, payload);
+
+      const broadcast = getBroadcast(room);
+      const calls = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "camera_status");
+      expect(calls.length).toBe(1);
+      expect(calls[0][1]).toEqual(payload);
+      expect(calls[0][2]).toEqual({ except: client });
     });
   });
 

@@ -92,7 +92,10 @@ if (adminPassword) {
 const httpServer = createServer(app);
 
 const server = new Server({
-  transport: new WebSocketTransport({ server: httpServer }),
+  transport: new WebSocketTransport({
+    server: httpServer,
+    maxPayload: 1024 * 1024, // 1MB — needed for WebRTC SDP signaling
+  }),
 });
 
 server.define("x01", X01Room);

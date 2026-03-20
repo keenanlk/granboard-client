@@ -6,7 +6,7 @@
 
 # Class: HighScoreController
 
-Defined in: [controllers/HighScoreController.ts:10](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/HighScoreController.ts#L10)
+Defined in: [controllers/HighScoreController.ts:10](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/HighScoreController.ts#L10)
 
 Controller for High Score game mode.
 
@@ -30,7 +30,7 @@ Controller for High Score game mode.
 
 > **onDartHit**(`segment`): `void`
 
-Defined in: [controllers/HighScoreController.ts:11](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/HighScoreController.ts#L11)
+Defined in: [controllers/HighScoreController.ts:11](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/HighScoreController.ts#L11)
 
 Handle a dart landing on a board segment.
 
@@ -54,7 +54,7 @@ Handle a dart landing on a board segment.
 
 > **onNextTurn**(): `void`
 
-Defined in: [controllers/HighScoreController.ts:17](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/HighScoreController.ts#L17)
+Defined in: [controllers/HighScoreController.ts:17](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/HighScoreController.ts#L17)
 
 Advance to the next player's turn.
 

@@ -8,7 +8,7 @@
 
 > **GameEventMap** = `object`
 
-Defined in: [events/GameEvents.ts:4](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/events/GameEvents.ts#L4)
+Defined in: [events/GameEvents.ts:4](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L4)
 
 Map of game event names to their payload types.
 
@@ -18,7 +18,7 @@ Map of game event names to their payload types.
 
 > **bust**: `Record`\<`string`, `never`\>
 
-Defined in: [events/GameEvents.ts:6](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/events/GameEvents.ts#L6)
+Defined in: [events/GameEvents.ts:6](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L6)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [events/GameEvents.ts:6](https://github.com/keenanlk/granboard-clien
 
 > **dart\_hit**: `object`
 
-Defined in: [events/GameEvents.ts:5](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/events/GameEvents.ts#L5)
+Defined in: [events/GameEvents.ts:5](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L5)
 
 #### effectiveMarks?
 
@@ -42,7 +42,7 @@ Defined in: [events/GameEvents.ts:5](https://github.com/keenanlk/granboard-clien
 
 > **game\_start**: `Record`\<`string`, `never`\>
 
-Defined in: [events/GameEvents.ts:11](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/events/GameEvents.ts#L11)
+Defined in: [events/GameEvents.ts:11](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L11)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [events/GameEvents.ts:11](https://github.com/keenanlk/granboard-clie
 
 > **game\_won**: `object`
 
-Defined in: [events/GameEvents.ts:7](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/events/GameEvents.ts#L7)
+Defined in: [events/GameEvents.ts:7](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L7)
 
 #### playerName
 
@@ -62,7 +62,7 @@ Defined in: [events/GameEvents.ts:7](https://github.com/keenanlk/granboard-clien
 
 > **next\_turn**: `Record`\<`string`, `never`\>
 
-Defined in: [events/GameEvents.ts:8](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/events/GameEvents.ts#L8)
+Defined in: [events/GameEvents.ts:8](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L8)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [events/GameEvents.ts:8](https://github.com/keenanlk/granboard-clien
 
 > **open\_numbers**: `object`
 
-Defined in: [events/GameEvents.ts:10](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/events/GameEvents.ts#L10)
+Defined in: [events/GameEvents.ts:10](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L10)
 
 Cricket only: numbers the current player has open (closed by them, not yet by all)
 

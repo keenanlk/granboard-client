@@ -8,7 +8,7 @@
 
 > **coordToSegmentId**(`x`, `y`): [`SegmentID`](../../Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [board/BoardGeometry.ts:75](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/BoardGeometry.ts#L75)
+Defined in: [board/BoardGeometry.ts:75](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/BoardGeometry.ts#L75)
 
 Maps an (x, y) board coordinate (mm, origin at bull center) to the SegmentID it lands on.
 Uses clockwise-from-top angle: θ = atan2(x, y).

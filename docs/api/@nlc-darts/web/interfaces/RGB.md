@@ -6,7 +6,7 @@
 
 # Interface: RGB
 
-Defined in: [board/GranboardLED.ts:18](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/GranboardLED.ts#L18)
+Defined in: [board/GranboardLED.ts:18](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/GranboardLED.ts#L18)
 
 An RGB color value (0-255 per channel).
 
@@ -16,7 +16,7 @@ An RGB color value (0-255 per channel).
 
 > **b**: `number`
 
-Defined in: [board/GranboardLED.ts:21](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/GranboardLED.ts#L21)
+Defined in: [board/GranboardLED.ts:21](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/GranboardLED.ts#L21)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [board/GranboardLED.ts:21](https://github.com/keenanlk/granboard-cli
 
 > **g**: `number`
 
-Defined in: [board/GranboardLED.ts:20](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/GranboardLED.ts#L20)
+Defined in: [board/GranboardLED.ts:20](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/GranboardLED.ts#L20)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [board/GranboardLED.ts:20](https://github.com/keenanlk/granboard-cli
 
 > **r**: `number`
 
-Defined in: [board/GranboardLED.ts:19](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/GranboardLED.ts#L19)
+Defined in: [board/GranboardLED.ts:19](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/GranboardLED.ts#L19)

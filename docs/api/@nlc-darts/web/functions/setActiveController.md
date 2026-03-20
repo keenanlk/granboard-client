@@ -8,7 +8,7 @@
 
 > **setActiveController**(`controller`): `void`
 
-Defined in: [controllers/GameController.ts:14](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/GameController.ts#L14)
+Defined in: [controllers/GameController.ts:14](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/GameController.ts#L14)
 
 Set the controller that receives board input, or `null` to disable input.
 

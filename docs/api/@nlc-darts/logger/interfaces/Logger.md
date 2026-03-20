@@ -6,7 +6,7 @@
 
 # Interface: Logger
 
-Defined in: [types.ts:2](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/logger/src/types.ts#L2)
+Defined in: [types.ts:2](https://github.com/keenanlk/granboard-client/blob/a9919abb2a9ef0da2999dc22dd129a8cba995edd/packages/logger/src/types.ts#L2)
 
 Structured logger interface compatible with pino.
 
@@ -16,7 +16,7 @@ Structured logger interface compatible with pino.
 
 > **child**(`bindings`): `Logger`
 
-Defined in: [types.ts:12](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/logger/src/types.ts#L12)
+Defined in: [types.ts:12](https://github.com/keenanlk/granboard-client/blob/a9919abb2a9ef0da2999dc22dd129a8cba995edd/packages/logger/src/types.ts#L12)
 
 Create a child logger with additional bound context.
 
@@ -36,7 +36,7 @@ Create a child logger with additional bound context.
 
 > **debug**(`obj`, `msg?`): `void`
 
-Defined in: [types.ts:4](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/logger/src/types.ts#L4)
+Defined in: [types.ts:4](https://github.com/keenanlk/granboard-client/blob/a9919abb2a9ef0da2999dc22dd129a8cba995edd/packages/logger/src/types.ts#L4)
 
 Log a message at the debug level.
 
@@ -60,7 +60,7 @@ Log a message at the debug level.
 
 > **error**(`obj`, `msg?`): `void`
 
-Defined in: [types.ts:10](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/logger/src/types.ts#L10)
+Defined in: [types.ts:10](https://github.com/keenanlk/granboard-client/blob/a9919abb2a9ef0da2999dc22dd129a8cba995edd/packages/logger/src/types.ts#L10)
 
 Log a message at the error level.
 
@@ -84,7 +84,7 @@ Log a message at the error level.
 
 > **info**(`obj`, `msg?`): `void`
 
-Defined in: [types.ts:6](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/logger/src/types.ts#L6)
+Defined in: [types.ts:6](https://github.com/keenanlk/granboard-client/blob/a9919abb2a9ef0da2999dc22dd129a8cba995edd/packages/logger/src/types.ts#L6)
 
 Log a message at the info level.
 
@@ -108,7 +108,7 @@ Log a message at the info level.
 
 > **warn**(`obj`, `msg?`): `void`
 
-Defined in: [types.ts:8](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/logger/src/types.ts#L8)
+Defined in: [types.ts:8](https://github.com/keenanlk/granboard-client/blob/a9919abb2a9ef0da2999dc22dd129a8cba995edd/packages/logger/src/types.ts#L8)
 
 Log a message at the warn level.
 

@@ -6,7 +6,7 @@
 
 # Class: ATWController
 
-Defined in: [controllers/ATWController.ts:23](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/ATWController.ts#L23)
+Defined in: [controllers/ATWController.ts:23](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/ATWController.ts#L23)
 
 Controller for Around the World game mode.
 
@@ -30,7 +30,7 @@ Controller for Around the World game mode.
 
 > **onDartHit**(`segment`): `void`
 
-Defined in: [controllers/ATWController.ts:24](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/ATWController.ts#L24)
+Defined in: [controllers/ATWController.ts:24](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/ATWController.ts#L24)
 
 Handle a dart landing on a board segment.
 
@@ -54,7 +54,7 @@ Handle a dart landing on a board segment.
 
 > **onNextTurn**(): `void`
 
-Defined in: [controllers/ATWController.ts:49](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/ATWController.ts#L49)
+Defined in: [controllers/ATWController.ts:49](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/ATWController.ts#L49)
 
 Advance to the next player's turn.
 

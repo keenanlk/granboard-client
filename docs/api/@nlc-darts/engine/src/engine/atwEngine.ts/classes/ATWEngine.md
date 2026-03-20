@@ -6,7 +6,7 @@
 
 # Class: ATWEngine
 
-Defined in: [engine/atwEngine.ts:86](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atwEngine.ts#L86)
+Defined in: [engine/atwEngine.ts:86](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atwEngine.ts#L86)
 
 Game engine for Around the World (ATW) mode implementing the GameEngine interface.
 
@@ -30,7 +30,7 @@ Game engine for Around the World (ATW) mode implementing the GameEngine interfac
 
 > **addDart**(`state`, `segment`): `Partial`\<[`ATWState`](../../atw.types.ts/interfaces/ATWState.md)\>
 
-Defined in: [engine/atwEngine.ts:107](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atwEngine.ts#L107)
+Defined in: [engine/atwEngine.ts:107](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atwEngine.ts#L107)
 
 Apply a dart throw. Returns only the fields that changed.
 
@@ -58,7 +58,7 @@ Apply a dart throw. Returns only the fields that changed.
 
 > **nextTurn**(`state`): `Partial`\<[`ATWState`](../../atw.types.ts/interfaces/ATWState.md)\>
 
-Defined in: [engine/atwEngine.ts:201](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atwEngine.ts#L201)
+Defined in: [engine/atwEngine.ts:201](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atwEngine.ts#L201)
 
 Commit the current player's turn and advance to the next player. Returns only the fields that changed.
 
@@ -82,7 +82,7 @@ Commit the current player's turn and advance to the next player. Returns only th
 
 > **startGame**(`options`, `playerNames`): [`ATWState`](../../atw.types.ts/interfaces/ATWState.md)
 
-Defined in: [engine/atwEngine.ts:87](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atwEngine.ts#L87)
+Defined in: [engine/atwEngine.ts:87](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atwEngine.ts#L87)
 
 Create fresh initial state for a new game.
 
@@ -110,7 +110,7 @@ Create fresh initial state for a new game.
 
 > **undoLastDart**(`state`): `Partial`\<[`ATWState`](../../atw.types.ts/interfaces/ATWState.md)\>
 
-Defined in: [engine/atwEngine.ts:162](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atwEngine.ts#L162)
+Defined in: [engine/atwEngine.ts:162](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atwEngine.ts#L162)
 
 Reverse the last dart thrown in the current turn. Returns only the fields that changed.
 

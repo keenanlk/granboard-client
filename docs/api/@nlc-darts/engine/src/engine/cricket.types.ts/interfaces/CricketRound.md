@@ -6,7 +6,7 @@
 
 # Interface: CricketRound
 
-Defined in: [engine/cricket.types.ts:38](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L38)
+Defined in: [engine/cricket.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L38)
 
 Summary of a completed Cricket round for one player.
 
@@ -16,7 +16,7 @@ Summary of a completed Cricket round for one player.
 
 > **darts**: `object`[]
 
-Defined in: [engine/cricket.types.ts:41](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L41)
+Defined in: [engine/cricket.types.ts:41](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L41)
 
 #### shortName
 
@@ -32,7 +32,7 @@ Defined in: [engine/cricket.types.ts:41](https://github.com/keenanlk/granboard-c
 
 > **marksEarned**: `number`
 
-Defined in: [engine/cricket.types.ts:40](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L40)
+Defined in: [engine/cricket.types.ts:40](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L40)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [engine/cricket.types.ts:40](https://github.com/keenanlk/granboard-c
 
 > **score**: `number`
 
-Defined in: [engine/cricket.types.ts:39](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L39)
+Defined in: [engine/cricket.types.ts:39](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L39)

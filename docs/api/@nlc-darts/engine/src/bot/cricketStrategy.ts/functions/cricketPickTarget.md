@@ -8,7 +8,7 @@
 
 > **cricketPickTarget**(`myMarks`, `allPlayers`, `myIndex`, `cutThroat?`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/cricketStrategy.ts:120](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/cricketStrategy.ts#L120)
+Defined in: [bot/cricketStrategy.ts:120](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/cricketStrategy.ts#L120)
 
 Cricket targeting strategy with three game-state modes.
 

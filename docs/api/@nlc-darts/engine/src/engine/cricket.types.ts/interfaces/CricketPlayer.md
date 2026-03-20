@@ -6,7 +6,7 @@
 
 # Interface: CricketPlayer
 
-Defined in: [engine/cricket.types.ts:45](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L45)
+Defined in: [engine/cricket.types.ts:45](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L45)
 
 A player's state in a Cricket game.
 
@@ -16,7 +16,7 @@ A player's state in a Cricket game.
 
 > **marks**: `Record`\<[`CricketTarget`](../type-aliases/CricketTarget.md), `number`\>
 
-Defined in: [engine/cricket.types.ts:47](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L47)
+Defined in: [engine/cricket.types.ts:47](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L47)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [engine/cricket.types.ts:47](https://github.com/keenanlk/granboard-c
 
 > **name**: `string`
 
-Defined in: [engine/cricket.types.ts:46](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L46)
+Defined in: [engine/cricket.types.ts:46](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L46)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [engine/cricket.types.ts:46](https://github.com/keenanlk/granboard-c
 
 > **rounds**: [`CricketRound`](CricketRound.md)[]
 
-Defined in: [engine/cricket.types.ts:51](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L51)
+Defined in: [engine/cricket.types.ts:51](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L51)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [engine/cricket.types.ts:51](https://github.com/keenanlk/granboard-c
 
 > **score**: `number`
 
-Defined in: [engine/cricket.types.ts:48](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L48)
+Defined in: [engine/cricket.types.ts:48](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L48)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [engine/cricket.types.ts:48](https://github.com/keenanlk/granboard-c
 
 > **totalDartsThrown**: `number`
 
-Defined in: [engine/cricket.types.ts:49](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L49)
+Defined in: [engine/cricket.types.ts:49](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L49)
 
 ***
 
@@ -56,4 +56,4 @@ Defined in: [engine/cricket.types.ts:49](https://github.com/keenanlk/granboard-c
 
 > **totalMarksEarned**: `number`
 
-Defined in: [engine/cricket.types.ts:50](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/cricket.types.ts#L50)
+Defined in: [engine/cricket.types.ts:50](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L50)

@@ -8,7 +8,7 @@
 
 > **highScorePickTarget**(`splitBull`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/highScoreStrategy.ts:11](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/highScoreStrategy.ts#L11)
+Defined in: [bot/highScoreStrategy.ts:11](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/highScoreStrategy.ts#L11)
 
 High Score targeting strategy: aim for the highest expected-value segment.
 

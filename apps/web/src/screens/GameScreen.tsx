@@ -36,6 +36,9 @@ import { useColyseusSync } from "../hooks/useColyseusSync.ts";
 import { ColyseusRemoteController } from "../controllers/ColyseusRemoteController.ts";
 import { OnlineIndicator } from "../components/OnlineIndicator.tsx";
 import { WaitingOverlay } from "../components/WaitingOverlay.tsx";
+import { useWebRTC } from "../hooks/useWebRTC.ts";
+import { CameraBackground } from "../components/CameraBackground.tsx";
+import { CameraPrompt } from "../components/CameraPrompt.tsx";
 
 interface GameScreenProps {
   x01Options: X01Options;
@@ -80,6 +83,8 @@ export function GameScreen({
   } = useGameStore();
 
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
+  const [cameraPromptShown, setCameraPromptShown] = useState(!!onlineConfig);
+  const [cameraEnabled, setCameraEnabled] = useState(false);
   const [botBoard, setBotBoard] = useState<{
     segment: SegmentID;
     mode: "outline" | "fill";
@@ -173,6 +178,13 @@ export function GameScreen({
       setActiveController(controller);
     }
   }, [room, onlineConfig]);
+
+  const localPlayerIndex = onlineConfig ? (onlineConfig.isHost ? 0 : 1) : 0;
+  const { localStream, remoteStream } = useWebRTC({
+    room,
+    isHost: onlineConfig?.isHost ?? false,
+    enabled: cameraEnabled,
+  });
 
   // Build bot map once per game session — indices match the player array.
   const bots = useMemo(() => {
@@ -345,6 +357,15 @@ export function GameScreen({
       hasWinner={!!winner}
       overlays={
         <>
+          {cameraPromptShown && (
+            <CameraPrompt
+              onAccept={() => {
+                setCameraEnabled(true);
+                setCameraPromptShown(false);
+              }}
+              onSkip={() => setCameraPromptShown(false)}
+            />
+          )}
           {onlineConfig && opponentDisconnected && !winner && (
             <WaitingOverlay message="Opponent disconnected" onCancel={onExit} />
           )}
@@ -423,8 +444,17 @@ export function GameScreen({
           </div>
         )}
         {/* Left: active player score */}
-        <div className="flex-1 flex flex-col min-w-0 min-h-0 px-4 py-2">
-          <div className="flex items-center gap-2 shrink-0">
+        <div className="flex-1 flex flex-col min-w-0 min-h-0 px-4 py-2 relative overflow-hidden">
+          {/* Camera background — scoped to score area only */}
+          {onlineConfig && (localStream || remoteStream) && (
+            <CameraBackground
+              localStream={localStream}
+              remoteStream={remoteStream}
+              currentPlayerIndex={currentPlayerIndex}
+              localPlayerIndex={localPlayerIndex}
+            />
+          )}
+          <div className="flex items-center gap-2 shrink-0 relative z-10">
             <span className="glow-dot" />
             <span
               className={`font-black uppercase tracking-widest text-[clamp(1rem,2vw,2.5rem)] ${isCurrentBot ? getBotCharacter(botSkills[currentPlayerIndex]!).animationClass : ""}`}
@@ -451,7 +481,7 @@ export function GameScreen({
           </div>
 
           {/* Big score */}
-          <div className="flex-1 flex flex-col items-center justify-center min-h-0">
+          <div className="flex-1 flex flex-col items-center justify-center min-h-0 relative z-10">
             {(isBust || (roundTotal > 0 && !isBust)) && (
               <span
                 className={`font-black leading-none mb-2 text-[clamp(1.25rem,2.5vw,3rem)] ${isBust ? "text-state-bust uppercase tracking-widest" : "text-[var(--color-game-accent)]"}`}

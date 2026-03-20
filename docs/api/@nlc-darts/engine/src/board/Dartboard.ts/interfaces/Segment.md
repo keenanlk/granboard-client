@@ -6,7 +6,7 @@
 
 # Interface: Segment
 
-Defined in: [board/Dartboard.ts:132](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L132)
+Defined in: [board/Dartboard.ts:132](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L132)
 
 A single dartboard segment with its identity, type, section, point value, and display names.
 
@@ -16,7 +16,7 @@ A single dartboard segment with its identity, type, section, point value, and di
 
 > **ID**: [`SegmentID`](../type-aliases/SegmentID.md)
 
-Defined in: [board/Dartboard.ts:133](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L133)
+Defined in: [board/Dartboard.ts:133](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L133)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [board/Dartboard.ts:133](https://github.com/keenanlk/granboard-clien
 
 > **LongName**: `string`
 
-Defined in: [board/Dartboard.ts:137](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L137)
+Defined in: [board/Dartboard.ts:137](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L137)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [board/Dartboard.ts:137](https://github.com/keenanlk/granboard-clien
 
 > **Section**: [`SegmentSection`](../type-aliases/SegmentSection.md)
 
-Defined in: [board/Dartboard.ts:135](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L135)
+Defined in: [board/Dartboard.ts:135](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L135)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [board/Dartboard.ts:135](https://github.com/keenanlk/granboard-clien
 
 > **ShortName**: `string`
 
-Defined in: [board/Dartboard.ts:138](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L138)
+Defined in: [board/Dartboard.ts:138](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L138)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [board/Dartboard.ts:138](https://github.com/keenanlk/granboard-clien
 
 > **Type**: [`SegmentType`](../type-aliases/SegmentType.md)
 
-Defined in: [board/Dartboard.ts:134](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L134)
+Defined in: [board/Dartboard.ts:134](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L134)
 
 ***
 
@@ -56,4 +56,4 @@ Defined in: [board/Dartboard.ts:134](https://github.com/keenanlk/granboard-clien
 
 > **Value**: `number`
 
-Defined in: [board/Dartboard.ts:136](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L136)
+Defined in: [board/Dartboard.ts:136](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L136)

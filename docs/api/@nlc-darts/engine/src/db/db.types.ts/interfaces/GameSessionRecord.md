@@ -6,7 +6,7 @@
 
 # Interface: GameSessionRecord
 
-Defined in: [db/db.types.ts:27](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L27)
+Defined in: [db/db.types.ts:27](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L27)
 
 A complete persisted game session with participants and round history.
 
@@ -16,7 +16,7 @@ A complete persisted game session with participants and round history.
 
 > **gameType**: `"x01"` \| `"cricket"` \| `"highscore"` \| `"atw"` \| `"tictactoe"`
 
-Defined in: [db/db.types.ts:29](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L29)
+Defined in: [db/db.types.ts:29](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L29)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [db/db.types.ts:29](https://github.com/keenanlk/granboard-client/blo
 
 > **id**: `string`
 
-Defined in: [db/db.types.ts:28](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L28)
+Defined in: [db/db.types.ts:28](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L28)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [db/db.types.ts:28](https://github.com/keenanlk/granboard-client/blo
 
 > **options**: `unknown`
 
-Defined in: [db/db.types.ts:31](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L31)
+Defined in: [db/db.types.ts:31](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L31)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [db/db.types.ts:31](https://github.com/keenanlk/granboard-client/blo
 
 > **participants**: `object`[]
 
-Defined in: [db/db.types.ts:32](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L32)
+Defined in: [db/db.types.ts:32](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L32)
 
 #### finalScore
 
@@ -64,7 +64,7 @@ Defined in: [db/db.types.ts:32](https://github.com/keenanlk/granboard-client/blo
 
 > **playedAt**: `number`
 
-Defined in: [db/db.types.ts:30](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L30)
+Defined in: [db/db.types.ts:30](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L30)
 
 ***
 
@@ -72,4 +72,4 @@ Defined in: [db/db.types.ts:30](https://github.com/keenanlk/granboard-client/blo
 
 > **rounds**: [`RoundRecord`](RoundRecord.md)[]
 
-Defined in: [db/db.types.ts:38](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L38)
+Defined in: [db/db.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L38)

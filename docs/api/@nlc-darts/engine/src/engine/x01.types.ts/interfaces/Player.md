@@ -6,7 +6,7 @@
 
 # Interface: Player
 
-Defined in: [engine/x01.types.ts:33](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01.types.ts#L33)
+Defined in: [engine/x01.types.ts:33](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L33)
 
 A player's state in an X01 game.
 
@@ -16,7 +16,7 @@ A player's state in an X01 game.
 
 > **name**: `string`
 
-Defined in: [engine/x01.types.ts:34](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01.types.ts#L34)
+Defined in: [engine/x01.types.ts:34](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L34)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [engine/x01.types.ts:34](https://github.com/keenanlk/granboard-clien
 
 > **opened**: `boolean`
 
-Defined in: [engine/x01.types.ts:37](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01.types.ts#L37)
+Defined in: [engine/x01.types.ts:37](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L37)
 
 For double-in: whether the player has opened by hitting a double. Always true if doubleIn=false.
 
@@ -34,7 +34,7 @@ For double-in: whether the player has opened by hitting a double. Always true if
 
 > **rounds**: `object`[]
 
-Defined in: [engine/x01.types.ts:38](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01.types.ts#L38)
+Defined in: [engine/x01.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L38)
 
 #### darts
 
@@ -56,7 +56,7 @@ Player's opened state at the START of this round — used to restore on cross-tu
 
 > **score**: `number`
 
-Defined in: [engine/x01.types.ts:35](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01.types.ts#L35)
+Defined in: [engine/x01.types.ts:35](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L35)
 
 ***
 
@@ -64,6 +64,6 @@ Defined in: [engine/x01.types.ts:35](https://github.com/keenanlk/granboard-clien
 
 > **totalDartsThrown**: `number`
 
-Defined in: [engine/x01.types.ts:45](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/x01.types.ts#L45)
+Defined in: [engine/x01.types.ts:45](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L45)
 
 Total darts thrown this game (all darts, including busts and double-in misses).

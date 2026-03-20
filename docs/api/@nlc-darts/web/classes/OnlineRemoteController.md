@@ -6,7 +6,7 @@
 
 # Class: OnlineRemoteController
 
-Defined in: [controllers/OnlineRemoteController.ts:11](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/OnlineRemoteController.ts#L11)
+Defined in: [controllers/OnlineRemoteController.ts:11](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/OnlineRemoteController.ts#L11)
 
 Controller used by the remote (non-host) player in online mode.
 Instead of mutating local game state, it sends messages to the host
@@ -23,7 +23,7 @@ broadcasts state updates back.
 
 > **new OnlineRemoteController**(`channel`): `OnlineRemoteController`
 
-Defined in: [controllers/OnlineRemoteController.ts:14](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/OnlineRemoteController.ts#L14)
+Defined in: [controllers/OnlineRemoteController.ts:14](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/OnlineRemoteController.ts#L14)
 
 #### Parameters
 
@@ -41,7 +41,7 @@ Defined in: [controllers/OnlineRemoteController.ts:14](https://github.com/keenan
 
 > **channel**: `RealtimeChannel`
 
-Defined in: [controllers/OnlineRemoteController.ts:12](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/OnlineRemoteController.ts#L12)
+Defined in: [controllers/OnlineRemoteController.ts:12](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/OnlineRemoteController.ts#L12)
 
 ## Methods
 
@@ -49,7 +49,7 @@ Defined in: [controllers/OnlineRemoteController.ts:12](https://github.com/keenan
 
 > **onDartHit**(`segment`): `void`
 
-Defined in: [controllers/OnlineRemoteController.ts:18](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/OnlineRemoteController.ts#L18)
+Defined in: [controllers/OnlineRemoteController.ts:18](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/OnlineRemoteController.ts#L18)
 
 Handle a dart landing on a board segment.
 
@@ -73,7 +73,7 @@ Handle a dart landing on a board segment.
 
 > **onNextTurn**(): `void`
 
-Defined in: [controllers/OnlineRemoteController.ts:35](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/OnlineRemoteController.ts#L35)
+Defined in: [controllers/OnlineRemoteController.ts:35](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/OnlineRemoteController.ts#L35)
 
 Advance to the next player's turn.
 
@@ -91,7 +91,7 @@ Advance to the next player's turn.
 
 > **sendUndo**(): `void`
 
-Defined in: [controllers/OnlineRemoteController.ts:43](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/OnlineRemoteController.ts#L43)
+Defined in: [controllers/OnlineRemoteController.ts:43](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/OnlineRemoteController.ts#L43)
 
 #### Returns
 

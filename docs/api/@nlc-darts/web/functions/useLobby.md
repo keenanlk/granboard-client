@@ -8,7 +8,7 @@
 
 > **useLobby**(): `object`
 
-Defined in: [hooks/useLobby.ts:8](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/hooks/useLobby.ts#L8)
+Defined in: [hooks/useLobby.ts:8](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useLobby.ts#L8)
 
 Manages lobby lifecycle: auto-expire invites, countdown timers.
 

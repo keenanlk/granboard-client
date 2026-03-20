@@ -8,7 +8,7 @@
 
 > **guardForOnlineTurn**(`inner`, `localIndex`, `getCurrent`): [`GameController`](../interfaces/GameController.md)
 
-Defined in: [controllers/OnlineTurnGuard.ts:18](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/OnlineTurnGuard.ts#L18)
+Defined in: [controllers/OnlineTurnGuard.ts:18](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/OnlineTurnGuard.ts#L18)
 
 Wraps a GameController so that onDartHit is only forwarded when it's
 the local player's turn. In online mode each player has their own

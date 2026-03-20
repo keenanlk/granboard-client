@@ -8,6 +8,6 @@
 
 > `const` **noopLogger**: [`Logger`](../interfaces/Logger.md)
 
-Defined in: [types.ts:16](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/logger/src/types.ts#L16)
+Defined in: [types.ts:16](https://github.com/keenanlk/granboard-client/blob/a9919abb2a9ef0da2999dc22dd129a8cba995edd/packages/logger/src/types.ts#L16)
 
 A no-op [Logger](../interfaces/Logger.md) implementation that silently discards all output.

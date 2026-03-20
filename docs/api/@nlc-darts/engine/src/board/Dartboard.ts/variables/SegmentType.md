@@ -8,7 +8,7 @@
 
 > `const` **SegmentType**: `object`
 
-Defined in: [board/Dartboard.ts:122](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L122)
+Defined in: [board/Dartboard.ts:122](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L122)
 
 Multiplier ring type of a dartboard segment.
 

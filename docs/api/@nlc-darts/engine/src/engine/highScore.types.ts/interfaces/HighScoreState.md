@@ -6,7 +6,7 @@
 
 # Interface: HighScoreState
 
-Defined in: [engine/highScore.types.ts:33](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L33)
+Defined in: [engine/highScore.types.ts:33](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L33)
 
 Complete mutable state for a High Score game in progress.
 
@@ -16,7 +16,7 @@ Complete mutable state for a High Score game in progress.
 
 > **currentPlayerIndex**: `number`
 
-Defined in: [engine/highScore.types.ts:36](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L36)
+Defined in: [engine/highScore.types.ts:36](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L36)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [engine/highScore.types.ts:36](https://github.com/keenanlk/granboard
 
 > **currentRound**: `number`
 
-Defined in: [engine/highScore.types.ts:37](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L37)
+Defined in: [engine/highScore.types.ts:37](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L37)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [engine/highScore.types.ts:37](https://github.com/keenanlk/granboard
 
 > **currentRoundDarts**: [`HighScoreThrownDart`](HighScoreThrownDart.md)[]
 
-Defined in: [engine/highScore.types.ts:38](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L38)
+Defined in: [engine/highScore.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L38)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [engine/highScore.types.ts:38](https://github.com/keenanlk/granboard
 
 > **inPlayoff**: `boolean`
 
-Defined in: [engine/highScore.types.ts:42](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L42)
+Defined in: [engine/highScore.types.ts:42](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L42)
 
 true when tied players are throwing 1-dart playoff
 
@@ -50,7 +50,7 @@ true when tied players are throwing 1-dart playoff
 
 > **options**: [`HighScoreOptions`](HighScoreOptions.md)
 
-Defined in: [engine/highScore.types.ts:34](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L34)
+Defined in: [engine/highScore.types.ts:34](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L34)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [engine/highScore.types.ts:34](https://github.com/keenanlk/granboard
 
 > **players**: [`HighScorePlayer`](HighScorePlayer.md)[]
 
-Defined in: [engine/highScore.types.ts:35](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L35)
+Defined in: [engine/highScore.types.ts:35](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L35)
 
 ***
 
@@ -66,7 +66,7 @@ Defined in: [engine/highScore.types.ts:35](https://github.com/keenanlk/granboard
 
 > **playoffDarts**: `object`[]
 
-Defined in: [engine/highScore.types.ts:43](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L43)
+Defined in: [engine/highScore.types.ts:43](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L43)
 
 #### playerIndex
 
@@ -82,6 +82,6 @@ Defined in: [engine/highScore.types.ts:43](https://github.com/keenanlk/granboard
 
 > **winners**: `string`[] \| `null`
 
-Defined in: [engine/highScore.types.ts:40](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L40)
+Defined in: [engine/highScore.types.ts:40](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L40)
 
 null = game ongoing, string[] = winner name(s)

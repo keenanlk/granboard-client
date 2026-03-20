@@ -6,6 +6,10 @@ export const ClientMessage = {
   REMATCH_REQUEST: "rematch_request",
   REMATCH_ACCEPT: "rematch_accept",
   REMATCH_DECLINE: "rematch_decline",
+  /** WebRTC SDP offer/answer relayed between peers for camera streaming. */
+  WEBRTC_SIGNAL: "webrtc_signal",
+  /** Notifies opponent whether this player's camera is active. */
+  CAMERA_STATUS: "camera_status",
 } as const;
 
 /** Server → Client broadcast types */

@@ -8,7 +8,7 @@
 
 > `const` **SegmentID**: `object`
 
-Defined in: [board/Dartboard.ts:2](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/board/Dartboard.ts#L2)
+Defined in: [board/Dartboard.ts:2](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L2)
 
 Numeric identifiers for every dartboard segment (inner, outer, triple, double for 1–20, plus bull, miss, bust, reset).
 

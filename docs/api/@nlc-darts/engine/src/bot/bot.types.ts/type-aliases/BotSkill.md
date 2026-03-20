@@ -8,7 +8,7 @@
 
 > **BotSkill** = *typeof* [`BotSkill`](../variables/BotSkill.md)\[keyof *typeof* [`BotSkill`](../variables/BotSkill.md)\]
 
-Defined in: [bot/bot.types.ts:15](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/bot.types.ts#L15)
+Defined in: [bot/bot.types.ts:15](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/bot.types.ts#L15)
 
 Bot skill levels expressed as throw standard deviation (σ) in mm.
 Lower σ = tighter grouping = more accurate.

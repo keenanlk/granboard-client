@@ -6,7 +6,7 @@
 
 # Interface: GameController
 
-Defined in: [controllers/GameController.ts:4](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/GameController.ts#L4)
+Defined in: [controllers/GameController.ts:4](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/GameController.ts#L4)
 
 Common interface implemented by all game-mode controllers.
 
@@ -16,7 +16,7 @@ Common interface implemented by all game-mode controllers.
 
 > **onDartHit**(`segment`): `void`
 
-Defined in: [controllers/GameController.ts:6](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/GameController.ts#L6)
+Defined in: [controllers/GameController.ts:6](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/GameController.ts#L6)
 
 Handle a dart landing on a board segment.
 
@@ -36,7 +36,7 @@ Handle a dart landing on a board segment.
 
 > **onNextTurn**(): `void`
 
-Defined in: [controllers/GameController.ts:8](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/controllers/GameController.ts#L8)
+Defined in: [controllers/GameController.ts:8](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/controllers/GameController.ts#L8)
 
 Advance to the next player's turn.
 

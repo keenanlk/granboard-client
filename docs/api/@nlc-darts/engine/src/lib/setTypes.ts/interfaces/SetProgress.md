@@ -6,7 +6,7 @@
 
 # Interface: SetProgress
 
-Defined in: [lib/setTypes.ts:42](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/lib/setTypes.ts#L42)
+Defined in: [lib/setTypes.ts:42](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L42)
 
 Read-only snapshot of set progress for UI display.
 
@@ -16,7 +16,7 @@ Read-only snapshot of set progress for UI display.
 
 > **currentLeg**: `number`
 
-Defined in: [lib/setTypes.ts:45](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/lib/setTypes.ts#L45)
+Defined in: [lib/setTypes.ts:45](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L45)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/setTypes.ts:45](https://github.com/keenanlk/granboard-client/bl
 
 > **legResults**: [`LegResult`](LegResult.md)[]
 
-Defined in: [lib/setTypes.ts:43](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/lib/setTypes.ts#L43)
+Defined in: [lib/setTypes.ts:43](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L43)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/setTypes.ts:43](https://github.com/keenanlk/granboard-client/bl
 
 > **playerNames**: `string`[]
 
-Defined in: [lib/setTypes.ts:46](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/lib/setTypes.ts#L46)
+Defined in: [lib/setTypes.ts:46](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L46)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [lib/setTypes.ts:46](https://github.com/keenanlk/granboard-client/bl
 
 > **totalLegs**: `number`
 
-Defined in: [lib/setTypes.ts:44](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/lib/setTypes.ts#L44)
+Defined in: [lib/setTypes.ts:44](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L44)

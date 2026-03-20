@@ -8,11 +8,17 @@
 
 > `const` **ClientMessage**: `object`
 
-Defined in: [apps/server/src/messages.ts:2](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/messages.ts#L2)
+Defined in: [apps/server/src/messages.ts:2](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/messages.ts#L2)
 
 Client → Server action types
 
 ## Type Declaration
+
+### CAMERA\_STATUS
+
+> `readonly` **CAMERA\_STATUS**: `"camera_status"` = `"camera_status"`
+
+Notifies opponent whether this player's camera is active.
 
 ### DART\_HIT
 
@@ -37,3 +43,9 @@ Client → Server action types
 ### UNDO
 
 > `readonly` **UNDO**: `"undo"` = `"undo"`
+
+### WEBRTC\_SIGNAL
+
+> `readonly` **WEBRTC\_SIGNAL**: `"webrtc_signal"` = `"webrtc_signal"`
+
+WebRTC SDP offer/answer relayed between peers for camera streaming.

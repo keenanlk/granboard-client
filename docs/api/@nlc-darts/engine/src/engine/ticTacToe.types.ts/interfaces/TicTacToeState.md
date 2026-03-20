@@ -6,7 +6,7 @@
 
 # Interface: TicTacToeState
 
-Defined in: [engine/ticTacToe.types.ts:34](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L34)
+Defined in: [engine/ticTacToe.types.ts:34](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L34)
 
 Complete mutable state for a Tic-Tac-Toe game in progress.
 
@@ -16,7 +16,7 @@ Complete mutable state for a Tic-Tac-Toe game in progress.
 
 > **currentPlayerIndex**: `number`
 
-Defined in: [engine/ticTacToe.types.ts:39](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L39)
+Defined in: [engine/ticTacToe.types.ts:39](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L39)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [engine/ticTacToe.types.ts:39](https://github.com/keenanlk/granboard
 
 > **currentRound**: `number`
 
-Defined in: [engine/ticTacToe.types.ts:40](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L40)
+Defined in: [engine/ticTacToe.types.ts:40](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L40)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [engine/ticTacToe.types.ts:40](https://github.com/keenanlk/granboard
 
 > **currentRoundDarts**: [`TicTacToeThrownDart`](TicTacToeThrownDart.md)[]
 
-Defined in: [engine/ticTacToe.types.ts:41](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L41)
+Defined in: [engine/ticTacToe.types.ts:41](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L41)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [engine/ticTacToe.types.ts:41](https://github.com/keenanlk/granboard
 
 > **grid**: `number`[]
 
-Defined in: [engine/ticTacToe.types.ts:37](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L37)
+Defined in: [engine/ticTacToe.types.ts:37](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L37)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [engine/ticTacToe.types.ts:37](https://github.com/keenanlk/granboard
 
 > **isCatsGame**: `boolean`
 
-Defined in: [engine/ticTacToe.types.ts:43](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L43)
+Defined in: [engine/ticTacToe.types.ts:43](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L43)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [engine/ticTacToe.types.ts:43](https://github.com/keenanlk/granboard
 
 > **options**: [`TicTacToeOptions`](TicTacToeOptions.md)
 
-Defined in: [engine/ticTacToe.types.ts:35](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L35)
+Defined in: [engine/ticTacToe.types.ts:35](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L35)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [engine/ticTacToe.types.ts:35](https://github.com/keenanlk/granboard
 
 > **owner**: (`0` \| `1` \| `null`)[]
 
-Defined in: [engine/ticTacToe.types.ts:38](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L38)
+Defined in: [engine/ticTacToe.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L38)
 
 ***
 
@@ -72,7 +72,7 @@ Defined in: [engine/ticTacToe.types.ts:38](https://github.com/keenanlk/granboard
 
 > **players**: [`TicTacToePlayer`](TicTacToePlayer.md)[]
 
-Defined in: [engine/ticTacToe.types.ts:36](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L36)
+Defined in: [engine/ticTacToe.types.ts:36](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L36)
 
 ***
 
@@ -80,4 +80,4 @@ Defined in: [engine/ticTacToe.types.ts:36](https://github.com/keenanlk/granboard
 
 > **winner**: `string` \| `null`
 
-Defined in: [engine/ticTacToe.types.ts:42](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L42)
+Defined in: [engine/ticTacToe.types.ts:42](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L42)

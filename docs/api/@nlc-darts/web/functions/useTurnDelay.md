@@ -8,7 +8,7 @@
 
 > **useTurnDelay**(`online?`): `object`
 
-Defined in: [hooks/useTurnDelay.ts:16](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/hooks/useTurnDelay.ts#L16)
+Defined in: [hooks/useTurnDelay.ts:16](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useTurnDelay.ts#L16)
 
 Manages the between-turn delay (remove darts countdown).
 Call triggerDelay(afterDelay) to start the overlay + LED countdown.

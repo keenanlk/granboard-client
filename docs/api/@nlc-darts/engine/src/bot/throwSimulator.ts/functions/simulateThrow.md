@@ -8,7 +8,7 @@
 
 > **simulateThrow**(`targetId`, `sigma`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/throwSimulator.ts:25](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/throwSimulator.ts#L25)
+Defined in: [bot/throwSimulator.ts:25](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/throwSimulator.ts#L25)
 
 Simulates a single dart throw aimed at `targetId` with `sigma` mm standard deviation.
 

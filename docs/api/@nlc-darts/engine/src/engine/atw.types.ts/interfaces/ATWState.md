@@ -6,7 +6,7 @@
 
 # Interface: ATWState
 
-Defined in: [engine/atw.types.ts:57](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L57)
+Defined in: [engine/atw.types.ts:57](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L57)
 
 Complete mutable state for an Around the World game in progress.
 
@@ -16,7 +16,7 @@ Complete mutable state for an Around the World game in progress.
 
 > **currentPlayerIndex**: `number`
 
-Defined in: [engine/atw.types.ts:60](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L60)
+Defined in: [engine/atw.types.ts:60](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L60)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [engine/atw.types.ts:60](https://github.com/keenanlk/granboard-clien
 
 > **currentRound**: `number`
 
-Defined in: [engine/atw.types.ts:61](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L61)
+Defined in: [engine/atw.types.ts:61](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L61)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [engine/atw.types.ts:61](https://github.com/keenanlk/granboard-clien
 
 > **currentRoundDarts**: [`ATWThrownDart`](ATWThrownDart.md)[]
 
-Defined in: [engine/atw.types.ts:62](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L62)
+Defined in: [engine/atw.types.ts:62](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L62)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [engine/atw.types.ts:62](https://github.com/keenanlk/granboard-clien
 
 > **firstFinishRound**: `number` \| `null`
 
-Defined in: [engine/atw.types.ts:66](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L66)
+Defined in: [engine/atw.types.ts:66](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L66)
 
 The round in which the first player finished
 
@@ -50,7 +50,7 @@ The round in which the first player finished
 
 > **options**: [`ATWOptions`](ATWOptions.md)
 
-Defined in: [engine/atw.types.ts:58](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L58)
+Defined in: [engine/atw.types.ts:58](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L58)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [engine/atw.types.ts:58](https://github.com/keenanlk/granboard-clien
 
 > **players**: [`ATWPlayer`](ATWPlayer.md)[]
 
-Defined in: [engine/atw.types.ts:59](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L59)
+Defined in: [engine/atw.types.ts:59](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L59)
 
 ***
 
@@ -66,6 +66,6 @@ Defined in: [engine/atw.types.ts:59](https://github.com/keenanlk/granboard-clien
 
 > **winners**: `string`[] \| `null`
 
-Defined in: [engine/atw.types.ts:64](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L64)
+Defined in: [engine/atw.types.ts:64](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L64)
 
 null = game ongoing, string[] = winner name(s)

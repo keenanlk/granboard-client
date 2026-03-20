@@ -6,7 +6,7 @@
 
 # Interface: PlayerRecord
 
-Defined in: [db/db.types.ts:2](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L2)
+Defined in: [db/db.types.ts:2](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L2)
 
 A stored player profile.
 
@@ -16,7 +16,7 @@ A stored player profile.
 
 > **createdAt**: `number`
 
-Defined in: [db/db.types.ts:5](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L5)
+Defined in: [db/db.types.ts:5](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L5)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [db/db.types.ts:5](https://github.com/keenanlk/granboard-client/blob
 
 > **id**: `string`
 
-Defined in: [db/db.types.ts:3](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L3)
+Defined in: [db/db.types.ts:3](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L3)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [db/db.types.ts:3](https://github.com/keenanlk/granboard-client/blob
 
 > **name**: `string`
 
-Defined in: [db/db.types.ts:4](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L4)
+Defined in: [db/db.types.ts:4](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L4)

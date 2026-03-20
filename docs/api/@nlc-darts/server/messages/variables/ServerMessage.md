@@ -8,7 +8,7 @@
 
 > `const` **ServerMessage**: `object`
 
-Defined in: [apps/server/src/messages.ts:12](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/server/src/messages.ts#L12)
+Defined in: [apps/server/src/messages.ts:16](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/messages.ts#L16)
 
 Server → Client broadcast types
 

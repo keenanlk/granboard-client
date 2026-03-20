@@ -8,7 +8,7 @@
 
 > **atwPickTarget**(`currentTarget`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/atwStrategy.ts:9](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/atwStrategy.ts#L9)
+Defined in: [bot/atwStrategy.ts:9](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/atwStrategy.ts#L9)
 
 ATW targeting strategy: aim at the current target number.
 

@@ -6,7 +6,7 @@
 
 # Class: Bot
 
-Defined in: [bot/Bot.ts:29](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/Bot.ts#L29)
+Defined in: [bot/Bot.ts:29](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/Bot.ts#L29)
 
 A Bot player that uses a statistical Gaussian throw model to simulate realistic darts.
 
@@ -27,7 +27,7 @@ Usage:
 
 > **new Bot**(`name`, `skill`): `Bot`
 
-Defined in: [bot/Bot.ts:33](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/Bot.ts#L33)
+Defined in: [bot/Bot.ts:33](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/Bot.ts#L33)
 
 #### Parameters
 
@@ -49,7 +49,7 @@ Defined in: [bot/Bot.ts:33](https://github.com/keenanlk/granboard-client/blob/f6
 
 > `readonly` **name**: `string`
 
-Defined in: [bot/Bot.ts:30](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/Bot.ts#L30)
+Defined in: [bot/Bot.ts:30](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/Bot.ts#L30)
 
 ***
 
@@ -57,7 +57,7 @@ Defined in: [bot/Bot.ts:30](https://github.com/keenanlk/granboard-client/blob/f6
 
 > `readonly` **sigma**: `number`
 
-Defined in: [bot/Bot.ts:31](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/Bot.ts#L31)
+Defined in: [bot/Bot.ts:31](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/Bot.ts#L31)
 
 ## Methods
 
@@ -65,7 +65,7 @@ Defined in: [bot/Bot.ts:31](https://github.com/keenanlk/granboard-client/blob/f6
 
 > **throwATW**(`currentTarget`, `onThrow?`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/Bot.ts:89](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/Bot.ts#L89)
+Defined in: [bot/Bot.ts:89](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/Bot.ts#L89)
 
 Pick a target for Around the World and simulate a throw.
 Returns the SegmentID where the dart actually lands (may miss target).
@@ -90,7 +90,7 @@ Returns the SegmentID where the dart actually lands (may miss target).
 
 > **throwCricket**(`myMarks`, `allPlayers`, `myIndex`, `onThrow?`, `cutThroat?`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/Bot.ts:58](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/Bot.ts#L58)
+Defined in: [bot/Bot.ts:58](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/Bot.ts#L58)
 
 Pick a target for Cricket and simulate a throw.
 Returns the SegmentID where the dart actually lands (may miss target).
@@ -127,7 +127,7 @@ Returns the SegmentID where the dart actually lands (may miss target).
 
 > **throwHighScore**(`splitBull`, `onThrow?`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/Bot.ts:75](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/Bot.ts#L75)
+Defined in: [bot/Bot.ts:75](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/Bot.ts#L75)
 
 Pick a target for High Score and simulate a throw.
 Returns the SegmentID where the dart actually lands (may miss target).
@@ -152,7 +152,7 @@ Returns the SegmentID where the dart actually lands (may miss target).
 
 > **throwTicTacToe**(`grid`, `owner`, `myIndex`, `myMarks`, `opponentMarks`, `onThrow?`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/Bot.ts:103](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/Bot.ts#L103)
+Defined in: [bot/Bot.ts:103](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/Bot.ts#L103)
 
 Pick a target for Tic Tac Toe and simulate a throw.
 Returns the SegmentID where the dart actually lands (may miss target).
@@ -193,7 +193,7 @@ Returns the SegmentID where the dart actually lands (may miss target).
 
 > **throwX01**(`score`, `opts`, `opened`, `onThrow?`): [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-Defined in: [bot/Bot.ts:42](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/bot/Bot.ts#L42)
+Defined in: [bot/Bot.ts:42](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/Bot.ts#L42)
 
 Pick a target for X01 and simulate a throw.
 Returns the SegmentID where the dart actually lands (may miss target).

@@ -6,7 +6,7 @@
 
 # Class: Granboard
 
-Defined in: [board/Granboard.ts:236](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/Granboard.ts#L236)
+Defined in: [board/Granboard.ts:236](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/Granboard.ts#L236)
 
 BLE client for connecting to and communicating with a GranBoard dartboard.
 
@@ -16,7 +16,7 @@ BLE client for connecting to and communicating with a GranBoard dartboard.
 
 > **new Granboard**(): `Granboard`
 
-Defined in: [board/Granboard.ts:239](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/Granboard.ts#L239)
+Defined in: [board/Granboard.ts:239](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/Granboard.ts#L239)
 
 #### Returns
 
@@ -28,7 +28,7 @@ Defined in: [board/Granboard.ts:239](https://github.com/keenanlk/granboard-clien
 
 > `optional` **segmentHitCallback?**: (`segment`) => `void`
 
-Defined in: [board/Granboard.ts:237](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/Granboard.ts#L237)
+Defined in: [board/Granboard.ts:237](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/Granboard.ts#L237)
 
 #### Parameters
 
@@ -46,7 +46,7 @@ Defined in: [board/Granboard.ts:237](https://github.com/keenanlk/granboard-clien
 
 > **sendCommand**(`bytes`): `Promise`\<`void`\>
 
-Defined in: [board/Granboard.ts:253](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/Granboard.ts#L253)
+Defined in: [board/Granboard.ts:253](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/Granboard.ts#L253)
 
 #### Parameters
 
@@ -64,7 +64,7 @@ Defined in: [board/Granboard.ts:253](https://github.com/keenanlk/granboard-clien
 
 > **setSegmentHitCallback**(`cb`): `void`
 
-Defined in: [board/Granboard.ts:247](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/Granboard.ts#L247)
+Defined in: [board/Granboard.ts:247](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/Granboard.ts#L247)
 
 #### Parameters
 
@@ -82,7 +82,7 @@ Defined in: [board/Granboard.ts:247](https://github.com/keenanlk/granboard-clien
 
 > `static` **ConnectToBoard**(): `Promise`\<`Granboard`\>
 
-Defined in: [board/Granboard.ts:267](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/Granboard.ts#L267)
+Defined in: [board/Granboard.ts:267](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/Granboard.ts#L267)
 
 #### Returns
 
@@ -94,7 +94,7 @@ Defined in: [board/Granboard.ts:267](https://github.com/keenanlk/granboard-clien
 
 > `static` **TryAutoReconnect**(): `Promise`\<`Granboard`\>
 
-Defined in: [board/Granboard.ts:276](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/Granboard.ts#L276)
+Defined in: [board/Granboard.ts:276](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/Granboard.ts#L276)
 
 #### Returns
 

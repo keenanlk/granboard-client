@@ -6,7 +6,7 @@
 
 # Class: HighScoreEngine
 
-Defined in: [engine/highScoreEngine.ts:39](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScoreEngine.ts#L39)
+Defined in: [engine/highScoreEngine.ts:39](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScoreEngine.ts#L39)
 
 Game engine for High Score mode implementing the GameEngine interface.
 
@@ -30,7 +30,7 @@ Game engine for High Score mode implementing the GameEngine interface.
 
 > **addDart**(`state`, `segment`): `Partial`\<[`HighScoreState`](../../highScore.types.ts/interfaces/HighScoreState.md)\>
 
-Defined in: [engine/highScoreEngine.ts:60](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScoreEngine.ts#L60)
+Defined in: [engine/highScoreEngine.ts:60](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScoreEngine.ts#L60)
 
 Apply a dart throw. Returns only the fields that changed.
 
@@ -58,7 +58,7 @@ Apply a dart throw. Returns only the fields that changed.
 
 > **nextTurn**(`state`): `Partial`\<[`HighScoreState`](../../highScore.types.ts/interfaces/HighScoreState.md)\>
 
-Defined in: [engine/highScoreEngine.ts:75](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScoreEngine.ts#L75)
+Defined in: [engine/highScoreEngine.ts:75](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScoreEngine.ts#L75)
 
 Commit the current player's turn and advance to the next player. Returns only the fields that changed.
 
@@ -82,7 +82,7 @@ Commit the current player's turn and advance to the next player. Returns only th
 
 > **startGame**(`options`, `playerNames`): [`HighScoreState`](../../highScore.types.ts/interfaces/HighScoreState.md)
 
-Defined in: [engine/highScoreEngine.ts:43](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScoreEngine.ts#L43)
+Defined in: [engine/highScoreEngine.ts:43](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScoreEngine.ts#L43)
 
 Create fresh initial state for a new game.
 
@@ -110,7 +110,7 @@ Create fresh initial state for a new game.
 
 > **undoLastDart**(`state`): `Partial`\<[`HighScoreState`](../../highScore.types.ts/interfaces/HighScoreState.md)\>
 
-Defined in: [engine/highScoreEngine.ts:68](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScoreEngine.ts#L68)
+Defined in: [engine/highScoreEngine.ts:68](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScoreEngine.ts#L68)
 
 Reverse the last dart thrown in the current turn. Returns only the fields that changed.
 

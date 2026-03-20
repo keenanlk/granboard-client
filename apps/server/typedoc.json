@@ -1,6 +1,7 @@
 {
   "tsconfig": "./tsconfig.docs.json",
   "skipErrorChecking": true,
+  "gitRevision": "main",
   "entryPoints": [
     "src/messages.ts",
     "src/supabaseAdmin.ts",

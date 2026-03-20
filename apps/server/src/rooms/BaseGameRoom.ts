@@ -96,6 +96,15 @@ export abstract class BaseGameRoom<
       });
     });
 
+    // WebRTC signaling passthrough — relay to the other player
+    this.onMessage(ClientMessage.WEBRTC_SIGNAL, (client, payload) =>
+      this.broadcast(ClientMessage.WEBRTC_SIGNAL, payload, { except: client }),
+    );
+    // Camera status passthrough — relay to the other player
+    this.onMessage(ClientMessage.CAMERA_STATUS, (client, payload) =>
+      this.broadcast(ClientMessage.CAMERA_STATUS, payload, { except: client }),
+    );
+
     // Rematch passthrough
     this.onMessage(ClientMessage.REMATCH_REQUEST, (client) =>
       this.broadcast(ServerMessage.REMATCH_REQUEST, {}, { except: client }),

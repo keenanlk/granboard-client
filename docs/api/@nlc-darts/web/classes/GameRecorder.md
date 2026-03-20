@@ -6,7 +6,7 @@
 
 # Class: GameRecorder
 
-Defined in: [db/gameRecorder.ts:12](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/db/gameRecorder.ts#L12)
+Defined in: [db/gameRecorder.ts:12](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/db/gameRecorder.ts#L12)
 
 Accumulates round data during a game and saves the session to IndexedDB when finished.
 
@@ -16,7 +16,7 @@ Accumulates round data during a game and saves the session to IndexedDB when fin
 
 > **new GameRecorder**(`gameType`, `playerNames`, `playerIds`, `options`): `GameRecorder`
 
-Defined in: [db/gameRecorder.ts:20](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/db/gameRecorder.ts#L20)
+Defined in: [db/gameRecorder.ts:20](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/db/gameRecorder.ts#L20)
 
 #### Parameters
 
@@ -46,7 +46,7 @@ Defined in: [db/gameRecorder.ts:20](https://github.com/keenanlk/granboard-client
 
 > **recordRound**(`playerIndex`, `darts`, `roundScore`): `void`
 
-Defined in: [db/gameRecorder.ts:34](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/db/gameRecorder.ts#L34)
+Defined in: [db/gameRecorder.ts:34](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/db/gameRecorder.ts#L34)
 
 Call this before nextTurn() — captures the just-completed round for a player.
 
@@ -74,7 +74,7 @@ Call this before nextTurn() — captures the just-completed round for a player.
 
 > **save**(`winnerNames`, `finalScores`): `Promise`\<`void`\>
 
-Defined in: [db/gameRecorder.ts:47](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/db/gameRecorder.ts#L47)
+Defined in: [db/gameRecorder.ts:47](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/db/gameRecorder.ts#L47)
 
 Call when the game ends. Only writes to DB if at least one named player is in the game.
 

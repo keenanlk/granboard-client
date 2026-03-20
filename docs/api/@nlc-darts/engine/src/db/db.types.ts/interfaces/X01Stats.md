@@ -6,7 +6,7 @@
 
 # Interface: X01Stats
 
-Defined in: [db/db.types.ts:42](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L42)
+Defined in: [db/db.types.ts:42](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L42)
 
 Aggregated statistics for a player's X01 game history.
 
@@ -16,7 +16,7 @@ Aggregated statistics for a player's X01 game history.
 
 > **avgRound**: `number`
 
-Defined in: [db/db.types.ts:46](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L46)
+Defined in: [db/db.types.ts:46](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L46)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [db/db.types.ts:46](https://github.com/keenanlk/granboard-client/blo
 
 > **bestRound**: `number`
 
-Defined in: [db/db.types.ts:47](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L47)
+Defined in: [db/db.types.ts:47](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L47)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [db/db.types.ts:47](https://github.com/keenanlk/granboard-client/blo
 
 > **gamesPlayed**: `number`
 
-Defined in: [db/db.types.ts:43](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L43)
+Defined in: [db/db.types.ts:43](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L43)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [db/db.types.ts:43](https://github.com/keenanlk/granboard-client/blo
 
 > **ppd**: `number`
 
-Defined in: [db/db.types.ts:45](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L45)
+Defined in: [db/db.types.ts:45](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L45)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [db/db.types.ts:45](https://github.com/keenanlk/granboard-client/blo
 
 > **wins**: `number`
 
-Defined in: [db/db.types.ts:44](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/db/db.types.ts#L44)
+Defined in: [db/db.types.ts:44](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L44)

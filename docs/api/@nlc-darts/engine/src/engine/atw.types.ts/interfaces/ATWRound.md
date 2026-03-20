@@ -6,7 +6,7 @@
 
 # Interface: ATWRound
 
-Defined in: [engine/atw.types.ts:36](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L36)
+Defined in: [engine/atw.types.ts:36](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L36)
 
 Summary of a completed ATW round for one player.
 
@@ -16,7 +16,7 @@ Summary of a completed ATW round for one player.
 
 > **darts**: `object`[]
 
-Defined in: [engine/atw.types.ts:37](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L37)
+Defined in: [engine/atw.types.ts:37](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L37)
 
 #### hit
 
@@ -32,7 +32,7 @@ Defined in: [engine/atw.types.ts:37](https://github.com/keenanlk/granboard-clien
 
 > **endTargetIndex**: `number`
 
-Defined in: [engine/atw.types.ts:39](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L39)
+Defined in: [engine/atw.types.ts:39](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L39)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [engine/atw.types.ts:39](https://github.com/keenanlk/granboard-clien
 
 > **startTargetIndex**: `number`
 
-Defined in: [engine/atw.types.ts:38](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/atw.types.ts#L38)
+Defined in: [engine/atw.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L38)

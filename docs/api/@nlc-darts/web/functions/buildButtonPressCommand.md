@@ -8,7 +8,7 @@
 
 > **buildButtonPressCommand**(`colorUp`, `colorDown`): `number`[]
 
-Defined in: [board/GranboardLED.ts:126](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/board/GranboardLED.ts#L126)
+Defined in: [board/GranboardLED.ts:126](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/GranboardLED.ts#L126)
 
 Wave animation triggered by the board button press.
 

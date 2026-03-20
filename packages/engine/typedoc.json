@@ -1,3 +1,4 @@
 {
-  "tsconfig": "./tsconfig.docs.json"
+  "tsconfig": "./tsconfig.docs.json",
+  "gitRevision": "main"
 }

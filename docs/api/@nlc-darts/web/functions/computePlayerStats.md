@@ -8,7 +8,7 @@
 
 > **computePlayerStats**(`sessions`, `playerId`): [`PlayerStats`](../../engine/src/db/db.types.ts/interfaces/PlayerStats.md)
 
-Defined in: [db/playerStats.ts:10](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/apps/web/src/db/playerStats.ts#L10)
+Defined in: [db/playerStats.ts:10](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/db/playerStats.ts#L10)
 
 Compute aggregate stats for a player across all their recorded sessions.
 

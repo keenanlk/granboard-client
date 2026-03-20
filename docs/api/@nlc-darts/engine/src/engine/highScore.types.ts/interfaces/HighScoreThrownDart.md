@@ -6,7 +6,7 @@
 
 # Interface: HighScoreThrownDart
 
-Defined in: [engine/highScore.types.ts:20](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L20)
+Defined in: [engine/highScore.types.ts:20](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L20)
 
 A single dart thrown during a High Score game.
 
@@ -16,7 +16,7 @@ A single dart thrown during a High Score game.
 
 > **segment**: [`Segment`](../../../board/Dartboard.ts/interfaces/Segment.md)
 
-Defined in: [engine/highScore.types.ts:21](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L21)
+Defined in: [engine/highScore.types.ts:21](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L21)
 
 ***
 
@@ -24,4 +24,4 @@ Defined in: [engine/highScore.types.ts:21](https://github.com/keenanlk/granboard
 
 > **value**: `number`
 
-Defined in: [engine/highScore.types.ts:22](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/highScore.types.ts#L22)
+Defined in: [engine/highScore.types.ts:22](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L22)

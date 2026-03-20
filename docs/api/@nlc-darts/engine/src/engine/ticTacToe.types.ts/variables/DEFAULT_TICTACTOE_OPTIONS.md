@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_TICTACTOE\_OPTIONS**: [`TicTacToeOptions`](../interfaces/TicTacToeOptions.md)
 
-Defined in: [engine/ticTacToe.types.ts:10](https://github.com/keenanlk/granboard-client/blob/f6e472bfd4df75add5b30dc8b55157c64591398f/packages/engine/src/engine/ticTacToe.types.ts#L10)
+Defined in: [engine/ticTacToe.types.ts:10](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L10)
 
 Default Tic-Tac-Toe options: 20-round limit, split bull.
