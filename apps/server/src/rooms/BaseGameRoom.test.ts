@@ -12,6 +12,7 @@ vi.mock("@colyseus/core", () => {
     onMessage(type: string, handler: Function) {
       this._messageHandlers.set(type, handler);
     }
+    setState = vi.fn();
     broadcast = vi.fn();
     disconnect = vi.fn();
     allowReconnection = vi.fn(() => Promise.resolve());
