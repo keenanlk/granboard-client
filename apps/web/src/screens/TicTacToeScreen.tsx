@@ -17,6 +17,7 @@ import { GameMenu } from "../components/GameMenu.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { HistoryRow } from "../components/HistoryRow.tsx";
 import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
+import { RobotModel } from "../components/RobotModel.tsx";
 import { gameEventBus } from "../events/gameEventBus.ts";
 import { playerTextSizes } from "../lib/playerTextSizes.ts";
 
@@ -562,6 +563,9 @@ export function TicTacToeScreen({
                 ...(i === 0 ? { paddingLeft: "var(--sal)" } : {}),
               }}
             >
+              {botSkills[i] != null && (
+                <RobotModel skill={botSkills[i]!} size={32} />
+              )}
               {/* Name + claimed stacked */}
               <div className="flex flex-col items-center">
                 <span

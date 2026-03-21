@@ -30,6 +30,8 @@ import { gameLogger } from "../lib/GameLogger.ts";
 import { GameMenu } from "../components/GameMenu.tsx";
 import { HistoryRow } from "../components/HistoryRow.tsx";
 import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
+import { RobotModel } from "../components/RobotModel.tsx";
+import { Sounds } from "../sound/sounds.ts";
 import { playerTextSizes } from "../lib/playerTextSizes.ts";
 import type { OnlineConfig } from "../store/useOnlineStore.ts";
 import { useColyseusSync } from "../hooks/useColyseusSync.ts";
@@ -230,21 +232,52 @@ export function GameScreen({
     getThrow,
   });
 
-  // Show bot dartboard overlay: outline on target before throw, fill on actual after throw.
-  // Clear board when bot is not active (use a 0ms timeout to avoid synchronous setState in effect).
+  // Bot throw animation: play "BasicAttack" ~800ms before each dart lands, then reset to idle.
+  // animKey increments to force the RobotModel to re-trigger the same animation name.
+  const [botAnimation, setBotAnimation] = useState("CombatIdle");
+  const [botAnimKey, setBotAnimKey] = useState(0);
   useEffect(() => {
     if (!isCurrentBot || !!winner || isTransitioning) {
-      const t = setTimeout(() => setBotBoard(null), 0);
-      return () => clearTimeout(t);
+      setBotAnimation("CombatIdle");
+      return;
     }
     const dartsThrown = currentRoundDarts.length;
-    // After last dart or bust, keep fill state (set by getThrow) — don't override.
+    if (dartsThrown >= 3 || isBust) {
+      setBotAnimation("CombatIdle");
+      return;
+    }
+    // Reset to idle at start of each dart cycle
+    setBotAnimation("CombatIdle");
+    // Start attack animation 2200ms into the 3000ms delay (800ms before dart lands)
+    const attackTimer = setTimeout(() => {
+      setBotAnimation("BasicAttack");
+      setBotAnimKey((k) => k + 1);
+      Sounds.whoosh();
+    }, 2200);
+    return () => {
+      clearTimeout(attackTimer);
+    };
+  }, [isCurrentBot, currentPlayerIndex, currentRoundDarts.length, isBust, winner, isTransitioning]);
+
+  // Show bot dartboard overlay: outline on target before throw, fill on actual after throw.
+  // Clear board when bot is not active.
+  const botBoardTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!isCurrentBot || !!winner) {
+      setBotBoard(null);
+      if (botBoardTimer.current) clearTimeout(botBoardTimer.current);
+      return;
+    }
+    if (isTransitioning) return;
+
+    const dartsThrown = currentRoundDarts.length;
     if (dartsThrown >= 3 || isBust) return;
 
-    // After a dart lands (fill set by getThrow), wait 800ms then show next target outline.
-    // For the first dart (dartsThrown=0), show outline immediately.
-    const delay = dartsThrown > 0 ? 800 : 0;
-    const t = setTimeout(() => {
+    // Don't clear the current board — let the fill from getThrow stay visible.
+    // Just schedule the next outline after a delay.
+    const delay = dartsThrown === 0 ? 200 : 800;
+    if (botBoardTimer.current) clearTimeout(botBoardTimer.current);
+    botBoardTimer.current = setTimeout(() => {
       const {
         players: ps,
         x01Options: opts,
@@ -255,7 +288,7 @@ export function GameScreen({
       const target = x01PickTarget(p.score, opts, p.opened);
       setBotBoard({ segment: target, mode: "outline" });
     }, delay);
-    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isCurrentBot,
     currentPlayerIndex,
@@ -389,6 +422,7 @@ export function GameScreen({
                 .slice()
                 .sort((a, b) => a.score - b.score)
                 .map((p, rank) => {
+                  const origIndex = players.indexOf(p);
                   const ppd =
                     p.totalDartsThrown === 0
                       ? "0.00"
@@ -400,6 +434,7 @@ export function GameScreen({
                     name: p.name,
                     isWinner: p.name === winner,
                     rank: rank + 1,
+                    botSkill: botSkills[origIndex],
                     stats: [
                       { label: "remaining", value: String(p.score) },
                       { label: "darts", value: String(p.totalDartsThrown) },
@@ -507,6 +542,16 @@ export function GameScreen({
             >
               {currentPlayer?.score ?? ""}
             </span>
+            {isCurrentBot && !winner && (
+              <div className="absolute bottom-0 right-0">
+                <RobotModel
+                  skill={botSkills[currentPlayerIndex]!}
+                  size="clamp(14rem, 30vw, 24rem)"
+                  animation={botAnimation}
+                  animKey={botAnimKey}
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -617,6 +662,9 @@ export function GameScreen({
               data-active={String(isActive)}
               style={i === 0 ? { paddingLeft: "var(--sal)" } : undefined}
             >
+              {botSkills[i] != null && (
+                <RobotModel skill={botSkills[i]!} size={32} />
+              )}
               <span
                 style={{
                   fontSize: textSizes.name,

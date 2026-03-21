@@ -16,6 +16,7 @@ import { DartboardSVG } from "../components/DartboardSVG.tsx";
 import { GameMenu } from "../components/GameMenu.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
+import { RobotModel } from "../components/RobotModel.tsx";
 import { gameEventBus } from "../events/gameEventBus.ts";
 import { gameLogger } from "../lib/GameLogger.ts";
 import { playerTextSizes } from "../lib/playerTextSizes.ts";
@@ -439,6 +440,9 @@ export function ATWScreen({
               data-active={String(isActive)}
               style={i === 0 ? { paddingLeft: "var(--sal)" } : undefined}
             >
+              {botSkills[i] != null && (
+                <RobotModel skill={botSkills[i]!} size={32} />
+              )}
               <span
                 className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${botSkills[i] != null ? getBotCharacter(botSkills[i]!).animationClass : isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
                 style={{

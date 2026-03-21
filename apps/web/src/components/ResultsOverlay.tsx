@@ -1,12 +1,15 @@
+import { useState, useEffect } from "react";
 import { getSetWinner } from "@nlc-darts/engine";
-import type { SetProgress } from "@nlc-darts/engine";
+import type { BotSkill, SetProgress } from "@nlc-darts/engine";
 import type { RematchState } from "../hooks/useOnlineRematch.ts";
+import { RobotModel } from "./RobotModel.tsx";
 
 interface PlayerResult {
   name: string;
   isWinner: boolean;
   rank: number;
   stats: { label: string; value: string }[];
+  botSkill?: BotSkill | null;
 }
 
 interface ResultsOverlayProps {
@@ -22,6 +25,35 @@ interface ResultsOverlayProps {
     onAccept: () => void;
     onDecline: () => void;
   };
+}
+
+function WinnerRobot({ skill }: { skill: BotSkill }) {
+  const [animation, setAnimation] = useState("BasicAttack");
+  const [animKey, setAnimKey] = useState(0);
+
+  useEffect(() => {
+    // Celebrate immediately, then cycle: idle for 3s → celebrate → repeat
+    const interval = setInterval(() => {
+      setAnimation("BasicAttack");
+      setAnimKey((k) => k + 1);
+      setTimeout(() => setAnimation("StaticIdle"), 1000);
+    }, 4000);
+    // After initial celebrate, go to idle
+    const initial = setTimeout(() => setAnimation("StaticIdle"), 1000);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(initial);
+    };
+  }, []);
+
+  return (
+    <RobotModel
+      skill={skill}
+      size="clamp(8rem, 20vh, 14rem)"
+      animation={animation}
+      animKey={animKey}
+    />
+  );
 }
 
 function SetScoreline({ setProgress }: { setProgress: SetProgress }) {
@@ -112,7 +144,7 @@ export function ResultsOverlay({
           : "Winner";
 
   return (
-    <div className="absolute inset-0 z-10 bg-zinc-950 flex flex-col overflow-hidden">
+    <div className="absolute inset-0 z-20 bg-zinc-950 flex flex-col overflow-hidden">
       {/* Content — vertically centered */}
       <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-6 gap-2">
         {/* Subtitle: leg info or "Game Over" */}
@@ -157,9 +189,12 @@ export function ResultsOverlay({
           <SetScoreline setProgress={effectiveSetProgress} />
         )}
 
-        {/* Winner name */}
+        {/* Winner name + robot */}
         {winners.map((p) => (
           <div key={p.name} className="flex flex-col items-center gap-2">
+            {p.botSkill != null && (
+              <WinnerRobot skill={p.botSkill} />
+            )}
             <p
               className="font-normal leading-none"
               style={{
@@ -212,7 +247,14 @@ export function ResultsOverlay({
           <div className="w-full max-w-md flex flex-col items-center gap-2 mt-2">
             <div className="w-full border-t border-zinc-800" />
             {losers.map((p) => (
-              <div key={p.name} className="flex items-baseline gap-3">
+              <div key={p.name} className="flex items-center gap-3">
+                {p.botSkill != null && (
+                  <RobotModel
+                    skill={p.botSkill}
+                    size="clamp(3rem, 6vh, 5rem)"
+                    animation="Death"
+                  />
+                )}
                 <span
                   className="text-zinc-400 font-bold uppercase tracking-wide"
                   style={{ fontSize: "clamp(0.7rem, 1.6vh, 1.1rem)" }}

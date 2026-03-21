@@ -14,8 +14,8 @@ import type { Bot, Segment } from "@nlc-darts/engine";
  * the caller) so they can be included as effect deps without causing infinite loops.
  */
 
-const BOT_DART_DELAY = 2000; // ms between each bot dart
-const BOT_NEXT_DELAY = 2500; // ms after last dart before auto-advancing turn
+const BOT_DART_DELAY = 3000; // ms between each bot dart
+const BOT_NEXT_DELAY = 3000; // ms after last dart before auto-advancing turn
 
 export function useBotTurn({
   bots,

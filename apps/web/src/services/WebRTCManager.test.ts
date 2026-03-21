@@ -1,0 +1,298 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { WebRTCManager } from "./WebRTCManager.ts";
+import type { WebRTCStatus } from "./WebRTCManager.ts";
+
+// ── Mocks ────────────────────────────────────────────────────────────────
+
+/** Minimal mock of a Colyseus Room for signaling. */
+function mockRoom() {
+  const handlers = new Map<string, (...args: unknown[]) => void>();
+  return {
+    send: vi.fn(),
+    onMessage: vi.fn((type: string, handler: (...args: unknown[]) => void) => {
+      handlers.set(type, handler);
+    }),
+    _handlers: handlers,
+    /** Simulate receiving a message from the server. */
+    _receive(type: string, payload: unknown) {
+      handlers.get(type)?.(payload);
+    },
+  };
+}
+
+/** Minimal mock of a MediaStream. */
+function mockMediaStream() {
+  const track = { stop: vi.fn(), kind: "video" };
+  return {
+    getTracks: () => [track],
+    _track: track,
+  } as unknown as MediaStream;
+}
+
+/** Stub RTCPeerConnection — enough to exercise WebRTCManager logic. */
+class MockRTCPeerConnection {
+  ontrack: ((event: unknown) => void) | null = null;
+  oniceconnectionstatechange: (() => void) | null = null;
+  iceGatheringState = "complete";
+  iceConnectionState = "new";
+  localDescription = { toJSON: () => ({ type: "offer", sdp: "mock-sdp" }) };
+
+  addTrack = vi.fn();
+  createOffer = vi.fn().mockResolvedValue({ type: "offer", sdp: "mock-sdp" });
+  createAnswer = vi.fn().mockResolvedValue({ type: "answer", sdp: "mock-answer" });
+  setLocalDescription = vi.fn().mockResolvedValue(undefined);
+  setRemoteDescription = vi.fn().mockResolvedValue(undefined);
+  restartIce = vi.fn();
+  close = vi.fn();
+  addEventListener = vi.fn();
+  removeEventListener = vi.fn();
+}
+
+let originalRTC: typeof globalThis.RTCPeerConnection;
+let originalRTCSessionDescription: typeof globalThis.RTCSessionDescription;
+let originalMediaDevices: MediaDevices;
+
+beforeEach(() => {
+  originalRTC = globalThis.RTCPeerConnection;
+  originalRTCSessionDescription = globalThis.RTCSessionDescription;
+  originalMediaDevices = navigator.mediaDevices;
+
+  // @ts-expect-error — test mock
+  globalThis.RTCPeerConnection = MockRTCPeerConnection;
+  // @ts-expect-error — test mock
+  globalThis.RTCSessionDescription = class { constructor(public init: unknown) {} };
+
+  Object.defineProperty(navigator, "mediaDevices", {
+    value: {
+      getUserMedia: vi.fn().mockResolvedValue(mockMediaStream()),
+    },
+    configurable: true,
+  });
+});
+
+afterEach(() => {
+  globalThis.RTCPeerConnection = originalRTC;
+  globalThis.RTCSessionDescription = originalRTCSessionDescription;
+  Object.defineProperty(navigator, "mediaDevices", {
+    value: originalMediaDevices,
+    configurable: true,
+  });
+  vi.restoreAllMocks();
+});
+
+// ── Tests ────────────────────────────────────────────────────────────────
+
+describe("WebRTCManager", () => {
+  it("reports 'denied' when getUserMedia is not available", async () => {
+    Object.defineProperty(navigator, "mediaDevices", {
+      value: undefined,
+      configurable: true,
+    });
+
+    const statuses: WebRTCStatus[] = [];
+    const manager = new WebRTCManager({
+      onStatus: (s) => statuses.push(s),
+      onLocalStream: vi.fn(),
+      onRemoteStream: vi.fn(),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await manager.start(mockRoom() as any, true);
+    expect(statuses).toEqual(["denied"]);
+  });
+
+  it("reports 'denied' when getUserMedia throws", async () => {
+    (navigator.mediaDevices.getUserMedia as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new Error("NotAllowedError"),
+    );
+
+    const statuses: WebRTCStatus[] = [];
+    const manager = new WebRTCManager({
+      onStatus: (s) => statuses.push(s),
+      onLocalStream: vi.fn(),
+      onRemoteStream: vi.fn(),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await manager.start(mockRoom() as any, true);
+    expect(statuses).toContain("denied");
+  });
+
+  it("exposes localStream after getUserMedia succeeds", async () => {
+    const onLocalStream = vi.fn();
+    const manager = new WebRTCManager({
+      onStatus: vi.fn(),
+      onLocalStream,
+      onRemoteStream: vi.fn(),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await manager.start(mockRoom() as any, true);
+    expect(onLocalStream).toHaveBeenCalledWith(expect.any(Object));
+    expect(onLocalStream.mock.calls[0][0].getTracks).toBeDefined();
+  });
+
+  it("host creates an offer and sends it via Colyseus", async () => {
+    const room = mockRoom();
+    const manager = new WebRTCManager({
+      onStatus: vi.fn(),
+      onLocalStream: vi.fn(),
+      onRemoteStream: vi.fn(),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await manager.start(room as any, true);
+
+    // Allow the async offer creation to resolve
+    await vi.waitFor(() => {
+      expect(room.send).toHaveBeenCalledWith(
+        "webrtc_signal",
+        expect.objectContaining({ type: "offer" }),
+      );
+    });
+  });
+
+  it("guest does NOT create an offer", async () => {
+    const room = mockRoom();
+    const manager = new WebRTCManager({
+      onStatus: vi.fn(),
+      onLocalStream: vi.fn(),
+      onRemoteStream: vi.fn(),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await manager.start(room as any, false);
+    await new Promise((r) => setTimeout(r, 10));
+
+    const signalCalls = room.send.mock.calls.filter(
+      (args: unknown[]) => args[0] === "webrtc_signal",
+    );
+    expect(signalCalls).toHaveLength(0);
+  });
+
+  it("guest responds to an offer with an answer", async () => {
+    const room = mockRoom();
+    const manager = new WebRTCManager({
+      onStatus: vi.fn(),
+      onLocalStream: vi.fn(),
+      onRemoteStream: vi.fn(),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await manager.start(room as any, false);
+
+    // Simulate receiving an offer
+    room._receive("webrtc_signal", {
+      type: "offer",
+      sdp: { type: "offer", sdp: "remote-offer" },
+    });
+
+    await vi.waitFor(() => {
+      expect(room.send).toHaveBeenCalledWith(
+        "webrtc_signal",
+        expect.objectContaining({ type: "answer" }),
+      );
+    });
+  });
+
+  it("stop() releases camera tracks and closes peer connection", async () => {
+    const stream = mockMediaStream();
+    (navigator.mediaDevices.getUserMedia as ReturnType<typeof vi.fn>).mockResolvedValue(stream);
+
+    const onLocalStream = vi.fn();
+    const onRemoteStream = vi.fn();
+    const manager = new WebRTCManager({
+      onStatus: vi.fn(),
+      onLocalStream,
+      onRemoteStream,
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await manager.start(mockRoom() as any, true);
+    manager.stop();
+
+    expect((stream as unknown as { _track: { stop: ReturnType<typeof vi.fn> } })._track.stop).toHaveBeenCalled();
+    expect(onLocalStream).toHaveBeenLastCalledWith(null);
+    expect(onRemoteStream).toHaveBeenLastCalledWith(null);
+  });
+
+  it("stop() before getUserMedia resolves prevents setup", async () => {
+    let resolveMedia!: (s: MediaStream) => void;
+    (navigator.mediaDevices.getUserMedia as ReturnType<typeof vi.fn>).mockReturnValue(
+      new Promise((r) => { resolveMedia = r; }),
+    );
+
+    const onLocalStream = vi.fn();
+    const manager = new WebRTCManager({
+      onStatus: vi.fn(),
+      onLocalStream,
+      onRemoteStream: vi.fn(),
+    });
+
+    const room = mockRoom();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const started = manager.start(room as any, true);
+
+    // Stop before getUserMedia resolves
+    manager.stop();
+
+    // Now resolve getUserMedia
+    const stream = mockMediaStream();
+    resolveMedia(stream);
+    await started;
+
+    // Tracks should be stopped, localStream callback should only have received null (from stop)
+    expect((stream as unknown as { _track: { stop: ReturnType<typeof vi.fn> } })._track.stop).toHaveBeenCalled();
+    const nonNullCalls = onLocalStream.mock.calls.filter(
+      (args: unknown[]) => args[0] !== null,
+    );
+    expect(nonNullCalls).toHaveLength(0);
+  });
+
+  it("registers webrtc_signal handler on the room", async () => {
+    const room = mockRoom();
+    const manager = new WebRTCManager({
+      onStatus: vi.fn(),
+      onLocalStream: vi.fn(),
+      onRemoteStream: vi.fn(),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await manager.start(room as any, false);
+
+    expect(room.onMessage).toHaveBeenCalledWith("webrtc_signal", expect.any(Function));
+  });
+
+  it("verifies Colyseus connection after getUserMedia", async () => {
+    const room = mockRoom();
+    const manager = new WebRTCManager({
+      onStatus: vi.fn(),
+      onLocalStream: vi.fn(),
+      onRemoteStream: vi.fn(),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await manager.start(room as any, true);
+
+    // request_state is sent as a health check
+    expect(room.send).toHaveBeenCalledWith("request_state", {});
+  });
+
+  it("aborts if Colyseus health check fails", async () => {
+    const room = mockRoom();
+    room.send.mockImplementation(() => {
+      throw new Error("WebSocket closed");
+    });
+
+    const statuses: WebRTCStatus[] = [];
+    const manager = new WebRTCManager({
+      onStatus: (s) => statuses.push(s),
+      onLocalStream: vi.fn(),
+      onRemoteStream: vi.fn(),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await manager.start(room as any, true);
+    expect(statuses).toContain("denied");
+  });
+});

@@ -6,6 +6,7 @@ import tripleSrc from "../assets/sounds/triple.mp3";
 import doubleSrc from "../assets/sounds/double.mp3";
 import singleSrc from "../assets/sounds/single.mp3";
 import buzzerSrc from "../assets/sounds/buzzer.mp3";
+import whooshSrc from "../assets/sounds/whoosh.mp3";
 
 let _volume = parseFloat(localStorage.getItem("app-volume") ?? "1");
 
@@ -85,6 +86,7 @@ const triple = makeSound(tripleSrc);
 const double_ = makeSound(doubleSrc);
 const single = makeSound(singleSrc);
 const buzzer = makeSound(buzzerSrc);
+const whoosh = makeSound(whooshSrc);
 
 export const Sounds = {
   intro: () => intro.play(),
@@ -95,4 +97,5 @@ export const Sounds = {
   triple: () => triple.play(),
   double: () => double_.play(),
   single: () => single.play(),
+  whoosh: () => whoosh.play(),
 };

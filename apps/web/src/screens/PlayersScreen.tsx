@@ -8,10 +8,37 @@ interface PlayersScreenProps {
   onBack: () => void;
 }
 
-function StatBox({ label, value }: { label: string; value: string }) {
+function StatBox({
+  label,
+  value,
+  accentBorder,
+}: {
+  label: string;
+  value: string;
+  accentBorder?: string;
+}) {
   return (
-    <div className="flex flex-col items-center justify-center bg-zinc-900 rounded-xl px-4 py-3 gap-0.5">
-      <span className="text-2xl font-black text-white tabular-nums">
+    <div
+      className={`flex flex-col items-center justify-center bg-zinc-900 rounded-xl px-4 py-3 gap-0.5 border border-zinc-800${accentBorder ? ` border-l-2` : ""}`}
+      style={accentBorder ? { borderLeftColor: accentBorder } : undefined}
+    >
+      <span className="text-3xl font-black text-white tabular-nums">
+        {value}
+      </span>
+      <span className="text-xs text-zinc-500 uppercase tracking-wider font-bold">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function OverallStatBox({ label, value }: { label: string; value: string }) {
+  return (
+    <div
+      className="flex flex-col items-center justify-center bg-zinc-900 rounded-xl px-4 py-3 gap-0.5 border border-zinc-800"
+      style={{ boxShadow: "0 0 8px rgba(255,255,255,0.05)" }}
+    >
+      <span className="text-4xl font-black text-white tabular-nums">
         {value}
       </span>
       <span className="text-xs text-zinc-500 uppercase tracking-wider font-bold">
@@ -29,6 +56,28 @@ function pct(wins: number, games: number) {
 function fmt(n: number, dec = 1) {
   if (n === 0) return "—";
   return n.toFixed(dec);
+}
+
+const SECTION_STYLES = {
+  x01: { color: "#ef4444", label: "X01" },
+  cricket: { color: "#4ade80", label: "Cricket" },
+  highscore: { color: "#facc15", label: "High Score" },
+} as const;
+
+function SectionHeader({ type }: { type: keyof typeof SECTION_STYLES }) {
+  const { color, label } = SECTION_STYLES[type];
+  return (
+    <p
+      className="text-sm uppercase tracking-widest font-normal"
+      style={{
+        fontFamily: "Beon, sans-serif",
+        color,
+        textShadow: `0 0 10px ${color}, 0 0 30px ${color}80`,
+      }}
+    >
+      {label}
+    </p>
+  );
 }
 
 function PlayerDetail({
@@ -65,7 +114,17 @@ function PlayerDetail({
         >
           ← Back
         </button>
-        <span className="font-black text-white text-lg">{player.name}</span>
+        <span
+          className="text-lg font-normal"
+          style={{
+            fontFamily: "Beon, sans-serif",
+            color: "#fff",
+            textShadow:
+              "0 0 10px rgba(255,255,255,0.3), 0 0 30px rgba(255,255,255,0.1)",
+          }}
+        >
+          {player.name}
+        </span>
         {confirmDelete ? (
           <div className="flex items-center gap-2">
             <button
@@ -103,13 +162,21 @@ function PlayerDetail({
           <>
             {/* Overall */}
             <section className="flex flex-col gap-2">
-              <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">
+              <p
+                className="text-sm uppercase tracking-widest font-normal"
+                style={{
+                  fontFamily: "Beon, sans-serif",
+                  color: "#fff",
+                  textShadow:
+                    "0 0 10px rgba(255,255,255,0.3), 0 0 30px rgba(255,255,255,0.1)",
+                }}
+              >
                 Overall
               </p>
               <div className="grid grid-cols-3 gap-2">
-                <StatBox label="Games" value={String(stats.totalGames)} />
-                <StatBox label="Wins" value={String(stats.totalWins)} />
-                <StatBox
+                <OverallStatBox label="Games" value={String(stats.totalGames)} />
+                <OverallStatBox label="Wins" value={String(stats.totalWins)} />
+                <OverallStatBox
                   label="Win %"
                   value={pct(stats.totalWins, stats.totalGames)}
                 />
@@ -119,23 +186,24 @@ function PlayerDetail({
             {/* X01 */}
             {stats.x01.gamesPlayed > 0 && (
               <section className="flex flex-col gap-2">
-                <p className="text-red-500 text-xs uppercase tracking-widest font-bold">
-                  X01
-                </p>
+                <SectionHeader type="x01" />
                 <div className="grid grid-cols-2 gap-2">
                   <StatBox
                     label="Games"
                     value={`${stats.x01.wins}W / ${stats.x01.gamesPlayed}G`}
+                    accentBorder="#ef4444"
                   />
                   <StatBox
                     label="Win %"
                     value={pct(stats.x01.wins, stats.x01.gamesPlayed)}
+                    accentBorder="#ef4444"
                   />
-                  <StatBox label="PPD" value={fmt(stats.x01.ppd)} />
-                  <StatBox label="Avg Round" value={fmt(stats.x01.avgRound)} />
+                  <StatBox label="PPD" value={fmt(stats.x01.ppd)} accentBorder="#ef4444" />
+                  <StatBox label="Avg Round" value={fmt(stats.x01.avgRound)} accentBorder="#ef4444" />
                   <StatBox
                     label="Best Round"
                     value={fmt(stats.x01.bestRound, 0)}
+                    accentBorder="#ef4444"
                   />
                 </div>
               </section>
@@ -144,22 +212,23 @@ function PlayerDetail({
             {/* Cricket */}
             {stats.cricket.gamesPlayed > 0 && (
               <section className="flex flex-col gap-2">
-                <p className="text-green-400 text-xs uppercase tracking-widest font-bold">
-                  Cricket
-                </p>
+                <SectionHeader type="cricket" />
                 <div className="grid grid-cols-2 gap-2">
                   <StatBox
                     label="Games"
                     value={`${stats.cricket.wins}W / ${stats.cricket.gamesPlayed}G`}
+                    accentBorder="#4ade80"
                   />
                   <StatBox
                     label="Win %"
                     value={pct(stats.cricket.wins, stats.cricket.gamesPlayed)}
+                    accentBorder="#4ade80"
                   />
-                  <StatBox label="MPR" value={fmt(stats.cricket.mpr)} />
+                  <StatBox label="MPR" value={fmt(stats.cricket.mpr)} accentBorder="#4ade80" />
                   <StatBox
                     label="Avg Pts/Round"
                     value={fmt(stats.cricket.avgRoundScore)}
+                    accentBorder="#4ade80"
                   />
                 </div>
               </section>
@@ -168,13 +237,12 @@ function PlayerDetail({
             {/* High Score */}
             {stats.highscore.gamesPlayed > 0 && (
               <section className="flex flex-col gap-2">
-                <p className="text-yellow-400 text-xs uppercase tracking-widest font-bold">
-                  High Score
-                </p>
+                <SectionHeader type="highscore" />
                 <div className="grid grid-cols-2 gap-2">
                   <StatBox
                     label="Games"
                     value={`${stats.highscore.wins}W / ${stats.highscore.gamesPlayed}G`}
+                    accentBorder="#facc15"
                   />
                   <StatBox
                     label="Win %"
@@ -182,76 +250,31 @@ function PlayerDetail({
                       stats.highscore.wins,
                       stats.highscore.gamesPlayed,
                     )}
+                    accentBorder="#facc15"
                   />
                   <StatBox
                     label="Avg Score"
                     value={fmt(stats.highscore.avgScore, 0)}
+                    accentBorder="#facc15"
                   />
                   <StatBox
                     label="Best Score"
                     value={fmt(stats.highscore.bestScore, 0)}
+                    accentBorder="#facc15"
                   />
                   <StatBox
                     label="Avg Round"
                     value={fmt(stats.highscore.avgRound, 0)}
+                    accentBorder="#facc15"
                   />
                   <StatBox
                     label="Best Round"
                     value={fmt(stats.highscore.bestRound, 0)}
+                    accentBorder="#facc15"
                   />
                 </div>
               </section>
             )}
-
-            {/* Recent sessions */}
-            <section className="flex flex-col gap-2">
-              <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold">
-                Recent Games
-              </p>
-              <div className="flex flex-col gap-1.5">
-                {[...sessions!]
-                  .sort((a, b) => b.playedAt - a.playedAt)
-                  .slice(0, 10)
-                  .map((s) => {
-                    const me = s.participants.find(
-                      (p) => p.playerId === player.id,
-                    );
-                    const date = new Date(s.playedAt);
-                    const label =
-                      s.gameType === "x01"
-                        ? `X01 · ${(s.options as { startingScore?: number })?.startingScore ?? ""}`
-                        : s.gameType === "cricket"
-                          ? "Cricket"
-                          : "High Score";
-                    return (
-                      <div
-                        key={s.id}
-                        className="flex items-center justify-between bg-zinc-900 rounded-lg px-3 py-2"
-                      >
-                        <div className="flex flex-col">
-                          <span className="text-sm font-bold text-white">
-                            {label}
-                          </span>
-                          <span className="text-xs text-zinc-500">
-                            {date.toLocaleDateString()} ·{" "}
-                            {s.participants.length} players
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          {me?.isWinner && (
-                            <span className="text-xs font-black text-green-400 uppercase tracking-wider">
-                              Win
-                            </span>
-                          )}
-                          <span className="text-sm font-bold text-zinc-400 tabular-nums">
-                            {me?.finalScore ?? "—"}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
-            </section>
           </>
         )}
       </div>
@@ -293,7 +316,15 @@ export function PlayersScreen({ onBack }: PlayersScreenProps) {
         >
           ← Back
         </button>
-        <span className="font-black text-white text-xl tracking-widest">
+        <span
+          className="text-xl tracking-widest font-normal"
+          style={{
+            fontFamily: "Beon, sans-serif",
+            color: "#fff",
+            textShadow:
+              "0 0 10px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.2)",
+          }}
+        >
           Players
         </span>
         <div className="w-14" />
@@ -314,10 +345,24 @@ export function PlayersScreen({ onBack }: PlayersScreenProps) {
               <button
                 key={p.id}
                 onClick={() => setSelected(p)}
-                className="flex items-center justify-between bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-xl px-4 py-3 transition-colors"
+                className="flex items-center justify-between bg-zinc-900 border-2 border-zinc-800 rounded-xl px-4 py-3 transition-all duration-150"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#22d3ee";
+                  e.currentTarget.style.boxShadow =
+                    "0 0 12px rgba(34,211,238,0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "";
+                  e.currentTarget.style.boxShadow = "";
+                }}
               >
-                <span className="text-white font-bold text-lg">{p.name}</span>
-                <span className="text-zinc-500 text-sm">Stats →</span>
+                <span className="text-white font-bold text-xl">{p.name}</span>
+                <span
+                  className="text-sm font-bold"
+                  style={{ color: "#22d3ee" }}
+                >
+                  Stats →
+                </span>
               </button>
             ))}
           </div>
@@ -356,7 +401,17 @@ export function PlayersScreen({ onBack }: PlayersScreenProps) {
             ) : (
               <button
                 onClick={() => setCreating(true)}
-                className="w-full py-4 rounded-2xl border border-dashed border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 font-bold text-base transition-colors"
+                className="w-full py-4 rounded-2xl border-2 text-base font-bold transition-all duration-150"
+                style={{ borderColor: "#22d3ee40", color: "#22d3ee" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#22d3ee";
+                  e.currentTarget.style.boxShadow =
+                    "0 0 12px rgba(34,211,238,0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#22d3ee40";
+                  e.currentTarget.style.boxShadow = "";
+                }}
               >
                 + New Player
               </button>

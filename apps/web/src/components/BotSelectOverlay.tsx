@@ -1,5 +1,6 @@
 import { getAllCharacters } from "@nlc-darts/engine";
 import type { BotSkill } from "@nlc-darts/engine";
+import { RobotModel } from "./RobotModel.tsx";
 
 const ALL_CHARACTERS = getAllCharacters();
 
@@ -29,7 +30,7 @@ export function BotSelectOverlay({
               <button
                 key={skill}
                 onClick={() => onSelect(skill)}
-                className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl border-2 py-5 px-3 transition-all duration-200 ${character.animationClass} ${
+                className={`relative flex flex-col items-center justify-center gap-2 rounded-2xl border-2 pt-5 pb-0 px-3 overflow-hidden transition-all duration-200 ${character.animationClass} ${
                   isActive ? "scale-105" : "hover:scale-[1.03]"
                 }`}
                 style={{
@@ -58,6 +59,9 @@ export function BotSelectOverlay({
                 <span className="text-xs font-bold text-content-muted tabular-nums">
                   {character.ppd} ppd
                 </span>
+
+                {/* 3D Robot */}
+                <RobotModel skill={skill} size={80} />
 
                 {/* Active indicator */}
                 {isActive && (

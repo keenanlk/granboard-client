@@ -67,8 +67,11 @@ export function HomeScreen({
       return;
     }
     if (isConnected) disconnect();
-    else if (!isConnecting) connect();
-  }, [isConnected, isConnecting, connect, disconnect]);
+    else if (!isConnecting) {
+      if (import.meta.env.DEV) connectMock();
+      else connect();
+    }
+  }, [isConnected, isConnecting, connect, disconnect, connectMock]);
 
   return (
     <div
@@ -291,6 +294,35 @@ export function HomeScreen({
             </p>
             <p className="text-zinc-500 text-sm mt-1 font-medium">
               Play against others
+            </p>
+          </button>
+
+          <button
+            onClick={onPlayers}
+            className="w-full rounded-2xl px-6 text-left transition-all duration-150 flex flex-col justify-center bg-zinc-900 border-2 border-zinc-800"
+            style={{ borderColor: undefined }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "#22d3ee";
+              e.currentTarget.style.boxShadow = "0 0 12px rgba(34,211,238,0.5)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "";
+              e.currentTarget.style.boxShadow = "";
+            }}
+          >
+            <p
+              className="text-4xl tracking-tight font-normal"
+              style={{
+                fontFamily: "Beon, sans-serif",
+                color: "#22d3ee",
+                textShadow:
+                  "0 0 20px #22d3ee, 0 0 60px #22d3ee, 0 0 100px rgba(34,211,238,0.5)",
+              }}
+            >
+              Stats
+            </p>
+            <p className="text-zinc-500 text-sm mt-1 font-medium">
+              Player stats & records
             </p>
           </button>
         </div>

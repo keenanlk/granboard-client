@@ -31,6 +31,7 @@ import { DartboardSVG } from "../components/DartboardSVG.tsx";
 import { gameLogger } from "../lib/GameLogger.ts";
 import { HistoryRow } from "../components/HistoryRow.tsx";
 import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
+import { RobotModel } from "../components/RobotModel.tsx";
 import { playerTextSizes } from "../lib/playerTextSizes.ts";
 import type { OnlineConfig } from "../store/useOnlineStore.ts";
 import { useColyseusSync } from "../hooks/useColyseusSync.ts";
@@ -776,6 +777,9 @@ export function CricketScreen({
               data-active={String(isActive)}
               style={i === 0 ? { paddingLeft: "var(--sal)" } : undefined}
             >
+              {botSkills[i] != null && (
+                <RobotModel skill={botSkills[i]!} size={32} />
+              )}
               <span
                 className={`font-black uppercase tracking-wide truncate max-w-full transition-colors duration-300 ${botSkills[i] != null ? getBotCharacter(botSkills[i]!).animationClass : isActive ? "text-[var(--color-game-accent)]" : "text-content-faint"}`}
                 style={{
