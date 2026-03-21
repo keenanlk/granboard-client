@@ -7,9 +7,11 @@ import { HighScoreScreen } from "./screens/HighScoreScreen.tsx";
 import { ATWScreen } from "./screens/ATWScreen.tsx";
 import { TicTacToeScreen } from "./screens/TicTacToeScreen.tsx";
 import { PlayersScreen } from "./screens/PlayersScreen.tsx";
+import { OnboardingScreen } from "./screens/OnboardingScreen.tsx";
 import { PracticeScreen } from "./screens/PracticeScreen.tsx";
 import { SetSetupScreen } from "./screens/SetSetupScreen.tsx";
 import { useGameStore } from "./store/useGameStore.ts";
+import { usePlayerProfileStore } from "./store/usePlayerProfileStore.ts";
 import { useCricketStore } from "./store/useCricketStore.ts";
 import { getSetWinner, legCount } from "@nlc-darts/engine";
 import type {
@@ -232,6 +234,12 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    usePlayerProfileStore.getState().load();
+  }, []);
+
+  const { loaded: playersLoaded, players } = usePlayerProfileStore();
+
   // --- Set match helpers ---
 
   function buildSetProgress(state: SetState): SetProgress {
@@ -433,6 +441,12 @@ function App() {
 
   // Build set progress for current game screens
   const currentSetProgress = setMatch ? buildSetProgress(setMatch) : undefined;
+
+  if (!playersLoaded) return <div className="h-screen bg-zinc-950" />;
+
+  if (players.length === 0) {
+    return <OnboardingScreen />;
+  }
 
   if (screen.name === "game") {
     return (
