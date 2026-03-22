@@ -8,7 +8,9 @@ const mockPlayers = [
 
 vi.mock("../db/db.ts", () => ({
   dbGetAllPlayers: vi.fn(() => Promise.resolve([...mockPlayers])),
-  dbAddPlayer: vi.fn((name: string) => Promise.resolve({ id: "new-id", name, createdAt: Date.now() })),
+  dbAddPlayer: vi.fn((name: string) =>
+    Promise.resolve({ id: "new-id", name, createdAt: Date.now() }),
+  ),
   dbDeletePlayer: vi.fn(() => Promise.resolve()),
   dbRenamePlayer: vi.fn(() => Promise.resolve()),
 }));
@@ -45,7 +47,10 @@ describe("usePlayerProfileStore", () => {
   });
 
   it("createPlayer() adds player sorted by name", async () => {
-    usePlayerProfileStore.setState({ players: [{ id: "1", name: "Zara", createdAt: 1 }], loaded: true });
+    usePlayerProfileStore.setState({
+      players: [{ id: "1", name: "Zara", createdAt: 1 }],
+      loaded: true,
+    });
     await usePlayerProfileStore.getState().createPlayer("Bob");
     const names = usePlayerProfileStore.getState().players.map((p) => p.name);
     expect(names).toEqual(["Bob", "Zara"]);

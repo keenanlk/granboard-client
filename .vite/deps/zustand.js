@@ -1,9 +1,5 @@
-import {
-  require_react
-} from "./chunk-VX2H6PUQ.js";
-import {
-  __toESM
-} from "./chunk-G3PMV62Z.js";
+import { require_react } from "./chunk-VX2H6PUQ.js";
+import { __toESM } from "./chunk-G3PMV62Z.js";
 
 // node_modules/zustand/esm/vanilla.mjs
 var createStoreImpl = (createState) => {
@@ -13,7 +9,13 @@ var createStoreImpl = (createState) => {
     const nextState = typeof partial === "function" ? partial(state) : partial;
     if (!Object.is(nextState, state)) {
       const previousState = state;
-      state = (replace != null ? replace : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state, nextState);
+      state = (
+        replace != null
+          ? replace
+          : typeof nextState !== "object" || nextState === null
+      )
+        ? nextState
+        : Object.assign({}, state, nextState);
       listeners.forEach((listener) => listener(state, previousState));
     }
   };
@@ -24,10 +26,11 @@ var createStoreImpl = (createState) => {
     return () => listeners.delete(listener);
   };
   const api = { setState, getState, getInitialState, subscribe };
-  const initialState = state = createState(setState, getState, api);
+  const initialState = (state = createState(setState, getState, api));
   return api;
 };
-var createStore = ((createState) => createState ? createStoreImpl(createState) : createStoreImpl);
+var createStore = (createState) =>
+  createState ? createStoreImpl(createState) : createStoreImpl;
 
 // node_modules/zustand/esm/react.mjs
 var import_react = __toESM(require_react(), 1);
@@ -35,8 +38,14 @@ var identity = (arg) => arg;
 function useStore(api, selector = identity) {
   const slice = import_react.default.useSyncExternalStore(
     api.subscribe,
-    import_react.default.useCallback(() => selector(api.getState()), [api, selector]),
-    import_react.default.useCallback(() => selector(api.getInitialState()), [api, selector])
+    import_react.default.useCallback(
+      () => selector(api.getState()),
+      [api, selector],
+    ),
+    import_react.default.useCallback(
+      () => selector(api.getInitialState()),
+      [api, selector],
+    ),
   );
   import_react.default.useDebugValue(slice);
   return slice;
@@ -47,10 +56,7 @@ var createImpl = (createState) => {
   Object.assign(useBoundStore, api);
   return useBoundStore;
 };
-var create = ((createState) => createState ? createImpl(createState) : createImpl);
-export {
-  create,
-  createStore,
-  useStore
-};
+var create = (createState) =>
+  createState ? createImpl(createState) : createImpl;
+export { create, createStore, useStore };
 //# sourceMappingURL=zustand.js.map

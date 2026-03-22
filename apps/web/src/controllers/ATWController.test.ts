@@ -5,7 +5,14 @@ vi.mock("../events/gameEventBus.ts", () => ({
   gameEventBus: { emit: vi.fn() },
 }));
 vi.mock("../lib/logger.ts", () => ({
-  logger: { child: () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() }) },
+  logger: {
+    child: () => ({
+      debug: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+    }),
+  },
 }));
 vi.mock("../store/useATWStore.ts", () => ({
   useATWStore: { getState: vi.fn() },
@@ -17,16 +24,19 @@ import { useATWStore } from "../store/useATWStore.ts";
 
 const s20 = CreateSegment(SegmentID.INNER_20);
 
-function mockStore(before: Record<string, unknown>, after: Record<string, unknown>) {
+function mockStore(
+  before: Record<string, unknown>,
+  after: Record<string, unknown>,
+) {
   const addDart = vi.fn();
   const nextTurn = vi.fn();
   const beforeState = { addDart, nextTurn, ...before };
   const afterState = { addDart, nextTurn, ...after };
   vi.mocked(useATWStore.getState)
-    .mockReturnValueOnce(beforeState as any) // before snapshot
-    .mockReturnValueOnce(beforeState as any) // addDart call
-    .mockReturnValueOnce(afterState as any) // after snapshot
-    .mockReturnValueOnce(afterState as any); // emitOpenNumbers call
+    .mockReturnValueOnce(beforeState as never) // before snapshot
+    .mockReturnValueOnce(beforeState as never) // addDart call
+    .mockReturnValueOnce(afterState as never) // after snapshot
+    .mockReturnValueOnce(afterState as never); // emitOpenNumbers call
   return { addDart, nextTurn };
 }
 
@@ -72,9 +82,9 @@ describe("ATWController", () => {
       },
     );
     ctrl.onDartHit(s20);
-    const openCall = vi.mocked(gameEventBus.emit).mock.calls.find(
-      (c) => c[0] === "open_numbers",
-    );
+    const openCall = vi
+      .mocked(gameEventBus.emit)
+      .mock.calls.find((c) => c[0] === "open_numbers");
     expect(openCall).toBeDefined();
     expect((openCall![1] as { numbers: number[] }).numbers).toEqual([5]);
   });
@@ -114,13 +124,15 @@ describe("ATWController", () => {
       players: [{ name: "Alice", finished: true, currentTarget: 21 }],
     };
     vi.mocked(useATWStore.getState)
-      .mockReturnValueOnce(beforeState as any)  // before
-      .mockReturnValueOnce(beforeState as any)  // addDart call
-      .mockReturnValueOnce(afterState as any)   // after
-      .mockReturnValueOnce(afterState as any)   // emitOpenNumbers
-      .mockReturnValueOnce(afterState as any);  // extra safety
+      .mockReturnValueOnce(beforeState as never) // before
+      .mockReturnValueOnce(beforeState as never) // addDart call
+      .mockReturnValueOnce(afterState as never) // after
+      .mockReturnValueOnce(afterState as never) // emitOpenNumbers
+      .mockReturnValueOnce(afterState as never); // extra safety
     ctrl.onDartHit(s20);
-    expect(gameEventBus.emit).toHaveBeenCalledWith("game_won", { playerName: "Alice" });
+    expect(gameEventBus.emit).toHaveBeenCalledWith("game_won", {
+      playerName: "Alice",
+    });
   });
 
   it("onNextTurn emits next_turn and open_numbers", () => {
@@ -131,12 +143,14 @@ describe("ATWController", () => {
       players: [{ name: "Alice", finished: false, currentTarget: 7 }],
     };
     vi.mocked(useATWStore.getState)
-      .mockReturnValueOnce(state as any)  // nextTurn call
-      .mockReturnValueOnce(state as any); // emitOpenNumbers call
+      .mockReturnValueOnce(state as never) // nextTurn call
+      .mockReturnValueOnce(state as never); // emitOpenNumbers call
     ctrl.onNextTurn();
     expect(nextTurn).toHaveBeenCalled();
     expect(gameEventBus.emit).toHaveBeenCalledWith("next_turn", {});
-    expect(gameEventBus.emit).toHaveBeenCalledWith("open_numbers", { numbers: [7] });
+    expect(gameEventBus.emit).toHaveBeenCalledWith("open_numbers", {
+      numbers: [7],
+    });
   });
 
   it("open_numbers is empty when player finished or target is bull (25)", () => {
@@ -147,12 +161,12 @@ describe("ATWController", () => {
       players: [{ name: "Alice", finished: true, currentTarget: 25 }],
     };
     vi.mocked(useATWStore.getState)
-      .mockReturnValueOnce(state as any)
-      .mockReturnValueOnce(state as any);
+      .mockReturnValueOnce(state as never)
+      .mockReturnValueOnce(state as never);
     ctrl.onNextTurn();
-    const openCall = vi.mocked(gameEventBus.emit).mock.calls.find(
-      (c) => c[0] === "open_numbers",
-    );
+    const openCall = vi
+      .mocked(gameEventBus.emit)
+      .mock.calls.find((c) => c[0] === "open_numbers");
     expect(openCall).toBeDefined();
     expect((openCall![1] as { numbers: number[] }).numbers).toEqual([]);
   });

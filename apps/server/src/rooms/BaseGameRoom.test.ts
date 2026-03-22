@@ -20,7 +20,9 @@ vi.mock("@colyseus/core", () => {
   return { Room: MockRoom };
 });
 
-const mockUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({}) });
+const mockUpdate = vi
+  .fn()
+  .mockReturnValue({ eq: vi.fn().mockResolvedValue({}) });
 const mockFrom = vi.fn().mockReturnValue({ update: mockUpdate });
 vi.mock("../supabaseAdmin.ts", () => ({ supabaseAdmin: null }));
 import * as supaModule from "../supabaseAdmin.ts";
@@ -53,7 +55,9 @@ function createRoom(
 }
 
 function getHandler(room: unknown, type: string): Function {
-  return (room as { _messageHandlers: Map<string, Function> })._messageHandlers.get(type)!;
+  return (
+    room as { _messageHandlers: Map<string, Function> }
+  )._messageHandlers.get(type)!;
 }
 
 function mockClient(sessionId = "client-1") {
@@ -81,7 +85,9 @@ describe("BaseGameRoom", () => {
 
     it("registers all message handlers", () => {
       const room = createRoom();
-      const handlers = (room as unknown as { _messageHandlers: Map<string, Function> })._messageHandlers;
+      const handlers = (
+        room as unknown as { _messageHandlers: Map<string, Function> }
+      )._messageHandlers;
       expect(handlers.has("dart_hit")).toBe(true);
       expect(handlers.has("next_turn")).toBe(true);
       expect(handlers.has("undo")).toBe(true);
@@ -103,18 +109,27 @@ describe("BaseGameRoom", () => {
       (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client2);
 
       // Both clients should have received STATE_UPDATE
-      expect(client1.send).toHaveBeenCalledWith("state_update", expect.any(Object));
-      expect(client2.send).toHaveBeenCalledWith("state_update", expect.any(Object));
+      expect(client1.send).toHaveBeenCalledWith(
+        "state_update",
+        expect.any(Object),
+      );
+      expect(client2.send).toHaveBeenCalledWith(
+        "state_update",
+        expect.any(Object),
+      );
     });
 
     it("sends current state to joining client", () => {
       const room = createRoom();
       const client = mockClient();
       (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client);
-      expect(client.send).toHaveBeenCalledWith("state_update", expect.objectContaining({
-        seq: expect.any(Number),
-        state: expect.any(Object),
-      }));
+      expect(client.send).toHaveBeenCalledWith(
+        "state_update",
+        expect.objectContaining({
+          seq: expect.any(Number),
+          state: expect.any(Object),
+        }),
+      );
     });
   });
 
@@ -128,10 +143,13 @@ describe("BaseGameRoom", () => {
       client.send.mockClear();
       handler(client);
 
-      expect(client.send).toHaveBeenCalledWith("state_update", expect.objectContaining({
-        state: expect.any(Object),
-        seq: expect.any(Number),
-      }));
+      expect(client.send).toHaveBeenCalledWith(
+        "state_update",
+        expect.objectContaining({
+          state: expect.any(Object),
+          seq: expect.any(Number),
+        }),
+      );
     });
   });
 
@@ -145,7 +163,9 @@ describe("BaseGameRoom", () => {
       handler(client);
 
       const broadcast = getBroadcast(room);
-      const calls = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "rematch_request");
+      const calls = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "rematch_request",
+      );
       expect(calls.length).toBe(1);
       expect(calls[0][2]).toEqual({ except: client });
     });
@@ -159,7 +179,9 @@ describe("BaseGameRoom", () => {
       handler(client);
 
       const broadcast = getBroadcast(room);
-      const calls = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "rematch_accept");
+      const calls = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "rematch_accept",
+      );
       expect(calls.length).toBe(1);
     });
 
@@ -172,7 +194,9 @@ describe("BaseGameRoom", () => {
       handler(client);
 
       const broadcast = getBroadcast(room);
-      const calls = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "rematch_decline");
+      const calls = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "rematch_decline",
+      );
       expect(calls.length).toBe(1);
     });
   });
@@ -188,7 +212,9 @@ describe("BaseGameRoom", () => {
       handler(client, payload);
 
       const broadcast = getBroadcast(room);
-      const calls = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "webrtc_signal");
+      const calls = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "webrtc_signal",
+      );
       expect(calls.length).toBe(1);
       expect(calls[0][1]).toEqual(payload);
       expect(calls[0][2]).toEqual({ except: client });
@@ -204,7 +230,9 @@ describe("BaseGameRoom", () => {
       handler(client, payload);
 
       const broadcast = getBroadcast(room);
-      const calls = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "camera_status");
+      const calls = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "camera_status",
+      );
       expect(calls.length).toBe(1);
       expect(calls[0][1]).toEqual(payload);
       expect(calls[0][2]).toEqual({ except: client });
@@ -220,22 +248,36 @@ describe("BaseGameRoom", () => {
       const broadcast = getBroadcast(room);
       broadcast.mockClear();
 
-      await (room as unknown as { onLeave: (c: unknown, code?: number) => Promise<void> }).onLeave(client, 4000);
+      await (
+        room as unknown as {
+          onLeave: (c: unknown, code?: number) => Promise<void>;
+        }
+      ).onLeave(client, 4000);
 
-      const leftCalls = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "player_left");
+      const leftCalls = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "player_left",
+      );
       expect(leftCalls.length).toBe(1);
-      expect(leftCalls[0][1]).toEqual(expect.objectContaining({ playerIndex: 0 }));
+      expect(leftCalls[0][1]).toEqual(
+        expect.objectContaining({ playerIndex: 0 }),
+      );
     });
 
     it("non-consented leave attempts reconnection", async () => {
       const room = createRoom();
       const client = mockClient();
-      const allowReconnection = (room as unknown as { allowReconnection: ReturnType<typeof vi.fn> }).allowReconnection;
+      const allowReconnection = (
+        room as unknown as { allowReconnection: ReturnType<typeof vi.fn> }
+      ).allowReconnection;
       allowReconnection.mockResolvedValue(undefined);
 
       (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client);
 
-      await (room as unknown as { onLeave: (c: unknown, code?: number) => Promise<void> }).onLeave(client);
+      await (
+        room as unknown as {
+          onLeave: (c: unknown, code?: number) => Promise<void>;
+        }
+      ).onLeave(client);
 
       expect(allowReconnection).toHaveBeenCalledWith(client, 30);
     });
@@ -243,30 +285,47 @@ describe("BaseGameRoom", () => {
     it("reconnection success sends state update", async () => {
       const room = createRoom();
       const client = mockClient();
-      const allowReconnection = (room as unknown as { allowReconnection: ReturnType<typeof vi.fn> }).allowReconnection;
+      const allowReconnection = (
+        room as unknown as { allowReconnection: ReturnType<typeof vi.fn> }
+      ).allowReconnection;
       allowReconnection.mockResolvedValue(undefined);
 
       (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client);
       client.send.mockClear();
 
-      await (room as unknown as { onLeave: (c: unknown, code?: number) => Promise<void> }).onLeave(client);
+      await (
+        room as unknown as {
+          onLeave: (c: unknown, code?: number) => Promise<void>;
+        }
+      ).onLeave(client);
 
-      expect(client.send).toHaveBeenCalledWith("state_update", expect.any(Object));
+      expect(client.send).toHaveBeenCalledWith(
+        "state_update",
+        expect.any(Object),
+      );
     });
 
     it("reconnection timeout removes player and broadcasts PLAYER_LEFT", async () => {
       const room = createRoom();
       const client = mockClient();
-      const allowReconnection = (room as unknown as { allowReconnection: ReturnType<typeof vi.fn> }).allowReconnection;
+      const allowReconnection = (
+        room as unknown as { allowReconnection: ReturnType<typeof vi.fn> }
+      ).allowReconnection;
       allowReconnection.mockRejectedValue(new Error("timeout"));
 
       (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client);
       const broadcast = getBroadcast(room);
       broadcast.mockClear();
 
-      await (room as unknown as { onLeave: (c: unknown, code?: number) => Promise<void> }).onLeave(client);
+      await (
+        room as unknown as {
+          onLeave: (c: unknown, code?: number) => Promise<void>;
+        }
+      ).onLeave(client);
 
-      const leftCalls = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "player_left");
+      const leftCalls = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "player_left",
+      );
       expect(leftCalls.length).toBe(1);
     });
   });
@@ -288,7 +347,9 @@ describe("BaseGameRoom", () => {
       undoHandler(client);
 
       // Should broadcast state_update after undo
-      const stateUpdates = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "state_update");
+      const stateUpdates = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "state_update",
+      );
       expect(stateUpdates.length).toBe(1);
     });
 
@@ -310,7 +371,9 @@ describe("BaseGameRoom", () => {
       // Player 2 tries to undo player 1's dart
       undoHandler(client2);
 
-      const stateUpdates = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "state_update");
+      const stateUpdates = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "state_update",
+      );
       expect(stateUpdates.length).toBe(0);
     });
 
@@ -342,7 +405,9 @@ describe("BaseGameRoom", () => {
 
       undoHandler(client1);
 
-      const stateUpdates = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "state_update");
+      const stateUpdates = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "state_update",
+      );
       expect(stateUpdates.length).toBe(0);
     });
   });
@@ -357,7 +422,9 @@ describe("BaseGameRoom", () => {
       dartHandler(client, { segmentId: SegmentID.INNER_1 });
 
       const broadcast = getBroadcast(room);
-      const lastStateUpdate = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "state_update").pop();
+      const lastStateUpdate = broadcast.mock.calls
+        .filter((c: unknown[]) => c[0] === "state_update")
+        .pop();
       expect(lastStateUpdate).toBeDefined();
       expect(lastStateUpdate![1].state.undoStack.length).toBe(1);
     });
@@ -382,7 +449,9 @@ describe("BaseGameRoom", () => {
       }
 
       const broadcast = getBroadcast(room);
-      const stateUpdates = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "state_update");
+      const stateUpdates = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "state_update",
+      );
       const lastState = stateUpdates[stateUpdates.length - 1][1].state;
       expect(lastState.undoStack.length).toBeLessThanOrEqual(12);
     });
@@ -399,8 +468,12 @@ describe("BaseGameRoom", () => {
       dartHandler(client, { segmentId: SegmentID.INNER_2 });
 
       const broadcast = getBroadcast(room);
-      const stateUpdates = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "state_update");
-      const seqs = stateUpdates.map((c: unknown[]) => (c[1] as { seq: number }).seq);
+      const stateUpdates = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "state_update",
+      );
+      const seqs = stateUpdates.map(
+        (c: unknown[]) => (c[1] as { seq: number }).seq,
+      );
       // Each dart should increment seq
       for (let i = 1; i < seqs.length; i++) {
         expect(seqs[i]).toBeGreaterThan(seqs[i - 1]);
@@ -411,7 +484,9 @@ describe("BaseGameRoom", () => {
   describe("inactivity timer", () => {
     it("disconnects room after 10 minutes of inactivity", () => {
       const room = createRoom();
-      const disconnectFn = (room as unknown as { disconnect: ReturnType<typeof vi.fn> }).disconnect;
+      const disconnectFn = (
+        room as unknown as { disconnect: ReturnType<typeof vi.fn> }
+      ).disconnect;
 
       vi.advanceTimersByTime(10 * 60 * 1000);
 
@@ -422,7 +497,9 @@ describe("BaseGameRoom", () => {
       const room = createRoom();
       const client = mockClient();
       (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client);
-      const disconnectFn = (room as unknown as { disconnect: ReturnType<typeof vi.fn> }).disconnect;
+      const disconnectFn = (
+        room as unknown as { disconnect: ReturnType<typeof vi.fn> }
+      ).disconnect;
 
       // Advance 9 minutes
       vi.advanceTimersByTime(9 * 60 * 1000);
@@ -447,7 +524,9 @@ describe("BaseGameRoom", () => {
       (room as unknown as { onDispose: () => void }).onDispose();
       // Should not throw and timer should be cleared
       // Advancing time should NOT call disconnect
-      const disconnectFn = (room as unknown as { disconnect: ReturnType<typeof vi.fn> }).disconnect;
+      const disconnectFn = (
+        room as unknown as { disconnect: ReturnType<typeof vi.fn> }
+      ).disconnect;
       vi.advanceTimersByTime(15 * 60 * 1000);
       expect(disconnectFn).not.toHaveBeenCalled();
     });
@@ -480,7 +559,9 @@ describe("BaseGameRoom", () => {
       // Try another dart after win
       dartHandler(client1, { segmentId: SegmentID.INNER_1 });
 
-      const gameEvents = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "game_event");
+      const gameEvents = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "game_event",
+      );
       expect(gameEvents.length).toBe(0);
     });
   });
@@ -500,7 +581,9 @@ describe("BaseGameRoom", () => {
       // Client 2 tries to end client 1's turn
       nextTurn(client2);
 
-      const turnDelays = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "turn_delay");
+      const turnDelays = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "turn_delay",
+      );
       expect(turnDelays.length).toBe(0);
     });
 
@@ -529,7 +612,9 @@ describe("BaseGameRoom", () => {
 
       nextTurn(client1);
 
-      const turnDelays = broadcast.mock.calls.filter((c: unknown[]) => c[0] === "turn_delay");
+      const turnDelays = broadcast.mock.calls.filter(
+        (c: unknown[]) => c[0] === "turn_delay",
+      );
       expect(turnDelays.length).toBe(0);
     });
   });

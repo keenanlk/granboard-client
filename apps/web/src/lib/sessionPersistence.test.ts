@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { saveSession, loadSession, clearSession } from "./sessionPersistence.ts";
+import {
+  saveSession,
+  loadSession,
+  clearSession,
+} from "./sessionPersistence.ts";
 import type { PersistedSession } from "./sessionPersistence.ts";
 
 const mockStorage = new Map<string, string>();
@@ -93,7 +97,11 @@ describe("sessionPersistence", () => {
       botSkills: [null],
       gameState: { marks: {} },
       savedAt: 1700000000000,
-      setConfig: { format: "bo3" as const, legs: [], throwOrder: "alternate" as const },
+      setConfig: {
+        format: "bo3" as const,
+        legs: [],
+        throwOrder: "alternate" as const,
+      },
       legResults: [],
       currentLegIndex: 0,
     });
@@ -109,7 +117,11 @@ describe("sessionPersistence", () => {
     expect(loaded!.botSkills).toEqual([null]);
     expect(loaded!.gameState).toEqual({ marks: {} });
     expect(loaded!.savedAt).toBe(1700000000000);
-    expect(loaded!.setConfig).toEqual({ format: "bo3", legs: [], throwOrder: "alternate" });
+    expect(loaded!.setConfig).toEqual({
+      format: "bo3",
+      legs: [],
+      throwOrder: "alternate",
+    });
     expect(loaded!.legResults).toEqual([]);
     expect(loaded!.currentLegIndex).toBe(0);
   });

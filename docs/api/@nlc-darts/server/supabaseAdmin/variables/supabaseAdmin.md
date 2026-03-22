@@ -8,6 +8,6 @@
 
 > `const` **supabaseAdmin**: `SupabaseClient`\<`any`, `"public"`, `"public"`, `any`, `any`\> \| `null`
 
-Defined in: [apps/server/src/supabaseAdmin.ts:12](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/supabaseAdmin.ts#L12)
+Defined in: [apps/server/src/supabaseAdmin.ts:15](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/supabaseAdmin.ts#L15)
 
 Supabase admin client using the service-role key, or null when credentials are missing.

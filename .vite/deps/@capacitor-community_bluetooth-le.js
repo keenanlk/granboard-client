@@ -7,39 +7,45 @@ import {
   numberToUUID,
   numbersToDataView,
   textToDataView,
-  webUUIDToString
+  webUUIDToString,
 } from "./chunk-CJKUUSXD.js";
-import {
-  Capacitor,
-  registerPlugin
-} from "./chunk-PT3A4N6G.js";
+import { Capacitor, registerPlugin } from "./chunk-PT3A4N6G.js";
 import "./chunk-G3PMV62Z.js";
 
 // node_modules/@capacitor-community/bluetooth-le/dist/esm/definitions.js
 var ScanMode;
-(function(ScanMode2) {
-  ScanMode2[ScanMode2["SCAN_MODE_LOW_POWER"] = 0] = "SCAN_MODE_LOW_POWER";
-  ScanMode2[ScanMode2["SCAN_MODE_BALANCED"] = 1] = "SCAN_MODE_BALANCED";
-  ScanMode2[ScanMode2["SCAN_MODE_LOW_LATENCY"] = 2] = "SCAN_MODE_LOW_LATENCY";
+(function (ScanMode2) {
+  ScanMode2[(ScanMode2["SCAN_MODE_LOW_POWER"] = 0)] = "SCAN_MODE_LOW_POWER";
+  ScanMode2[(ScanMode2["SCAN_MODE_BALANCED"] = 1)] = "SCAN_MODE_BALANCED";
+  ScanMode2[(ScanMode2["SCAN_MODE_LOW_LATENCY"] = 2)] = "SCAN_MODE_LOW_LATENCY";
 })(ScanMode || (ScanMode = {}));
 var ConnectionPriority;
-(function(ConnectionPriority2) {
-  ConnectionPriority2[ConnectionPriority2["CONNECTION_PRIORITY_BALANCED"] = 0] = "CONNECTION_PRIORITY_BALANCED";
-  ConnectionPriority2[ConnectionPriority2["CONNECTION_PRIORITY_HIGH"] = 1] = "CONNECTION_PRIORITY_HIGH";
-  ConnectionPriority2[ConnectionPriority2["CONNECTION_PRIORITY_LOW_POWER"] = 2] = "CONNECTION_PRIORITY_LOW_POWER";
+(function (ConnectionPriority2) {
+  ConnectionPriority2[
+    (ConnectionPriority2["CONNECTION_PRIORITY_BALANCED"] = 0)
+  ] = "CONNECTION_PRIORITY_BALANCED";
+  ConnectionPriority2[(ConnectionPriority2["CONNECTION_PRIORITY_HIGH"] = 1)] =
+    "CONNECTION_PRIORITY_HIGH";
+  ConnectionPriority2[
+    (ConnectionPriority2["CONNECTION_PRIORITY_LOW_POWER"] = 2)
+  ] = "CONNECTION_PRIORITY_LOW_POWER";
 })(ConnectionPriority || (ConnectionPriority = {}));
 
 // node_modules/@capacitor-community/bluetooth-le/dist/esm/plugin.js
 var BluetoothLe = registerPlugin("BluetoothLe", {
-  web: () => import("./web-J3KFB53V.js").then((m) => new m.BluetoothLeWeb())
+  web: () => import("./web-J3KFB53V.js").then((m) => new m.BluetoothLeWeb()),
 });
 
 // node_modules/@capacitor-community/bluetooth-le/dist/esm/queue.js
 var makeQueue = () => {
   let currentTask = Promise.resolve();
-  return (fn) => new Promise((resolve, reject) => {
-    currentTask = currentTask.then(() => fn()).then(resolve).catch(reject);
-  });
+  return (fn) =>
+    new Promise((resolve, reject) => {
+      currentTask = currentTask
+        .then(() => fn())
+        .then(resolve)
+        .catch(reject);
+    });
 };
 function getQueue(enabled) {
   if (enabled) {
@@ -54,9 +60,14 @@ function parseUUID(uuid) {
     throw new Error(`Invalid UUID type ${typeof uuid}. Expected string.`);
   }
   uuid = uuid.toLowerCase();
-  const is128BitUuid = uuid.search(/^[0-9a-f]{8}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{12}$/) >= 0;
+  const is128BitUuid =
+    uuid.search(
+      /^[0-9a-f]{8}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{12}$/,
+    ) >= 0;
   if (!is128BitUuid) {
-    throw new Error(`Invalid UUID format ${uuid}. Expected 128 bit string (e.g. "0000180d-0000-1000-8000-00805f9b34fb").`);
+    throw new Error(
+      `Invalid UUID format ${uuid}. Expected 128 bit string (e.g. "0000180d-0000-1000-8000-00805f9b34fb").`,
+    );
   }
   return uuid;
 }
@@ -105,7 +116,9 @@ var BleClientClass = class {
     await this.queue(async () => {
       var _a;
       const key = `onEnabledChanged`;
-      await ((_a = this.eventListeners.get(key)) === null || _a === void 0 ? void 0 : _a.remove());
+      await ((_a = this.eventListeners.get(key)) === null || _a === void 0
+        ? void 0
+        : _a.remove());
       const listener = await BluetoothLe.addListener(key, (result) => {
         callback(result.value);
       });
@@ -117,7 +130,9 @@ var BleClientClass = class {
     await this.queue(async () => {
       var _a;
       const key = `onEnabledChanged`;
-      await ((_a = this.eventListeners.get(key)) === null || _a === void 0 ? void 0 : _a.remove());
+      await ((_a = this.eventListeners.get(key)) === null || _a === void 0
+        ? void 0
+        : _a.remove());
       this.eventListeners.delete(key);
       await BluetoothLe.stopEnabledNotifications();
     });
@@ -161,18 +176,33 @@ var BleClientClass = class {
     options = this.validateRequestBleDeviceOptions(options);
     await this.queue(async () => {
       var _a;
-      await ((_a = this.scanListener) === null || _a === void 0 ? void 0 : _a.remove());
-      this.scanListener = await BluetoothLe.addListener("onScanResult", (resultInternal) => {
-        const result = Object.assign(Object.assign({}, resultInternal), { manufacturerData: this.convertObject(resultInternal.manufacturerData), serviceData: this.convertObject(resultInternal.serviceData), rawAdvertisement: resultInternal.rawAdvertisement ? this.convertValue(resultInternal.rawAdvertisement) : void 0 });
-        callback(result);
-      });
+      await ((_a = this.scanListener) === null || _a === void 0
+        ? void 0
+        : _a.remove());
+      this.scanListener = await BluetoothLe.addListener(
+        "onScanResult",
+        (resultInternal) => {
+          const result = Object.assign(Object.assign({}, resultInternal), {
+            manufacturerData: this.convertObject(
+              resultInternal.manufacturerData,
+            ),
+            serviceData: this.convertObject(resultInternal.serviceData),
+            rawAdvertisement: resultInternal.rawAdvertisement
+              ? this.convertValue(resultInternal.rawAdvertisement)
+              : void 0,
+          });
+          callback(result);
+        },
+      );
       await BluetoothLe.requestLEScan(options);
     });
   }
   async stopLEScan() {
     await this.queue(async () => {
       var _a;
-      await ((_a = this.scanListener) === null || _a === void 0 ? void 0 : _a.remove());
+      await ((_a = this.scanListener) === null || _a === void 0
+        ? void 0
+        : _a.remove());
       this.scanListener = null;
       await BluetoothLe.stopLEScan();
     });
@@ -207,7 +237,9 @@ var BleClientClass = class {
       var _a;
       if (onDisconnect) {
         const key = `disconnected|${deviceId}`;
-        await ((_a = this.eventListeners.get(key)) === null || _a === void 0 ? void 0 : _a.remove());
+        await ((_a = this.eventListeners.get(key)) === null || _a === void 0
+          ? void 0
+          : _a.remove());
         const listener = await BluetoothLe.addListener(key, () => {
           onDisconnect(deviceId);
         });
@@ -254,7 +286,10 @@ var BleClientClass = class {
   }
   async requestConnectionPriority(deviceId, connectionPriority) {
     await this.queue(async () => {
-      await BluetoothLe.requestConnectionPriority({ deviceId, connectionPriority });
+      await BluetoothLe.requestConnectionPriority({
+        deviceId,
+        connectionPriority,
+      });
     });
   }
   async readRssi(deviceId) {
@@ -268,11 +303,16 @@ var BleClientClass = class {
     service = parseUUID(service);
     characteristic = parseUUID(characteristic);
     const value = await this.queue(async () => {
-      const result = await BluetoothLe.read(Object.assign({
-        deviceId,
-        service,
-        characteristic
-      }, options));
+      const result = await BluetoothLe.read(
+        Object.assign(
+          {
+            deviceId,
+            service,
+            characteristic,
+          },
+          options,
+        ),
+      );
       return this.convertValue(result.value);
     });
     return value;
@@ -288,15 +328,26 @@ var BleClientClass = class {
       if (Capacitor.getPlatform() !== "web") {
         writeValue = dataViewToHexString(value);
       }
-      await BluetoothLe.write(Object.assign({
-        deviceId,
-        service,
-        characteristic,
-        value: writeValue
-      }, options));
+      await BluetoothLe.write(
+        Object.assign(
+          {
+            deviceId,
+            service,
+            characteristic,
+            value: writeValue,
+          },
+          options,
+        ),
+      );
     });
   }
-  async writeWithoutResponse(deviceId, service, characteristic, value, options) {
+  async writeWithoutResponse(
+    deviceId,
+    service,
+    characteristic,
+    value,
+    options,
+  ) {
     service = parseUUID(service);
     characteristic = parseUUID(characteristic);
     await this.queue(async () => {
@@ -307,12 +358,17 @@ var BleClientClass = class {
       if (Capacitor.getPlatform() !== "web") {
         writeValue = dataViewToHexString(value);
       }
-      await BluetoothLe.writeWithoutResponse(Object.assign({
-        deviceId,
-        service,
-        characteristic,
-        value: writeValue
-      }, options));
+      await BluetoothLe.writeWithoutResponse(
+        Object.assign(
+          {
+            deviceId,
+            service,
+            characteristic,
+            value: writeValue,
+          },
+          options,
+        ),
+      );
     });
   }
   async readDescriptor(deviceId, service, characteristic, descriptor, options) {
@@ -320,17 +376,29 @@ var BleClientClass = class {
     characteristic = parseUUID(characteristic);
     descriptor = parseUUID(descriptor);
     const value = await this.queue(async () => {
-      const result = await BluetoothLe.readDescriptor(Object.assign({
-        deviceId,
-        service,
-        characteristic,
-        descriptor
-      }, options));
+      const result = await BluetoothLe.readDescriptor(
+        Object.assign(
+          {
+            deviceId,
+            service,
+            characteristic,
+            descriptor,
+          },
+          options,
+        ),
+      );
       return this.convertValue(result.value);
     });
     return value;
   }
-  async writeDescriptor(deviceId, service, characteristic, descriptor, value, options) {
+  async writeDescriptor(
+    deviceId,
+    service,
+    characteristic,
+    descriptor,
+    value,
+    options,
+  ) {
     service = parseUUID(service);
     characteristic = parseUUID(characteristic);
     descriptor = parseUUID(descriptor);
@@ -342,13 +410,18 @@ var BleClientClass = class {
       if (Capacitor.getPlatform() !== "web") {
         writeValue = dataViewToHexString(value);
       }
-      await BluetoothLe.writeDescriptor(Object.assign({
-        deviceId,
-        service,
-        characteristic,
-        descriptor,
-        value: writeValue
-      }, options));
+      await BluetoothLe.writeDescriptor(
+        Object.assign(
+          {
+            deviceId,
+            service,
+            characteristic,
+            descriptor,
+            value: writeValue,
+          },
+          options,
+        ),
+      );
     });
   }
   async startNotifications(deviceId, service, characteristic, callback) {
@@ -357,15 +430,21 @@ var BleClientClass = class {
     await this.queue(async () => {
       var _a;
       const key = `notification|${deviceId}|${service}|${characteristic}`;
-      await ((_a = this.eventListeners.get(key)) === null || _a === void 0 ? void 0 : _a.remove());
+      await ((_a = this.eventListeners.get(key)) === null || _a === void 0
+        ? void 0
+        : _a.remove());
       const listener = await BluetoothLe.addListener(key, (event) => {
-        callback(this.convertValue(event === null || event === void 0 ? void 0 : event.value));
+        callback(
+          this.convertValue(
+            event === null || event === void 0 ? void 0 : event.value,
+          ),
+        );
       });
       this.eventListeners.set(key, listener);
       await BluetoothLe.startNotifications({
         deviceId,
         service,
-        characteristic
+        characteristic,
       });
     });
   }
@@ -375,12 +454,14 @@ var BleClientClass = class {
     await this.queue(async () => {
       var _a;
       const key = `notification|${deviceId}|${service}|${characteristic}`;
-      await ((_a = this.eventListeners.get(key)) === null || _a === void 0 ? void 0 : _a.remove());
+      await ((_a = this.eventListeners.get(key)) === null || _a === void 0
+        ? void 0
+        : _a.remove());
       this.eventListeners.delete(key);
       await BluetoothLe.stopNotifications({
         deviceId,
         service,
-        characteristic
+        characteristic,
       });
     });
   }
@@ -426,6 +507,6 @@ export {
   numberToUUID,
   numbersToDataView,
   textToDataView,
-  webUUIDToString
+  webUUIDToString,
 };
 //# sourceMappingURL=@capacitor-community_bluetooth-le.js.map

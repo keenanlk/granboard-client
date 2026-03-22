@@ -9,12 +9,12 @@ Use `str_replace` for all edits — read each file before editing and make surgi
 
 Add `| "<game>"` in each of these four locations:
 
-| File | Location |
-|---|---|
-| `src/db/db.ts` | `GameSessionRecord.gameType` union |
-| `src/db/gameRecorder.ts` | `gameType` field + constructor param (2 places) |
-| `src/lib/sessionPersistence.ts` | `PersistedSession.gameType` union |
-| `src/hooks/useGameSession.ts` | `gameType` param union |
+| File                            | Location                                        |
+| ------------------------------- | ----------------------------------------------- |
+| `src/db/db.ts`                  | `GameSessionRecord.gameType` union              |
+| `src/db/gameRecorder.ts`        | `gameType` field + constructor param (2 places) |
+| `src/lib/sessionPersistence.ts` | `PersistedSession.gameType` union               |
+| `src/hooks/useGameSession.ts`   | `gameType` param union                          |
 
 Read each file before editing to find the exact union string.
 
@@ -26,6 +26,7 @@ Read each file before editing to find the exact union string.
 game's screen component import) and use it as a pattern for all additions.
 
 Add in `src/App.tsx`:
+
 - Import the screen component and options/state types
 - Add `"<game>"` to the `Screen` type union
 - Add a `handleRematch` case for `"<game>"`
@@ -43,6 +44,7 @@ Add in `src/App.tsx`:
 block to use as a pattern.
 
 In `src/screens/GameSetupScreen.tsx`:
+
 - Import options type and `DEFAULT_<GAME>_OPTIONS`
 - Add `"<game>"` to the `game` prop union
 - Add options state: `const [<game>Options, set<Game>Options] = useState(DEFAULT_<GAME>_OPTIONS)`

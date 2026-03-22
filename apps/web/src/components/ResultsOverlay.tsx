@@ -192,9 +192,7 @@ export function ResultsOverlay({
         {/* Winner name + robot */}
         {winners.map((p) => (
           <div key={p.name} className="flex flex-col items-center gap-2">
-            {p.botSkill != null && (
-              <WinnerRobot skill={p.botSkill} />
-            )}
+            {p.botSkill != null && <WinnerRobot skill={p.botSkill} />}
             <p
               className="font-normal leading-none"
               style={{

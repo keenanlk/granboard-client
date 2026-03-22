@@ -8,7 +8,11 @@
  */
 
 // Controllers
-export { type GameController, setActiveController, getActiveController } from "./controllers/GameController.js";
+export {
+  type GameController,
+  setActiveController,
+  getActiveController,
+} from "./controllers/GameController.js";
 export { X01Controller } from "./controllers/X01Controller.js";
 export { CricketController } from "./controllers/CricketController.js";
 export { ATWController } from "./controllers/ATWController.js";
@@ -20,11 +24,22 @@ export { guardForOnlineTurn } from "./controllers/OnlineTurnGuard.js";
 
 // Stores
 export { createGameStore } from "./store/createGameStore.js";
-export { type PlayerStatus, type RoomStatus, type InviteStatus, type OnlineGameType, type OnlinePlayer, type Room, type Invite } from "./store/online.types.js";
+export {
+  type PlayerStatus,
+  type RoomStatus,
+  type InviteStatus,
+  type OnlineGameType,
+  type OnlinePlayer,
+  type Room,
+  type Invite,
+} from "./store/online.types.js";
 
 // Hooks
 export { useTurnDelay } from "./hooks/useTurnDelay.js";
-export { useOnlineRematch, type RematchState } from "./hooks/useOnlineRematch.js";
+export {
+  useOnlineRematch,
+  type RematchState,
+} from "./hooks/useOnlineRematch.js";
 export { useLobby } from "./hooks/useLobby.js";
 export { useAwardDetection } from "./hooks/useAwardDetection.js";
 export { useBoardWiring } from "./hooks/useBoardWiring.js";
@@ -52,6 +67,13 @@ export {
 } from "./board/GranboardLED.js";
 
 // Database
-export { dbGetAllPlayers, dbAddPlayer, dbDeletePlayer, dbRenamePlayer, dbSaveSession, dbGetSessionsForPlayer } from "./db/db.js";
+export {
+  dbGetAllPlayers,
+  dbAddPlayer,
+  dbDeletePlayer,
+  dbRenamePlayer,
+  dbSaveSession,
+  dbGetSessionsForPlayer,
+} from "./db/db.js";
 export { computePlayerStats } from "./db/playerStats.js";
 export { GameRecorder } from "./db/gameRecorder.js";

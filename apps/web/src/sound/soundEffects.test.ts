@@ -18,9 +18,15 @@ vi.mock("./sounds.ts", () => ({
 import { setTurnTransitioning } from "./soundEffects.ts";
 import { Sounds } from "./sounds.ts";
 
-const mockSounds = Sounds as unknown as Record<string, ReturnType<typeof vi.fn>>;
+const mockSounds = Sounds as unknown as Record<
+  string,
+  ReturnType<typeof vi.fn>
+>;
 
-function emitDartHit(segment: ReturnType<typeof CreateSegment>, effectiveMarks?: number) {
+function emitDartHit(
+  segment: ReturnType<typeof CreateSegment>,
+  effectiveMarks?: number,
+) {
   gameEventBus.emit("dart_hit", { segment, effectiveMarks });
 }
 

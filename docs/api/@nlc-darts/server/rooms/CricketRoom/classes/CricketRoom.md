@@ -6,7 +6,7 @@
 
 # Class: CricketRoom
 
-Defined in: [apps/server/src/rooms/CricketRoom.ts:15](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/CricketRoom.ts#L15)
+Defined in: [apps/server/src/rooms/CricketRoom.ts:11](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/CricketRoom.ts#L11)
 
 Colyseus room for Cricket dart games.
 
@@ -119,7 +119,7 @@ Intervals and timeouts are cleared when the room is disposed.
 
 > `protected` **engine**: [`CricketEngine`](../../../../engine/src/engine/cricketEngine.ts/classes/CricketEngine.md) = `cricketEngine`
 
-Defined in: [apps/server/src/rooms/CricketRoom.ts:16](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/CricketRoom.ts#L16)
+Defined in: [apps/server/src/rooms/CricketRoom.ts:12](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/CricketRoom.ts#L12)
 
 Game engine that drives state transitions for this room type.
 
@@ -133,7 +133,7 @@ Game engine that drives state transitions for this room type.
 
 > `protected` **gameOptions**: [`CricketOptions`](../../../../engine/src/engine/cricket.types.ts/interfaces/CricketOptions.md)
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:43](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L43)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:56](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L56)
 
 Parsed game options for the current match.
 
@@ -147,7 +147,7 @@ Parsed game options for the current match.
 
 > `protected` **gameState**: [`CricketState`](../../../../engine/src/engine/cricket.types.ts/interfaces/CricketState.md)
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:41](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L41)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:54](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L54)
 
 Current authoritative game state.
 
@@ -173,7 +173,7 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 > `protected` **log**: [`Logger`](../../../../logger/interfaces/Logger.md)
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:38](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L38)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:51](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L51)
 
 Scoped logger instance for this room.
 
@@ -223,7 +223,7 @@ Frequency to send the room state to connected clients, in milliseconds.
 
 > `protected` **playerIds**: (`string` \| `null`)[] = `[]`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:51](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L51)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:64](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L64)
 
 Supabase user IDs for each player (null for guests).
 
@@ -237,7 +237,7 @@ Supabase user IDs for each player (null for guests).
 
 > `protected` **playerMap**: `Map`\<`string`, `number`\>
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:47](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L47)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:60](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L60)
 
 Maps Colyseus session IDs to player seat indices.
 
@@ -251,7 +251,7 @@ Maps Colyseus session IDs to player seat indices.
 
 > `protected` **playerNames**: `string`[] = `[]`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:49](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L49)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:62](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L62)
 
 Ordered display names for each player.
 
@@ -341,7 +341,7 @@ The state instance you provided to `setState()`.
 
 > `protected` **supabaseRoomId**: `string` \| `null` = `null`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:53](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L53)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:66](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L66)
 
 Supabase room row ID for recording results, if available.
 
@@ -355,7 +355,7 @@ Supabase room row ID for recording results, if available.
 
 > `protected` **undoStack**: [`CricketState`](../../../../engine/src/engine/cricket.types.ts/interfaces/CricketState.md)[] = `[]`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:45](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L45)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:58](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L58)
 
 Stack of previous states used for undo support.
 
@@ -926,7 +926,7 @@ Promise<void>
 
 > `protected` **emitGameEvents**(`state`, `segment`): `void`
 
-Defined in: [apps/server/src/rooms/CricketRoom.ts:28](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/CricketRoom.ts#L28)
+Defined in: [apps/server/src/rooms/CricketRoom.ts:37](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/CricketRoom.ts#L37)
 
 Subclass hook: generate game events after a dart is processed.
 
@@ -1113,7 +1113,7 @@ will be called with the data returned by `onCacheRoom`
 
 > **onCreate**(`options`): `void`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:66](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L66)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:81](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L81)
 
 #### Parameters
 
@@ -1135,7 +1135,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:66](https://github.com/keenan
 
 > **onDispose**(): `void`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:167](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L167)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:205](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L205)
 
 #### Returns
 
@@ -1151,7 +1151,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:167](https://github.com/keena
 
 > **onJoin**(`client`): `void`
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:122](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L122)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:149](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L149)
 
 #### Parameters
 
@@ -1171,9 +1171,9 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:122](https://github.com/keena
 
 ### onLeave()
 
-> **onLeave**(`client`, `code?`): `Promise`\<`void`\>
+> **onLeave**(`client`, `consented?`): `Promise`\<`void`\>
 
-Defined in: [apps/server/src/rooms/BaseGameRoom.ts:136](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L136)
+Defined in: [apps/server/src/rooms/BaseGameRoom.ts:166](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/BaseGameRoom.ts#L166)
 
 #### Parameters
 
@@ -1181,9 +1181,9 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:136](https://github.com/keena
 
 `Client`
 
-##### code?
+##### consented?
 
-`number`
+`boolean`
 
 #### Returns
 
@@ -1292,7 +1292,7 @@ process startup, with the data returned by the `onCacheRoom` method.
 
 > `protected` **onTurnChanged**(): `void`
 
-Defined in: [apps/server/src/rooms/CricketRoom.ts:51](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/CricketRoom.ts#L51)
+Defined in: [apps/server/src/rooms/CricketRoom.ts:60](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/CricketRoom.ts#L60)
 
 Subclass hook: called after nextTurn for game-specific events.
 
@@ -1347,7 +1347,7 @@ These methods will be wrapped by try/catch:
 
 > `protected` **parseOptions**(`raw`): [`CricketOptions`](../../../../engine/src/engine/cricket.types.ts/interfaces/CricketOptions.md)
 
-Defined in: [apps/server/src/rooms/CricketRoom.ts:18](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/CricketRoom.ts#L18)
+Defined in: [apps/server/src/rooms/CricketRoom.ts:14](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/rooms/CricketRoom.ts#L14)
 
 Subclass hook: extract typed options from the raw create payload.
 

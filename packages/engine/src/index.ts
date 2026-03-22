@@ -18,9 +18,7 @@ export {
 export type { GameEngine } from "./engine/GameEngine.ts";
 
 export { x01Engine, X01Engine } from "./engine/x01Engine.ts";
-export {
-  DEFAULT_X01_OPTIONS,
-} from "./engine/x01.types.ts";
+export { DEFAULT_X01_OPTIONS } from "./engine/x01.types.ts";
 export type {
   X01Options,
   ThrownDart,
@@ -44,9 +42,7 @@ export type {
 } from "./engine/cricket.types.ts";
 
 export { highScoreEngine, HighScoreEngine } from "./engine/highScoreEngine.ts";
-export {
-  DEFAULT_HIGHSCORE_OPTIONS,
-} from "./engine/highScore.types.ts";
+export { DEFAULT_HIGHSCORE_OPTIONS } from "./engine/highScore.types.ts";
 export type {
   HighScoreOptions,
   HighScoreThrownDart,
@@ -69,10 +65,12 @@ export type {
   ATWState,
 } from "./engine/atw.types.ts";
 
-export { generateGrid, ticTacToeEngine, TicTacToeEngine } from "./engine/ticTacToeEngine.ts";
 export {
-  DEFAULT_TICTACTOE_OPTIONS,
-} from "./engine/ticTacToe.types.ts";
+  generateGrid,
+  ticTacToeEngine,
+  TicTacToeEngine,
+} from "./engine/ticTacToeEngine.ts";
+export { DEFAULT_TICTACTOE_OPTIONS } from "./engine/ticTacToe.types.ts";
 export type {
   TicTacToeOptions,
   TicTacToeThrownDart,
@@ -84,10 +82,7 @@ export type {
 export { Bot } from "./bot/Bot.ts";
 export { BotSkill } from "./bot/bot.types.ts";
 export type { BotSkill as BotSkillType } from "./bot/bot.types.ts";
-export {
-  getBotCharacter,
-  getAllCharacters,
-} from "./bot/botCharacters.ts";
+export { getBotCharacter, getAllCharacters } from "./bot/botCharacters.ts";
 export type { BotCharacter } from "./bot/botCharacters.ts";
 export { simulateThrow } from "./bot/throwSimulator.ts";
 export { x01PickTarget } from "./bot/x01Strategy.ts";
@@ -98,10 +93,7 @@ export { ticTacToePickTarget } from "./bot/ticTacToeStrategy.ts";
 export { SINGLE_OUT_CHART } from "./bot/x01OutChart.ts";
 
 // lib
-export {
-  getSetWinner,
-  legCount,
-} from "./lib/setTypes.ts";
+export { getSetWinner, legCount } from "./lib/setTypes.ts";
 export type {
   SetFormat,
   LegConfig,

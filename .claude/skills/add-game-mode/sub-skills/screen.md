@@ -13,6 +13,7 @@ full set of events emitted. Do not guess at event names or payloads.
 Create `/src/controllers/<Game>Controller.ts`:
 
 **`onDartHit(segment)`**
+
 1. Call store `addDart(segment)`
 2. Guard: if dart count didn't change, return early — the dart wasn't registered
 3. Emit `dart_hit` with relevant metadata (score delta, marks, etc. — match the rule doc)
@@ -21,6 +22,7 @@ Create `/src/controllers/<Game>Controller.ts`:
 5. If `state.winners` is set → emit `game_won`
 
 **`onNextTurn()`**
+
 1. Call store `nextTurn()`
 2. Emit `next_turn`
 3. Emit `open_numbers` with the new current player's targets
@@ -86,6 +88,7 @@ const isCurrentBot = bots.has(state.currentPlayerIndex);
 ```
 
 Use `isCurrentBot` to:
+
 - Show `BotThinkingIndicator` instead of action prompts
 - Disable the undo button
 - Hide any human-input UI while the bot is thinking

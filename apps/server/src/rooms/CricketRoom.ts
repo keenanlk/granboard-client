@@ -1,8 +1,4 @@
-import type {
-  Segment,
-  CricketOptions,
-  CricketState,
-} from "@nlc-darts/engine";
+import type { Segment, CricketOptions, CricketState } from "@nlc-darts/engine";
 import {
   cricketEngine,
   CRICKET_TARGETS,
@@ -17,9 +13,22 @@ export class CricketRoom extends BaseGameRoom<CricketState, CricketOptions> {
 
   protected parseOptions(raw: unknown): CricketOptions {
     if (raw && typeof raw === "object") {
+      const r = raw as Record<string, unknown>;
       return {
-        ...DEFAULT_CRICKET_OPTIONS,
-        ...(raw as Partial<CricketOptions>),
+        singleBull:
+          typeof r.singleBull === "boolean"
+            ? r.singleBull
+            : DEFAULT_CRICKET_OPTIONS.singleBull,
+        roundLimit:
+          typeof r.roundLimit === "number" &&
+          Number.isInteger(r.roundLimit) &&
+          r.roundLimit > 0
+            ? r.roundLimit
+            : DEFAULT_CRICKET_OPTIONS.roundLimit,
+        cutThroat:
+          typeof r.cutThroat === "boolean"
+            ? r.cutThroat
+            : DEFAULT_CRICKET_OPTIONS.cutThroat,
       };
     }
     return DEFAULT_CRICKET_OPTIONS;

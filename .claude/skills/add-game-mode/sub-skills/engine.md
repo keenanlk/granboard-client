@@ -14,30 +14,34 @@ Create `/src/engine/<game>Engine.ts` implementing `GameEngine<TState, TOptions>`
 
 Required exports:
 
-| Export | Description |
-|---|---|
-| `<Game>Options` | Configurable settings (player count, round limit, variants) |
-| `<Game>State` | Full game snapshot — players, round, dartsThrown, winners |
-| `<Game>Player` | Per-player data (score, targets hit, etc.) |
-| `ThrownDart` | Per-dart metadata |
-| `DEFAULT_<GAME>_OPTIONS` | Sensible defaults for all options |
-| `<game>Engine` | Singleton: `export const <game>Engine = new <Game>Engine()` |
+| Export                   | Description                                                 |
+| ------------------------ | ----------------------------------------------------------- |
+| `<Game>Options`          | Configurable settings (player count, round limit, variants) |
+| `<Game>State`            | Full game snapshot — players, round, dartsThrown, winners   |
+| `<Game>Player`           | Per-player data (score, targets hit, etc.)                  |
+| `ThrownDart`             | Per-dart metadata                                           |
+| `DEFAULT_<GAME>_OPTIONS` | Sensible defaults for all options                           |
+| `<game>Engine`           | Singleton: `export const <game>Engine = new <Game>Engine()` |
 
 Four methods — all pure, no side effects, always return new state:
 
 **`startGame(options, playerNames)`**
+
 - Initialize state from options and player list
 
 **`addDart(state, segment)`**
+
 - No-op (return state unchanged) if: winners already set, 3 darts already thrown this turn,
   or current player is already finished
 - Otherwise process the dart and return updated state
 
 **`undoLastDart(state)`**
+
 - Restore the previous state snapshot
 - No-op if history is empty
 
 **`nextTurn(state)`**
+
 - Record round stats, rotate to next player, increment round when all players have thrown
 - Detect win condition and set winners
 - Enforce round limit if configured

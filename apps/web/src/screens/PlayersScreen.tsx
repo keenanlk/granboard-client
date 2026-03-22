@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { usePlayerProfileStore } from "../store/usePlayerProfileStore.ts";
 import { dbGetSessionsForPlayer } from "../db/db.ts";
-import type { GameSessionRecord, PlayerRecord, PlayerStats } from "@nlc-darts/engine";
+import type {
+  GameSessionRecord,
+  PlayerRecord,
+  PlayerStats,
+} from "@nlc-darts/engine";
 import { computePlayerStats } from "../db/playerStats.ts";
 
 interface PlayersScreenProps {
@@ -174,7 +178,10 @@ function PlayerDetail({
                 Overall
               </p>
               <div className="grid grid-cols-3 gap-2">
-                <OverallStatBox label="Games" value={String(stats.totalGames)} />
+                <OverallStatBox
+                  label="Games"
+                  value={String(stats.totalGames)}
+                />
                 <OverallStatBox label="Wins" value={String(stats.totalWins)} />
                 <OverallStatBox
                   label="Win %"
@@ -198,8 +205,16 @@ function PlayerDetail({
                     value={pct(stats.x01.wins, stats.x01.gamesPlayed)}
                     accentBorder="#ef4444"
                   />
-                  <StatBox label="PPD" value={fmt(stats.x01.ppd)} accentBorder="#ef4444" />
-                  <StatBox label="Avg Round" value={fmt(stats.x01.avgRound)} accentBorder="#ef4444" />
+                  <StatBox
+                    label="PPD"
+                    value={fmt(stats.x01.ppd)}
+                    accentBorder="#ef4444"
+                  />
+                  <StatBox
+                    label="Avg Round"
+                    value={fmt(stats.x01.avgRound)}
+                    accentBorder="#ef4444"
+                  />
                   <StatBox
                     label="Best Round"
                     value={fmt(stats.x01.bestRound, 0)}
@@ -224,7 +239,11 @@ function PlayerDetail({
                     value={pct(stats.cricket.wins, stats.cricket.gamesPlayed)}
                     accentBorder="#4ade80"
                   />
-                  <StatBox label="MPR" value={fmt(stats.cricket.mpr)} accentBorder="#4ade80" />
+                  <StatBox
+                    label="MPR"
+                    value={fmt(stats.cricket.mpr)}
+                    accentBorder="#4ade80"
+                  />
                   <StatBox
                     label="Avg Pts/Round"
                     value={fmt(stats.cricket.avgRoundScore)}

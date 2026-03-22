@@ -34,10 +34,7 @@ vi.mock("../lib/logger.ts", () => ({
 
 import { X01Room } from "./X01Room.ts";
 
-function createRoom(
-  gameOptions: unknown = {},
-  playerNames = ["Alice", "Bob"],
-) {
+function createRoom(gameOptions: unknown = {}, playerNames = ["Alice", "Bob"]) {
   const room = new X01Room();
   room.onCreate({
     gameOptions,
@@ -48,7 +45,9 @@ function createRoom(
 }
 
 function getHandler(room: unknown, type: string): Function {
-  return (room as { _messageHandlers: Map<string, Function> })._messageHandlers.get(type)!;
+  return (
+    room as { _messageHandlers: Map<string, Function> }
+  )._messageHandlers.get(type)!;
 }
 
 function mockClient(sessionId = "client-1") {
@@ -59,20 +58,26 @@ describe("X01Room", () => {
   describe("parseOptions", () => {
     it("returns default options when raw is null", () => {
       const room = createRoom(null);
-      const state = (room as unknown as { gameState: { x01Options: X01Options } }).gameState;
+      const state = (
+        room as unknown as { gameState: { x01Options: X01Options } }
+      ).gameState;
       expect(state.x01Options.startingScore).toBe(501);
       expect(state.x01Options.doubleOut).toBe(false);
     });
 
     it("returns default options when raw is undefined", () => {
       const room = createRoom(undefined);
-      const state = (room as unknown as { gameState: { x01Options: X01Options } }).gameState;
+      const state = (
+        room as unknown as { gameState: { x01Options: X01Options } }
+      ).gameState;
       expect(state.x01Options.startingScore).toBe(501);
     });
 
     it("merges partial options with defaults", () => {
       const room = createRoom({ doubleOut: true });
-      const state = (room as unknown as { gameState: { x01Options: X01Options } }).gameState;
+      const state = (
+        room as unknown as { gameState: { x01Options: X01Options } }
+      ).gameState;
       expect(state.x01Options.doubleOut).toBe(true);
       expect(state.x01Options.startingScore).toBe(501);
     });
@@ -86,7 +91,9 @@ describe("X01Room", () => {
         doubleIn: true,
       };
       const room = createRoom(opts);
-      const state = (room as unknown as { gameState: { x01Options: X01Options } }).gameState;
+      const state = (
+        room as unknown as { gameState: { x01Options: X01Options } }
+      ).gameState;
       expect(state.x01Options.startingScore).toBe(301);
       expect(state.x01Options.splitBull).toBe(true);
       expect(state.x01Options.doubleIn).toBe(true);
@@ -106,9 +113,13 @@ describe("X01Room", () => {
       const handler = getHandler(room, "dart_hit");
       handler(client, { segmentId: SegmentID.OUTER_20 });
 
-      const broadcastMock = (room as unknown as { broadcast: ReturnType<typeof vi.fn> }).broadcast;
+      const broadcastMock = (
+        room as unknown as { broadcast: ReturnType<typeof vi.fn> }
+      ).broadcast;
       const dartHitCall = broadcastMock.mock.calls.find(
-        (c: unknown[]) => c[0] === "game_event" && (c[1] as { eventName: string }).eventName === "dart_hit",
+        (c: unknown[]) =>
+          c[0] === "game_event" &&
+          (c[1] as { eventName: string }).eventName === "dart_hit",
       );
       expect(dartHitCall).toBeDefined();
       expect(dartHitCall![1].data.segment).toBeDefined();
@@ -140,9 +151,13 @@ describe("X01Room", () => {
       handler(client, { segmentId: SegmentID.TRP_20 });
       handler(client, { segmentId: SegmentID.TRP_20 });
 
-      const broadcastMock = (bustRoom as unknown as { broadcast: ReturnType<typeof vi.fn> }).broadcast;
+      const broadcastMock = (
+        bustRoom as unknown as { broadcast: ReturnType<typeof vi.fn> }
+      ).broadcast;
       const bustCalls = broadcastMock.mock.calls.filter(
-        (c: unknown[]) => c[0] === "game_event" && (c[1] as { eventName: string }).eventName === "bust",
+        (c: unknown[]) =>
+          c[0] === "game_event" &&
+          (c[1] as { eventName: string }).eventName === "bust",
       );
       expect(bustCalls.length).toBeGreaterThanOrEqual(1);
     });
@@ -174,9 +189,13 @@ describe("X01Room", () => {
       // Single 1 to win (remaining = 1)
       handler(client, { segmentId: SegmentID.INNER_1 });
 
-      const broadcastMock = (winRoom as unknown as { broadcast: ReturnType<typeof vi.fn> }).broadcast;
+      const broadcastMock = (
+        winRoom as unknown as { broadcast: ReturnType<typeof vi.fn> }
+      ).broadcast;
       const wonCalls = broadcastMock.mock.calls.filter(
-        (c: unknown[]) => c[0] === "game_event" && (c[1] as { eventName: string }).eventName === "game_won",
+        (c: unknown[]) =>
+          c[0] === "game_event" &&
+          (c[1] as { eventName: string }).eventName === "game_won",
       );
       expect(wonCalls.length).toBe(1);
       expect(wonCalls[0][1].data.playerName).toBe("Alice");
@@ -188,9 +207,13 @@ describe("X01Room", () => {
       const handler = getHandler(room, "dart_hit");
       handler(client, { segmentId: SegmentID.INNER_1 }); // Single 1 on 501
 
-      const broadcastMock = (room as unknown as { broadcast: ReturnType<typeof vi.fn> }).broadcast;
+      const broadcastMock = (
+        room as unknown as { broadcast: ReturnType<typeof vi.fn> }
+      ).broadcast;
       const bustCalls = broadcastMock.mock.calls.filter(
-        (c: unknown[]) => c[0] === "game_event" && (c[1] as { eventName: string }).eventName === "bust",
+        (c: unknown[]) =>
+          c[0] === "game_event" &&
+          (c[1] as { eventName: string }).eventName === "bust",
       );
       expect(bustCalls.length).toBe(0);
     });
@@ -205,7 +228,9 @@ describe("X01Room", () => {
       const handler = getHandler(room, "dart_hit");
       handler(client, { segmentId: SegmentID.TRP_20 });
 
-      const broadcastMock = (room as unknown as { broadcast: ReturnType<typeof vi.fn> }).broadcast;
+      const broadcastMock = (
+        room as unknown as { broadcast: ReturnType<typeof vi.fn> }
+      ).broadcast;
       const stateUpdates = broadcastMock.mock.calls.filter(
         (c: unknown[]) => c[0] === "state_update",
       );
@@ -221,7 +246,9 @@ describe("X01Room", () => {
 
       // Player 0's turn, but client-2 (player 1) sends dart
       const handler = getHandler(room, "dart_hit");
-      const broadcastMock = (room as unknown as { broadcast: ReturnType<typeof vi.fn> }).broadcast;
+      const broadcastMock = (
+        room as unknown as { broadcast: ReturnType<typeof vi.fn> }
+      ).broadcast;
       broadcastMock.mockClear();
 
       handler(client2, { segmentId: SegmentID.TRP_20 });
@@ -239,7 +266,9 @@ describe("X01Room", () => {
       (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client);
 
       const nextTurn = getHandler(room, "next_turn");
-      const broadcastMock = (room as unknown as { broadcast: ReturnType<typeof vi.fn> }).broadcast;
+      const broadcastMock = (
+        room as unknown as { broadcast: ReturnType<typeof vi.fn> }
+      ).broadcast;
       broadcastMock.mockClear();
 
       nextTurn(client);
@@ -251,7 +280,9 @@ describe("X01Room", () => {
       expect(turnDelay.length).toBe(1);
 
       const nextTurnEvents = broadcastMock.mock.calls.filter(
-        (c: unknown[]) => c[0] === "game_event" && (c[1] as { eventName: string }).eventName === "next_turn",
+        (c: unknown[]) =>
+          c[0] === "game_event" &&
+          (c[1] as { eventName: string }).eventName === "next_turn",
       );
       expect(nextTurnEvents.length).toBe(1);
     });

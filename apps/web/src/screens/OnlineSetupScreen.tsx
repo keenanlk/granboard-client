@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { DEFAULT_X01_OPTIONS, DEFAULT_CRICKET_OPTIONS } from "@nlc-darts/engine";
+import {
+  DEFAULT_X01_OPTIONS,
+  DEFAULT_CRICKET_OPTIONS,
+} from "@nlc-darts/engine";
 import type { X01Options, CricketOptions } from "@nlc-darts/engine";
 import { useOnlineStore } from "../store/useOnlineStore.ts";
 import type { OnlineGameType } from "../store/online.types.ts";
@@ -9,7 +12,11 @@ interface OnlineSetupScreenProps {
   hostName: string;
   guestName: string;
   isHost: boolean;
-  onStart: (gameType: OnlineGameType, options: unknown, colyseusRoomId?: string) => void;
+  onStart: (
+    gameType: OnlineGameType,
+    options: unknown,
+    colyseusRoomId?: string,
+  ) => void;
   onBack: () => void;
 }
 

@@ -3,6 +3,7 @@
 ## Project purpose
 
 This app powers a GranBoard-based darts scoring system. It is a Turborepo monorepo with:
+
 - `apps/web` — React frontend (Vite + Capacitor)
 - `apps/server` — Colyseus game server for online multiplayer
 - `packages/engine` — Shared pure game logic (no browser/Node deps)

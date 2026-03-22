@@ -97,7 +97,10 @@ export async function dbRenamePlayer(id: string, name: string): Promise<void> {
 export async function dbSaveSession(session: GameSessionRecord): Promise<void> {
   const db = await getDB();
   await db.add("game_sessions", session);
-  log.info({ sessionId: session.id, gameType: session.gameType }, "Game session saved");
+  log.info(
+    { sessionId: session.id, gameType: session.gameType },
+    "Game session saved",
+  );
 }
 
 /**

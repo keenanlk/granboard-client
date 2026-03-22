@@ -32,12 +32,19 @@ function Robot({
     const action = actions[animation] ?? actions["StaticIdle"];
     if (!action) return;
 
-    const isOneShot = animation === "BasicAttack" || animation === "Death" || animation === "GetHit" || animation === "Jump_Air" || animation === "Jump_Start" || animation === "Jump_Landing";
+    const isOneShot =
+      animation === "BasicAttack" ||
+      animation === "Death" ||
+      animation === "GetHit" ||
+      animation === "Jump_Air" ||
+      animation === "Jump_Start" ||
+      animation === "Jump_Landing";
 
     action.reset().fadeIn(0.2).play();
 
     if (isOneShot) {
       action.setLoop(LoopOnce, 1);
+      // eslint-disable-next-line react-hooks/immutability -- three.js AnimationAction requires direct mutation
       action.clampWhenFinished = true;
     }
 

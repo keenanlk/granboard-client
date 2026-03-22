@@ -38,7 +38,10 @@ export function OnboardingScreen() {
         Create a player to start tracking your stats
       </p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-md">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4 w-full max-w-md"
+      >
         <input
           type="text"
           value={name}

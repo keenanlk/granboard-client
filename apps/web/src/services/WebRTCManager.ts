@@ -104,7 +104,9 @@ export class WebRTCManager {
   async start(room: Room, isHost: boolean): Promise<void> {
     // getUserMedia requires a secure context (HTTPS, localhost, or capacitor://).
     if (!navigator.mediaDevices?.getUserMedia) {
-      console.warn("[WebRTC] getUserMedia not available — likely insecure context (HTTP). Camera disabled.");
+      console.warn(
+        "[WebRTC] getUserMedia not available — likely insecure context (HTTP). Camera disabled.",
+      );
       this.onStatus("denied");
       return;
     }
@@ -115,7 +117,11 @@ export class WebRTCManager {
     let stream: MediaStream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+        video: {
+          facingMode: "user",
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
         audio: false,
       });
     } catch (err) {
@@ -137,7 +143,9 @@ export class WebRTCManager {
     try {
       room.send("request_state", {});
     } catch {
-      console.warn("[WebRTC] Colyseus connection dead after getUserMedia — skipping WebRTC setup");
+      console.warn(
+        "[WebRTC] Colyseus connection dead after getUserMedia — skipping WebRTC setup",
+      );
       this.onStatus("denied");
       return;
     }
@@ -173,13 +181,13 @@ export class WebRTCManager {
     };
 
     // 4. Register signaling handler — receives offers/answers from the other player
-    room.onMessage("webrtc_signal", (payload: {
-      type: string;
-      sdp?: RTCSessionDescriptionInit;
-    }) => {
-      if (this.stopped) return;
-      this.handleSignal(pc, room, payload, isHost);
-    });
+    room.onMessage(
+      "webrtc_signal",
+      (payload: { type: string; sdp?: RTCSessionDescriptionInit }) => {
+        if (this.stopped) return;
+        this.handleSignal(pc, room, payload, isHost);
+      },
+    );
 
     // 5. Host creates offer with retry; guest just waits for the offer
     if (isHost) {
@@ -191,7 +199,11 @@ export class WebRTCManager {
    * Repeatedly send an offer until the guest answers or retries are exhausted.
    * This handles the race where the guest hasn't registered its handler yet.
    */
-  private sendOfferWithRetry(pc: RTCPeerConnection, room: Room, attempt: number): void {
+  private sendOfferWithRetry(
+    pc: RTCPeerConnection,
+    room: Room,
+    attempt: number,
+  ): void {
     if (this.stopped || this.gotAnswer || attempt >= OFFER_MAX_RETRIES) return;
 
     this.createAndSendOffer(pc, room).then(() => {
@@ -204,7 +216,10 @@ export class WebRTCManager {
   }
 
   /** Create an SDP offer, wait for ICE gathering, then send via Colyseus. */
-  private async createAndSendOffer(pc: RTCPeerConnection, room: Room): Promise<void> {
+  private async createAndSendOffer(
+    pc: RTCPeerConnection,
+    room: Room,
+  ): Promise<void> {
     try {
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);

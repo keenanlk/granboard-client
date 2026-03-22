@@ -17,13 +17,24 @@ vi.mock("../board/MockGranboard.ts", () => ({
   }),
 }));
 vi.mock("../lib/logger.ts", () => ({
-  logger: { child: () => ({ warn: vi.fn(), info: vi.fn(), debug: vi.fn(), error: vi.fn() }) },
+  logger: {
+    child: () => ({
+      warn: vi.fn(),
+      info: vi.fn(),
+      debug: vi.fn(),
+      error: vi.fn(),
+    }),
+  },
 }));
 
 const { Granboard } = await import("../board/Granboard.ts");
 
 beforeEach(() => {
-  useGranboardStore.setState({ board: null, status: "disconnected", errorMessage: null });
+  useGranboardStore.setState({
+    board: null,
+    status: "disconnected",
+    errorMessage: null,
+  });
   vi.clearAllMocks();
 });
 
@@ -56,7 +67,9 @@ describe("useGranboardStore", () => {
   });
 
   it("connect() sets status to error and errorMessage on failure", async () => {
-    vi.mocked(Granboard.ConnectToBoard).mockRejectedValueOnce(new Error("BLE unavailable"));
+    vi.mocked(Granboard.ConnectToBoard).mockRejectedValueOnce(
+      new Error("BLE unavailable"),
+    );
     await useGranboardStore.getState().connect();
     expect(useGranboardStore.getState().status).toBe("error");
     expect(useGranboardStore.getState().errorMessage).toBe("BLE unavailable");
@@ -75,7 +88,9 @@ describe("useGranboardStore", () => {
   });
 
   it("autoReconnect() reverts to disconnected on failure (not error)", async () => {
-    vi.mocked(Granboard.TryAutoReconnect).mockRejectedValueOnce(new Error("no device"));
+    vi.mocked(Granboard.TryAutoReconnect).mockRejectedValueOnce(
+      new Error("no device"),
+    );
     await useGranboardStore.getState().autoReconnect();
     expect(useGranboardStore.getState().status).toBe("disconnected");
     expect(useGranboardStore.getState().errorMessage).toBeNull();

@@ -15,7 +15,7 @@ vi.stubGlobal("localStorage", {
 
 // Import after mocking localStorage so the module picks it up
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-let gameLogger: typeof import("./GameLogger.ts")["gameLogger"];
+let gameLogger: (typeof import("./GameLogger.ts"))["gameLogger"];
 
 describe("GameLogger", () => {
   beforeEach(async () => {
@@ -153,5 +153,102 @@ describe("GameLogger", () => {
     for (const line of lines) {
       expect(() => JSON.parse(line)).not.toThrow();
     }
+  });
+
+  describe("download()", () => {
+    // GameLogger.download() references `window` and `document` which don't
+    // exist in the Node test environment — stub them for this block.
+    let fakeWindow: Record<string, unknown>;
+    let fakeDocument: Record<string, unknown>;
+
+    beforeEach(() => {
+      fakeWindow = {};
+      fakeDocument = { createElement: vi.fn() };
+      vi.stubGlobal("window", fakeWindow);
+      vi.stubGlobal("document", fakeDocument);
+    });
+
+    it("does nothing when no lines have been logged", async () => {
+      const spy = vi.spyOn(URL, "createObjectURL");
+      await gameLogger.download();
+      expect(spy).not.toHaveBeenCalled();
+      spy.mockRestore();
+    });
+
+    it("uses showSaveFilePicker when available", async () => {
+      gameLogger.start("x01", ["Alice"], [null], {});
+
+      const closeFn = vi.fn().mockResolvedValue(undefined);
+      const writeFn = vi.fn().mockResolvedValue(undefined);
+      const mockHandle = {
+        createWritable: vi
+          .fn()
+          .mockResolvedValue({ write: writeFn, close: closeFn }),
+      };
+      fakeWindow.showSaveFilePicker = vi
+        .fn()
+        .mockResolvedValue(mockHandle);
+
+      await gameLogger.download();
+
+      expect(fakeWindow.showSaveFilePicker).toHaveBeenCalled();
+      expect(writeFn).toHaveBeenCalledWith(
+        expect.stringContaining("game_start"),
+      );
+      expect(closeFn).toHaveBeenCalled();
+    });
+
+    it("falls back to blob download when showSaveFilePicker is absent", async () => {
+      gameLogger.start("x01", ["Alice"], [null], {});
+
+      const clickFn = vi.fn();
+      (fakeDocument.createElement as ReturnType<typeof vi.fn>).mockReturnValue({
+        href: "",
+        download: "",
+        click: clickFn,
+      });
+      const createObjectURLSpy = vi
+        .spyOn(URL, "createObjectURL")
+        .mockReturnValue("blob:test");
+      const revokeObjectURLSpy = vi
+        .spyOn(URL, "revokeObjectURL")
+        .mockImplementation(() => {});
+
+      await gameLogger.download();
+
+      expect(createObjectURLSpy).toHaveBeenCalled();
+      expect(clickFn).toHaveBeenCalled();
+      expect(revokeObjectURLSpy).toHaveBeenCalledWith("blob:test");
+
+      createObjectURLSpy.mockRestore();
+      revokeObjectURLSpy.mockRestore();
+    });
+
+    it("falls through to blob download when showSaveFilePicker throws", async () => {
+      gameLogger.start("x01", ["Alice"], [null], {});
+      fakeWindow.showSaveFilePicker = vi
+        .fn()
+        .mockRejectedValue(new Error("User cancelled"));
+
+      const clickFn = vi.fn();
+      (fakeDocument.createElement as ReturnType<typeof vi.fn>).mockReturnValue({
+        href: "",
+        download: "",
+        click: clickFn,
+      });
+      const createObjectURLSpy = vi
+        .spyOn(URL, "createObjectURL")
+        .mockReturnValue("blob:test");
+      const revokeObjectURLSpy = vi
+        .spyOn(URL, "revokeObjectURL")
+        .mockImplementation(() => {});
+
+      await gameLogger.download();
+
+      expect(clickFn).toHaveBeenCalled();
+
+      createObjectURLSpy.mockRestore();
+      revokeObjectURLSpy.mockRestore();
+    });
   });
 });

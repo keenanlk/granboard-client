@@ -12,7 +12,7 @@ import {
   buildRequestInit,
   registerPlugin,
   registerWebPlugin,
-  setPlatform
+  setPlatform,
 } from "./chunk-PT3A4N6G.js";
 import "./chunk-G3PMV62Z.js";
 export {
@@ -29,5 +29,5 @@ export {
   buildRequestInit,
   registerPlugin,
   registerWebPlugin,
-  setPlatform
+  setPlatform,
 };

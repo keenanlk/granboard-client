@@ -12,6 +12,19 @@ const INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 const RECONNECT_ALLOWANCE_MS = 30 * 1000; // 30 seconds
 const UNDO_CAP = 12;
 
+// ── 2.1 Valid segmentId range (0=INNER_1 through 82=MISS) ───────────────────
+const MIN_SEGMENT_ID = 0;
+const MAX_SEGMENT_ID = 82;
+
+// ── 2.5 Max concurrent rooms ────────────────────────────────────────────────
+const MAX_ROOMS = Number(process.env.MAX_ROOMS) || 50;
+let _activeRoomCount = 0;
+
+/** Returns the current number of active game rooms. */
+export function activeRoomCount(): number {
+  return _activeRoomCount;
+}
+
 /** Options passed when creating a game room. */
 interface RoomCreateOptions {
   /** Game-specific options blob, parsed by each room subclass. */
@@ -54,16 +67,29 @@ export abstract class BaseGameRoom<
   private seq = 0;
   private inactivityTimer: ReturnType<typeof setTimeout> | null = null;
 
+  /** Timestamp when the room was created. */
+  private createdAt = Date.now();
+  /** Total darts thrown in this room. */
+  private dartCount = 0;
+
   /** Subclass hook: extract typed options from the raw create payload. */
   protected abstract parseOptions(raw: unknown): TOptions;
 
   /** Subclass hook: generate game events after a dart is processed. */
-  protected abstract emitGameEvents(
-    state: TState,
-    segment: Segment,
-  ): void;
+  protected abstract emitGameEvents(state: TState, segment: Segment): void;
 
   onCreate(options: RoomCreateOptions): void {
+    // 2.5 Max concurrent rooms
+    if (_activeRoomCount >= MAX_ROOMS) {
+      this.log = logger.child({ module: "room", roomId: this.roomId });
+      this.log.warn(
+        { activeRooms: _activeRoomCount, max: MAX_ROOMS },
+        "Room limit reached",
+      );
+      throw new Error("Server room limit reached");
+    }
+    _activeRoomCount++;
+
     const { playerNames, playerIds, roomId } = options;
     this.log = logger.child({ module: "room", roomId: this.roomId });
     this.playerNames = playerNames;
@@ -73,7 +99,10 @@ export abstract class BaseGameRoom<
     this.gameState = this.engine.startGame(this.gameOptions, playerNames);
     this.setState(this.gameState);
 
-    this.log.info({ playerNames, playerCount: playerNames.length }, "Room created");
+    this.log.info(
+      { playerNames, playerCount: playerNames.length },
+      "Room created",
+    );
 
     this.maxClients = 2;
 
@@ -84,9 +113,7 @@ export abstract class BaseGameRoom<
     this.onMessage(ClientMessage.NEXT_TURN, (client) =>
       this.handleNextTurn(client),
     );
-    this.onMessage(ClientMessage.UNDO, (client) =>
-      this.handleUndo(client),
-    );
+    this.onMessage(ClientMessage.UNDO, (client) => this.handleUndo(client));
 
     // Client requests fresh state (after registering message handlers)
     this.onMessage("request_state", (client) => {
@@ -122,7 +149,10 @@ export abstract class BaseGameRoom<
   onJoin(client: Client): void {
     const playerIndex = this.playerMap.size;
     this.playerMap.set(client.sessionId, playerIndex);
-    this.log.info({ sessionId: client.sessionId, playerIndex }, "Player joined");
+    this.log.info(
+      { sessionId: client.sessionId, playerIndex },
+      "Player joined",
+    );
 
     // Send initial state to the joining client
     client.send(ServerMessage.STATE_UPDATE, {
@@ -133,16 +163,21 @@ export abstract class BaseGameRoom<
     this.resetInactivityTimer();
   }
 
-  async onLeave(client: Client, code?: number): Promise<void> {
+  async onLeave(client: Client, consented?: boolean): Promise<void> {
     const playerIndex = this.playerMap.get(client.sessionId);
-    const consented = code === 4000; // WS_CLOSE_CONSENTED
-    this.log.info({ sessionId: client.sessionId, playerIndex, consented }, "Player disconnected");
+    this.log.info(
+      { sessionId: client.sessionId, playerIndex, consented },
+      "Player disconnected",
+    );
 
     if (!consented) {
       // Allow reconnection
       try {
         await this.allowReconnection(client, RECONNECT_ALLOWANCE_MS / 1000);
-        this.log.info({ sessionId: client.sessionId, playerIndex }, "Player reconnected");
+        this.log.info(
+          { sessionId: client.sessionId, playerIndex },
+          "Player reconnected",
+        );
         // Player reconnected — send current state
         client.send(ServerMessage.STATE_UPDATE, {
           state: this.getSerializableState(),
@@ -150,7 +185,10 @@ export abstract class BaseGameRoom<
         });
         return;
       } catch {
-        this.log.warn({ sessionId: client.sessionId, playerIndex }, "Reconnection timed out");
+        this.log.warn(
+          { sessionId: client.sessionId, playerIndex },
+          "Reconnection timed out",
+        );
       }
     }
 
@@ -165,8 +203,17 @@ export abstract class BaseGameRoom<
   }
 
   onDispose(): void {
+    _activeRoomCount = Math.max(0, _activeRoomCount - 1);
     if (this.inactivityTimer) clearTimeout(this.inactivityTimer);
-    this.log.info({}, "Room disposed");
+    const durationSec = Math.round((Date.now() - this.createdAt) / 1000);
+    this.log.info(
+      {
+        durationSec,
+        dartCount: this.dartCount,
+        playerCount: this.playerMap.size,
+      },
+      "Room disposed",
+    );
   }
 
   // ── Action handlers ─────────────────────────────────────────────────────
@@ -175,76 +222,126 @@ export abstract class BaseGameRoom<
     client: Client,
     payload: { segmentId: SegmentID },
   ): void {
-    const playerIndex = this.playerMap.get(client.sessionId);
+    try {
+      const playerIndex = this.playerMap.get(client.sessionId);
 
-    // Validate it's this player's turn
-    if (playerIndex !== this.gameState.currentPlayerIndex) return;
+      // Validate it's this player's turn
+      if (playerIndex !== this.gameState.currentPlayerIndex) return;
 
-    // Don't accept darts after game is won
-    if (this.gameState.winner != null) return;
+      // Don't accept darts after game is won
+      if (this.gameState.winner != null) return;
 
-    const segment = CreateSegment(payload.segmentId);
-    this.log.debug({ segmentId: payload.segmentId, playerIndex }, "Dart hit");
+      // 2.1 Validate segmentId
+      const sid = payload?.segmentId;
+      if (
+        typeof sid !== "number" ||
+        !Number.isInteger(sid) ||
+        sid < MIN_SEGMENT_ID ||
+        sid > MAX_SEGMENT_ID
+      ) {
+        this.log.warn(
+          { sessionId: client.sessionId, payload },
+          "Invalid segmentId",
+        );
+        return;
+      }
 
-    // Push undo snapshot
-    this.pushUndo();
+      const segment = CreateSegment(sid);
+      this.dartCount++;
+      this.log.debug({ segmentId: sid, playerIndex }, "Dart hit");
 
-    // Apply dart
-    const changes = this.engine.addDart(this.gameState, segment);
-    this.gameState = { ...this.gameState, ...changes };
+      // Push undo snapshot
+      this.pushUndo();
 
-    // Emit game events (dart_hit, bust, game_won, open_numbers etc.)
-    this.emitGameEvents(this.gameState, segment);
+      // Apply dart
+      const changes = this.engine.addDart(this.gameState, segment);
+      this.gameState = { ...this.gameState, ...changes };
 
-    // Check for winner
-    if (this.gameState.winner != null) {
-      this.broadcast(ServerMessage.GAME_ENDED, {
-        winner: this.gameState.winner,
-      });
-      this.recordResult();
+      // Emit game events (dart_hit, bust, game_won, open_numbers etc.)
+      this.emitGameEvents(this.gameState, segment);
+
+      // Check for winner
+      if (this.gameState.winner != null) {
+        this.broadcast(ServerMessage.GAME_ENDED, {
+          winner: this.gameState.winner,
+        });
+        this.recordResult();
+      }
+
+      this.broadcastState();
+      this.resetInactivityTimer();
+    } catch (err) {
+      this.log.error(
+        {
+          err,
+          roomId: this.roomId,
+          playerIndex: this.playerMap.get(client.sessionId),
+          payload,
+        },
+        "Error in handleDartHit",
+      );
     }
-
-    this.broadcastState();
-    this.resetInactivityTimer();
   }
 
   private handleNextTurn(client: Client): void {
-    const playerIndex = this.playerMap.get(client.sessionId);
-    if (playerIndex !== this.gameState.currentPlayerIndex) return;
-    if (this.gameState.winner != null) return;
-    this.log.debug({ playerIndex }, "Next turn");
+    try {
+      const playerIndex = this.playerMap.get(client.sessionId);
+      if (playerIndex !== this.gameState.currentPlayerIndex) return;
+      if (this.gameState.winner != null) return;
+      this.log.debug({ playerIndex }, "Next turn");
 
-    // Signal turn delay to all clients
-    this.broadcast(ServerMessage.TURN_DELAY, {});
+      // Signal turn delay to all clients
+      this.broadcast(ServerMessage.TURN_DELAY, {});
 
-    this.pushUndo();
-    const changes = this.engine.nextTurn(this.gameState);
-    this.gameState = { ...this.gameState, ...changes };
+      this.pushUndo();
+      const changes = this.engine.nextTurn(this.gameState);
+      this.gameState = { ...this.gameState, ...changes };
 
-    // Emit next_turn event
-    this.broadcast(ServerMessage.GAME_EVENT, {
-      eventName: "next_turn",
-      data: {},
-    });
+      // Emit next_turn event
+      this.broadcast(ServerMessage.GAME_EVENT, {
+        eventName: "next_turn",
+        data: {},
+      });
 
-    // Emit game-specific events on turn change (e.g., open_numbers for cricket)
-    this.onTurnChanged();
+      // Emit game-specific events on turn change (e.g., open_numbers for cricket)
+      this.onTurnChanged();
 
-    this.broadcastState();
-    this.resetInactivityTimer();
+      this.broadcastState();
+      this.resetInactivityTimer();
+    } catch (err) {
+      this.log.error(
+        {
+          err,
+          roomId: this.roomId,
+          playerIndex: this.playerMap.get(client.sessionId),
+        },
+        "Error in handleNextTurn",
+      );
+    }
   }
 
   private handleUndo(client: Client): void {
-    const playerIndex = this.playerMap.get(client.sessionId);
-    if (playerIndex !== this.gameState.currentPlayerIndex) return;
-    if (this.gameState.winner != null) return;
-    this.log.debug({ playerIndex }, "Undo");
+    try {
+      const playerIndex = this.playerMap.get(client.sessionId);
+      if (playerIndex !== this.gameState.currentPlayerIndex) return;
+      if (this.gameState.winner != null) return;
+      this.log.debug({ playerIndex }, "Undo");
 
-    const changes = this.engine.undoLastDart(this.gameState);
-    this.gameState = { ...this.gameState, ...changes };
+      const changes = this.engine.undoLastDart(this.gameState);
+      this.gameState = { ...this.gameState, ...changes };
 
-    this.broadcastState();
-    this.resetInactivityTimer();
+      this.broadcastState();
+      this.resetInactivityTimer();
+    } catch (err) {
+      this.log.error(
+        {
+          err,
+          roomId: this.roomId,
+          playerIndex: this.playerMap.get(client.sessionId),
+        },
+        "Error in handleUndo",
+      );
+    }
   }
 
   // ── Broadcast helpers ───────────────────────────────────────────────────
@@ -263,7 +360,10 @@ export abstract class BaseGameRoom<
   }
 
   private pushUndo(): void {
-    this.undoStack = [...this.undoStack.slice(-(UNDO_CAP - 1)), { ...this.gameState }];
+    this.undoStack = [
+      ...this.undoStack.slice(-(UNDO_CAP - 1)),
+      { ...this.gameState },
+    ];
   }
 
   /** Subclass hook: called after nextTurn for game-specific events. */
@@ -285,13 +385,29 @@ export abstract class BaseGameRoom<
 
   private async recordResult(): Promise<void> {
     if (!supabaseAdmin || !this.supabaseRoomId) return;
+
+    const sb = supabaseAdmin;
+    const roomId = this.supabaseRoomId!;
+    const doRecord = () =>
+      sb.from("rooms").update({ status: "finished" }).eq("id", roomId);
+
     try {
-      await supabaseAdmin
-        .from("rooms")
-        .update({ status: "finished" })
-        .eq("id", this.supabaseRoomId);
+      await doRecord();
     } catch (err) {
-      this.log.error({ err, supabaseRoomId: this.supabaseRoomId }, "Failed to record game result");
+      this.log.warn(
+        { err, supabaseRoomId: this.supabaseRoomId },
+        "Failed to record result — retrying in 2s",
+      );
+      // 3.2 Single retry after 2 seconds
+      try {
+        await new Promise((r) => setTimeout(r, 2000));
+        await doRecord();
+      } catch (retryErr) {
+        this.log.error(
+          { err: retryErr, supabaseRoomId: this.supabaseRoomId },
+          "Retry failed — game result not recorded",
+        );
+      }
     }
   }
 }

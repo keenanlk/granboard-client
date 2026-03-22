@@ -45,6 +45,7 @@ import { logger } from "./lib/logger.ts";
 // Side-effect imports — activate sound and LED event subscriptions
 import "./sound/soundEffects.ts";
 import "./board/ledEffects.ts";
+import { ErrorBoundary } from "./components/ErrorFallback.tsx";
 
 const log = logger.child({ module: "colyseus" });
 
@@ -685,15 +686,12 @@ function App() {
                 (import.meta.env.VITE_COLYSEUS_URL as string) ??
                 "http://localhost:2567";
               const client = new Client(colyseusUrl);
-              const colyseusRoom = await client.create(
-                gameType as string,
-                {
-                  gameOptions: options,
-                  playerNames,
-                  playerIds: [null, null],
-                  roomId: screen.roomId,
-                },
-              );
+              const colyseusRoom = await client.create(gameType as string, {
+                gameOptions: options,
+                playerNames,
+                playerIds: [null, null],
+                roomId: screen.roomId,
+              });
               colyseusRoomId = colyseusRoom.roomId;
               // Store the room so useColyseusSync can reuse it
               setPendingColyseusRoom(colyseusRoom);
@@ -784,4 +782,12 @@ function App() {
   );
 }
 
-export default App;
+function AppWithErrorBoundary() {
+  return (
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  );
+}
+
+export default AppWithErrorBoundary;

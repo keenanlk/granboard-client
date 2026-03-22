@@ -6,7 +6,12 @@ vi.mock("./lib/logger.ts", () => ({
     info: vi.fn(),
     error: vi.fn(),
     debug: vi.fn(),
-    child: () => ({ warn: vi.fn(), info: vi.fn(), error: vi.fn(), debug: vi.fn() }),
+    child: () => ({
+      warn: vi.fn(),
+      info: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn(),
+    }),
   },
 }));
 

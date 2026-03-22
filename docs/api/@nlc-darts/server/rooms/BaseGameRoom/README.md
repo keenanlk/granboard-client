@@ -9,3 +9,7 @@
 ## Classes
 
 - [BaseGameRoom](classes/BaseGameRoom.md)
+
+## Functions
+
+- [activeRoomCount](functions/activeRoomCount.md)

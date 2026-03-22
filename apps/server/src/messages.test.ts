@@ -4,7 +4,16 @@ import { ClientMessage, ServerMessage } from "./messages.ts";
 describe("ClientMessage", () => {
   it("exports expected keys", () => {
     expect(Object.keys(ClientMessage).sort()).toEqual(
-      ["DART_HIT", "NEXT_TURN", "UNDO", "REMATCH_REQUEST", "REMATCH_ACCEPT", "REMATCH_DECLINE", "WEBRTC_SIGNAL", "CAMERA_STATUS"].sort(),
+      [
+        "DART_HIT",
+        "NEXT_TURN",
+        "UNDO",
+        "REMATCH_REQUEST",
+        "REMATCH_ACCEPT",
+        "REMATCH_DECLINE",
+        "WEBRTC_SIGNAL",
+        "CAMERA_STATUS",
+      ].sort(),
     );
   });
 });

@@ -1,10 +1,11 @@
+coverage
+node_modules
 dist
 dist-ssr
 dist-electron
 dev-dist
 release
 out
-node_modules
 ios
 .idea
 *.log

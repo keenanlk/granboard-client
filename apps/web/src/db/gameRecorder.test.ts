@@ -27,30 +27,15 @@ describe("GameRecorder", () => {
   });
 
   it("recordRound increments round counter per player and stores round data", () => {
-    const recorder = new GameRecorder(
-      "x01",
-      ["Alice", "Bob"],
-      ["p1", "p2"],
-      { startScore: 501 },
-    );
+    const recorder = new GameRecorder("x01", ["Alice", "Bob"], ["p1", "p2"], {
+      startScore: 501,
+    });
 
-    recorder.recordRound(
-      0,
-      [{ value: 20, shortName: "20" }],
-      60,
-    );
+    recorder.recordRound(0, [{ value: 20, shortName: "20" }], 60);
 
-    recorder.recordRound(
-      1,
-      [{ value: 19, shortName: "19" }],
-      57,
-    );
+    recorder.recordRound(1, [{ value: 19, shortName: "19" }], 57);
 
-    recorder.recordRound(
-      0,
-      [{ value: 18, shortName: "T18" }],
-      54,
-    );
+    recorder.recordRound(0, [{ value: 18, shortName: "T18" }], 54);
 
     // Verify via save that rounds were recorded
     // (rounds are private, so we verify through save output)
@@ -127,12 +112,9 @@ describe("GameRecorder", () => {
     const dbMod = await getDbMock();
     const mockSave = vi.mocked(dbMod.dbSaveSession);
 
-    const recorder = new GameRecorder(
-      "highscore",
-      ["Alice"],
-      ["p1"],
-      { rounds: 8 },
-    );
+    const recorder = new GameRecorder("highscore", ["Alice"], ["p1"], {
+      rounds: 8,
+    });
 
     recorder.recordRound(0, [{ value: 20, shortName: "T20" }], 60);
 
@@ -161,12 +143,7 @@ describe("GameRecorder", () => {
     const mockSave = vi.mocked(dbMod.dbSaveSession);
     mockSave.mockRejectedValueOnce(new Error("IndexedDB write failed"));
 
-    const recorder = new GameRecorder(
-      "x01",
-      ["Alice"],
-      ["p1"],
-      {},
-    );
+    const recorder = new GameRecorder("x01", ["Alice"], ["p1"], {});
 
     // Should not throw
     await expect(recorder.save(["Alice"], [0])).resolves.toBeUndefined();
@@ -176,12 +153,7 @@ describe("GameRecorder", () => {
     const dbMod = await getDbMock();
     const mockSave = vi.mocked(dbMod.dbSaveSession);
 
-    const recorder = new GameRecorder(
-      "x01",
-      ["Alice"],
-      ["p1"],
-      {},
-    );
+    const recorder = new GameRecorder("x01", ["Alice"], ["p1"], {});
 
     recorder.recordRound(0, [{ value: 20, shortName: "20" }], 20);
     recorder.recordRound(0, [{ value: 19, shortName: "19" }], 19);

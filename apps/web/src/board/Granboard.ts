@@ -154,7 +154,10 @@ async function connectCapacitor(deviceId?: string): Promise<void> {
     (s) => s.uuid.toLowerCase() === SERVICE_UUID.toLowerCase(),
   );
   if (!service) throw new Error("GranBoard service not found.");
-  log.debug({ characteristicCount: service.characteristics.length }, "Service found");
+  log.debug(
+    { characteristicCount: service.characteristics.length },
+    "Service found",
+  );
 
   const notifyChar = service.characteristics.find((c) => c.properties.notify);
   const writeChar =
@@ -166,7 +169,10 @@ async function connectCapacitor(deviceId?: string): Promise<void> {
     throw new Error("Required BLE characteristics not found.");
 
   capWriteCharUUID = writeChar.uuid;
-  log.debug({ writeChar: capWriteCharUUID, notifyChar: notifyChar.uuid }, "Characteristics found");
+  log.debug(
+    { writeChar: capWriteCharUUID, notifyChar: notifyChar.uuid },
+    "Characteristics found",
+  );
 
   await BleClient.startNotifications(
     device.deviceId,
@@ -275,7 +281,10 @@ export class Granboard {
 
   public static async TryAutoReconnect(): Promise<Granboard> {
     const savedId = localStorage.getItem(DEVICE_ID_KEY) ?? undefined;
-    log.debug({ platform: isNative ? "native" : "web", savedId: savedId ?? null }, "TryAutoReconnect");
+    log.debug(
+      { platform: isNative ? "native" : "web", savedId: savedId ?? null },
+      "TryAutoReconnect",
+    );
     if (isNative) {
       if (!savedId) throw new Error("No previously paired device.");
       await connectCapacitor(savedId);

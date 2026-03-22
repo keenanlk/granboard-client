@@ -71,7 +71,7 @@ export class X01Engine implements GameEngine<X01State, X01Options> {
   startGame(options: X01Options, playerNames: string[]): X01State {
     return {
       x01Options: options,
-       players: playerNames.map((name) => ({
+      players: playerNames.map((name) => ({
         name,
         score: options.startingScore,
         opened: !options.doubleIn,

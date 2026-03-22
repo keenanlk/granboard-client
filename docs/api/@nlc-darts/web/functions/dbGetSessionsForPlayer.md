@@ -8,7 +8,7 @@
 
 > **dbGetSessionsForPlayer**(`playerId`): `Promise`\<[`GameSessionRecord`](../../engine/src/db/db.types.ts/interfaces/GameSessionRecord.md)[]\>
 
-Defined in: [db/db.ts:109](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/db/db.ts#L109)
+Defined in: [db/db.ts:112](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/db/db.ts#L112)
 
 Retrieve all game sessions that include the given player.
 

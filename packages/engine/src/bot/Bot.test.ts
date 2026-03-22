@@ -70,8 +70,22 @@ describe("Bot", () => {
     const bot = new Bot("CPU", BotSkill.Advanced);
     const marks = emptyMarks();
     const players: CricketPlayer[] = [
-      { name: "CPU", marks: emptyMarks(), score: 0, totalDartsThrown: 0, totalMarksEarned: 0, rounds: [] },
-      { name: "P2", marks: emptyMarks(), score: 0, totalDartsThrown: 0, totalMarksEarned: 0, rounds: [] },
+      {
+        name: "CPU",
+        marks: emptyMarks(),
+        score: 0,
+        totalDartsThrown: 0,
+        totalMarksEarned: 0,
+        rounds: [],
+      },
+      {
+        name: "P2",
+        marks: emptyMarks(),
+        score: 0,
+        totalDartsThrown: 0,
+        totalMarksEarned: 0,
+        rounds: [],
+      },
     ];
     const result = bot.throwCricket(marks, players, 0);
     expect(typeof result).toBe("number");
@@ -81,8 +95,22 @@ describe("Bot", () => {
     const bot = new Bot("CPU", BotSkill.SemiPro);
     const marks = emptyMarks();
     const players: CricketPlayer[] = [
-      { name: "CPU", marks: emptyMarks(), score: 0, totalDartsThrown: 0, totalMarksEarned: 0, rounds: [] },
-      { name: "P2", marks: emptyMarks(), score: 0, totalDartsThrown: 0, totalMarksEarned: 0, rounds: [] },
+      {
+        name: "CPU",
+        marks: emptyMarks(),
+        score: 0,
+        totalDartsThrown: 0,
+        totalMarksEarned: 0,
+        rounds: [],
+      },
+      {
+        name: "P2",
+        marks: emptyMarks(),
+        score: 0,
+        totalDartsThrown: 0,
+        totalMarksEarned: 0,
+        rounds: [],
+      },
     ];
     bot.throwCricket(marks, players, 0);
     expect(mockSimulateThrow).toHaveBeenCalledWith(expect.any(Number), 15.5);
@@ -93,8 +121,22 @@ describe("Bot", () => {
     const onThrow = vi.fn();
     const marks = emptyMarks();
     const players: CricketPlayer[] = [
-      { name: "CPU", marks: emptyMarks(), score: 0, totalDartsThrown: 0, totalMarksEarned: 0, rounds: [] },
-      { name: "P2", marks: emptyMarks(), score: 0, totalDartsThrown: 0, totalMarksEarned: 0, rounds: [] },
+      {
+        name: "CPU",
+        marks: emptyMarks(),
+        score: 0,
+        totalDartsThrown: 0,
+        totalMarksEarned: 0,
+        rounds: [],
+      },
+      {
+        name: "P2",
+        marks: emptyMarks(),
+        score: 0,
+        totalDartsThrown: 0,
+        totalMarksEarned: 0,
+        rounds: [],
+      },
     ];
     bot.throwCricket(marks, players, 0, onThrow);
     expect(onThrow).toHaveBeenCalledOnce();
@@ -138,7 +180,17 @@ describe("Bot", () => {
   it("throwTicTacToe returns a SegmentID", () => {
     const bot = new Bot("CPU", BotSkill.Intermediate);
     const grid = [20, 19, 18, 17, 16, 15, 14, 13, 12];
-    const owner: (0 | 1 | null)[] = [null, null, null, null, null, null, null, null, null];
+    const owner: (0 | 1 | null)[] = [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ];
     const result = bot.throwTicTacToe(grid, owner, 0, [], []);
     expect(typeof result).toBe("number");
   });
@@ -147,7 +199,17 @@ describe("Bot", () => {
     const bot = new Bot("CPU", BotSkill.Advanced);
     const onThrow = vi.fn();
     const grid = [20, 19, 18, 17, 16, 15, 14, 13, 12];
-    const owner: (0 | 1 | null)[] = [null, null, null, null, null, null, null, null, null];
+    const owner: (0 | 1 | null)[] = [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ];
     bot.throwTicTacToe(grid, owner, 0, [], [], onThrow);
     expect(onThrow).toHaveBeenCalledOnce();
     expect(onThrow).toHaveBeenCalledWith(expect.any(Number), 78);
@@ -156,7 +218,17 @@ describe("Bot", () => {
   it("throwTicTacToe calls simulateThrow with correct sigma", () => {
     const bot = new Bot("CPU", BotSkill.Advanced);
     const grid = [20, 19, 18, 17, 16, 15, 14, 13, 12];
-    const owner: (0 | 1 | null)[] = [null, null, null, null, null, null, null, null, null];
+    const owner: (0 | 1 | null)[] = [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ];
     bot.throwTicTacToe(grid, owner, 0, [], []);
     expect(mockSimulateThrow).toHaveBeenCalledWith(expect.any(Number), 20);
   });

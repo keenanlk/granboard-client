@@ -34,7 +34,10 @@ describe("detectX01Award", () => {
 
   it("returns null for 2 darts", () => {
     expect(
-      detectX01Award([makeX01Dart(SegmentID.TRP_20), makeX01Dart(SegmentID.TRP_20)]),
+      detectX01Award([
+        makeX01Dart(SegmentID.TRP_20),
+        makeX01Dart(SegmentID.TRP_20),
+      ]),
     ).toBeNull();
   });
 
@@ -137,7 +140,9 @@ describe("detectX01Award", () => {
 describe("detectCricketAward", () => {
   it("returns null for fewer than 3 darts", () => {
     expect(detectCricketAward([])).toBeNull();
-    expect(detectCricketAward([makeCricketDart(SegmentID.TRP_20, 20, 3)])).toBeNull();
+    expect(
+      detectCricketAward([makeCricketDart(SegmentID.TRP_20, 20, 3)]),
+    ).toBeNull();
   });
 
   it("returns threeinblack for 3 x DBL_BULL", () => {

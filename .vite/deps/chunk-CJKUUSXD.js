@@ -3,7 +3,9 @@ function numbersToDataView(value) {
   return new DataView(Uint8Array.from(value).buffer);
 }
 function dataViewToNumbers(value) {
-  return Array.from(new Uint8Array(value.buffer, value.byteOffset, value.byteLength));
+  return Array.from(
+    new Uint8Array(value.buffer, value.byteOffset, value.byteLength),
+  );
 }
 function textToDataView(value) {
   return numbersToDataView(value.split("").map((s) => s.charCodeAt(0)));
@@ -16,12 +18,15 @@ function numberToUUID(value) {
 }
 function hexStringToDataView(hex) {
   const bin = [];
-  let i, c, isEmpty = 1, buffer = 0;
+  let i,
+    c,
+    isEmpty = 1,
+    buffer = 0;
   for (i = 0; i < hex.length; i++) {
     c = hex.charCodeAt(i);
-    if (c > 47 && c < 58 || c > 64 && c < 71 || c > 96 && c < 103) {
-      buffer = buffer << 4 ^ (c > 64 ? c + 9 : c) & 15;
-      if (isEmpty ^= 1) {
+    if ((c > 47 && c < 58) || (c > 64 && c < 71) || (c > 96 && c < 103)) {
+      buffer = (buffer << 4) ^ ((c > 64 ? c + 9 : c) & 15);
+      if ((isEmpty ^= 1)) {
         bin.push(buffer & 255);
       }
     }
@@ -29,13 +34,15 @@ function hexStringToDataView(hex) {
   return numbersToDataView(bin);
 }
 function dataViewToHexString(value) {
-  return dataViewToNumbers(value).map((n) => {
-    let s = n.toString(16);
-    if (s.length == 1) {
-      s = "0" + s;
-    }
-    return s;
-  }).join(" ");
+  return dataViewToNumbers(value)
+    .map((n) => {
+      let s = n.toString(16);
+      if (s.length == 1) {
+        s = "0" + s;
+      }
+      return s;
+    })
+    .join(" ");
 }
 function webUUIDToString(uuid) {
   if (typeof uuid === "string") {
@@ -66,6 +73,6 @@ export {
   hexStringToDataView,
   dataViewToHexString,
   webUUIDToString,
-  mapToObject
+  mapToObject,
 };
 //# sourceMappingURL=chunk-CJKUUSXD.js.map

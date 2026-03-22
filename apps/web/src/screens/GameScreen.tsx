@@ -238,7 +238,7 @@ export function GameScreen({
   const [botAnimKey, setBotAnimKey] = useState(0);
   useEffect(() => {
     if (!isCurrentBot || !!winner || isTransitioning) {
-      setBotAnimation("CombatIdle");
+      setBotAnimation("CombatIdle"); // eslint-disable-line react-hooks/set-state-in-effect -- intentional reset on early return
       return;
     }
     const dartsThrown = currentRoundDarts.length;
@@ -257,14 +257,21 @@ export function GameScreen({
     return () => {
       clearTimeout(attackTimer);
     };
-  }, [isCurrentBot, currentPlayerIndex, currentRoundDarts.length, isBust, winner, isTransitioning]);
+  }, [
+    isCurrentBot,
+    currentPlayerIndex,
+    currentRoundDarts.length,
+    isBust,
+    winner,
+    isTransitioning,
+  ]);
 
   // Show bot dartboard overlay: outline on target before throw, fill on actual after throw.
   // Clear board when bot is not active.
   const botBoardTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (!isCurrentBot || !!winner) {
-      setBotBoard(null);
+      setBotBoard(null); // eslint-disable-line react-hooks/set-state-in-effect -- intentional cleanup on early return
       if (botBoardTimer.current) clearTimeout(botBoardTimer.current);
       return;
     }
@@ -288,7 +295,6 @@ export function GameScreen({
       const target = x01PickTarget(p.score, opts, p.opened);
       setBotBoard({ segment: target, mode: "outline" });
     }, delay);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isCurrentBot,
     currentPlayerIndex,

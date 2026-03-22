@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ADMIN_PASSWORD=yourpassword tsx watch src/index.ts | pino-pretty",
     "test": "vitest run --coverage",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit && prettier --check ."
   },
   "dependencies": {
     "@colyseus/core": "^0.16.24",

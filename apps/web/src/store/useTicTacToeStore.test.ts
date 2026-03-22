@@ -38,19 +38,28 @@ describe("useTicTacToeStore", () => {
 
   describe("startGame", () => {
     it("initializes grid with 9 cells, center is bull (25)", () => {
-      store().startGame({ roundLimit: 20, singleBull: false }, ["Alice", "Bob"]);
+      store().startGame({ roundLimit: 20, singleBull: false }, [
+        "Alice",
+        "Bob",
+      ]);
       const s = store();
       expect(s.grid).toHaveLength(9);
       expect(s.grid[4]).toBe(25);
     });
 
     it("initializes owner array to all null", () => {
-      store().startGame({ roundLimit: 20, singleBull: false }, ["Alice", "Bob"]);
+      store().startGame({ roundLimit: 20, singleBull: false }, [
+        "Alice",
+        "Bob",
+      ]);
       expect(store().owner).toEqual(Array(9).fill(null));
     });
 
     it("initializes players with zero marks", () => {
-      store().startGame({ roundLimit: 20, singleBull: false }, ["Alice", "Bob"]);
+      store().startGame({ roundLimit: 20, singleBull: false }, [
+        "Alice",
+        "Bob",
+      ]);
       const s = store();
       expect(s.players).toHaveLength(2);
       expect(s.players[0].marks).toEqual(Array(9).fill(0));
@@ -58,13 +67,19 @@ describe("useTicTacToeStore", () => {
     });
 
     it("sets no winner and no cat's game", () => {
-      store().startGame({ roundLimit: 20, singleBull: false }, ["Alice", "Bob"]);
+      store().startGame({ roundLimit: 20, singleBull: false }, [
+        "Alice",
+        "Bob",
+      ]);
       expect(store().winner).toBeNull();
       expect(store().isCatsGame).toBe(false);
     });
 
     it("grid has 8 unique numbers from 1-20 plus bull", () => {
-      store().startGame({ roundLimit: 20, singleBull: false }, ["Alice", "Bob"]);
+      store().startGame({ roundLimit: 20, singleBull: false }, [
+        "Alice",
+        "Bob",
+      ]);
       const grid = store().grid;
       const nonBull = grid.filter((_, i) => i !== 4);
       expect(new Set(nonBull).size).toBe(8);
@@ -79,7 +94,10 @@ describe("useTicTacToeStore", () => {
     beforeEach(() => {
       // Seed a deterministic grid by mocking Math.random
       vi.spyOn(Math, "random").mockImplementation(() => 0.1);
-      store().startGame({ roundLimit: 20, singleBull: false }, ["Alice", "Bob"]);
+      store().startGame({ roundLimit: 20, singleBull: false }, [
+        "Alice",
+        "Bob",
+      ]);
       vi.restoreAllMocks();
     });
 
@@ -140,7 +158,10 @@ describe("useTicTacToeStore", () => {
   describe("undoLastDart", () => {
     beforeEach(() => {
       vi.spyOn(Math, "random").mockImplementation(() => 0.1);
-      store().startGame({ roundLimit: 20, singleBull: false }, ["Alice", "Bob"]);
+      store().startGame({ roundLimit: 20, singleBull: false }, [
+        "Alice",
+        "Bob",
+      ]);
       vi.restoreAllMocks();
     });
 
@@ -163,7 +184,10 @@ describe("useTicTacToeStore", () => {
   describe("nextTurn", () => {
     beforeEach(() => {
       vi.spyOn(Math, "random").mockImplementation(() => 0.1);
-      store().startGame({ roundLimit: 20, singleBull: false }, ["Alice", "Bob"]);
+      store().startGame({ roundLimit: 20, singleBull: false }, [
+        "Alice",
+        "Bob",
+      ]);
       vi.restoreAllMocks();
     });
 
@@ -237,7 +261,10 @@ describe("useTicTacToeStore", () => {
   describe("serialization", () => {
     it("getSerializableState and restoreState round-trip", () => {
       vi.spyOn(Math, "random").mockImplementation(() => 0.1);
-      store().startGame({ roundLimit: 20, singleBull: false }, ["Alice", "Bob"]);
+      store().startGame({ roundLimit: 20, singleBull: false }, [
+        "Alice",
+        "Bob",
+      ]);
       vi.restoreAllMocks();
 
       const gridNum = store().grid[0];
@@ -257,7 +284,10 @@ describe("useTicTacToeStore", () => {
   describe("resetGame", () => {
     it("clears state back to defaults", () => {
       vi.spyOn(Math, "random").mockImplementation(() => 0.1);
-      store().startGame({ roundLimit: 20, singleBull: false }, ["Alice", "Bob"]);
+      store().startGame({ roundLimit: 20, singleBull: false }, [
+        "Alice",
+        "Bob",
+      ]);
       vi.restoreAllMocks();
 
       store().addDart(singleOf(store().grid[0]));

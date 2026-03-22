@@ -9,7 +9,12 @@ import { logger } from "../lib/logger.ts";
 const log = logger.child({ module: "colyseus" });
 
 const COLYSEUS_URL =
-  (import.meta.env.VITE_COLYSEUS_URL as string) ?? "http://localhost:2567";
+  (import.meta.env.VITE_COLYSEUS_URL as string | undefined) ??
+  ((import.meta.env.PROD
+    ? (() => {
+        throw new Error("VITE_COLYSEUS_URL must be set in production");
+      })()
+    : "http://localhost:2567") as string);
 
 /** Module-level room storage — survives StrictMode re-renders */
 let pendingRoom: Room | null = null;

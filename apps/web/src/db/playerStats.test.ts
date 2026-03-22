@@ -366,7 +366,12 @@ describe("computePlayerStats", () => {
     const session = makeSession({
       gameType: "x01",
       participants: [
-        { playerId: PLAYER_ID, name: "Alice", finalScore: 501, isWinner: false },
+        {
+          playerId: PLAYER_ID,
+          name: "Alice",
+          finalScore: 501,
+          isWinner: false,
+        },
       ],
       rounds: [],
     });

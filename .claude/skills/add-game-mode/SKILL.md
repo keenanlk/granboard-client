@@ -79,7 +79,7 @@ Ask the user what accent color they want for this game before writing anything.
 In `src/index.css`, add:
 
 ```css
-.game-<n> {
+.game-<n > {
   --sal: 0px;
   --color-game-accent: theme(--color-<color>-400);
   --color-game-accent-dim: theme(--color-<color>-950);
@@ -96,6 +96,7 @@ and add `"game-<n>"` to the `gameClass` prop union in `src/components/GameShell.
 ## Phase 7: README
 
 In `README.md`:
+
 - Architecture Overview table → add engine to Pure Game Engines row
 - State Management table → add new store/engine row
 
@@ -109,6 +110,7 @@ Run `npm test`. If tests fail: read the output carefully, fix the engine or asse
 Run `npm run lint`. Fix all errors before reporting done.
 
 Report to the user what to verify manually:
+
 - Full game: 1 human + 1 bot
 - Dart hits register, bot throws on its turn, LEDs highlight correct numbers
 - Turn transitions, undo works for human (disabled for bot)

@@ -4,16 +4,18 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import "../index.css";
 
 // Mock simulateThrow for perfect accuracy — bot always hits exactly what it aims at
-vi.mock("@nlc-darts/engine/src/bot/throwSimulator.ts", async (importOriginal) => {
-  const mod =
-    await importOriginal<
-      typeof import("@nlc-darts/engine/src/bot/throwSimulator.ts")
+vi.mock(
+  "@nlc-darts/engine/src/bot/throwSimulator.ts",
+  async (importOriginal) => {
+    const mod = await importOriginal<
+      typeof import("@nlc-darts/engine/src/bot/throwSimulator.ts") // eslint-disable-line @typescript-eslint/consistent-type-imports
     >();
-  return {
-    ...mod,
-    simulateThrow: (target: number) => target,
-  };
-});
+    return {
+      ...mod,
+      simulateThrow: (target: number) => target,
+    };
+  },
+);
 
 // Mock sound + LED side-effect modules to avoid audio/BLE in tests
 vi.mock("../sound/soundEffects.ts", () => ({
@@ -42,10 +44,7 @@ vi.mock("../sound/sounds.ts", () => ({
 
 import { TicTacToeScreen } from "../screens/TicTacToeScreen.tsx";
 import { useTicTacToeStore } from "../store/useTicTacToeStore.ts";
-import type {
-  TicTacToeState,
-  TicTacToePlayer,
-} from "@nlc-darts/engine";
+import type { TicTacToeState, TicTacToePlayer } from "@nlc-darts/engine";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

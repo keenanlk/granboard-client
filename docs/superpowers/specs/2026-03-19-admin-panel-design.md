@@ -73,10 +73,10 @@ Returns `history: null` if Supabase is not configured (graceful degradation).
 
 ## Files to Modify/Create
 
-| File | Action |
-|------|--------|
+| File                       | Action                                                     |
+| -------------------------- | ---------------------------------------------------------- |
 | `apps/server/package.json` | Add `@colyseus/monitor`, `express-basic-auth` dependencies |
-| `apps/server/src/index.ts` | Mount auth middleware, monitor, and stats endpoint |
+| `apps/server/src/index.ts` | Mount auth middleware, monitor, and stats endpoint         |
 
 ## New Dependencies
 
@@ -85,10 +85,10 @@ Returns `history: null` if Supabase is not configured (graceful degradation).
 
 ## Environment Variables
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `ADMIN_PASSWORD` | Yes (for admin) | — | Password for admin panel access |
-| `ADMIN_USER` | No | `"admin"` | Username for admin panel access |
+| Variable         | Required        | Default   | Description                     |
+| ---------------- | --------------- | --------- | ------------------------------- |
+| `ADMIN_PASSWORD` | Yes (for admin) | —         | Password for admin panel access |
+| `ADMIN_USER`     | No              | `"admin"` | Username for admin panel access |
 
 ## Verification
 

@@ -34,10 +34,7 @@ vi.mock("../lib/logger.ts", () => ({
 
 import { CricketRoom } from "./CricketRoom.ts";
 
-function createRoom(
-  gameOptions: unknown = {},
-  playerNames = ["Alice", "Bob"],
-) {
+function createRoom(gameOptions: unknown = {}, playerNames = ["Alice", "Bob"]) {
   const room = new CricketRoom();
   room.onCreate({
     gameOptions,
@@ -48,7 +45,9 @@ function createRoom(
 }
 
 function getHandler(room: unknown, type: string): Function {
-  return (room as { _messageHandlers: Map<string, Function> })._messageHandlers.get(type)!;
+  return (
+    room as { _messageHandlers: Map<string, Function> }
+  )._messageHandlers.get(type)!;
 }
 
 function mockClient(sessionId = "client-1") {

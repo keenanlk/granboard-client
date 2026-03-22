@@ -18,7 +18,7 @@ interface MockOptions {
 }
 
 const mockEngine: GameEngine<MockState, MockOptions> = {
-  startGame: (opts, _names) => ({
+  startGame: (opts) => ({
     score: opts.startScore,
     currentDarts: [],
     winner: null,
@@ -31,7 +31,7 @@ const mockEngine: GameEngine<MockState, MockOptions> = {
     currentDarts: state.currentDarts.slice(0, -1),
     score: state.score + (state.currentDarts.at(-1) ?? 0),
   }),
-  nextTurn: (_state) => ({
+  nextTurn: () => ({
     currentDarts: [],
   }),
 };

@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { DEFAULT_X01_OPTIONS, DEFAULT_CRICKET_OPTIONS, legCount } from "@nlc-darts/engine";
+import {
+  DEFAULT_X01_OPTIONS,
+  DEFAULT_CRICKET_OPTIONS,
+  legCount,
+} from "@nlc-darts/engine";
 import type { X01Options, BotSkill as BotSkillType } from "@nlc-darts/engine";
 import {
   PlayerSelectStep,

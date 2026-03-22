@@ -15,10 +15,7 @@ const miss = CreateSegment(SegmentID.MISS);
 
 let state: HighScoreState;
 
-function start(
-  opts: Partial<HighScoreOptions> = {},
-  players = ["Alice"],
-) {
+function start(opts: Partial<HighScoreOptions> = {}, players = ["Alice"]) {
   state = highScoreEngine.startGame(
     { ...DEFAULT_HIGHSCORE_OPTIONS, ...opts },
     players,

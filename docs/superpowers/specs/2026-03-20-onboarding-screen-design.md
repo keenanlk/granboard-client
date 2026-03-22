@@ -31,6 +31,7 @@ Note: The `ResumePrompt` overlay (for resuming interrupted games) only renders a
 - Once the store updates with `players.length > 0`, App.tsx naturally renders the home screen
 
 **Design constraints (from memory):**
+
 - Target display: 15-24 inch screen viewed from ~8 feet
 - Big, bold typography — scores and headings must be huge
 - Large tap/click targets
