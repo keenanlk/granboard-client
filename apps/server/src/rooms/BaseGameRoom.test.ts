@@ -20,10 +20,13 @@ vi.mock("@colyseus/core", () => {
   return { Room: MockRoom };
 });
 
-const mockUpdate = vi
-  .fn()
-  .mockReturnValue({ eq: vi.fn().mockResolvedValue({}) });
-const mockFrom = vi.fn().mockReturnValue({ update: mockUpdate });
+const mockEq = vi.fn().mockResolvedValue({});
+const mockUpdate = vi.fn().mockReturnValue({ eq: mockEq });
+const mockInsert = vi.fn().mockResolvedValue({ error: null });
+const mockFrom = vi.fn((table: string) => {
+  if (table === "game_results") return { insert: mockInsert };
+  return { update: mockUpdate };
+});
 vi.mock("../supabaseAdmin.ts", () => ({ supabaseAdmin: null }));
 import * as supaModule from "../supabaseAdmin.ts";
 vi.mock("../lib/logger.ts", () => ({
@@ -620,7 +623,7 @@ describe("BaseGameRoom", () => {
   });
 
   describe("recordResult", () => {
-    it("calls supabase when configured and game is won", () => {
+    it("calls supabase when configured and game is won", async () => {
       // Temporarily set supabaseAdmin to a mock client
       Object.defineProperty(supaModule, "supabaseAdmin", {
         value: { from: mockFrom },
@@ -647,8 +650,20 @@ describe("BaseGameRoom", () => {
       dartHandler(client1, { segmentId: SegmentID.TRP_20 });
       dartHandler(client1, { segmentId: SegmentID.INNER_1 });
 
+      // Allow async recordResult to complete
+      await vi.runAllTimersAsync();
+
       expect(mockFrom).toHaveBeenCalledWith("rooms");
       expect(mockUpdate).toHaveBeenCalledWith({ status: "finished" });
+      expect(mockFrom).toHaveBeenCalledWith("game_results");
+      expect(mockInsert).toHaveBeenCalled();
+      const insertedRows = mockInsert.mock.calls[0][0];
+      expect(insertedRows).toHaveLength(2); // one per player
+      expect(insertedRows[0].game_type).toBe("x01");
+      expect(insertedRows[0].won).toBe(true); // Alice won
+      expect(insertedRows[1].won).toBe(false); // Bob lost
+      expect(insertedRows[0].total_darts).toBe(6);
+      expect(insertedRows[0].ppd).toBeGreaterThan(0);
 
       // Reset
       Object.defineProperty(supaModule, "supabaseAdmin", {
@@ -658,8 +673,23 @@ describe("BaseGameRoom", () => {
       });
     });
 
-    it("skips recording when supabaseAdmin is null", () => {
-      mockFrom.mockClear();
+    it("logs error when game_results insert fails", async () => {
+      const errorInsert = vi
+        .fn()
+        .mockResolvedValue({ error: { message: "insert error" } });
+      const errorEq = vi.fn().mockResolvedValue({});
+      const errorUpdate = vi.fn().mockReturnValue({ eq: errorEq });
+      const errorFrom = vi.fn((table: string) => {
+        if (table === "game_results") return { insert: errorInsert };
+        return { update: errorUpdate };
+      });
+
+      Object.defineProperty(supaModule, "supabaseAdmin", {
+        value: { from: errorFrom },
+        writable: true,
+        configurable: true,
+      });
+
       const room = createRoom({ startingScore: 301 });
       const client1 = mockClient("c1");
       const client2 = mockClient("c2");
@@ -677,6 +707,87 @@ describe("BaseGameRoom", () => {
       dartHandler(client1, { segmentId: SegmentID.TRP_20 });
       dartHandler(client1, { segmentId: SegmentID.TRP_20 });
       dartHandler(client1, { segmentId: SegmentID.INNER_1 });
+
+      await vi.runAllTimersAsync();
+
+      expect(errorInsert).toHaveBeenCalled();
+
+      Object.defineProperty(supaModule, "supabaseAdmin", {
+        value: null,
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    it("retries on failure and inserts game_results on success", async () => {
+      const failingEq = vi
+        .fn()
+        .mockRejectedValueOnce(new Error("network"))
+        .mockResolvedValueOnce({});
+      const failingUpdate = vi.fn().mockReturnValue({ eq: failingEq });
+      const retryInsert = vi.fn().mockResolvedValue({ error: null });
+      const retryFrom = vi.fn((table: string) => {
+        if (table === "game_results") return { insert: retryInsert };
+        return { update: failingUpdate };
+      });
+
+      Object.defineProperty(supaModule, "supabaseAdmin", {
+        value: { from: retryFrom },
+        writable: true,
+        configurable: true,
+      });
+
+      const room = createRoom({ startingScore: 301 });
+      const client1 = mockClient("c1");
+      const client2 = mockClient("c2");
+      (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client1);
+      (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client2);
+
+      const dartHandler = getHandler(room, "dart_hit");
+      const nextTurn = getHandler(room, "next_turn");
+
+      dartHandler(client1, { segmentId: SegmentID.TRP_20 });
+      dartHandler(client1, { segmentId: SegmentID.TRP_20 });
+      dartHandler(client1, { segmentId: SegmentID.TRP_20 });
+      nextTurn(client1);
+      nextTurn(client2);
+      dartHandler(client1, { segmentId: SegmentID.TRP_20 });
+      dartHandler(client1, { segmentId: SegmentID.TRP_20 });
+      dartHandler(client1, { segmentId: SegmentID.INNER_1 });
+
+      await vi.runAllTimersAsync();
+
+      // Should have retried — eq called twice (initial + retry)
+      expect(failingEq).toHaveBeenCalledTimes(2);
+
+      Object.defineProperty(supaModule, "supabaseAdmin", {
+        value: null,
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    it("skips recording when supabaseAdmin is null", async () => {
+      mockFrom.mockClear();
+      mockInsert.mockClear();
+      const room = createRoom({ startingScore: 301 });
+      const client1 = mockClient("c1");
+      const client2 = mockClient("c2");
+      (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client1);
+      (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client2);
+
+      const dartHandler = getHandler(room, "dart_hit");
+      const nextTurn = getHandler(room, "next_turn");
+
+      dartHandler(client1, { segmentId: SegmentID.TRP_20 });
+      dartHandler(client1, { segmentId: SegmentID.TRP_20 });
+      dartHandler(client1, { segmentId: SegmentID.TRP_20 });
+      nextTurn(client1);
+      nextTurn(client2);
+      dartHandler(client1, { segmentId: SegmentID.TRP_20 });
+      dartHandler(client1, { segmentId: SegmentID.TRP_20 });
+      dartHandler(client1, { segmentId: SegmentID.INNER_1 });
+      await vi.runAllTimersAsync();
 
       expect(mockFrom).not.toHaveBeenCalled();
     });

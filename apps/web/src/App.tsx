@@ -37,7 +37,9 @@ import type {
 } from "@nlc-darts/engine";
 import { OnlineLobbyScreen } from "./screens/OnlineLobbyScreen.tsx";
 import { OnlineSetupScreen } from "./screens/OnlineSetupScreen.tsx";
+import { AuthScreen } from "./screens/AuthScreen.tsx";
 import { useOnlineStore } from "./store/useOnlineStore.ts";
+import { supabase } from "./lib/supabaseClient.ts";
 import type { OnlineGameType } from "./store/online.types.ts";
 import type { OnlineConfig } from "./store/useOnlineStore.ts";
 import { setPendingColyseusRoom } from "./hooks/useColyseusSync.ts";
@@ -51,6 +53,7 @@ const log = logger.child({ module: "colyseus" });
 
 type Screen =
   | { name: "home" }
+  | { name: "auth" }
   | { name: "players" }
   | { name: "practice" }
   | {
@@ -64,6 +67,7 @@ type Screen =
       roomId: string;
       isHost: boolean;
       gameType: OnlineGameType;
+      gameOptions?: unknown;
       hostName: string;
       guestName: string;
     }
@@ -638,6 +642,15 @@ function App() {
     );
   }
 
+  if (screen.name === "auth") {
+    return (
+      <AuthScreen
+        onBack={() => setScreen({ name: "home" })}
+        onAuthenticated={() => setScreen({ name: "online-lobby" })}
+      />
+    );
+  }
+
   if (screen.name === "online-lobby") {
     return (
       <OnlineLobbyScreen
@@ -655,6 +668,7 @@ function App() {
             roomId,
             isHost,
             gameType: currentRoom.game_type,
+            gameOptions: currentRoom.game_options,
             hostName,
             guestName,
           });
@@ -667,6 +681,7 @@ function App() {
     return (
       <OnlineSetupScreen
         gameType={screen.gameType}
+        gameOptions={screen.gameOptions}
         hostName={screen.hostName}
         guestName={screen.guestName}
         isHost={screen.isHost}
@@ -676,20 +691,28 @@ function App() {
         }}
         onStart={async (gameType, options, guestColyseusRoomId) => {
           const playerNames = [screen.hostName, screen.guestName];
+          const { currentRoom } = useOnlineStore.getState();
+          const playerIds: (string | null)[] = [
+            currentRoom?.host_id ?? null,
+            currentRoom?.guest_id ?? null,
+          ];
 
           // Host: create Colyseus room first so we can share the ID
           let colyseusRoomId: string | undefined;
           if (screen.isHost) {
             try {
               const { Client } = await import("colyseus.js");
-              const colyseusUrl =
+              const rawColUrl =
                 (import.meta.env.VITE_COLYSEUS_URL as string) ??
-                "http://localhost:2567";
+                `${location.protocol === "https:" ? "https" : "http"}://192.168.40.151:2567`;
+              const colyseusUrl = rawColUrl.startsWith("/")
+                ? `${location.origin}${rawColUrl}`
+                : rawColUrl;
               const client = new Client(colyseusUrl);
               const colyseusRoom = await client.create(gameType as string, {
                 gameOptions: options,
                 playerNames,
-                playerIds: [null, null],
+                playerIds,
                 roomId: screen.roomId,
               });
               colyseusRoomId = colyseusRoom.roomId;
@@ -705,7 +728,7 @@ function App() {
             isHost: screen.isHost,
             gameType: gameType as "x01" | "cricket",
             playerNames,
-            playerIds: [null, null],
+            playerIds,
             gameOptions: options,
             colyseusRoomId: colyseusRoomId ?? guestColyseusRoomId,
           };
@@ -714,7 +737,7 @@ function App() {
               name: "game",
               x01Options: options as X01Options,
               playerNames,
-              playerIds: [null, null],
+              playerIds,
               botSkills: [null, null],
               onlineConfig,
             });
@@ -723,7 +746,7 @@ function App() {
               name: "cricket",
               options: options as CricketOptions,
               playerNames,
-              playerIds: [null, null],
+              playerIds,
               botSkills: [null, null],
               onlineConfig,
             });
@@ -769,7 +792,16 @@ function App() {
         onSetMatch={() => setScreen({ name: "set-setup" })}
         onPractice={() => setScreen({ name: "practice" })}
         onPlayers={() => setScreen({ name: "players" })}
-        onOnline={() => setScreen({ name: "online-lobby" })}
+        onOnline={() => {
+          // Check for existing auth session
+          void supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session?.user) {
+              setScreen({ name: "online-lobby" });
+            } else {
+              setScreen({ name: "auth" });
+            }
+          });
+        }}
       />
       {pendingResume && (
         <ResumePrompt

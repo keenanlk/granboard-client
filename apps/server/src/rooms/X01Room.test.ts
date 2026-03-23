@@ -219,6 +219,64 @@ describe("X01Room", () => {
     });
   });
 
+  describe("gameTypeName", () => {
+    it("returns 'x01'", () => {
+      const room = createRoom();
+      expect((room as unknown as { gameTypeName: string }).gameTypeName).toBe(
+        "x01",
+      );
+    });
+  });
+
+  describe("extractPlayerGameStats", () => {
+    it("extracts stats from player state after darts", () => {
+      const room = createRoom({ startingScore: 301 });
+      const client1 = mockClient("client-1");
+      const client2 = mockClient("client-2");
+      (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client1);
+      (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client2);
+
+      const handler = getHandler(room, "dart_hit");
+      const nextTurn = getHandler(room, "next_turn");
+
+      // Round 1: 3x T20 = 180, total score = 180
+      handler(client1, { segmentId: SegmentID.TRP_20 });
+      handler(client1, { segmentId: SegmentID.TRP_20 });
+      handler(client1, { segmentId: SegmentID.TRP_20 });
+      nextTurn(client1);
+
+      const state = (
+        room as unknown as {
+          gameState: {
+            x01Options: X01Options;
+            players: {
+              totalDartsThrown: number;
+              rounds: { score: number }[];
+            }[];
+          };
+        }
+      ).gameState;
+      const extract = (
+        room as unknown as {
+          extractPlayerGameStats: (
+            s: typeof state,
+            i: number,
+          ) => {
+            totalDarts: number;
+            totalScore: number;
+            totalMarks: number;
+            totalRounds: number;
+          };
+        }
+      ).extractPlayerGameStats(state, 0);
+
+      expect(extract.totalDarts).toBe(3);
+      expect(extract.totalScore).toBe(180);
+      expect(extract.totalMarks).toBe(0);
+      expect(extract.totalRounds).toBe(1);
+    });
+  });
+
   describe("integration", () => {
     it("handleDartHit processes dart and broadcasts state", () => {
       const room = createRoom();

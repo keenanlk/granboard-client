@@ -15,6 +15,7 @@
     "@nlc-darts/engine": "workspace:*",
     "@nlc-darts/logger": "workspace:*",
     "@supabase/supabase-js": "^2.99.2",
+    "dotenv": "^17.3.1",
     "express": "^5.1.0",
     "express-basic-auth": "^1.2.1"
   },

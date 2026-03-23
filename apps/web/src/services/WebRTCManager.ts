@@ -138,8 +138,44 @@ export class WebRTCManager {
 
     this.localStream = stream;
     this.onLocalStream(stream);
+    this.setupPeerConnection(room, isHost, stream);
+  }
 
-    // 2. Verify Colyseus connection is still alive before proceeding
+  /**
+   * Begin the WebRTC flow with a pre-acquired camera stream, skipping getUserMedia.
+   *
+   * Use this when the stream has already been obtained (e.g. from a camera preview).
+   * Ownership of the stream transfers to this manager — `stop()` will stop its tracks.
+   *
+   * @param room   - Active Colyseus room used for signaling.
+   * @param isHost - Whether this player is the room host (creates offers).
+   * @param stream - Pre-acquired MediaStream from getUserMedia.
+   */
+  async startWithStream(
+    room: Room,
+    isHost: boolean,
+    stream: MediaStream,
+  ): Promise<void> {
+    if (this.stopped) {
+      for (const track of stream.getTracks()) track.stop();
+      return;
+    }
+
+    this.localStream = stream;
+    this.onLocalStream(stream);
+    this.setupPeerConnection(room, isHost, stream);
+  }
+
+  /**
+   * Create the RTCPeerConnection, add tracks, register signaling, and begin
+   * the offer/answer exchange. Shared by both `start` and `startWithStream`.
+   */
+  private setupPeerConnection(
+    room: Room,
+    isHost: boolean,
+    stream: MediaStream,
+  ): void {
+    // Verify Colyseus connection is still alive before proceeding
     try {
       room.send("request_state", {});
     } catch {
@@ -152,7 +188,7 @@ export class WebRTCManager {
 
     this.onStatus("connecting");
 
-    // 3. Create peer connection and set up signaling
+    // Create peer connection and set up signaling
     const pc = new RTCPeerConnection(STUN_SERVERS);
     this.pc = pc;
 
@@ -180,7 +216,7 @@ export class WebRTCManager {
       }
     };
 
-    // 4. Register signaling handler — receives offers/answers from the other player
+    // Register signaling handler — receives offers/answers from the other player
     room.onMessage(
       "webrtc_signal",
       (payload: { type: string; sdp?: RTCSessionDescriptionInit }) => {
@@ -189,7 +225,7 @@ export class WebRTCManager {
       },
     );
 
-    // 5. Host creates offer with retry; guest just waits for the offer
+    // Host creates offer with retry; guest just waits for the offer
     if (isHost) {
       this.sendOfferWithRetry(pc, room, 0);
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   DEFAULT_X01_OPTIONS,
   DEFAULT_CRICKET_OPTIONS,
@@ -9,6 +9,7 @@ import type { OnlineGameType } from "../store/online.types.ts";
 
 interface OnlineSetupScreenProps {
   gameType: OnlineGameType;
+  gameOptions?: unknown;
   hostName: string;
   guestName: string;
   isHost: boolean;
@@ -24,15 +25,22 @@ const STARTING_SCORES = [301, 501, 701] as const;
 
 export function OnlineSetupScreen({
   gameType,
+  gameOptions,
   hostName,
   guestName,
   isHost,
   onStart,
   onBack,
 }: OnlineSetupScreenProps) {
-  const [x01Options, setX01Options] = useState<X01Options>(DEFAULT_X01_OPTIONS);
+  const [x01Options, setX01Options] = useState<X01Options>(
+    gameOptions && gameType === "x01"
+      ? (gameOptions as X01Options)
+      : DEFAULT_X01_OPTIONS,
+  );
   const [cricketOptions, setCricketOptions] = useState<CricketOptions>(
-    DEFAULT_CRICKET_OPTIONS,
+    gameOptions && gameType === "cricket"
+      ? (gameOptions as CricketOptions)
+      : DEFAULT_CRICKET_OPTIONS,
   );
 
   const setX01Option = <K extends keyof X01Options>(
@@ -45,6 +53,16 @@ export function OnlineSetupScreen({
       if (key === "masterOut" && value) next.doubleOut = false;
       return next;
     });
+
+  // Host: auto-start if options were already configured in the lobby
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (isHost && gameOptions && !autoStarted.current) {
+      autoStarted.current = true;
+      onStart(gameType, gameOptions);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Guest: listen for game_started from host
   useEffect(() => {

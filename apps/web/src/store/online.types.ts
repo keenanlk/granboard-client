@@ -16,6 +16,12 @@ export interface OnlinePlayer {
   display_name: string;
   status: PlayerStatus;
   last_seen: string;
+  x01_grade: string | null;
+  x01_ppd: number;
+  x01_games: number;
+  cricket_grade: string | null;
+  cricket_mpr: number;
+  cricket_games: number;
 }
 
 /** A multiplayer game room record. */

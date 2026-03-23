@@ -36,6 +36,42 @@ export class X01Room extends BaseGameRoom<X01State, X01Options> {
     return DEFAULT_X01_OPTIONS;
   }
 
+  protected get gameTypeName(): string {
+    return "x01";
+  }
+
+  protected extractPlayerGameStats(
+    state: X01State,
+    playerIndex: number,
+  ): {
+    totalDarts: number;
+    totalScore: number;
+    totalMarks: number;
+    totalRounds: number;
+  } {
+    const player = state.players[playerIndex];
+    const totalDarts = player.totalDartsThrown;
+    // Total score = sum of all round scores (points scored toward the target)
+    let totalScore = player.rounds.reduce((sum, r) => sum + r.score, 0);
+    let totalRounds = player.rounds.length;
+
+    // Include unflushed current round (nextTurn hasn't been called yet at game end)
+    if (
+      state.currentPlayerIndex === playerIndex &&
+      state.currentRoundDarts.length > 0
+    ) {
+      totalScore += state.turnStartScores[playerIndex] - player.score;
+      totalRounds += 1;
+    }
+
+    return {
+      totalDarts,
+      totalScore,
+      totalMarks: 0, // Not applicable for X01
+      totalRounds,
+    };
+  }
+
   protected emitGameEvents(state: X01State, segment: Segment): void {
     // Dart hit event
     this.broadcast(ServerMessage.GAME_EVENT, {

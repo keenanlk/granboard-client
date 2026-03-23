@@ -126,3 +126,13 @@ export type {
   HighScoreStats,
   PlayerStats,
 } from "./db/db.types.ts";
+
+// grading
+export {
+  GRADES,
+  MIN_GAMES_FOR_GRADE,
+  ROLLING_WINDOW,
+  computeX01Grade,
+  computeCricketGrade,
+} from "./grading/grading.ts";
+export type { Grade } from "./grading/grading.ts";

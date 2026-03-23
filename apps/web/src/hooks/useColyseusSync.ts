@@ -8,13 +8,18 @@ import { logger } from "../lib/logger.ts";
 
 const log = logger.child({ module: "colyseus" });
 
-const COLYSEUS_URL =
+const rawColyseusUrl =
   (import.meta.env.VITE_COLYSEUS_URL as string | undefined) ??
   ((import.meta.env.PROD
     ? (() => {
         throw new Error("VITE_COLYSEUS_URL must be set in production");
       })()
-    : "http://localhost:2567") as string);
+    : `${location.protocol === "https:" ? "https" : "http"}://192.168.40.151:2567`) as string);
+
+// Support relative proxy paths (e.g. "/colyseus-proxy") by resolving to absolute URL
+const COLYSEUS_URL = rawColyseusUrl.startsWith("/")
+  ? `${location.origin}${rawColyseusUrl}`
+  : rawColyseusUrl;
 
 /** Module-level room storage — survives StrictMode re-renders */
 let pendingRoom: Room | null = null;
@@ -48,6 +53,16 @@ let activeRoom: Room | null = null;
 let connectingTo: string | null = null; // guards async joinById
 let cleanupTimer: ReturnType<typeof setTimeout> | null = null;
 
+// Module-level callback refs — survive component remounts so handlers
+// registered once keep pointing to the *current* component's callbacks.
+let lastSeenSeq = 0;
+const cbRefs = {
+  restore: null as ((state: unknown) => void) | null,
+  gameEnded: null as ((winner: string) => void) | undefined | null,
+  disconnect: null as (() => void) | undefined | null,
+  turnDelay: null as (() => void) | undefined | null,
+};
+
 /** Manages a Colyseus room connection for online multiplayer state sync. */
 export function useColyseusSync({
   onlineConfig,
@@ -58,18 +73,12 @@ export function useColyseusSync({
 }: UseColyseusSyncOptions): UseColyseusSyncReturn {
   const [connectedRoom, setConnectedRoom] = useState<Room | null>(null);
   const roomRef = useRef<Room | null>(null);
-  const lastSeenSeqRef = useRef(0);
 
-  const restoreRef = useRef(restoreState);
-  const onGameEndedRef = useRef(onGameEnded);
-  const onDisconnectRef = useRef(onOpponentDisconnected);
-  const onTurnDelayRef = useRef(onTurnDelay);
-  useEffect(() => {
-    restoreRef.current = restoreState;
-    onGameEndedRef.current = onGameEnded;
-    onDisconnectRef.current = onOpponentDisconnected;
-    onTurnDelayRef.current = onTurnDelay;
-  });
+  // Keep module-level refs pointing to the current component's callbacks
+  cbRefs.restore = restoreState;
+  cbRefs.gameEnded = onGameEnded;
+  cbRefs.disconnect = onOpponentDisconnected;
+  cbRefs.turnDelay = onTurnDelay;
 
   const isHost = onlineConfig?.isHost;
   const colyseusRoomId = onlineConfig?.colyseusRoomId;
@@ -77,14 +86,14 @@ export function useColyseusSync({
   useEffect(() => {
     if (!onlineConfig) return;
 
-    function setupHandlersOnRoom(r: Room) {
+    function installHandlers(r: Room) {
       r.onMessage(
         "state_update",
         (payload: { state: unknown; seq: number }) => {
-          if (payload.seq <= lastSeenSeqRef.current) return;
-          lastSeenSeqRef.current = payload.seq;
+          if (payload.seq <= lastSeenSeq) return;
+          lastSeenSeq = payload.seq;
           log.debug({ seq: payload.seq }, "State update received");
-          restoreRef.current(payload.state);
+          cbRefs.restore?.(payload.state);
         },
       );
 
@@ -96,36 +105,26 @@ export function useColyseusSync({
       );
 
       r.onMessage("turn_delay", () => {
-        onTurnDelayRef.current?.();
+        cbRefs.turnDelay?.();
       });
 
       r.onMessage("game_ended", (payload: { winner: string }) => {
-        onGameEndedRef.current?.(payload.winner);
+        cbRefs.gameEnded?.(payload.winner);
       });
 
       r.onMessage("player_left", () => {
-        onDisconnectRef.current?.();
+        cbRefs.disconnect?.();
       });
-
-      // Request fresh state now that handlers are registered
-      r.send("request_state", {});
     }
 
-    // If we already have an active room for this config, reuse but re-register handlers
+    // If we already have an active room for this config, reuse it.
+    // Handlers are already installed — just reset seq and request fresh state.
     if (activeRoom && activeRoomId === (colyseusRoomId ?? "host")) {
       roomRef.current = activeRoom;
-      setupHandlersOnRoom(activeRoom);
+      lastSeenSeq = 0;
+      activeRoom.send("request_state", {});
       queueMicrotask(() => setConnectedRoom(activeRoom));
       return;
-    }
-
-    function setupRoomHandlers(r: Room) {
-      activeRoom = r;
-      activeRoomId = colyseusRoomId ?? "host";
-      roomRef.current = r;
-      setConnectedRoom(r);
-      setupHandlersOnRoom(r);
-      log.info({ roomId: r.roomId }, "Room connected");
     }
 
     async function connect() {
@@ -159,9 +158,14 @@ export function useColyseusSync({
         }
 
         if (!room) return;
-        // Always set up handlers — even if StrictMode set disposed=true,
-        // the room connection is real and needs handlers
-        setupRoomHandlers(room);
+
+        activeRoom = room;
+        activeRoomId = colyseusRoomId ?? "host";
+        roomRef.current = room;
+        setConnectedRoom(room);
+        installHandlers(room);
+        room.send("request_state", {});
+        log.info({ roomId: room.roomId }, "Room connected");
       } catch (err) {
         connectingTo = null;
         log.error({ err }, "Connection failed");

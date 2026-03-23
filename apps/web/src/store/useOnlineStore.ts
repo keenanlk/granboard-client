@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { supabase } from "../lib/supabaseClient.ts";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { logger } from "../lib/logger.ts";
+import { fetchPlayerStats, EMPTY_STATS } from "../lib/onlineStats.ts";
+import type { OnlinePlayerStats } from "../lib/onlineStats.ts";
 
 const log = logger.child({ module: "online" });
 import type {
@@ -36,6 +38,7 @@ interface OnlineState {
   authUserId: string | null;
   displayName: string | null;
   connectionStatus: ConnectionStatus;
+  stats: OnlinePlayerStats;
 
   // Lobby
   onlinePlayers: OnlinePlayer[];
@@ -50,7 +53,7 @@ interface OnlineState {
   sentInvite: Invite | null;
 
   // Actions
-  goOnline: (displayName: string) => Promise<void>;
+  goOnline: () => Promise<void>;
   goOffline: () => Promise<void>;
   createRoom: (
     gameType: OnlineGameType,
@@ -72,10 +75,25 @@ interface OnlineState {
   updateRoomStatus: (status: RoomStatus) => void;
 }
 
+function buildPresencePayload(state: OnlineState, statusOverride?: PlayerStatus) {
+  return {
+    id: state.authUserId,
+    display_name: state.displayName,
+    status: statusOverride ?? "online",
+    x01_grade: state.stats.x01.grade,
+    x01_ppd: state.stats.x01.ppd,
+    x01_games: state.stats.x01.games,
+    cricket_grade: state.stats.cricket.grade,
+    cricket_mpr: state.stats.cricket.mpr,
+    cricket_games: state.stats.cricket.games,
+  };
+}
+
 export const useOnlineStore = create<OnlineState>((set, get) => ({
   authUserId: null,
   displayName: null,
   connectionStatus: "offline",
+  stats: EMPTY_STATS,
   onlinePlayers: [],
   lobbyChannel: null,
   currentRoom: null,
@@ -85,20 +103,20 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
   pendingInvite: null,
   sentInvite: null,
 
-  goOnline: async (displayName: string) => {
+  goOnline: async () => {
     set({ connectionStatus: "connecting" });
     try {
-      // Anonymous auth
+      // Expect an existing session (user signed in via AuthScreen)
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      let userId = session?.user?.id;
-      if (!userId) {
-        const { data, error } = await supabase.auth.signInAnonymously();
-        if (error) throw error;
-        userId = data.user?.id;
-      }
-      if (!userId) throw new Error("Failed to get user ID");
+      const userId = session?.user?.id;
+      if (!userId) throw new Error("Not authenticated");
+
+      const displayName = localStorage.getItem("nlc-online-name") ?? "Player";
+
+      // Fetch online stats for this player
+      const stats = await fetchPlayerStats(userId);
 
       // Upsert player record
       await supabase.from("online_players").upsert(
@@ -115,6 +133,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
         authUserId: userId,
         displayName,
         connectionStatus: "online",
+        stats,
       });
 
       // Join lobby presence channel
@@ -131,6 +150,12 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
               id: string;
               display_name: string;
               status: PlayerStatus;
+              x01_grade: string | null;
+              x01_ppd: number;
+              x01_games: number;
+              cricket_grade: string | null;
+              cricket_mpr: number;
+              cricket_games: number;
             };
             if (p.id !== get().authUserId) {
               players.push({
@@ -138,6 +163,12 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
                 display_name: p.display_name,
                 status: p.status,
                 last_seen: new Date().toISOString(),
+                x01_grade: p.x01_grade ?? null,
+                x01_ppd: p.x01_ppd ?? 0,
+                x01_games: p.x01_games ?? 0,
+                cricket_grade: p.cricket_grade ?? null,
+                cricket_mpr: p.cricket_mpr ?? 0,
+                cricket_games: p.cricket_games ?? 0,
               });
             }
           }
@@ -193,11 +224,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
         )
         .subscribe(async (status) => {
           if (status === "SUBSCRIBED") {
-            await lobbyChannel.track({
-              id: userId,
-              display_name: displayName,
-              status: "online",
-            });
+            await lobbyChannel.track(buildPresencePayload(get()));
           }
         });
 
@@ -242,6 +269,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
 
     set({
       connectionStatus: "offline",
+      stats: EMPTY_STATS,
       onlinePlayers: [],
       lobbyChannel: null,
       roomChannel: null,
@@ -290,11 +318,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
     // Update lobby presence
     const { lobbyChannel } = get();
     if (lobbyChannel) {
-      await lobbyChannel.track({
-        id: authUserId,
-        display_name: get().displayName,
-        status: "in_game",
-      });
+      await lobbyChannel.track(buildPresencePayload(get(), "in_game"));
     }
 
     return room;
@@ -333,11 +357,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
 
     const { lobbyChannel } = get();
     if (lobbyChannel) {
-      await lobbyChannel.track({
-        id: authUserId,
-        display_name: get().displayName,
-        status: "in_game",
-      });
+      await lobbyChannel.track(buildPresencePayload(get(), "in_game"));
     }
   },
 
@@ -377,11 +397,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
 
       const { lobbyChannel } = get();
       if (lobbyChannel) {
-        await lobbyChannel.track({
-          id: authUserId,
-          display_name: get().displayName,
-          status: "online",
-        });
+        await lobbyChannel.track(buildPresencePayload(get()));
       }
     }
   },

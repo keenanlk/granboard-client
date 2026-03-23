@@ -34,6 +34,38 @@ export class CricketRoom extends BaseGameRoom<CricketState, CricketOptions> {
     return DEFAULT_CRICKET_OPTIONS;
   }
 
+  protected get gameTypeName(): string {
+    return "cricket";
+  }
+
+  protected extractPlayerGameStats(
+    state: CricketState,
+    playerIndex: number,
+  ): {
+    totalDarts: number;
+    totalScore: number;
+    totalMarks: number;
+    totalRounds: number;
+  } {
+    const player = state.players[playerIndex];
+    let totalRounds = player.rounds.length;
+
+    // Include unflushed current round (nextTurn hasn't been called yet at game end)
+    if (
+      state.currentPlayerIndex === playerIndex &&
+      state.currentRoundDarts.length > 0
+    ) {
+      totalRounds += 1;
+    }
+
+    return {
+      totalDarts: player.totalDartsThrown,
+      totalScore: player.score,
+      totalMarks: player.totalMarksEarned,
+      totalRounds,
+    };
+  }
+
   protected emitGameEvents(state: CricketState, segment: Segment): void {
     // Get the last thrown dart's effective marks for the event
     const lastDart = state.currentRoundDarts.at(-1);

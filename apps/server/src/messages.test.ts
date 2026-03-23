@@ -11,6 +11,7 @@ describe("ClientMessage", () => {
         "REMATCH_REQUEST",
         "REMATCH_ACCEPT",
         "REMATCH_DECLINE",
+        "REMATCH",
         "WEBRTC_SIGNAL",
         "CAMERA_STATUS",
       ].sort(),

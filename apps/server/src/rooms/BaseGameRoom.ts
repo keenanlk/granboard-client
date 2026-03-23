@@ -78,6 +78,17 @@ export abstract class BaseGameRoom<
   /** Subclass hook: generate game events after a dart is processed. */
   protected abstract emitGameEvents(state: TState, segment: Segment): void;
 
+  /** Subclass hook: extract per-player stats at game end for recording. */
+  protected abstract extractPlayerGameStats(
+    state: TState,
+    playerIndex: number,
+  ): {
+    totalDarts: number;
+    totalScore: number;
+    totalMarks: number;
+    totalRounds: number;
+  };
+
   onCreate(options: RoomCreateOptions): void {
     // 2.5 Max concurrent rooms
     if (_activeRoomCount >= MAX_ROOMS) {
@@ -114,6 +125,7 @@ export abstract class BaseGameRoom<
       this.handleNextTurn(client),
     );
     this.onMessage(ClientMessage.UNDO, (client) => this.handleUndo(client));
+    this.onMessage(ClientMessage.REMATCH, () => this.handleRematch());
 
     // Client requests fresh state (after registering message handlers)
     this.onMessage("request_state", (client) => {
@@ -366,6 +378,16 @@ export abstract class BaseGameRoom<
     ];
   }
 
+  /** Reset game state for a rematch within the same room. */
+  private handleRematch(): void {
+    // Idempotent: only reset if the game is actually finished
+    if (this.gameState.winner === null) return;
+    this.log.info({}, "Rematch — resetting game state");
+    this.gameState = this.engine.startGame(this.gameOptions, this.playerNames);
+    this.undoStack = [];
+    this.broadcastState();
+  }
+
   /** Subclass hook: called after nextTurn for game-specific events. */
   protected onTurnChanged(): void {
     // Default no-op, override in subclasses
@@ -383,13 +405,59 @@ export abstract class BaseGameRoom<
 
   // ── Result recording ────────────────────────────────────────────────────
 
+  /** Determine the game type string for the game_results table. */
+  protected abstract get gameTypeName(): string;
+
   private async recordResult(): Promise<void> {
     if (!supabaseAdmin || !this.supabaseRoomId) return;
 
     const sb = supabaseAdmin;
     const roomId = this.supabaseRoomId!;
-    const doRecord = () =>
-      sb.from("rooms").update({ status: "finished" }).eq("id", roomId);
+
+    const doRecord = async () => {
+      // Update room status
+      await sb.from("rooms").update({ status: "finished" }).eq("id", roomId);
+
+      // Insert per-player game results
+      const winnerName = this.gameState.winner;
+      const rows = this.playerNames
+        .map((name, i) => {
+          const playerId = this.playerIds[i];
+          if (!playerId) return null; // Skip guests without auth
+
+          const stats = this.extractPlayerGameStats(this.gameState, i);
+          const ppd =
+            stats.totalDarts > 0 ? stats.totalScore / stats.totalDarts : 0;
+          const mpr =
+            stats.totalRounds > 0 ? stats.totalMarks / stats.totalRounds : 0;
+
+          // Find opponent ID
+          const opponentIndex = i === 0 ? 1 : 0;
+          const opponentId = this.playerIds[opponentIndex] ?? null;
+
+          return {
+            room_id: roomId,
+            game_type: this.gameTypeName,
+            player_id: playerId,
+            opponent_id: opponentId,
+            won: name === winnerName,
+            total_darts: stats.totalDarts,
+            total_score: stats.totalScore,
+            total_marks: stats.totalMarks,
+            total_rounds: stats.totalRounds,
+            ppd,
+            mpr,
+          };
+        })
+        .filter((r): r is NonNullable<typeof r> => r !== null);
+
+      if (rows.length > 0) {
+        const { error } = await sb.from("game_results").insert(rows);
+        if (error) {
+          this.log.error({ err: error }, "Failed to insert game_results");
+        }
+      }
+    };
 
     try {
       await doRecord();

@@ -8,8 +8,9 @@ const config: CapacitorConfig = {
   webDir: "dist",
   server: isDev
     ? {
-        url: "http://192.168.40.151:5173",
-        cleartext: true,
+        url: "https://192.168.40.151:5173",
+        cleartext: false,
+        allowNavigation: ["192.168.40.151"],
       }
     : undefined,
   ios: {
@@ -17,6 +18,9 @@ const config: CapacitorConfig = {
     scrollEnabled: false,
   },
   plugins: {
+    CapacitorHttp: {
+      enabled: true,
+    },
     BluetoothLe: {
       // Displayed in the iOS Bluetooth permission dialog
       displayStrings: {

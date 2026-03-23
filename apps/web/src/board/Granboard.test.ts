@@ -252,12 +252,11 @@ describe("Granboard (web path)", () => {
       const board = await Granboard.ConnectToBoard();
 
       // Find the gattserverdisconnected handler via the mock device
-      const requestFn = navigator.bluetooth.requestDevice as ReturnType<typeof vi.fn>;
-      const btDevice = await requestFn();
-      const disconnectHandler = (btDevice as { addEventListener: ReturnType<typeof vi.fn> })
-        .addEventListener.mock.calls.find(
-          (c: unknown[]) => c[0] === "gattserverdisconnected",
-        );
+      const btDevice = await vi.mocked(navigator.bluetooth.requestDevice)();
+      const addEventListenerMock = vi.mocked(btDevice.addEventListener);
+      const disconnectHandler = addEventListenerMock.mock.calls.find(
+        (c) => c[0] === "gattserverdisconnected",
+      );
 
       if (disconnectHandler) {
         (disconnectHandler[1] as () => void)();

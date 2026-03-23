@@ -308,6 +308,53 @@ describe("CricketRoom", () => {
     });
   });
 
+  describe("gameTypeName", () => {
+    it("returns 'cricket'", () => {
+      const room = createRoom();
+      expect((room as unknown as { gameTypeName: string }).gameTypeName).toBe(
+        "cricket",
+      );
+    });
+  });
+
+  describe("extractPlayerGameStats", () => {
+    it("extracts stats from player state after darts", () => {
+      const room = createRoom();
+      const client1 = mockClient("client-1");
+      const client2 = mockClient("client-2");
+      (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client1);
+      (room as unknown as { onJoin: (c: unknown) => void }).onJoin(client2);
+
+      const handler = getHandler(room, "dart_hit");
+      const nextTurn = getHandler(room, "next_turn");
+
+      // Player 0 throws T20, T19, T18 = 3 marks each = 9 total marks
+      handler(client1, { segmentId: SegmentID.TRP_20 });
+      handler(client1, { segmentId: SegmentID.TRP_19 });
+      handler(client1, { segmentId: SegmentID.TRP_18 });
+      nextTurn(client1);
+
+      const state = getState(room);
+      const extract = (
+        room as unknown as {
+          extractPlayerGameStats: (
+            s: CricketState,
+            i: number,
+          ) => {
+            totalDarts: number;
+            totalScore: number;
+            totalMarks: number;
+            totalRounds: number;
+          };
+        }
+      ).extractPlayerGameStats(state, 0);
+
+      expect(extract.totalDarts).toBe(3);
+      expect(extract.totalMarks).toBe(9);
+      expect(extract.totalRounds).toBe(1);
+    });
+  });
+
   describe("integration", () => {
     it("handleDartHit processes dart and broadcasts state", () => {
       const room = createRoom();

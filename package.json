@@ -9,11 +9,17 @@
     "lint": "turbo lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "supabase:start": "npx supabase start --workdir apps/web",
+    "supabase:stop": "npx supabase stop --workdir apps/web",
+    "supabase:reset": "npx supabase db reset --workdir apps/web",
+    "supabase:status": "npx supabase status --workdir apps/web",
+    "supabase:schema": "npx supabase db dump --local --workdir apps/web -f supabase/schema.sql"
   },
   "devDependencies": {
     "nyc": "^18.0.0",
     "prettier": "^3.8.1",
+    "supabase": "^2.81.3",
     "turbo": "2.8.17",
     "typedoc": "^0.28.17",
     "typedoc-plugin-markdown": "^4.11.0"

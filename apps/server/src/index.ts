@@ -1,3 +1,4 @@
+import "./env.js"; // must be first — loads .env before other modules read process.env
 import { Server } from "@colyseus/core";
 import { monitor } from "@colyseus/monitor";
 import { WebSocketTransport } from "@colyseus/ws-transport";
@@ -5,7 +6,8 @@ import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import basicAuth from "express-basic-auth";
 import { createServer } from "http";
-import { readFileSync } from "node:fs";
+import { createServer as createHttpsServer } from "https";
+import { existsSync, readFileSync } from "node:fs";
 import { X01Room } from "./rooms/X01Room.js";
 import { CricketRoom } from "./rooms/CricketRoom.js";
 import { logger } from "./lib/logger.js";
@@ -31,7 +33,8 @@ const port = Number(process.env.PORT) || 2567;
 const app = express();
 
 // ── 2.3 CORS allowlist ──────────────────────────────────────────────────────
-const defaultOrigins = "http://localhost:5173,capacitor://localhost";
+const defaultOrigins =
+  "http://localhost:5173,https://localhost:5173,https://192.168.40.151:5173,capacitor://localhost";
 const allowedOrigins = new Set(
   (process.env.CORS_ORIGINS ?? defaultOrigins).split(",").map((o) => o.trim()),
 );
@@ -182,7 +185,19 @@ if (adminPassword) {
   logger.warn("ADMIN_PASSWORD not set — admin panel disabled");
 }
 
-const httpServer = createServer(app);
+const certPath = new URL("../.certs/cert.pem", import.meta.url);
+const keyPath = new URL("../.certs/key.pem", import.meta.url);
+const hasCerts = existsSync(certPath) && existsSync(keyPath);
+
+const httpServer = hasCerts
+  ? createHttpsServer(
+      {
+        cert: readFileSync(certPath),
+        key: readFileSync(keyPath),
+      },
+      app,
+    )
+  : createServer(app);
 
 const server = new Server({
   transport: new WebSocketTransport({
@@ -196,7 +211,11 @@ server.define("cricket", CricketRoom);
 
 server.listen(port, "0.0.0.0").then(() => {
   logger.info(
-    { port, env: process.env.NODE_ENV ?? "development" },
+    {
+      port,
+      env: process.env.NODE_ENV ?? "development",
+      https: hasCerts,
+    },
     "Colyseus server listening",
   );
 });

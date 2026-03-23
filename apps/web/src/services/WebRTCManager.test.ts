@@ -498,4 +498,88 @@ describe("WebRTCManager", () => {
     );
     expect(answerCalls).toHaveLength(0);
   });
+
+  describe("startWithStream", () => {
+    it("skips getUserMedia and uses provided stream", async () => {
+      const stream = mockMediaStream();
+      const onLocalStream = vi.fn();
+      const manager = new WebRTCManager({
+        onStatus: vi.fn(),
+        onLocalStream,
+        onRemoteStream: vi.fn(),
+      });
+
+      const room = mockRoom();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await manager.startWithStream(room as any, false, stream);
+
+      expect(navigator.mediaDevices.getUserMedia).not.toHaveBeenCalled();
+      expect(onLocalStream).toHaveBeenCalledWith(stream);
+    });
+
+    it("sets up peer connection and signaling with pre-acquired stream", async () => {
+      const stream = mockMediaStream();
+      const room = mockRoom();
+      const manager = new WebRTCManager({
+        onStatus: vi.fn(),
+        onLocalStream: vi.fn(),
+        onRemoteStream: vi.fn(),
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await manager.startWithStream(room as any, true, stream);
+
+      expect(room.send).toHaveBeenCalledWith("request_state", {});
+      expect(room.onMessage).toHaveBeenCalledWith(
+        "webrtc_signal",
+        expect.any(Function),
+      );
+
+      // Host should send offer
+      await vi.waitFor(() => {
+        expect(room.send).toHaveBeenCalledWith(
+          "webrtc_signal",
+          expect.objectContaining({ type: "offer" }),
+        );
+      });
+    });
+
+    it("stop() after startWithStream stops the provided stream tracks", async () => {
+      const stream = mockMediaStream();
+      const room = mockRoom();
+      const manager = new WebRTCManager({
+        onStatus: vi.fn(),
+        onLocalStream: vi.fn(),
+        onRemoteStream: vi.fn(),
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await manager.startWithStream(room as any, false, stream);
+      manager.stop();
+
+      expect(
+        (stream as unknown as { _track: { stop: ReturnType<typeof vi.fn> } })
+          ._track.stop,
+      ).toHaveBeenCalled();
+    });
+
+    it("stops provided stream tracks if already stopped", async () => {
+      const stream = mockMediaStream();
+      const manager = new WebRTCManager({
+        onStatus: vi.fn(),
+        onLocalStream: vi.fn(),
+        onRemoteStream: vi.fn(),
+      });
+
+      manager.stop();
+      const room = mockRoom();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await manager.startWithStream(room as any, false, stream);
+
+      expect(
+        (stream as unknown as { _track: { stop: ReturnType<typeof vi.fn> } })
+          ._track.stop,
+      ).toHaveBeenCalled();
+    });
+  });
 });

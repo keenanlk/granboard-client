@@ -10,6 +10,8 @@ interface UseWebRTCOptions {
   isHost: boolean;
   /** When true, starts camera and WebRTC connection. When false, tears down. */
   enabled: boolean;
+  /** Pre-acquired camera stream from CameraPreview. When provided, WebRTCManager skips getUserMedia. */
+  preAcquiredStream?: MediaStream | null;
 }
 
 interface UseWebRTCReturn {
@@ -32,6 +34,7 @@ export function useWebRTC({
   room,
   isHost,
   enabled,
+  preAcquiredStream,
 }: UseWebRTCOptions): UseWebRTCReturn {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -44,21 +47,38 @@ export function useWebRTC({
   }, []);
 
   useEffect(() => {
+    console.log("[useWebRTC] effect:", { room: !!room, enabled, hasStream: !!preAcquiredStream });
     if (!room || !enabled) {
       cleanup();
       return;
     }
 
     const manager = new WebRTCManager({
-      onStatus: setStatus,
-      onLocalStream: setLocalStream,
-      onRemoteStream: setRemoteStream,
+      onStatus: (s) => {
+        console.log("[useWebRTC] status:", s);
+        setStatus(s);
+      },
+      onLocalStream: (s) => {
+        console.log("[useWebRTC] localStream:", !!s);
+        setLocalStream(s);
+      },
+      onRemoteStream: (s) => {
+        console.log("[useWebRTC] remoteStream:", !!s);
+        setRemoteStream(s);
+      },
     });
     managerRef.current = manager;
-    manager.start(room, isHost);
+
+    if (preAcquiredStream) {
+      console.log("[useWebRTC] calling startWithStream");
+      manager.startWithStream(room, isHost, preAcquiredStream);
+    } else {
+      console.log("[useWebRTC] calling start (no pre-acquired stream)");
+      manager.start(room, isHost);
+    }
 
     return cleanup;
-  }, [room, isHost, enabled, cleanup]);
+  }, [room, isHost, enabled, preAcquiredStream, cleanup]);
 
   return { localStream, remoteStream, status };
 }

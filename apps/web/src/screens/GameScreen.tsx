@@ -40,7 +40,7 @@ import { OnlineIndicator } from "../components/OnlineIndicator.tsx";
 import { WaitingOverlay } from "../components/WaitingOverlay.tsx";
 import { useWebRTC } from "../hooks/useWebRTC.ts";
 import { CameraBackground } from "../components/CameraBackground.tsx";
-import { CameraPrompt } from "../components/CameraPrompt.tsx";
+import { CameraPreview } from "../components/CameraPreview.tsx";
 
 interface GameScreenProps {
   x01Options: X01Options;
@@ -85,8 +85,10 @@ export function GameScreen({
   } = useGameStore();
 
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
-  const [cameraPromptShown, setCameraPromptShown] = useState(!!onlineConfig);
-  const [cameraEnabled, setCameraEnabled] = useState(false);
+  const [cameraPreviewShown, setCameraPreviewShown] = useState(!!onlineConfig);
+  const [confirmedStream, setConfirmedStream] = useState<MediaStream | null>(
+    null,
+  );
   const [botBoard, setBotBoard] = useState<{
     segment: SegmentID;
     mode: "outline" | "fill";
@@ -185,7 +187,8 @@ export function GameScreen({
   const { localStream, remoteStream } = useWebRTC({
     room,
     isHost: onlineConfig?.isHost ?? false,
-    enabled: cameraEnabled,
+    enabled: confirmedStream !== null,
+    preAcquiredStream: confirmedStream,
   });
 
   // Build bot map once per game session — indices match the player array.
@@ -348,11 +351,14 @@ export function GameScreen({
   const { rematchState, requestRematch, acceptRematch, declineRematch } =
     useOnlineRematch(onlineConfig);
 
-  // When both players accept rematch, trigger it
+  // When both players accept rematch, reset the Colyseus room then remount
   useEffect(() => {
-    if (rematchState === "accepted") onRematch();
+    if (rematchState === "accepted") {
+      room?.send("rematch", {});
+      onRematch();
+    }
     if (rematchState === "declined") onExit();
-  }, [rematchState, onRematch, onExit]);
+  }, [rematchState, onRematch, onExit, room]);
 
   return (
     <GameShell
@@ -396,13 +402,13 @@ export function GameScreen({
       hasWinner={!!winner}
       overlays={
         <>
-          {cameraPromptShown && (
-            <CameraPrompt
-              onAccept={() => {
-                setCameraEnabled(true);
-                setCameraPromptShown(false);
+          {cameraPreviewShown && (
+            <CameraPreview
+              onConfirm={(stream) => {
+                setConfirmedStream(stream);
+                setCameraPreviewShown(false);
               }}
-              onSkip={() => setCameraPromptShown(false)}
+              onSkip={() => setCameraPreviewShown(false)}
             />
           )}
           {onlineConfig && opponentDisconnected && !winner && (
