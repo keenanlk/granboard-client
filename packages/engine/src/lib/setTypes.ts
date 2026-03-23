@@ -2,8 +2,8 @@ import type { X01Options } from "../engine/x01.types.ts";
 import type { CricketOptions } from "../engine/cricket.types.ts";
 import type { BotSkill } from "../bot/Bot.ts";
 
-/** Best-of set format: best of 3 or best of 5 legs. */
-export type SetFormat = "bo3" | "bo5";
+/** Best-of set format: best of 1, 3, 5, 7, or 9 legs. */
+export type SetFormat = "bo1" | "bo3" | "bo5" | "bo7" | "bo9";
 
 /** Configuration for a single leg within a set. */
 export interface LegConfig {
@@ -54,7 +54,7 @@ export function getSetWinner(
   legResults: LegResult[],
   format: SetFormat,
 ): string | null {
-  const needed = format === "bo3" ? 2 : 3;
+  const needed = Math.ceil(parseInt(format.slice(2)) / 2);
   const wins = new Map<string, number>();
   for (const r of legResults) {
     const count = (wins.get(r.winnerName) ?? 0) + 1;
@@ -68,5 +68,5 @@ export function getSetWinner(
  * Returns the total number of legs for a given format.
  */
 export function legCount(format: SetFormat): number {
-  return format === "bo3" ? 3 : 5;
+  return parseInt(format.slice(2));
 }

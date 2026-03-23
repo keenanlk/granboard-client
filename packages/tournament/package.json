@@ -1,0 +1,26 @@
+{
+  "name": "@nlc-darts/tournament",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./src/*": "./src/*"
+  },
+  "scripts": {
+    "test": "vitest run --coverage",
+    "lint": "tsc --noEmit && prettier --check ."
+  },
+  "dependencies": {
+    "@nlc-darts/engine": "workspace:*",
+    "brackets-manager": "^1.0.0",
+    "brackets-model": "^1.6.2"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.0",
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.0"
+  }
+}
