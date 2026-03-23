@@ -11,10 +11,12 @@
   },
   "scripts": {
     "test": "vitest run --coverage",
-    "lint": "tsc --noEmit && prettier --check ."
+    "lint": "eslint . && tsc --noEmit && prettier --check ."
   },
   "devDependencies": {
+    "@nlc-darts/eslint-config": "workspace:*",
     "@vitest/coverage-v8": "^4.1.0",
+    "eslint": "^9.39.4",
     "typescript": "~5.9.3",
     "vitest": "^4.1.0"
   }

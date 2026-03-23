@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/db/db.types.ts](../README.md) / RecordedDart
 
@@ -18,7 +18,7 @@ A single dart as persisted in game history.
 
 Defined in: [db/db.types.ts:13](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L13)
 
-***
+---
 
 ### scored?
 
@@ -26,7 +26,7 @@ Defined in: [db/db.types.ts:13](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:12](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L12)
 
-***
+---
 
 ### shortName
 
@@ -34,7 +34,7 @@ Defined in: [db/db.types.ts:12](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:11](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L11)
 
-***
+---
 
 ### value
 

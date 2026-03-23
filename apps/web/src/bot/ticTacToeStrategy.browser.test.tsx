@@ -1,15 +1,14 @@
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type * as ThrowSimulatorModule from "@nlc-darts/engine/src/bot/throwSimulator.ts";
 import "../index.css";
 
 // Mock simulateThrow for perfect accuracy — bot always hits exactly what it aims at
 vi.mock(
   "@nlc-darts/engine/src/bot/throwSimulator.ts",
   async (importOriginal) => {
-    const mod = await importOriginal<
-      typeof import("@nlc-darts/engine/src/bot/throwSimulator.ts") // eslint-disable-line @typescript-eslint/consistent-type-imports
-    >();
+    const mod = await importOriginal<typeof ThrowSimulatorModule>();
     return {
       ...mod,
       simulateThrow: (target: number) => target,

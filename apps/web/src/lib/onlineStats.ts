@@ -46,8 +46,14 @@ export async function fetchPlayerStats(
   const avgPpd = totalDarts > 0 ? totalScore / totalDarts : 0;
 
   const cricketGames = cricketRows.length;
-  const totalMarks = cricketRows.reduce((sum, r) => sum + (r.total_marks ?? 0), 0);
-  const totalRounds = cricketRows.reduce((sum, r) => sum + (r.total_rounds ?? 0), 0);
+  const totalMarks = cricketRows.reduce(
+    (sum, r) => sum + (r.total_marks ?? 0),
+    0,
+  );
+  const totalRounds = cricketRows.reduce(
+    (sum, r) => sum + (r.total_rounds ?? 0),
+    0,
+  );
   const avgMpr = totalRounds > 0 ? totalMarks / totalRounds : 0;
 
   return {

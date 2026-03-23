@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CricketThrownDart } from "@nlc-darts/engine";
 
 interface Props {
@@ -27,8 +27,13 @@ const HOLD_AFTER_LAST_MS = 2200;
 
 export function CricketMarksOverlay({ darts, onDismiss }: Props) {
   const [visibleCount, setVisibleCount] = useState(0);
+  // Capture mount-time values — the overlay is a one-shot animation and
+  // should not restart if the parent re-renders with new props mid-flight.
+  const dartsRef = useRef(darts);
+  const onDismissRef = useRef(onDismiss);
 
   useEffect(() => {
+    const darts = dartsRef.current;
     const timers: ReturnType<typeof setTimeout>[] = [];
 
     darts.forEach((_, i) => {
@@ -39,13 +44,12 @@ export function CricketMarksOverlay({ darts, onDismiss }: Props) {
 
     timers.push(
       setTimeout(
-        onDismiss,
+        () => onDismissRef.current(),
         (darts.length - 1) * POP_INTERVAL_MS + 150 + HOLD_AFTER_LAST_MS,
       ),
     );
 
     return () => timers.forEach(clearTimeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

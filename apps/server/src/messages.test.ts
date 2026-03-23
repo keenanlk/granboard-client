@@ -14,6 +14,15 @@ describe("ClientMessage", () => {
         "REMATCH",
         "WEBRTC_SIGNAL",
         "CAMERA_STATUS",
+        "CREATE_TOURNAMENT",
+        "START_TOURNAMENT",
+        "RECORD_RESULT",
+        "REGISTER_PLAYER",
+        "UNREGISTER_PLAYER",
+        "READY_FOR_MATCH",
+        "UNREADY_FOR_MATCH",
+        "MATCH_GAME_RESULT",
+        "MATCH_GAME_ROOM_READY",
       ].sort(),
     );
   });
@@ -31,6 +40,15 @@ describe("ServerMessage", () => {
         "REMATCH_REQUEST",
         "REMATCH_ACCEPT",
         "REMATCH_DECLINE",
+        "BRACKET_UPDATE",
+        "REGISTRATION_UPDATE",
+        "TOURNAMENT_CREATED",
+        "TOURNAMENT_ERROR",
+        "MATCH_READY_STATE",
+        "MATCH_COUNTDOWN",
+        "MATCH_START",
+        "MATCH_YOUR_TURN",
+        "MATCH_GAME_ROOM_CREATED",
       ].sort(),
     );
   });

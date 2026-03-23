@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "test": "turbo test && bash scripts/merge-coverage.sh",
-    "lint": "turbo lint",
+    "test": "turbo test --filter='*' && bash scripts/merge-coverage.sh",
+    "lint": "turbo lint --filter='*'",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "docs": "typedoc",
@@ -14,7 +14,8 @@
     "supabase:stop": "npx supabase stop --workdir apps/web",
     "supabase:reset": "npx supabase db reset --workdir apps/web",
     "supabase:status": "npx supabase status --workdir apps/web",
-    "supabase:schema": "npx supabase db dump --local --workdir apps/web -f supabase/schema.sql"
+    "supabase:schema": "npx supabase db dump --local --workdir apps/web -f supabase/schema.sql",
+    "supabase:types": "npx supabase gen types typescript --local --workdir apps/web > packages/supabase/src/database.types.ts"
   },
   "devDependencies": {
     "nyc": "^18.0.0",

@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { GameRecorder } from "./gameRecorder.ts";
-
 vi.mock("./db.ts", () => ({
   dbSaveSession: vi.fn(() => Promise.resolve()),
 }));
@@ -16,8 +15,7 @@ vi.mock("../lib/logger.ts", () => ({
   },
 }));
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-async function getDbMock(): Promise<typeof import("./db.ts")> {
+async function getDbMock() {
   return await import("./db.ts");
 }
 

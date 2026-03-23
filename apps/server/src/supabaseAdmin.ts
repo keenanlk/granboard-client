@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@nlc-darts/supabase";
 import { logger } from "./lib/logger.js";
 
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -14,5 +15,5 @@ if (!supabaseUrl || !supabaseServiceKey) {
 /** Supabase admin client using the service-role key, or null when credentials are missing. */
 export const supabaseAdmin =
   supabaseUrl && supabaseServiceKey
-    ? createClient(supabaseUrl, supabaseServiceKey)
+    ? createClient<Database>(supabaseUrl, supabaseServiceKey)
     : null;

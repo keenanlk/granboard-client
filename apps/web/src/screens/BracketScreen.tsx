@@ -1,9 +1,23 @@
 import { useEffect, useState, useCallback } from "react";
-import { ArrowLeft, Copy, Check, Play, UserPlus, UserMinus } from "lucide-react";
+import {
+  ArrowLeft,
+  Copy,
+  Check,
+  Play,
+  UserPlus,
+  UserMinus,
+} from "lucide-react";
 import { supabase } from "../lib/supabaseClient.ts";
 import { BracketCanvas } from "../components/tournament/BracketCanvas.tsx";
 import { MatchDetailPanel } from "../components/tournament/MatchDetailPanel.tsx";
-import type { Tournament, Database, TournamentGameConfig } from "@nlc-darts/tournament";
+import type {
+  Tournament,
+  Database,
+  TournamentGameConfig,
+  TournamentFormat,
+  TournamentVisibility,
+  TournamentStatus,
+} from "@nlc-darts/tournament";
 import { Status } from "@nlc-darts/tournament";
 
 interface RegisteredPlayer {
@@ -19,18 +33,35 @@ interface BracketScreenProps {
   tournamentRoom: {
     connected: boolean;
     bracketData: Database | null;
-    registrationUpdate: { tournamentId: string; participantCount: number; participants: Array<{ id: string; name: string }> } | null;
-    matchReadyState: { matchId: number; readyPlayerIds: string[]; opponentName: string | null } | null;
+    registrationUpdate: {
+      tournamentId: string;
+      participantCount: number;
+      participants: Array<{ id: string; name: string }>;
+    } | null;
+    matchReadyState: {
+      matchId: number;
+      readyPlayerIds: string[];
+      opponentName: string | null;
+    } | null;
     matchCountdown: { matchId: number; secondsLeft: number } | null;
+    participantUserMap: Record<number, string> | null;
     error: string | null;
     connect: () => Promise<void>;
     disconnect: () => void;
     startTournament: (tournamentId: string, userId: string) => void;
     registerPlayer: (tournamentId: string, userId: string) => void;
     unregisterPlayer: (tournamentId: string, userId: string) => void;
-    readyForMatch: (matchId: number, userId: string) => void;
+    readyForMatch: (
+      matchId: number,
+      userId: string,
+      tournamentId: string,
+    ) => void;
     unreadyForMatch: (matchId: number, userId: string) => void;
-    recordResult: (matchId: number, opponent1Score: number, opponent2Score: number) => void;
+    recordResult: (
+      matchId: number,
+      opponent1Score: number,
+      opponent2Score: number,
+    ) => void;
   };
   onMatchStart?: (data: {
     matchId: number;
@@ -38,6 +69,12 @@ interface BracketScreenProps {
     playerIds: string[];
     gameSettings: TournamentGameConfig;
   }) => void;
+  pendingMatch?: {
+    matchId: number;
+    legResults: Array<{ winnerName: string; winnerIndex: number }>;
+    playerNames: string[];
+  } | null;
+  onResumeMatch?: () => void;
 }
 
 export function BracketScreen({
@@ -46,18 +83,26 @@ export function BracketScreen({
   userId,
   onBack,
   tournamentRoom,
+  pendingMatch,
+  onResumeMatch,
 }: BracketScreenProps) {
   void _isOnline; // kept in props for future use
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
-  const [participants, setParticipants] = useState<RegisteredPlayer[]>([]);
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [localBracketData, setLocalBracketData] = useState<Database | null>(null);
+  const [fetchedParticipants, setFetchedParticipants] = useState<
+    RegisteredPlayer[]
+  >([]);
+  const [localBracketData, setLocalBracketData] = useState<Database | null>(
+    null,
+  );
   const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null);
 
   // Manual score entry modal (organiser override)
-  const [manualResultModal, setManualResultModal] = useState<{ matchId: number } | null>(null);
+  const [localReadyIds, setLocalReadyIds] = useState<string[]>([]);
+  const [manualResultModal, setManualResultModal] = useState<{
+    matchId: number;
+  } | null>(null);
   const [score1, setScore1] = useState("");
   const [score2, setScore2] = useState("");
 
@@ -70,28 +115,24 @@ export function BracketScreen({
       .eq("tournament_id", tournamentId);
 
     if (!registrations || registrations.length === 0) {
-      setParticipants([]);
-      setIsRegistered(false);
+      setFetchedParticipants([]);
       return;
     }
 
-    const userIds = registrations.map(
-      (r: { user_id: string }) => r.user_id,
-    );
-    setIsRegistered(userIds.includes(userId));
+    const userIds = registrations.map((r: { user_id: string }) => r.user_id);
 
     const { data: players } = await supabase
       .from("online_players")
       .select("id, display_name")
       .in("id", userIds);
 
-    setParticipants(
+    setFetchedParticipants(
       (players ?? []).map((p: { id: string; display_name: string }) => ({
         id: p.id,
         name: p.display_name,
       })),
     );
-  }, [tournamentId, userId]);
+  }, [tournamentId]);
 
   // Fetch tournament details + participants
   useEffect(() => {
@@ -106,29 +147,41 @@ export function BracketScreen({
         setTournament({
           id: data.id,
           name: data.name,
-          format: data.format,
-          visibility: data.visibility,
-          status: data.status,
+          format: data.format as TournamentFormat,
+          visibility: data.visibility as TournamentVisibility,
+          status: data.status as TournamentStatus,
           joinCode: data.join_code,
           createdBy: data.created_by,
           scheduledAt: data.scheduled_at,
           registrationDeadline: data.registration_deadline,
           maxParticipants: data.max_participants,
           createdAt: data.created_at,
-          gameSettings: data.game_settings ?? null,
+          gameSettings: data.game_settings as TournamentGameConfig | null,
         });
 
         // Fetch bracket data from Supabase for in-progress/completed tournaments
         if (data.status === "in_progress" || data.status === "completed") {
-          const [stages, groups, rounds, matches, matchGames, participantsData] =
-            await Promise.all([
-              supabase.from("tournament_stages").select("*").eq("tournament_id", data.id),
-              supabase.from("tournament_groups").select("*"),
-              supabase.from("tournament_rounds").select("*"),
-              supabase.from("tournament_matches").select("*"),
-              supabase.from("tournament_match_games").select("*"),
-              supabase.from("tournament_participants").select("*").eq("tournament_id", data.id),
-            ]);
+          const [
+            stages,
+            groups,
+            rounds,
+            matches,
+            matchGames,
+            participantsData,
+          ] = await Promise.all([
+            supabase
+              .from("tournament_stages")
+              .select("*")
+              .eq("tournament_id", data.id),
+            supabase.from("tournament_groups").select("*"),
+            supabase.from("tournament_rounds").select("*"),
+            supabase.from("tournament_matches").select("*"),
+            supabase.from("tournament_match_games").select("*"),
+            supabase
+              .from("tournament_participants")
+              .select("*")
+              .eq("tournament_id", data.id),
+          ]);
 
           // Filter groups/rounds/matches to only those belonging to this tournament's stages
           const stageIds = new Set(
@@ -168,27 +221,23 @@ export function BracketScreen({
     })();
   }, [tournamentId, fetchParticipants]);
 
-  // Update participants when Colyseus sends registration updates
-  useEffect(() => {
-    if (room.registrationUpdate) {
-      setParticipants(room.registrationUpdate.participants);
-      setIsRegistered(
-        room.registrationUpdate.participants.some((p) => p.id === userId),
-      );
-    }
-  }, [room.registrationUpdate, userId]);
+  // Derive participants: prefer live Colyseus registration updates over fetched data
+  const participants = room.registrationUpdate
+    ? room.registrationUpdate.participants
+    : fetchedParticipants;
 
-  // When bracket data arrives, the tournament has started — update local status
-  useEffect(() => {
-    if (room.bracketData && tournament?.status === "registration") {
-      setTournament((t) => (t ? { ...t, status: "in_progress" } : t));
-    }
-  }, [room.bracketData, tournament?.status]);
+  const isRegistered = participants.some((p) => p.id === userId);
+
+  // Derive tournament status: if bracket data has arrived, tournament is in_progress
+  const effectiveTournamentStatus =
+    room.bracketData && tournament?.status === "registration"
+      ? ("in_progress" as const)
+      : (tournament?.status ?? "registration");
 
   const isOrganiser = tournament?.createdBy === userId;
-  const isRegistration = tournament?.status === "registration";
-  const isInProgress = tournament?.status === "in_progress";
-  const isComplete = tournament?.status === "completed";
+  const isRegistration = effectiveTournamentStatus === "registration";
+  const isInProgress = effectiveTournamentStatus === "in_progress";
+  const isComplete = effectiveTournamentStatus === "completed";
 
   const handleCopyCode = () => {
     if (tournament?.joinCode) {
@@ -208,11 +257,10 @@ export function BracketScreen({
 
   const handleMatchTap = (matchId: number) => {
     if (!isInProgress) return;
-    const match = bd?.match.find(
-      (m) => (m.id as number) === matchId,
-    );
+    const match = bd?.match.find((m) => (m.id as number) === matchId);
     if (!match || match.status >= Status.Completed) return;
     setSelectedMatchId(matchId);
+    setLocalReadyIds([]);
   };
 
   const handleManualSubmitResult = () => {
@@ -226,9 +274,10 @@ export function BracketScreen({
   };
 
   // Get match details for selected match
-  const selectedMatch = selectedMatchId != null
-    ? bd?.match.find((m) => (m.id as number) === selectedMatchId)
-    : null;
+  const selectedMatch =
+    selectedMatchId != null
+      ? bd?.match.find((m) => (m.id as number) === selectedMatchId)
+      : null;
 
   // Resolve participant names and user IDs for the selected match
   let p1Name: string | null = null;
@@ -237,34 +286,52 @@ export function BracketScreen({
   let p2UserId: string | null = null;
 
   if (selectedMatch && bd) {
-    const p1 = selectedMatch.opponent1?.id != null
-      ? bd.participant.find((p) => p.id === selectedMatch.opponent1!.id)
-      : null;
-    const p2 = selectedMatch.opponent2?.id != null
-      ? bd.participant.find((p) => p.id === selectedMatch.opponent2!.id)
-      : null;
+    const p1 =
+      selectedMatch.opponent1?.id != null
+        ? bd.participant.find((p) => p.id === selectedMatch.opponent1!.id)
+        : null;
+    const p2 =
+      selectedMatch.opponent2?.id != null
+        ? bd.participant.find((p) => p.id === selectedMatch.opponent2!.id)
+        : null;
     p1Name = p1?.name ?? null;
     p2Name = p2?.name ?? null;
 
-    // Map participant names back to user IDs via the participants list (from registration)
-    if (p1Name) {
-      const found = participants.find((reg) => reg.name === p1Name);
-      p1UserId = found?.id ?? null;
-    }
-    if (p2Name) {
-      const found = participants.find((reg) => reg.name === p2Name);
-      p2UserId = found?.id ?? null;
+    // Use server-provided participantId→userId map (reliable, no name collisions)
+    const pMap = room.participantUserMap;
+    if (pMap) {
+      if (selectedMatch.opponent1?.id != null) {
+        p1UserId = pMap[selectedMatch.opponent1.id as number] ?? null;
+      }
+      if (selectedMatch.opponent2?.id != null) {
+        p2UserId = pMap[selectedMatch.opponent2.id as number] ?? null;
+      }
+    } else {
+      // Fallback: name-based lookup from registration data
+      if (p1Name) {
+        p1UserId = participants.find((reg) => reg.name === p1Name)?.id ?? null;
+      }
+      if (p2Name) {
+        p2UserId = participants.find((reg) => reg.name === p2Name)?.id ?? null;
+      }
     }
   }
 
-  // Ready state for selected match
+  // Sync local ready state with server broadcasts
+  const serverReadyIds =
+    room.matchReadyState &&
+    selectedMatchId != null &&
+    room.matchReadyState.matchId === selectedMatchId
+      ? room.matchReadyState.readyPlayerIds
+      : [];
+  const mergedReadyIds = [...new Set([...serverReadyIds, ...localReadyIds])];
   const matchReadyForSelected =
-    room.matchReadyState && selectedMatchId != null && room.matchReadyState.matchId === selectedMatchId
-      ? room.matchReadyState
-      : null;
+    mergedReadyIds.length > 0 ? { readyPlayerIds: mergedReadyIds } : null;
 
   const matchCountdownForSelected =
-    room.matchCountdown && selectedMatchId != null && room.matchCountdown.matchId === selectedMatchId
+    room.matchCountdown &&
+    selectedMatchId != null &&
+    room.matchCountdown.matchId === selectedMatchId
       ? room.matchCountdown
       : null;
 
@@ -317,11 +384,11 @@ export function BracketScreen({
             <span
               className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full"
               style={{
-                backgroundColor: `${STATUS_COLORS[tournament.status]}20`,
-                color: STATUS_COLORS[tournament.status],
+                backgroundColor: `${STATUS_COLORS[effectiveTournamentStatus]}20`,
+                color: STATUS_COLORS[effectiveTournamentStatus],
               }}
             >
-              {STATUS_LABELS[tournament.status]}
+              {STATUS_LABELS[effectiveTournamentStatus]}
             </span>
           </div>
         </div>
@@ -420,14 +487,43 @@ export function BracketScreen({
         </div>
       )}
 
+      {/* Resume match banner */}
+      {pendingMatch && onResumeMatch && (
+        <div className="px-6 pb-3 shrink-0">
+          <button
+            onClick={() => {
+              // Re-select the match to trigger ready-up flow
+              setSelectedMatchId(pendingMatch.matchId);
+              setLocalReadyIds([]);
+            }}
+            className="w-full py-3 px-4 rounded-xl bg-amber-900/30 border border-amber-700 flex items-center justify-between"
+          >
+            <div>
+              <p className="text-amber-300 font-bold text-sm">
+                Match in progress
+              </p>
+              <p className="text-zinc-400 text-xs">
+                {pendingMatch.playerNames.join(" vs ")} — Leg{" "}
+                {pendingMatch.legResults.length + 1}
+              </p>
+            </div>
+            <span className="text-amber-400 font-bold text-sm">
+              Tap to resume
+            </span>
+          </button>
+        </div>
+      )}
+
       {/* Bracket canvas */}
       <div className="flex-1 min-h-0">
-        {(isInProgress || isComplete) && (room.bracketData || localBracketData) ? (
+        {(isInProgress || isComplete) &&
+        (room.bracketData || localBracketData) ? (
           <BracketCanvas
             matches={(room.bracketData ?? localBracketData)!.match}
             participants={(room.bracketData ?? localBracketData)!.participant}
             rounds={(room.bracketData ?? localBracketData)!.round}
             groups={(room.bracketData ?? localBracketData)!.group}
+            currentUserName={participants.find((p) => p.id === userId)?.name}
             onMatchTap={handleMatchTap}
           />
         ) : isRegistration ? (
@@ -460,8 +556,14 @@ export function BracketScreen({
           gameSettings={tournament.gameSettings}
           readyState={matchReadyForSelected}
           countdown={matchCountdownForSelected}
-          onReady={() => room.readyForMatch(selectedMatchId, userId)}
-          onUnready={() => room.unreadyForMatch(selectedMatchId, userId)}
+          onReady={() => {
+            setLocalReadyIds((ids) => [...ids, userId]);
+            room.readyForMatch(selectedMatchId, userId, tournamentId);
+          }}
+          onUnready={() => {
+            setLocalReadyIds((ids) => ids.filter((id) => id !== userId));
+            room.unreadyForMatch(selectedMatchId, userId);
+          }}
           onClose={() => setSelectedMatchId(null)}
         />
       )}

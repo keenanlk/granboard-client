@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ADMIN_PASSWORD=yourpassword tsx watch src/index.ts | pino-pretty",
     "test": "vitest run --coverage",
-    "lint": "tsc --noEmit && prettier --check ."
+    "lint": "eslint . && tsc --noEmit && prettier --check ."
   },
   "dependencies": {
     "@colyseus/core": "^0.16.24",
@@ -14,15 +14,20 @@
     "@colyseus/ws-transport": "^0.16.5",
     "@nlc-darts/engine": "workspace:*",
     "@nlc-darts/logger": "workspace:*",
+    "@nlc-darts/supabase": "workspace:*",
+    "@nlc-darts/tournament": "workspace:*",
     "@supabase/supabase-js": "^2.99.2",
     "dotenv": "^17.3.1",
     "express": "^5.1.0",
-    "express-basic-auth": "^1.2.1"
+    "express-basic-auth": "^1.2.1",
+    "nanoid": "^5.1.7"
   },
   "devDependencies": {
+    "@nlc-darts/eslint-config": "workspace:*",
     "@types/express": "^5.0.3",
     "@types/node": "^24.10.1",
     "@vitest/coverage-v8": "^4.1.0",
+    "eslint": "^9.39.4",
     "pino-pretty": "^13",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",

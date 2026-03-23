@@ -14,7 +14,12 @@ export type {
 export { TOURNAMENT_FORMATS } from "./types.ts";
 
 // Re-export key brackets-manager types for storage adapter implementors
-export type { CrudInterface, Database, DataTypes, Table } from "brackets-manager";
+export type {
+  CrudInterface,
+  Database,
+  DataTypes,
+  Table,
+} from "brackets-manager";
 export type {
   InputStage,
   Stage,

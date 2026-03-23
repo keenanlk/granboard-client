@@ -7,7 +7,11 @@ import { CameraPreview } from "./CameraPreview.tsx";
 // ── Mocks ────────────────────────────────────────────────────────────────
 
 const mockStream = () => {
-  const track = { stop: vi.fn(), kind: "video", getSettings: () => ({ deviceId: "cam1" }) };
+  const track = {
+    stop: vi.fn(),
+    kind: "video",
+    getSettings: () => ({ deviceId: "cam1" }),
+  };
   return {
     getTracks: () => [track],
     getVideoTracks: () => [track],
@@ -16,7 +20,9 @@ const mockStream = () => {
 };
 
 vi.mock("../lib/cameraUtils.ts", () => ({
-  requestCamera: vi.fn().mockImplementation(() => Promise.resolve(mockStream())),
+  requestCamera: vi
+    .fn()
+    .mockImplementation(() => Promise.resolve(mockStream())),
   enumerateVideoDevices: vi.fn().mockResolvedValue([
     { kind: "videoinput", deviceId: "cam1", label: "Front Camera" },
     { kind: "videoinput", deviceId: "cam2", label: "Back Camera" },
@@ -25,7 +31,11 @@ vi.mock("../lib/cameraUtils.ts", () => ({
   isNativePlatform: vi.fn().mockReturnValue(false),
 }));
 
-import { requestCamera, stopAllTracks, isNativePlatform } from "../lib/cameraUtils.ts";
+import {
+  requestCamera,
+  stopAllTracks,
+  isNativePlatform,
+} from "../lib/cameraUtils.ts";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -37,8 +47,12 @@ describe("CameraPreview", () => {
   it("renders ask step initially", async () => {
     render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
     await expect.element(page.getByText("Enable Camera?")).toBeVisible();
-    await expect.element(page.getByRole("button", { name: "Enable" })).toBeVisible();
-    await expect.element(page.getByRole("button", { name: "Skip" })).toBeVisible();
+    await expect
+      .element(page.getByRole("button", { name: "Enable" }))
+      .toBeVisible();
+    await expect
+      .element(page.getByRole("button", { name: "Skip" }))
+      .toBeVisible();
   });
 
   it("calls onSkip when Skip is clicked", async () => {
@@ -52,14 +66,23 @@ describe("CameraPreview", () => {
     render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
     await page.getByRole("button", { name: "Enable" }).click();
     await expect.element(page.getByText("Camera Preview")).toBeVisible();
-    expect(requestCamera).toHaveBeenCalledWith({ kind: "facingMode", facingMode: "user" });
+    expect(requestCamera).toHaveBeenCalledWith({
+      kind: "facingMode",
+      facingMode: "user",
+    });
   });
 
   it("shows error when camera permission denied", async () => {
-    vi.mocked(requestCamera).mockRejectedValueOnce(new Error("NotAllowedError"));
+    vi.mocked(requestCamera).mockRejectedValueOnce(
+      new Error("NotAllowedError"),
+    );
     render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
     await page.getByRole("button", { name: "Enable" }).click();
-    await expect.element(page.getByText("Camera access denied. Check your browser permissions.")).toBeVisible();
+    await expect
+      .element(
+        page.getByText("Camera access denied. Check your browser permissions."),
+      )
+      .toBeVisible();
   });
 
   it("calls onConfirm with stream when Confirm is clicked", async () => {
@@ -75,7 +98,9 @@ describe("CameraPreview", () => {
   it("stops tracks and returns to ask step on Back", async () => {
     render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
     await page.getByRole("button", { name: "Enable" }).click();
-    await expect.element(page.getByRole("button", { name: "Back" })).toBeVisible();
+    await expect
+      .element(page.getByRole("button", { name: "Back" }))
+      .toBeVisible();
     await page.getByRole("button", { name: "Back" }).click();
     expect(stopAllTracks).toHaveBeenCalled();
     await expect.element(page.getByText("Enable Camera?")).toBeVisible();

@@ -46,8 +46,22 @@ function setupCapacitorBleDevice(deviceId = "cap-device-1") {
     {
       uuid: SERVICE_UUID,
       characteristics: [
-        { uuid: "notify-char", properties: { notify: true, write: false, writeWithoutResponse: false } },
-        { uuid: "write-char", properties: { notify: false, write: true, writeWithoutResponse: true } },
+        {
+          uuid: "notify-char",
+          properties: {
+            notify: true,
+            write: false,
+            writeWithoutResponse: false,
+          },
+        },
+        {
+          uuid: "write-char",
+          properties: {
+            notify: false,
+            write: true,
+            writeWithoutResponse: true,
+          },
+        },
       ],
     },
   ]);
@@ -60,9 +74,12 @@ function setupWebBluetoothDevice() {
   const notifyChar = {
     properties: { notify: true, write: false, writeWithoutResponse: false },
     startNotifications: vi.fn().mockResolvedValue(undefined),
-    addEventListener: vi.fn((type: string, handler: (event: unknown) => void) => {
-      if (type === "characteristicvaluechanged") notificationHandler = handler;
-    }),
+    addEventListener: vi.fn(
+      (type: string, handler: (event: unknown) => void) => {
+        if (type === "characteristicvaluechanged")
+          notificationHandler = handler;
+      },
+    ),
     uuid: "notify-uuid",
   };
   const writeChar = {
@@ -176,7 +193,9 @@ describe("Granboard (web path)", () => {
     it("uses getDevices for reconnection when available", async () => {
       const { device } = setupWebBluetoothDevice();
       mockStorage.set("granboard_device_id", "web-device-1");
-      (navigator.bluetooth.getDevices as ReturnType<typeof vi.fn>).mockResolvedValue([device]);
+      (
+        navigator.bluetooth.getDevices as ReturnType<typeof vi.fn>
+      ).mockResolvedValue([device]);
 
       vi.resetModules();
       const { Granboard } = await import("./Granboard.ts");
@@ -307,7 +326,9 @@ describe("Granboard (native/Capacitor path)", () => {
       const { Granboard } = await import("./Granboard.ts");
       const board = await Granboard.TryAutoReconnect();
       expect(board).toBeInstanceOf(Granboard);
-      expect(mockBleClient.getDevices).toHaveBeenCalledWith(["saved-cap-device"]);
+      expect(mockBleClient.getDevices).toHaveBeenCalledWith([
+        "saved-cap-device",
+      ]);
     });
 
     it("throws when saved device not found by getDevices", async () => {
@@ -384,7 +405,14 @@ describe("Granboard (native/Capacitor path)", () => {
           uuid: SERVICE_UUID,
           characteristics: [
             // No notify or write characteristics
-            { uuid: "useless", properties: { notify: false, write: false, writeWithoutResponse: false } },
+            {
+              uuid: "useless",
+              properties: {
+                notify: false,
+                write: false,
+                writeWithoutResponse: false,
+              },
+            },
           ],
         },
       ]);

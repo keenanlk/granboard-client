@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { BotSkill } from "@nlc-darts/engine";
-
 const mockStorage = new Map<string, string>();
 
 vi.stubGlobal("localStorage", {
@@ -14,14 +13,17 @@ vi.stubGlobal("localStorage", {
 });
 
 // Import after mocking localStorage so the module picks it up
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-let gameLogger: (typeof import("./GameLogger.ts"))["gameLogger"];
+// Declared as the resolved module type to avoid inline import() annotation
+let gameLogger: Awaited<ReturnType<typeof import_GameLogger>>["gameLogger"];
+async function import_GameLogger() {
+  return import("./GameLogger.ts");
+}
 
 describe("GameLogger", () => {
   beforeEach(async () => {
     mockStorage.clear();
     vi.resetModules();
-    const mod = await import("./GameLogger.ts");
+    const mod = await import_GameLogger();
     gameLogger = mod.gameLogger;
   });
 
@@ -185,9 +187,7 @@ describe("GameLogger", () => {
           .fn()
           .mockResolvedValue({ write: writeFn, close: closeFn }),
       };
-      fakeWindow.showSaveFilePicker = vi
-        .fn()
-        .mockResolvedValue(mockHandle);
+      fakeWindow.showSaveFilePicker = vi.fn().mockResolvedValue(mockHandle);
 
       await gameLogger.download();
 

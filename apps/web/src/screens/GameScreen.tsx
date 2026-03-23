@@ -9,12 +9,14 @@ import {
 } from "@nlc-darts/engine";
 import type {
   X01Options,
+  X01State,
   BotSkill,
   SegmentID,
   SetProgress,
   SetConfig,
   LegResult,
 } from "@nlc-darts/engine";
+import type { Room } from "colyseus.js";
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { X01Controller } from "../controllers/X01Controller.ts";
@@ -96,7 +98,7 @@ export function GameScreen({
 
   // Refs for deferred callbacks — populated after hooks that define them
   const dismissOverlaysRef = useRef<(() => void) | undefined>(undefined);
-  const colyseusRoomRef = useRef<unknown>(null);
+  const colyseusRoomRef = useRef<Room | null>(null);
 
   const { handleNextTurn, isTransitioning, countdown, triggerRemoteDelay } =
     useGameSession({
@@ -109,8 +111,7 @@ export function GameScreen({
         if (onlineConfig && colyseusRoomRef.current) {
           const localIndex = onlineConfig.isHost ? 0 : 1;
           return guardForOnlineTurn(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            new ColyseusRemoteController(colyseusRoomRef.current as any),
+            new ColyseusRemoteController(colyseusRoomRef.current),
             localIndex,
             () => useGameStore.getState().currentPlayerIndex,
           );
@@ -140,8 +141,11 @@ export function GameScreen({
         useGameStore.getState().getSerializableState(),
       onInit: () => {
         if (restoredState) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          useGameStore.getState().restoreState(restoredState as any);
+          useGameStore
+            .getState()
+            .restoreState(
+              restoredState as X01State & { undoStack: X01State[] },
+            );
         } else {
           startGame(x01Options, playerNames);
         }
@@ -159,8 +163,9 @@ export function GameScreen({
   const { room } = useColyseusSync({
     onlineConfig: onlineConfig ?? null,
     restoreState: (state) =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      useGameStore.getState().restoreState(state as any),
+      useGameStore
+        .getState()
+        .restoreState(state as X01State & { undoStack: X01State[] }),
     onOpponentDisconnected: () => {
       setOpponentDisconnected(true);
     },
@@ -240,17 +245,17 @@ export function GameScreen({
   const [botAnimation, setBotAnimation] = useState("CombatIdle");
   const [botAnimKey, setBotAnimKey] = useState(0);
   useEffect(() => {
-    if (!isCurrentBot || !!winner || isTransitioning) {
-      setBotAnimation("CombatIdle"); // eslint-disable-line react-hooks/set-state-in-effect -- intentional reset on early return
-      return;
-    }
     const dartsThrown = currentRoundDarts.length;
-    if (dartsThrown >= 3 || isBust) {
-      setBotAnimation("CombatIdle");
-      return;
+    const shouldAnimate =
+      isCurrentBot && !winner && !isTransitioning && dartsThrown < 3 && !isBust;
+
+    // Reset to idle at the start of each dart cycle, deferred to avoid synchronous setState in effect
+    const idleTimer = setTimeout(() => setBotAnimation("CombatIdle"), 0);
+
+    if (!shouldAnimate) {
+      return () => clearTimeout(idleTimer);
     }
-    // Reset to idle at start of each dart cycle
-    setBotAnimation("CombatIdle");
+
     // Start attack animation 2200ms into the 3000ms delay (800ms before dart lands)
     const attackTimer = setTimeout(() => {
       setBotAnimation("BasicAttack");
@@ -258,6 +263,7 @@ export function GameScreen({
       Sounds.whoosh();
     }, 2200);
     return () => {
+      clearTimeout(idleTimer);
       clearTimeout(attackTimer);
     };
   }, [
@@ -273,10 +279,13 @@ export function GameScreen({
   // Clear board when bot is not active.
   const botBoardTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
+    if (botBoardTimer.current) clearTimeout(botBoardTimer.current);
+
     if (!isCurrentBot || !!winner) {
-      setBotBoard(null); // eslint-disable-line react-hooks/set-state-in-effect -- intentional cleanup on early return
-      if (botBoardTimer.current) clearTimeout(botBoardTimer.current);
-      return;
+      botBoardTimer.current = setTimeout(() => setBotBoard(null), 0);
+      return () => {
+        if (botBoardTimer.current) clearTimeout(botBoardTimer.current);
+      };
     }
     if (isTransitioning) return;
 
@@ -286,7 +295,6 @@ export function GameScreen({
     // Don't clear the current board — let the fill from getThrow stay visible.
     // Just schedule the next outline after a delay.
     const delay = dartsThrown === 0 ? 200 : 800;
-    if (botBoardTimer.current) clearTimeout(botBoardTimer.current);
     botBoardTimer.current = setTimeout(() => {
       const {
         players: ps,
@@ -298,6 +306,9 @@ export function GameScreen({
       const target = x01PickTarget(p.score, opts, p.opened);
       setBotBoard({ segment: target, mode: "outline" });
     }, delay);
+    return () => {
+      if (botBoardTimer.current) clearTimeout(botBoardTimer.current);
+    };
   }, [
     isCurrentBot,
     currentPlayerIndex,

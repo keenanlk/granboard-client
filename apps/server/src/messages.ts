@@ -12,6 +12,17 @@ export const ClientMessage = {
   WEBRTC_SIGNAL: "webrtc_signal",
   /** Notifies opponent whether this player's camera is active. */
   CAMERA_STATUS: "camera_status",
+  // Tournament messages
+  CREATE_TOURNAMENT: "create_tournament",
+  START_TOURNAMENT: "start_tournament",
+  RECORD_RESULT: "record_result",
+  REGISTER_PLAYER: "register_player",
+  UNREGISTER_PLAYER: "unregister_player",
+  // Tournament match-play messages
+  READY_FOR_MATCH: "ready_for_match",
+  UNREADY_FOR_MATCH: "unready_for_match",
+  MATCH_GAME_RESULT: "match_game_result",
+  MATCH_GAME_ROOM_READY: "match_game_room_ready",
 } as const;
 
 /** Server → Client broadcast types */
@@ -24,4 +35,15 @@ export const ServerMessage = {
   REMATCH_REQUEST: "rematch_request",
   REMATCH_ACCEPT: "rematch_accept",
   REMATCH_DECLINE: "rematch_decline",
+  // Tournament messages
+  BRACKET_UPDATE: "bracket_update",
+  REGISTRATION_UPDATE: "registration_update",
+  TOURNAMENT_CREATED: "tournament_created",
+  TOURNAMENT_ERROR: "tournament_error",
+  // Tournament match-play messages
+  MATCH_READY_STATE: "match_ready_state",
+  MATCH_COUNTDOWN: "match_countdown",
+  MATCH_START: "match_start",
+  MATCH_YOUR_TURN: "match_your_turn",
+  MATCH_GAME_ROOM_CREATED: "match_game_room_created",
 } as const;

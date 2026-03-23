@@ -1,4 +1,5 @@
 import { supabase } from "./supabaseClient.ts";
+import type { Json } from "@nlc-darts/supabase";
 import type { CreateTournamentData } from "../screens/CreateTournamentScreen.tsx";
 
 const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -45,7 +46,7 @@ export async function createOnlineTournament(
       scheduled_at: data.scheduledAt ?? null,
       registration_deadline: data.registrationDeadline ?? null,
       max_participants: data.maxParticipants ?? null,
-      game_settings: data.gameSettings,
+      game_settings: data.gameSettings as unknown as Json,
     })
     .select("id, join_code")
     .single();

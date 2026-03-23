@@ -10,6 +10,7 @@ import {
 } from "@nlc-darts/engine";
 import type {
   CricketOptions,
+  CricketState,
   CricketTarget,
   AwardType,
   BotSkill,
@@ -18,6 +19,7 @@ import type {
   SetConfig,
   LegResult,
 } from "@nlc-darts/engine";
+import type { Room } from "colyseus.js";
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { CricketMarksOverlay } from "../components/CricketMarksOverlay.tsx";
@@ -171,7 +173,7 @@ export function CricketScreen({
 
   // Refs for deferred callbacks — populated after hooks that define them
   const dismissOverlaysRef = useRef<(() => void) | undefined>(undefined);
-  const colyseusRoomRef = useRef<unknown>(null);
+  const colyseusRoomRef = useRef<Room | null>(null);
 
   const { handleNextTurn, isTransitioning, countdown, triggerRemoteDelay } =
     useGameSession({
@@ -184,8 +186,7 @@ export function CricketScreen({
         if (onlineConfig && colyseusRoomRef.current) {
           const localIndex = onlineConfig.isHost ? 0 : 1;
           return guardForOnlineTurn(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            new ColyseusRemoteController(colyseusRoomRef.current as any),
+            new ColyseusRemoteController(colyseusRoomRef.current),
             localIndex,
             () => useCricketStore.getState().currentPlayerIndex,
           );
@@ -216,8 +217,11 @@ export function CricketScreen({
         useCricketStore.getState().getSerializableState(),
       onInit: () => {
         if (restoredState) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          useCricketStore.getState().restoreState(restoredState as any);
+          useCricketStore
+            .getState()
+            .restoreState(
+              restoredState as CricketState & { undoStack: CricketState[] },
+            );
         } else {
           startGame(options, playerNames);
         }
@@ -236,8 +240,9 @@ export function CricketScreen({
   const { room } = useColyseusSync({
     onlineConfig: onlineConfig ?? null,
     restoreState: (state) =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      useCricketStore.getState().restoreState(state as any),
+      useCricketStore
+        .getState()
+        .restoreState(state as CricketState & { undoStack: CricketState[] }),
     onOpponentDisconnected: () => {
       setOpponentDisconnected(true);
     },
@@ -382,16 +387,19 @@ export function CricketScreen({
     if (currentRoundDarts.length !== 3 || winner) return;
     const award = detectCricketAward(currentRoundDarts);
     if (award) {
-      setPendingAward(award);
+      const id = setTimeout(() => setPendingAward(award), 0);
+      return () => clearTimeout(id);
     } else {
       const totalMarks = currentRoundDarts.reduce(
         (sum, d) => sum + d.effectiveMarks,
         0,
       );
-      if (totalMarks >= 5) setShowMarksAnimation(true);
+      if (totalMarks >= 5) {
+        const id = setTimeout(() => setShowMarksAnimation(true), 0);
+        return () => clearTimeout(id);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentRoundDarts.length]);
+  }, [currentRoundDarts.length, currentRoundDarts, winner]);
 
   useEffect(() => {
     dismissOverlaysRef.current = () => {

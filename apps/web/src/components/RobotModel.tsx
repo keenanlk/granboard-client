@@ -26,10 +26,17 @@ function Robot({
   const clonedScene = useMemo(() => cloneSkeleton(scene), [scene]);
 
   const { actions } = useAnimations(animations, groupRef);
+  const actionsRef = useRef(actions);
+
+  // Keep the ref current without triggering the render-time ref-mutation rule
+  useEffect(() => {
+    actionsRef.current = actions;
+  }, [actions]);
 
   // Play the requested animation (animKey forces re-trigger for repeated animations)
   useEffect(() => {
-    const action = actions[animation] ?? actions["StaticIdle"];
+    const action =
+      actionsRef.current[animation] ?? actionsRef.current["StaticIdle"];
     if (!action) return;
 
     const isOneShot =
@@ -44,14 +51,13 @@ function Robot({
 
     if (isOneShot) {
       action.setLoop(LoopOnce, 1);
-      // eslint-disable-next-line react-hooks/immutability -- three.js AnimationAction requires direct mutation
       action.clampWhenFinished = true;
     }
 
     return () => {
       action.fadeOut(0.2);
     };
-  }, [actions, animation, animKey]);
+  }, [animation, animKey]);
 
   // Color the robot like the reference: vibrant body color, gray joints, glowing eyes
   useMemo(() => {

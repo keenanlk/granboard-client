@@ -7,7 +7,12 @@ import {
   CreateSegment,
   atwPickTarget,
 } from "@nlc-darts/engine";
-import type { ATWOptions, BotSkill, SegmentID } from "@nlc-darts/engine";
+import type {
+  ATWOptions,
+  ATWState,
+  BotSkill,
+  SegmentID,
+} from "@nlc-darts/engine";
 import { ATWController } from "../controllers/ATWController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
@@ -75,8 +80,9 @@ export function ATWScreen({
     getSerializableState: () => useATWStore.getState().getSerializableState(),
     onInit: () => {
       if (restoredState) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        useATWStore.getState().restoreState(restoredState as any);
+        useATWStore
+          .getState()
+          .restoreState(restoredState as ATWState & { undoStack: ATWState[] });
       } else {
         startGame(options, playerNames);
       }
@@ -173,8 +179,7 @@ export function ATWScreen({
     if (!currentPlayer?.finished || !!winners || isTransitioning) return;
     const timer = setTimeout(() => handleNextTurn(), 800);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPlayer?.finished, winners, isTransitioning]);
+  }, [currentPlayer?.finished, winners, isTransitioning, handleNextTurn]);
 
   return (
     <GameShell

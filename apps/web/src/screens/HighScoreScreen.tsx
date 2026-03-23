@@ -7,7 +7,12 @@ import {
   highScorePickTarget,
   detectAward,
 } from "@nlc-darts/engine";
-import type { HighScoreOptions, BotSkill, SegmentID } from "@nlc-darts/engine";
+import type {
+  HighScoreOptions,
+  HighScoreState,
+  BotSkill,
+  SegmentID,
+} from "@nlc-darts/engine";
 import { HighScoreController } from "../controllers/HighScoreController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
@@ -82,8 +87,11 @@ export function HighScoreScreen({
       useHighScoreStore.getState().getSerializableState(),
     onInit: () => {
       if (restoredState) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        useHighScoreStore.getState().restoreState(restoredState as any);
+        useHighScoreStore
+          .getState()
+          .restoreState(
+            restoredState as HighScoreState & { undoStack: HighScoreState[] },
+          );
       } else {
         startGame(options, playerNames);
       }
@@ -190,7 +198,6 @@ export function HighScoreScreen({
     // Small delay so the last dart visually lands before results appear
     const timer = setTimeout(() => handleNextTurn(), 800);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     readyToSwitch,
     isLastPlayerOfRound,
@@ -198,6 +205,7 @@ export function HighScoreScreen({
     winners,
     isTransitioning,
     pendingAward,
+    handleNextTurn,
   ]);
 
   return (

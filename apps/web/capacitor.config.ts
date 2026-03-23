@@ -19,7 +19,10 @@ const config: CapacitorConfig = {
   },
   plugins: {
     CapacitorHttp: {
-      enabled: true,
+      // Disabled in dev mode — the HTTP interceptor routes through capacitor://
+      // which iOS blocks as mixed content when the page is served from the
+      // remote Vite dev server (https://...)
+      enabled: !isDev,
     },
     BluetoothLe: {
       // Displayed in the iOS Bluetooth permission dialog

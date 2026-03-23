@@ -87,23 +87,44 @@ export function useGameSession({
 
   // Stable refs so the onNextTurn closure always calls the latest version
   const extractRoundRef = useRef(extractRound);
-  extractRoundRef.current = extractRound;
   const getFinalScoresRef = useRef(getFinalScores);
-  getFinalScoresRef.current = getFinalScores;
   const onInitRef = useRef(onInit);
-  onInitRef.current = onInit;
   const getSerializableStateRef = useRef(getSerializableState);
-  getSerializableStateRef.current = getSerializableState;
+  const createControllerRef = useRef(createController);
 
   const { isTransitioning, countdown, triggerDelay } = useTurnDelay(online);
   const triggerDelayRef = useRef(triggerDelay);
-  triggerDelayRef.current = triggerDelay;
   const shouldSkipDelayRef = useRef(shouldSkipDelay);
-  shouldSkipDelayRef.current = shouldSkipDelay;
   const onTurnDelayStartRef = useRef(onTurnDelayStart);
-  onTurnDelayStartRef.current = onTurnDelayStart;
   const onBeforeNextTurnRef = useRef(onBeforeNextTurn);
-  onBeforeNextTurnRef.current = onBeforeNextTurn;
+
+  useEffect(() => {
+    extractRoundRef.current = extractRound;
+    getFinalScoresRef.current = getFinalScores;
+    onInitRef.current = onInit;
+    getSerializableStateRef.current = getSerializableState;
+    createControllerRef.current = createController;
+    triggerDelayRef.current = triggerDelay;
+    shouldSkipDelayRef.current = shouldSkipDelay;
+    onTurnDelayStartRef.current = onTurnDelayStart;
+    onBeforeNextTurnRef.current = onBeforeNextTurn;
+  });
+
+  // Persist session to localStorage
+  function persistSession() {
+    saveSession({
+      gameType,
+      options,
+      playerNames,
+      playerIds,
+      botSkills: botSkills ?? playerNames.map(() => null),
+      gameState: getSerializableStateRef.current(),
+      savedAt: Date.now(),
+      setConfig,
+      legResults,
+      currentLegIndex,
+    });
+  }
 
   // Reset saved guard when a new game starts
   useEffect(() => {
@@ -120,9 +141,7 @@ export function useGameSession({
     // Save initial session state
     persistSession();
 
-    // createController intentionally excluded from deps — it never needs to change
-
-    const controller = createController();
+    const controller = createControllerRef.current();
     recorderRef.current = new GameRecorder(
       gameType,
       playerNames,
@@ -161,24 +180,7 @@ export function useGameSession({
     controllerRef.current = controller;
     setActiveController(controller);
     return () => setActiveController(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameType, playerNames, playerIds, options]);
-
-  // Persist session to localStorage
-  function persistSession() {
-    saveSession({
-      gameType,
-      options,
-      playerNames,
-      playerIds,
-      botSkills: botSkills ?? playerNames.map(() => null),
-      gameState: getSerializableStateRef.current(),
-      savedAt: Date.now(),
-      setConfig,
-      legResults,
-      currentLegIndex,
-    });
-  }
 
   /**
    * Record the winning player's final round and save the session.
@@ -207,7 +209,7 @@ export function useGameSession({
     gameLogger.logGameEnd(winner, scoreMap);
     void recorderRef.current?.save(winner, finalScores);
     clearSession();
-  }, [winner]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [winner, playerNames, gameType]);
 
   const handleNextTurn = useCallback(() => {
     controllerRef.current?.onNextTurn();
@@ -215,7 +217,9 @@ export function useGameSession({
 
   // Save session after each dart (subscribe to state changes via a post-render effect)
   const winnerRef = useRef(winner);
-  winnerRef.current = winner;
+  useEffect(() => {
+    winnerRef.current = winner;
+  });
   useEffect(() => {
     // Persist on every render where there's no winner (game is live)
     if (!winnerRef.current) {

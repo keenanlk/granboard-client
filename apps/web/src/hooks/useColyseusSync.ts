@@ -75,10 +75,12 @@ export function useColyseusSync({
   const roomRef = useRef<Room | null>(null);
 
   // Keep module-level refs pointing to the current component's callbacks
-  cbRefs.restore = restoreState;
-  cbRefs.gameEnded = onGameEnded;
-  cbRefs.disconnect = onOpponentDisconnected;
-  cbRefs.turnDelay = onTurnDelay;
+  useEffect(() => {
+    cbRefs.restore = restoreState;
+    cbRefs.gameEnded = onGameEnded;
+    cbRefs.disconnect = onOpponentDisconnected;
+    cbRefs.turnDelay = onTurnDelay;
+  });
 
   const isHost = onlineConfig?.isHost;
   const colyseusRoomId = onlineConfig?.colyseusRoomId;

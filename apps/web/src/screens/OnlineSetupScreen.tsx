@@ -61,8 +61,7 @@ export function OnlineSetupScreen({
       autoStarted.current = true;
       onStart(gameType, gameOptions);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isHost, gameOptions, gameType, onStart]);
 
   // Guest: listen for game_started from host
   useEffect(() => {
@@ -91,8 +90,7 @@ export function OnlineSetupScreen({
     roomChannel.on("broadcast", { event: "player_left" }, () => {
       onBack();
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHost]);
+  }, [isHost, onStart, onBack]);
 
   function handleStart() {
     if (gameType === "x01") {

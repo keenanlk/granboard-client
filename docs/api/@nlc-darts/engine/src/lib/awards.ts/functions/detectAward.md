@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/lib/awards.ts](../README.md) / detectAward
 

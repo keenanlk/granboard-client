@@ -18,9 +18,10 @@ interface MatchDetailPanelProps {
 
 function formatGameInfo(settings: TournamentGameConfig | null): string {
   if (!settings) return "Game";
-  const gameLabel = settings.gameType === "x01"
-    ? `X01 ${settings.x01Options?.startingScore ?? 501}`
-    : "Cricket";
+  const gameLabel =
+    settings.gameType === "x01"
+      ? `X01 ${settings.x01Options?.startingScore ?? 501}`
+      : "Cricket";
   const bestOfMap: Record<string, string> = {
     bo1: "Single Leg",
     bo3: "Best of 3",
@@ -86,7 +87,9 @@ export function MatchDetailPanel({
             <p className="text-7xl font-black text-amber-400 tabular-nums">
               {countdown.secondsLeft}
             </p>
-            <p className="text-zinc-400 text-lg font-medium">Starting soon...</p>
+            <p className="text-zinc-400 text-lg font-medium">
+              Starting soon...
+            </p>
             <button
               onClick={onUnready}
               className="mt-2 px-6 py-3 rounded-xl bg-red-900/40 border border-red-800 text-red-400 text-lg font-bold"

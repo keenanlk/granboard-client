@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/board/Dartboard.ts](../README.md) / Segment
 
@@ -18,7 +18,7 @@ A single dartboard segment with its identity, type, section, point value, and di
 
 Defined in: [board/Dartboard.ts:133](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L133)
 
-***
+---
 
 ### LongName
 
@@ -26,7 +26,7 @@ Defined in: [board/Dartboard.ts:133](https://github.com/keenanlk/granboard-clien
 
 Defined in: [board/Dartboard.ts:137](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L137)
 
-***
+---
 
 ### Section
 
@@ -34,7 +34,7 @@ Defined in: [board/Dartboard.ts:137](https://github.com/keenanlk/granboard-clien
 
 Defined in: [board/Dartboard.ts:135](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L135)
 
-***
+---
 
 ### ShortName
 
@@ -42,7 +42,7 @@ Defined in: [board/Dartboard.ts:135](https://github.com/keenanlk/granboard-clien
 
 Defined in: [board/Dartboard.ts:138](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L138)
 
-***
+---
 
 ### Type
 
@@ -50,7 +50,7 @@ Defined in: [board/Dartboard.ts:138](https://github.com/keenanlk/granboard-clien
 
 Defined in: [board/Dartboard.ts:134](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/Dartboard.ts#L134)
 
-***
+---
 
 ### Value
 

@@ -47,7 +47,11 @@ export function useWebRTC({
   }, []);
 
   useEffect(() => {
-    console.log("[useWebRTC] effect:", { room: !!room, enabled, hasStream: !!preAcquiredStream });
+    console.log("[useWebRTC] effect:", {
+      room: !!room,
+      enabled,
+      hasStream: !!preAcquiredStream,
+    });
     if (!room || !enabled) {
       cleanup();
       return;

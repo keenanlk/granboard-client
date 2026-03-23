@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { DEFAULT_X01_OPTIONS, DEFAULT_CRICKET_OPTIONS } from "@nlc-darts/engine";
+import {
+  DEFAULT_X01_OPTIONS,
+  DEFAULT_CRICKET_OPTIONS,
+} from "@nlc-darts/engine";
 import type {
   X01Options,
   CricketOptions,
@@ -66,16 +69,12 @@ function OptionsSummary({ invite }: { invite: Invite }) {
   if (invite.game_type === "x01") {
     const x01 = opts as unknown as X01Options;
     if (!x01.startingScore) return null;
-    return (
-      <p className="text-zinc-400 text-sm">{x01Summary(x01)}</p>
-    );
+    return <p className="text-zinc-400 text-sm">{x01Summary(x01)}</p>;
   }
 
   if (invite.game_type === "cricket") {
     const cricket = opts as unknown as CricketOptions;
-    return (
-      <p className="text-zinc-400 text-sm">{cricketSummary(cricket)}</p>
-    );
+    return <p className="text-zinc-400 text-sm">{cricketSummary(cricket)}</p>;
   }
 
   if (invite.game_type === "set") {

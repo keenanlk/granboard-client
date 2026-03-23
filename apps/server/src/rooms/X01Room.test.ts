@@ -7,9 +7,15 @@ vi.mock("@colyseus/core", () => {
     roomId = "test-room";
     maxClients = 0;
     clients: unknown[] = [];
-    _messageHandlers = new Map<string, Function>();
+    _messageHandlers = new Map<
+      string,
+      (client: unknown, payload?: unknown) => void
+    >();
 
-    onMessage(type: string, handler: Function) {
+    onMessage(
+      type: string,
+      handler: (client: unknown, payload?: unknown) => void,
+    ) {
       this._messageHandlers.set(type, handler);
     }
     setState = vi.fn();
@@ -44,9 +50,17 @@ function createRoom(gameOptions: unknown = {}, playerNames = ["Alice", "Bob"]) {
   return room;
 }
 
-function getHandler(room: unknown, type: string): Function {
+function getHandler(
+  room: unknown,
+  type: string,
+): (client: unknown, payload?: unknown) => void {
   return (
-    room as { _messageHandlers: Map<string, Function> }
+    room as {
+      _messageHandlers: Map<
+        string,
+        (client: unknown, payload?: unknown) => void
+      >;
+    }
   )._messageHandlers.get(type)!;
 }
 

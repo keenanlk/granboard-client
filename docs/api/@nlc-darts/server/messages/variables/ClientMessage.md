@@ -1,6 +1,6 @@
 [**Documentation**](../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../README.md) / [@nlc-darts/server](../../README.md) / [messages](../README.md) / ClientMessage
 
@@ -14,38 +14,38 @@ Client → Server action types
 
 ## Type Declaration
 
-### CAMERA\_STATUS
+### CAMERA_STATUS
 
-> `readonly` **CAMERA\_STATUS**: `"camera_status"` = `"camera_status"`
+> `readonly` **CAMERA_STATUS**: `"camera_status"` = `"camera_status"`
 
 Notifies opponent whether this player's camera is active.
 
-### DART\_HIT
+### DART_HIT
 
-> `readonly` **DART\_HIT**: `"dart_hit"` = `"dart_hit"`
+> `readonly` **DART_HIT**: `"dart_hit"` = `"dart_hit"`
 
-### NEXT\_TURN
+### NEXT_TURN
 
-> `readonly` **NEXT\_TURN**: `"next_turn"` = `"next_turn"`
+> `readonly` **NEXT_TURN**: `"next_turn"` = `"next_turn"`
 
-### REMATCH\_ACCEPT
+### REMATCH_ACCEPT
 
-> `readonly` **REMATCH\_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
+> `readonly` **REMATCH_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
 
-### REMATCH\_DECLINE
+### REMATCH_DECLINE
 
-> `readonly` **REMATCH\_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
+> `readonly` **REMATCH_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
 
-### REMATCH\_REQUEST
+### REMATCH_REQUEST
 
-> `readonly` **REMATCH\_REQUEST**: `"rematch_request"` = `"rematch_request"`
+> `readonly` **REMATCH_REQUEST**: `"rematch_request"` = `"rematch_request"`
 
 ### UNDO
 
 > `readonly` **UNDO**: `"undo"` = `"undo"`
 
-### WEBRTC\_SIGNAL
+### WEBRTC_SIGNAL
 
-> `readonly` **WEBRTC\_SIGNAL**: `"webrtc_signal"` = `"webrtc_signal"`
+> `readonly` **WEBRTC_SIGNAL**: `"webrtc_signal"` = `"webrtc_signal"`
 
 WebRTC SDP offer/answer relayed between peers for camera streaming.

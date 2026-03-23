@@ -154,7 +154,13 @@ export function OnlineLobbyScreen({
   // Not online yet — connect automatically
   if (connectionStatus === "offline" || connectionStatus === "connecting") {
     return (
-      <div className="h-screen bg-zinc-950 text-white flex flex-col items-center justify-center gap-6 px-6 overflow-y-auto" style={{ paddingTop: "calc(var(--sat) + 1rem)", paddingBottom: "calc(var(--sab) + 1rem)" }}>
+      <div
+        className="h-screen bg-zinc-950 text-white flex flex-col items-center justify-center gap-6 px-6 overflow-y-auto"
+        style={{
+          paddingTop: "calc(var(--sat) + 1rem)",
+          paddingBottom: "calc(var(--sab) + 1rem)",
+        }}
+      >
         <button
           onClick={onBack}
           className="absolute top-6 left-6 text-zinc-500 hover:text-white transition-colors text-sm uppercase tracking-wider font-bold"
@@ -193,7 +199,10 @@ export function OnlineLobbyScreen({
   if (inviteTarget && !selectedGame) {
     const targetPlayer = onlinePlayers.find((p) => p.id === inviteTarget);
     return (
-      <div className="h-screen bg-zinc-950 text-white flex items-center justify-center px-6" style={{ paddingTop: "var(--sat)", paddingBottom: "var(--sab)" }}>
+      <div
+        className="h-screen bg-zinc-950 text-white flex items-center justify-center px-6"
+        style={{ paddingTop: "var(--sat)", paddingBottom: "var(--sab)" }}
+      >
         <div className="flex flex-col items-center gap-5 w-full max-w-xs">
           <div className="text-center">
             <h2 className="text-xl font-black uppercase tracking-widest text-zinc-300">
@@ -272,7 +281,15 @@ export function OnlineLobbyScreen({
       const legCricketOpts = leg.cricketOptions ?? DEFAULT_CRICKET_OPTIONS;
 
       return (
-        <div className="h-screen bg-zinc-950 text-white flex flex-col items-center justify-center gap-2 px-6" style={{ paddingTop: "var(--sat)", paddingBottom: "var(--sab)", paddingLeft: "calc(var(--sal) + 1.5rem)", paddingRight: "calc(var(--sar) + 1.5rem)" }}>
+        <div
+          className="h-screen bg-zinc-950 text-white flex flex-col items-center justify-center gap-2 px-6"
+          style={{
+            paddingTop: "var(--sat)",
+            paddingBottom: "var(--sab)",
+            paddingLeft: "calc(var(--sal) + 1.5rem)",
+            paddingRight: "calc(var(--sar) + 1.5rem)",
+          }}
+        >
           <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">
             Leg {editingLegIndex + 1}
           </p>
@@ -347,8 +364,10 @@ export function OnlineLobbyScreen({
                     key={key}
                     onClick={() => {
                       const next = { ...legOpts, [key]: !legOpts[key] };
-                      if (key === "doubleOut" && !legOpts[key]) next.masterOut = false;
-                      if (key === "masterOut" && !legOpts[key]) next.doubleOut = false;
+                      if (key === "doubleOut" && !legOpts[key])
+                        next.masterOut = false;
+                      if (key === "masterOut" && !legOpts[key])
+                        next.doubleOut = false;
                       handleSetLegChange(editingLegIndex, {
                         ...leg,
                         x01Options: next,

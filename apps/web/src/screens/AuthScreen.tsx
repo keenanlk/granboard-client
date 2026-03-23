@@ -143,8 +143,7 @@ export function AuthScreen({ onAuthenticated, onBack }: AuthScreenProps) {
         Sign In
       </h1>
       <p className="text-zinc-400 text-center max-w-xs">
-        Sign in with your email to play online. We&apos;ll send you a
-        code.
+        Sign in with your email to play online. We&apos;ll send you a code.
       </p>
 
       {step === "error" && (
@@ -174,9 +173,7 @@ export function AuthScreen({ onAuthenticated, onBack }: AuthScreenProps) {
         />
         <button
           onClick={() => void handleSignIn()}
-          disabled={
-            !email.trim() || !displayName.trim() || step === "checking"
-          }
+          disabled={!email.trim() || !displayName.trim() || step === "checking"}
           className="w-full py-4 rounded-xl font-black text-lg uppercase tracking-widest bg-amber-600 text-white active:bg-amber-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {step === "checking" ? "Sending..." : "Send Code"}

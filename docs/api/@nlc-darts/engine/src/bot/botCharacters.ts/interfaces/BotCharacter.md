@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/bot/botCharacters.ts](../README.md) / BotCharacter
 
@@ -20,7 +20,7 @@ Defined in: [bot/botCharacters.ts:19](https://github.com/keenanlk/granboard-clie
 
 CSS animation class name (defined in index.css)
 
-***
+---
 
 ### color
 
@@ -30,7 +30,7 @@ Defined in: [bot/botCharacters.ts:13](https://github.com/keenanlk/granboard-clie
 
 Neon color (CSS color value)
 
-***
+---
 
 ### dim
 
@@ -40,7 +40,7 @@ Defined in: [bot/botCharacters.ts:17](https://github.com/keenanlk/granboard-clie
 
 Dim background tint
 
-***
+---
 
 ### glow
 
@@ -50,7 +50,7 @@ Defined in: [bot/botCharacters.ts:15](https://github.com/keenanlk/granboard-clie
 
 Glow color for box-shadow / text-shadow (usually same hue, lower opacity)
 
-***
+---
 
 ### label
 
@@ -60,7 +60,7 @@ Defined in: [bot/botCharacters.ts:11](https://github.com/keenanlk/granboard-clie
 
 Short label for skill selector badges
 
-***
+---
 
 ### name
 
@@ -70,7 +70,7 @@ Defined in: [bot/botCharacters.ts:9](https://github.com/keenanlk/granboard-clien
 
 Display name shown on scoreboard
 
-***
+---
 
 ### ppd
 

@@ -32,17 +32,20 @@ export class TournamentRoom extends Room {
   /** Active countdown intervals per match */
   activeCountdowns: Map<number, ReturnType<typeof setInterval>> = new Map();
 
-  onCreate(): void {
+  onCreate(options: { tournamentId?: string } = {}): void {
     if (!supabaseAdmin) {
       log.error("Supabase not configured — TournamentRoom cannot operate");
       return;
     }
 
-    this.manager = new TournamentManager(
-      createSupabaseStorage(supabaseAdmin),
-    );
+    this.manager = new TournamentManager(createSupabaseStorage(supabaseAdmin));
 
     this.maxClients = 64;
+
+    // If created with a tournamentId, initialize context
+    if (options.tournamentId) {
+      void this.ensureTournamentContext(options.tournamentId);
+    }
 
     this.onMessage(
       ClientMessage.CREATE_TOURNAMENT,
@@ -76,8 +79,10 @@ export class TournamentRoom extends Room {
 
     this.onMessage(
       ClientMessage.READY_FOR_MATCH,
-      (client, data: { matchId: number; userId: string }) =>
-        this.handleReadyForMatch(client, data),
+      (
+        client,
+        data: { matchId: number; userId: string; tournamentId: string },
+      ) => this.handleReadyForMatch(client, data),
     );
 
     this.onMessage(
@@ -98,13 +103,42 @@ export class TournamentRoom extends Room {
       ) => this.handleMatchGameResult(client, data),
     );
 
+    // Host relays game room ID after creating it
+    this.onMessage(
+      ClientMessage.MATCH_GAME_ROOM_READY,
+      (_client, data: { matchId: number; colyseusRoomId: string }) => {
+        log.info(
+          { matchId: data.matchId, colyseusRoomId: data.colyseusRoomId },
+          "Game room created by host",
+        );
+        this.broadcast(ServerMessage.MATCH_GAME_ROOM_CREATED, data);
+      },
+    );
+
     this.resetInactivity();
     log.info("TournamentRoom created");
   }
 
-  onJoin(client: Client): void {
-    log.info({ sessionId: client.sessionId }, "Client joined tournament room");
+  async onJoin(client: Client): Promise<void> {
+    log.info(
+      {
+        sessionId: client.sessionId,
+        roomId: this.roomId,
+        tournamentId: this.tournamentId,
+        clients: this.clients.length,
+      },
+      "Client joined tournament room",
+    );
     this.resetInactivity();
+
+    // Send current bracket data + participant map to the joining client
+    if (this.manager && this.tournamentId && this.participantToUser.size > 0) {
+      const bracketData = await this.manager.getBracketData(this.tournamentId);
+      client.send(ServerMessage.BRACKET_UPDATE, {
+        bracketData,
+        participantUserMap: Object.fromEntries(this.participantToUser),
+      });
+    }
   }
 
   onLeave(client: Client): void {
@@ -129,7 +163,15 @@ export class TournamentRoom extends Room {
     if (!supabaseAdmin) return;
 
     try {
-      const { name, format, visibility, scheduledAt, registrationDeadline, maxParticipants, createdBy } = data;
+      const {
+        name,
+        format,
+        visibility,
+        scheduledAt,
+        registrationDeadline,
+        maxParticipants,
+        createdBy,
+      } = data;
 
       // Validate power of 2 for elimination formats
       if (
@@ -138,7 +180,8 @@ export class TournamentRoom extends Room {
         !isPowerOfTwo(maxParticipants)
       ) {
         client.send(ServerMessage.TOURNAMENT_ERROR, {
-          error: "Max participants must be a power of 2 for elimination formats",
+          error:
+            "Max participants must be a power of 2 for elimination formats",
         });
         return;
       }
@@ -176,10 +219,7 @@ export class TournamentRoom extends Room {
         joinCode,
       });
 
-      log.info(
-        { tournamentId: tournament.id, joinCode },
-        "Tournament created",
-      );
+      log.info({ tournamentId: tournament.id, joinCode }, "Tournament created");
     } catch (err) {
       log.error({ err }, "Error creating tournament");
       client.send(ServerMessage.TOURNAMENT_ERROR, {
@@ -241,9 +281,7 @@ export class TournamentRoom extends Room {
       }
 
       // Fetch player names
-      const userIds = registrations.map(
-        (r: { user_id: string }) => r.user_id,
-      );
+      const userIds = registrations.map((r: { user_id: string }) => r.user_id);
       const { data: players } = await supabaseAdmin
         .from("online_players")
         .select("id, display_name")
@@ -265,11 +303,7 @@ export class TournamentRoom extends Room {
       const format = tournament.format as TournamentFormat;
 
       // Create the bracket stage
-      await this.manager.createStage(
-        tournamentId,
-        format,
-        participantNames,
-      );
+      await this.manager.createStage(tournamentId, format, participantNames);
 
       // Update tournament status
       await supabaseAdmin
@@ -291,7 +325,10 @@ export class TournamentRoom extends Room {
       }
 
       // Broadcast bracket data to all clients
-      this.broadcast(ServerMessage.BRACKET_UPDATE, { bracketData });
+      this.broadcast(ServerMessage.BRACKET_UPDATE, {
+        bracketData,
+        participantUserMap: Object.fromEntries(this.participantToUser),
+      });
 
       // Notify players of any immediately-ready matches (e.g., after BYE auto-advances)
       await this.broadcastReadyMatches();
@@ -324,13 +361,17 @@ export class TournamentRoom extends Room {
 
       // Broadcast updated bracket
       if (this.tournamentId) {
-        const bracketData =
-          await this.manager.getBracketData(this.tournamentId);
-        this.broadcast(ServerMessage.BRACKET_UPDATE, { bracketData });
+        const bracketData = await this.manager.getBracketData(
+          this.tournamentId,
+        );
+        this.broadcast(ServerMessage.BRACKET_UPDATE, {
+          bracketData,
+          participantUserMap: Object.fromEntries(this.participantToUser),
+        });
 
         // Check if tournament is complete (all matches completed)
         const allComplete = bracketData.match.every(
-          (m) => m.status >= 4, // Status.Completed = 4
+          (m) => m.status >= Status.Completed,
         );
         if (allComplete && supabaseAdmin) {
           await supabaseAdmin
@@ -428,25 +469,94 @@ export class TournamentRoom extends Room {
     }
   }
 
+  /**
+   * Lazily initialize tournament context when connecting to a room
+   * that was created fresh (e.g. after server restart or new joinOrCreate).
+   */
+  private async ensureTournamentContext(
+    tournamentId: string,
+  ): Promise<boolean> {
+    if (!this.manager || !supabaseAdmin) return false;
+
+    if (this.tournamentId === tournamentId && this.participantToUser.size > 0) {
+      return true; // already initialized
+    }
+
+    this.tournamentId = tournamentId;
+
+    // Rebuild participant ↔ userId mappings from DB
+    const bracketData = await this.manager.getBracketData(tournamentId);
+    if (bracketData.participant.length === 0) return false;
+
+    // Use tournament_registrations to get the actual user IDs that registered,
+    // then match to bracket participants by name via online_players.
+    // This avoids the duplicate display_name problem.
+    const { data: registrations } = await supabaseAdmin
+      .from("tournament_registrations")
+      .select("user_id")
+      .eq("tournament_id", tournamentId);
+
+    if (!registrations) return false;
+
+    const userIds = registrations.map((r: { user_id: string }) => r.user_id);
+    const { data: players } = await supabaseAdmin
+      .from("online_players")
+      .select("id, display_name")
+      .in("id", userIds);
+
+    if (!players) return false;
+
+    this.participantToUser.clear();
+    this.userToParticipant.clear();
+    for (const participant of bracketData.participant) {
+      const player = players.find(
+        (p: { id: string; display_name: string }) =>
+          p.display_name === participant.name,
+      );
+      if (player) {
+        this.participantToUser.set(participant.id as number, player.id);
+        this.userToParticipant.set(player.id, participant.id as number);
+      }
+    }
+
+    return this.participantToUser.size > 0;
+  }
+
   // ── Match-play handlers ────────────────────────────────────────────────────
 
   private async handleReadyForMatch(
     _client: Client,
-    data: { matchId: number; userId: string },
+    data: { matchId: number; userId: string; tournamentId: string },
   ): Promise<void> {
-    if (!this.manager || !this.tournamentId) return;
+    log.info(
+      { data, roomId: this.roomId, clients: this.clients.length },
+      "READY_FOR_MATCH received",
+    );
+    if (!this.manager) {
+      log.error("No manager");
+      return;
+    }
+    if (!(await this.ensureTournamentContext(data.tournamentId))) {
+      log.error(
+        { tournamentId: data.tournamentId },
+        "Failed to ensure tournament context",
+      );
+      return;
+    }
 
     try {
-      const { matchId, userId } = data;
+      const { matchId, userId, tournamentId } = data;
 
-      const bracketData = await this.manager.getBracketData(this.tournamentId);
+      const bracketData = await this.manager.getBracketData(tournamentId);
       const match = bracketData.match.find((m) => m.id === matchId);
       if (!match) return;
 
       // Allow Ready (2) or Waiting (1) if one opponent is a BYE
-      const hasBye =
-        match.opponent1?.id == null || match.opponent2?.id == null;
-      if (match.status !== Status.Ready && !(match.status === Status.Waiting && hasBye)) {
+      const hasBye = match.opponent1?.id == null || match.opponent2?.id == null;
+      if (
+        match.status !== Status.Ready &&
+        !(match.status === Status.Waiting && hasBye)
+      ) {
         return;
       }
 
@@ -492,6 +602,10 @@ export class TournamentRoom extends Room {
           } else {
             clearInterval(interval);
             this.activeCountdowns.delete(matchId);
+            this.broadcast(ServerMessage.MATCH_COUNTDOWN, {
+              matchId,
+              secondsLeft: 0,
+            });
             void this.startMatch(matchId);
           }
         }, 1000);
@@ -533,6 +647,15 @@ export class TournamentRoom extends Room {
   }
 
   private async startMatch(matchId: number): Promise<void> {
+    log.info(
+      {
+        matchId,
+        hasMgr: !!this.manager,
+        tid: this.tournamentId,
+        hasSupa: !!supabaseAdmin,
+      },
+      "startMatch called",
+    );
     if (!this.manager || !this.tournamentId || !supabaseAdmin) return;
 
     try {
@@ -542,12 +665,14 @@ export class TournamentRoom extends Room {
 
       const [uid1, uid2] = this.getMatchUserIds(match);
 
-      const p1 = match.opponent1?.id != null
-        ? bracketData.participant.find((p) => p.id === match.opponent1!.id)
-        : null;
-      const p2 = match.opponent2?.id != null
-        ? bracketData.participant.find((p) => p.id === match.opponent2!.id)
-        : null;
+      const p1 =
+        match.opponent1?.id != null
+          ? bracketData.participant.find((p) => p.id === match.opponent1!.id)
+          : null;
+      const p2 =
+        match.opponent2?.id != null
+          ? bracketData.participant.find((p) => p.id === match.opponent2!.id)
+          : null;
 
       // Fetch game settings from tournament
       const { data: tournament } = await supabaseAdmin
@@ -618,8 +743,9 @@ export class TournamentRoom extends Room {
       });
 
       // Broadcast updated bracket
-      const updatedBracket =
-        await this.manager.getBracketData(this.tournamentId);
+      const updatedBracket = await this.manager.getBracketData(
+        this.tournamentId,
+      );
       this.broadcast(ServerMessage.BRACKET_UPDATE, {
         bracketData: updatedBracket,
       });
@@ -654,16 +780,16 @@ export class TournamentRoom extends Room {
   // ── Match-play helpers ────────────────────────────────────────────────────
 
   private getMatchUserIds(match: {
-    opponent1: any;
-    opponent2: any;
+    opponent1: { id?: number | string | null } | null;
+    opponent2: { id?: number | string | null } | null;
   }): [string | null, string | null] {
     const uid1 =
       match.opponent1?.id != null
-        ? this.participantToUser.get(match.opponent1.id as number) ?? null
+        ? (this.participantToUser.get(match.opponent1.id as number) ?? null)
         : null;
     const uid2 =
       match.opponent2?.id != null
-        ? this.participantToUser.get(match.opponent2.id as number) ?? null
+        ? (this.participantToUser.get(match.opponent2.id as number) ?? null)
         : null;
     return [uid1, uid2];
   }
@@ -752,4 +878,3 @@ interface RecordResultPayload {
   opponent1Score: number;
   opponent2Score: number;
 }
-

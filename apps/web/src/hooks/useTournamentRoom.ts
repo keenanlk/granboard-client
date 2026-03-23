@@ -1,10 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Client } from "colyseus.js";
 import type { Room } from "colyseus.js";
-import type { Database, TournamentFormat, TournamentGameConfig } from "@nlc-darts/tournament";
+import type {
+  Database,
+  TournamentFormat,
+  TournamentGameConfig,
+} from "@nlc-darts/tournament";
 
-const COLYSEUS_URL =
-  import.meta.env.VITE_COLYSEUS_URL ?? "ws://localhost:2567";
+const rawColyseusUrl =
+  (import.meta.env.VITE_COLYSEUS_URL as string) ?? "ws://localhost:2567";
+const COLYSEUS_URL = rawColyseusUrl.startsWith("/")
+  ? `${location.origin}${rawColyseusUrl}`
+  : rawColyseusUrl;
 
 interface RegistrationUpdate {
   tournamentId: string;
@@ -46,6 +53,7 @@ interface MatchAlert {
 interface TournamentRoomState {
   connected: boolean;
   bracketData: Database | null;
+  participantUserMap: Record<number, string> | null;
   registrationUpdate: RegistrationUpdate | null;
   tournamentCreated: TournamentCreatedEvent | null;
   error: string | null;
@@ -53,12 +61,14 @@ interface TournamentRoomState {
   matchCountdown: MatchCountdown | null;
   matchStart: MatchStart | null;
   matchAlert: MatchAlert | null;
+  matchGameRoom: { matchId: number; colyseusRoomId: string } | null;
 }
 
 export function useTournamentRoom() {
   const [state, setState] = useState<TournamentRoomState>({
     connected: false,
     bracketData: null,
+    participantUserMap: null,
     registrationUpdate: null,
     tournamentCreated: null,
     error: null,
@@ -66,38 +76,60 @@ export function useTournamentRoom() {
     matchCountdown: null,
     matchStart: null,
     matchAlert: null,
+    matchGameRoom: null,
   });
 
   const roomRef = useRef<Room | null>(null);
   const clientRef = useRef<Client | null>(null);
 
-  const connect = useCallback(async () => {
+  const currentTournamentIdRef = useRef<string | undefined>(undefined);
+
+  const connect = useCallback(async (tournamentId?: string) => {
+    // If already connected to a different tournament, disconnect first
+    if (
+      roomRef.current &&
+      tournamentId &&
+      currentTournamentIdRef.current !== tournamentId
+    ) {
+      roomRef.current.leave();
+      roomRef.current = null;
+    }
+
     if (roomRef.current) return;
+
+    currentTournamentIdRef.current = tournamentId;
 
     try {
       const client = new Client(COLYSEUS_URL);
       clientRef.current = client;
 
-      const room = await client.joinOrCreate("tournament");
+      const room = await client.joinOrCreate(
+        "tournament",
+        tournamentId ? { tournamentId } : {},
+      );
       roomRef.current = room;
 
-      room.onMessage("bracket_update", (data: { bracketData: Database }) => {
-        setState((s) => ({ ...s, bracketData: data.bracketData }));
+      room.onMessage(
+        "bracket_update",
+        (data: {
+          bracketData: Database;
+          participantUserMap?: Record<number, string>;
+        }) => {
+          setState((s) => ({
+            ...s,
+            bracketData: data.bracketData,
+            participantUserMap: data.participantUserMap ?? s.participantUserMap,
+          }));
+        },
+      );
+
+      room.onMessage("registration_update", (data: RegistrationUpdate) => {
+        setState((s) => ({ ...s, registrationUpdate: data }));
       });
 
-      room.onMessage(
-        "registration_update",
-        (data: RegistrationUpdate) => {
-          setState((s) => ({ ...s, registrationUpdate: data }));
-        },
-      );
-
-      room.onMessage(
-        "tournament_created",
-        (data: TournamentCreatedEvent) => {
-          setState((s) => ({ ...s, tournamentCreated: data }));
-        },
-      );
+      room.onMessage("tournament_created", (data: TournamentCreatedEvent) => {
+        setState((s) => ({ ...s, tournamentCreated: data }));
+      });
 
       room.onMessage("tournament_error", (data: { error: string }) => {
         setState((s) => ({ ...s, error: data.error }));
@@ -120,6 +152,13 @@ export function useTournamentRoom() {
         setState((s) => ({ ...s, matchAlert: data }));
       });
 
+      room.onMessage(
+        "match_game_room_created",
+        (data: { matchId: number; colyseusRoomId: string }) => {
+          setState((s) => ({ ...s, matchGameRoom: data }));
+        },
+      );
+
       room.onLeave(() => {
         roomRef.current = null;
         setState((s) => ({ ...s, connected: false }));
@@ -140,6 +179,7 @@ export function useTournamentRoom() {
     setState({
       connected: false,
       bracketData: null,
+      participantUserMap: null,
       registrationUpdate: null,
       tournamentCreated: null,
       error: null,
@@ -147,6 +187,7 @@ export function useTournamentRoom() {
       matchCountdown: null,
       matchStart: null,
       matchAlert: null,
+      matchGameRoom: null,
     });
   }, []);
 
@@ -189,12 +230,9 @@ export function useTournamentRoom() {
     [],
   );
 
-  const registerPlayer = useCallback(
-    (tournamentId: string, userId: string) => {
-      roomRef.current?.send("register_player", { tournamentId, userId });
-    },
-    [],
-  );
+  const registerPlayer = useCallback((tournamentId: string, userId: string) => {
+    roomRef.current?.send("register_player", { tournamentId, userId });
+  }, []);
 
   const unregisterPlayer = useCallback(
     (tournamentId: string, userId: string) => {
@@ -204,18 +242,19 @@ export function useTournamentRoom() {
   );
 
   const readyForMatch = useCallback(
-    (matchId: number, userId: string) => {
-      roomRef.current?.send("ready_for_match", { matchId, userId });
+    (matchId: number, userId: string, tournamentId: string) => {
+      roomRef.current?.send("ready_for_match", {
+        matchId,
+        userId,
+        tournamentId,
+      });
     },
     [],
   );
 
-  const unreadyForMatch = useCallback(
-    (matchId: number, userId: string) => {
-      roomRef.current?.send("unready_for_match", { matchId, userId });
-    },
-    [],
-  );
+  const unreadyForMatch = useCallback((matchId: number, userId: string) => {
+    roomRef.current?.send("unready_for_match", { matchId, userId });
+  }, []);
 
   const reportMatchGameResult = useCallback(
     (
@@ -240,6 +279,20 @@ export function useTournamentRoom() {
     setState((s) => ({ ...s, matchStart: null }));
   }, []);
 
+  const sendGameRoomReady = useCallback(
+    (matchId: number, colyseusRoomId: string) => {
+      roomRef.current?.send("match_game_room_ready", {
+        matchId,
+        colyseusRoomId,
+      });
+    },
+    [],
+  );
+
+  const clearMatchGameRoom = useCallback(() => {
+    setState((s) => ({ ...s, matchGameRoom: null }));
+  }, []);
+
   return {
     ...state,
     connect,
@@ -254,5 +307,7 @@ export function useTournamentRoom() {
     reportMatchGameResult,
     clearMatchAlert,
     clearMatchStart,
+    sendGameRoomReady,
+    clearMatchGameRoom,
   };
 }

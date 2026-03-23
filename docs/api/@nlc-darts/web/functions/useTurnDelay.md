@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / useTurnDelay
 
@@ -21,7 +21,7 @@ afterDelay is called once the countdown finishes.
 `boolean` = `false`
 
 When true, uses a shorter delay (2.5s) and hides the
-               numeric countdown — only shows who's up next.
+numeric countdown — only shows who's up next.
 
 ## Returns
 

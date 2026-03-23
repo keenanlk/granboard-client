@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import type { TournamentFormat, TournamentVisibility, TournamentGameConfig, TournamentGameType } from "@nlc-darts/tournament";
+import type {
+  TournamentFormat,
+  TournamentVisibility,
+  TournamentGameConfig,
+  TournamentGameType,
+} from "@nlc-darts/tournament";
 import type { SetFormat } from "@nlc-darts/engine";
 import { DEFAULT_CRICKET_OPTIONS } from "@nlc-darts/engine";
 
@@ -71,14 +76,18 @@ export function CreateTournamentScreen({
       gameType,
       bestOf,
       throwOrder: "loser",
-      x01Options: gameType === "x01" ? {
-        startingScore,
-        splitBull: false,
-        doubleOut,
-        masterOut: false,
-        doubleIn: false,
-      } : undefined,
-      cricketOptions: gameType === "cricket" ? DEFAULT_CRICKET_OPTIONS : undefined,
+      x01Options:
+        gameType === "x01"
+          ? {
+              startingScore,
+              splitBull: false,
+              doubleOut,
+              masterOut: false,
+              doubleIn: false,
+            }
+          : undefined,
+      cricketOptions:
+        gameType === "cricket" ? DEFAULT_CRICKET_OPTIONS : undefined,
     };
 
     const data: CreateTournamentData = {
@@ -86,8 +95,9 @@ export function CreateTournamentScreen({
       format,
       visibility,
       scheduledAt: startImmediately ? null : scheduledAt || null,
-      registrationDeadline:
-        startImmediately ? null : registrationDeadline || null,
+      registrationDeadline: startImmediately
+        ? null
+        : registrationDeadline || null,
       maxParticipants,
       gameSettings,
     };
@@ -363,12 +373,14 @@ export function CreateTournamentScreen({
             min={2}
             className="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-base focus:outline-none focus:border-amber-500"
           />
-          {maxParticipants && isElimination && !isPowerOfTwo(maxParticipants) && (
-            <p className="text-amber-400 text-xs mt-1">
-              Must be a power of 2 for elimination formats. Did you mean{" "}
-              {nearestPowersOfTwo(maxParticipants).join(" or ")}?
-            </p>
-          )}
+          {maxParticipants &&
+            isElimination &&
+            !isPowerOfTwo(maxParticipants) && (
+              <p className="text-amber-400 text-xs mt-1">
+                Must be a power of 2 for elimination formats. Did you mean{" "}
+                {nearestPowersOfTwo(maxParticipants).join(" or ")}?
+              </p>
+            )}
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@nlc-darts/supabase";
 import { logger } from "./logger.ts";
 
 const log = logger.child({ module: "supabase" });
@@ -17,4 +18,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-export const supabase = createClient(supabaseUrl ?? "", supabaseAnonKey ?? "");
+export const supabase = createClient<Database>(
+  supabaseUrl ?? "",
+  supabaseAnonKey ?? "",
+);

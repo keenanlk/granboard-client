@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/lib/setTypes.ts](../README.md) / SetProgress
 
@@ -18,7 +18,7 @@ Read-only snapshot of set progress for UI display.
 
 Defined in: [lib/setTypes.ts:45](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L45)
 
-***
+---
 
 ### legResults
 
@@ -26,7 +26,7 @@ Defined in: [lib/setTypes.ts:45](https://github.com/keenanlk/granboard-client/bl
 
 Defined in: [lib/setTypes.ts:43](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L43)
 
-***
+---
 
 ### playerNames
 
@@ -34,7 +34,7 @@ Defined in: [lib/setTypes.ts:43](https://github.com/keenanlk/granboard-client/bl
 
 Defined in: [lib/setTypes.ts:46](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L46)
 
-***
+---
 
 ### totalLegs
 

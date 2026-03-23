@@ -1,6 +1,6 @@
 [**Documentation**](../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../README.md) / [@nlc-darts/server](../../README.md) / [messages](../README.md) / ServerMessage
 
@@ -14,34 +14,34 @@ Server → Client broadcast types
 
 ## Type Declaration
 
-### GAME\_ENDED
+### GAME_ENDED
 
-> `readonly` **GAME\_ENDED**: `"game_ended"` = `"game_ended"`
+> `readonly` **GAME_ENDED**: `"game_ended"` = `"game_ended"`
 
-### GAME\_EVENT
+### GAME_EVENT
 
-> `readonly` **GAME\_EVENT**: `"game_event"` = `"game_event"`
+> `readonly` **GAME_EVENT**: `"game_event"` = `"game_event"`
 
-### PLAYER\_LEFT
+### PLAYER_LEFT
 
-> `readonly` **PLAYER\_LEFT**: `"player_left"` = `"player_left"`
+> `readonly` **PLAYER_LEFT**: `"player_left"` = `"player_left"`
 
-### REMATCH\_ACCEPT
+### REMATCH_ACCEPT
 
-> `readonly` **REMATCH\_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
+> `readonly` **REMATCH_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
 
-### REMATCH\_DECLINE
+### REMATCH_DECLINE
 
-> `readonly` **REMATCH\_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
+> `readonly` **REMATCH_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
 
-### REMATCH\_REQUEST
+### REMATCH_REQUEST
 
-> `readonly` **REMATCH\_REQUEST**: `"rematch_request"` = `"rematch_request"`
+> `readonly` **REMATCH_REQUEST**: `"rematch_request"` = `"rematch_request"`
 
-### STATE\_UPDATE
+### STATE_UPDATE
 
-> `readonly` **STATE\_UPDATE**: `"state_update"` = `"state_update"`
+> `readonly` **STATE_UPDATE**: `"state_update"` = `"state_update"`
 
-### TURN\_DELAY
+### TURN_DELAY
 
-> `readonly` **TURN\_DELAY**: `"turn_delay"` = `"turn_delay"`
+> `readonly` **TURN_DELAY**: `"turn_delay"` = `"turn_delay"`

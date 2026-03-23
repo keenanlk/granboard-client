@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { requestCamera, enumerateVideoDevices, stopAllTracks } from "./cameraUtils.ts";
+import {
+  requestCamera,
+  enumerateVideoDevices,
+  stopAllTracks,
+} from "./cameraUtils.ts";
 
 const mockStream = {
   getTracks: vi.fn(() => [{ stop: vi.fn() }, { stop: vi.fn() }]),

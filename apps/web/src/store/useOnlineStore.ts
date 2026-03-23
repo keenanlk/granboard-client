@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { supabase } from "../lib/supabaseClient.ts";
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import type { Json } from "@nlc-darts/supabase";
 import { logger } from "../lib/logger.ts";
 import { fetchPlayerStats, EMPTY_STATS } from "../lib/onlineStats.ts";
 import type { OnlinePlayerStats } from "../lib/onlineStats.ts";
@@ -75,7 +76,10 @@ interface OnlineState {
   updateRoomStatus: (status: RoomStatus) => void;
 }
 
-function buildPresencePayload(state: OnlineState, statusOverride?: PlayerStatus) {
+function buildPresencePayload(
+  state: OnlineState,
+  statusOverride?: PlayerStatus,
+) {
   return {
     id: state.authUserId,
     display_name: state.displayName,
@@ -291,7 +295,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
         host_id: authUserId,
         status: "waiting" as RoomStatus,
         game_type: gameType,
-        game_options: gameOptions,
+        game_options: gameOptions as Json,
       })
       .select()
       .single();
@@ -436,7 +440,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
       to_id: invite.to_id,
       room_id: invite.room_id,
       game_type: invite.game_type,
-      game_options: invite.game_options,
+      game_options: invite.game_options as Json,
       status: invite.status,
       created_at: invite.created_at,
       expires_at: invite.expires_at,

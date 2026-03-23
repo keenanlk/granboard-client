@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/x01.types.ts](../README.md) / Player
 
@@ -18,7 +18,7 @@ A player's state in an X01 game.
 
 Defined in: [engine/x01.types.ts:34](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L34)
 
-***
+---
 
 ### opened
 
@@ -28,7 +28,7 @@ Defined in: [engine/x01.types.ts:37](https://github.com/keenanlk/granboard-clien
 
 For double-in: whether the player has opened by hitting a double. Always true if doubleIn=false.
 
-***
+---
 
 ### rounds
 
@@ -50,7 +50,7 @@ Player's opened state at the START of this round — used to restore on cross-tu
 
 > **score**: `number`
 
-***
+---
 
 ### score
 
@@ -58,7 +58,7 @@ Player's opened state at the START of this round — used to restore on cross-tu
 
 Defined in: [engine/x01.types.ts:35](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L35)
 
-***
+---
 
 ### totalDartsThrown
 

@@ -6,7 +6,12 @@ import {
   CreateSegment,
   ticTacToePickTarget,
 } from "@nlc-darts/engine";
-import type { TicTacToeOptions, BotSkill, SegmentID } from "@nlc-darts/engine";
+import type {
+  TicTacToeOptions,
+  TicTacToeState,
+  BotSkill,
+  SegmentID,
+} from "@nlc-darts/engine";
 import { TicTacToeController } from "../controllers/TicTacToeController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
@@ -109,8 +114,11 @@ export function TicTacToeScreen({
       useTicTacToeStore.getState().getSerializableState(),
     onInit: () => {
       if (restoredState) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        useTicTacToeStore.getState().restoreState(restoredState as any);
+        useTicTacToeStore
+          .getState()
+          .restoreState(
+            restoredState as TicTacToeState & { undoStack: TicTacToeState[] },
+          );
       } else {
         startGame(options, playerNames);
       }

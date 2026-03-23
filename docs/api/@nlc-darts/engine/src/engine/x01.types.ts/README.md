@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../README.md) / [@nlc-darts/engine](../../../README.md) / src/engine/x01.types.ts
 
@@ -15,4 +15,4 @@
 
 ## Variables
 
-- [DEFAULT\_X01\_OPTIONS](variables/DEFAULT_X01_OPTIONS.md)
+- [DEFAULT_X01_OPTIONS](variables/DEFAULT_X01_OPTIONS.md)

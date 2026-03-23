@@ -10,6 +10,7 @@ import { createServer as createHttpsServer } from "https";
 import { existsSync, readFileSync } from "node:fs";
 import { X01Room } from "./rooms/X01Room.js";
 import { CricketRoom } from "./rooms/CricketRoom.js";
+import { TournamentRoom } from "./rooms/TournamentRoom.js";
 import { logger } from "./lib/logger.js";
 import { supabaseAdmin } from "./supabaseAdmin.js";
 
@@ -208,6 +209,7 @@ const server = new Server({
 
 server.define("x01", X01Room);
 server.define("cricket", CricketRoom);
+server.define("tournament", TournamentRoom).filterBy(["tournamentId"]);
 
 server.listen(port, "0.0.0.0").then(() => {
   logger.info(

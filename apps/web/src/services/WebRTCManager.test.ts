@@ -1,13 +1,24 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { WebRTCManager } from "./WebRTCManager.ts";
 import type { WebRTCStatus } from "./WebRTCManager.ts";
+import type { Room } from "colyseus.js";
 
 // ── Mocks ────────────────────────────────────────────────────────────────
 
+/** Structural subset of Colyseus Room used by WebRTCManager for signaling. */
+interface MockRoomHandle {
+  send: ReturnType<typeof vi.fn>;
+  onMessage: ReturnType<typeof vi.fn>;
+  _handlers: Map<string, (...args: unknown[]) => void>;
+  _receive(type: string, payload: unknown): void;
+  /** Cast to Room for passing into WebRTCManager methods. */
+  asRoom(): Room;
+}
+
 /** Minimal mock of a Colyseus Room for signaling. */
-function mockRoom() {
+function mockRoom(): MockRoomHandle {
   const handlers = new Map<string, (...args: unknown[]) => void>();
-  return {
+  const room = {
     send: vi.fn(),
     onMessage: vi.fn((type: string, handler: (...args: unknown[]) => void) => {
       handlers.set(type, handler);
@@ -17,7 +28,11 @@ function mockRoom() {
     _receive(type: string, payload: unknown) {
       handlers.get(type)?.(payload);
     },
+    asRoom() {
+      return room as unknown as Room;
+    },
   };
+  return room;
 }
 
 /** Minimal mock of a MediaStream. */
@@ -59,15 +74,14 @@ beforeEach(() => {
   originalRTCSessionDescription = globalThis.RTCSessionDescription;
   originalMediaDevices = navigator.mediaDevices;
 
-  // @ts-expect-error — test mock
-  globalThis.RTCPeerConnection = MockRTCPeerConnection;
-  // @ts-expect-error — test mock
+  globalThis.RTCPeerConnection =
+    MockRTCPeerConnection as unknown as typeof RTCPeerConnection;
   globalThis.RTCSessionDescription = class {
-    init: unknown;
-    constructor(init: unknown) {
+    init: RTCSessionDescriptionInit;
+    constructor(init: RTCSessionDescriptionInit) {
       this.init = init;
     }
-  };
+  } as unknown as typeof RTCSessionDescription;
 
   Object.defineProperty(navigator, "mediaDevices", {
     value: {
@@ -103,8 +117,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(mockRoom() as any, true);
+    await manager.start(mockRoom().asRoom(), true);
     expect(statuses).toEqual(["denied"]);
   });
 
@@ -120,8 +133,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(mockRoom() as any, true);
+    await manager.start(mockRoom().asRoom(), true);
     expect(statuses).toContain("denied");
   });
 
@@ -133,8 +145,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(mockRoom() as any, true);
+    await manager.start(mockRoom().asRoom(), true);
     expect(onLocalStream).toHaveBeenCalledWith(expect.any(Object));
     expect(onLocalStream.mock.calls[0][0].getTracks).toBeDefined();
   });
@@ -147,8 +158,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, true);
+    await manager.start(room.asRoom(), true);
 
     // Allow the async offer creation to resolve
     await vi.waitFor(() => {
@@ -167,8 +177,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, false);
+    await manager.start(room.asRoom(), false);
     await new Promise((r) => setTimeout(r, 10));
 
     const signalCalls = room.send.mock.calls.filter(
@@ -185,8 +194,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, false);
+    await manager.start(room.asRoom(), false);
 
     // Simulate receiving an offer
     room._receive("webrtc_signal", {
@@ -216,8 +224,7 @@ describe("WebRTCManager", () => {
       onRemoteStream,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(mockRoom() as any, true);
+    await manager.start(mockRoom().asRoom(), true);
     manager.stop();
 
     expect(
@@ -246,8 +253,7 @@ describe("WebRTCManager", () => {
     });
 
     const room = mockRoom();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const started = manager.start(room as any, true);
+    const started = manager.start(room.asRoom(), true);
 
     // Stop before getUserMedia resolves
     manager.stop();
@@ -276,8 +282,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, false);
+    await manager.start(room.asRoom(), false);
 
     expect(room.onMessage).toHaveBeenCalledWith(
       "webrtc_signal",
@@ -293,8 +298,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, true);
+    await manager.start(room.asRoom(), true);
 
     // request_state is sent as a health check
     expect(room.send).toHaveBeenCalledWith("request_state", {});
@@ -313,8 +317,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, true);
+    await manager.start(room.asRoom(), true);
     expect(statuses).toContain("denied");
   });
 
@@ -328,8 +331,7 @@ describe("WebRTCManager", () => {
       onRemoteStream,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, false);
+    await manager.start(room.asRoom(), false);
 
     // Access the PC instance stored internally by the manager
     const lastPC = (manager as unknown as { pc: MockRTCPeerConnection }).pc;
@@ -351,8 +353,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, false);
+    await manager.start(room.asRoom(), false);
 
     const lastPC = (manager as unknown as { pc: MockRTCPeerConnection }).pc;
     lastPC.iceConnectionState = "failed";
@@ -369,8 +370,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, true);
+    await manager.start(room.asRoom(), true);
     // Wait for offer send
     await vi.waitFor(() => {
       expect(room.send).toHaveBeenCalledWith(
@@ -395,8 +395,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, true);
+    await manager.start(room.asRoom(), true);
     // Let the initial offer resolve
     await vi.advanceTimersByTimeAsync(0);
 
@@ -432,8 +431,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, true);
+    await manager.start(room.asRoom(), true);
     await vi.advanceTimersByTimeAsync(0);
 
     // Stop while retry timer is pending
@@ -461,8 +459,7 @@ describe("WebRTCManager", () => {
       onRemoteStream,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, false);
+    await manager.start(room.asRoom(), false);
     const lastPC = (manager as unknown as { pc: MockRTCPeerConnection }).pc;
 
     manager.stop();
@@ -479,8 +476,7 @@ describe("WebRTCManager", () => {
       onRemoteStream: vi.fn(),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await manager.start(room as any, false);
+    await manager.start(room.asRoom(), false);
     manager.stop();
 
     // Simulate receiving an offer after stop — should not throw or send answer
@@ -510,8 +506,7 @@ describe("WebRTCManager", () => {
       });
 
       const room = mockRoom();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await manager.startWithStream(room as any, false, stream);
+      await manager.startWithStream(room.asRoom(), false, stream);
 
       expect(navigator.mediaDevices.getUserMedia).not.toHaveBeenCalled();
       expect(onLocalStream).toHaveBeenCalledWith(stream);
@@ -526,8 +521,7 @@ describe("WebRTCManager", () => {
         onRemoteStream: vi.fn(),
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await manager.startWithStream(room as any, true, stream);
+      await manager.startWithStream(room.asRoom(), true, stream);
 
       expect(room.send).toHaveBeenCalledWith("request_state", {});
       expect(room.onMessage).toHaveBeenCalledWith(
@@ -553,8 +547,7 @@ describe("WebRTCManager", () => {
         onRemoteStream: vi.fn(),
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await manager.startWithStream(room as any, false, stream);
+      await manager.startWithStream(room.asRoom(), false, stream);
       manager.stop();
 
       expect(
@@ -573,8 +566,7 @@ describe("WebRTCManager", () => {
 
       manager.stop();
       const room = mockRoom();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await manager.startWithStream(room as any, false, stream);
+      await manager.startWithStream(room.asRoom(), false, stream);
 
       expect(
         (stream as unknown as { _track: { stop: ReturnType<typeof vi.fn> } })

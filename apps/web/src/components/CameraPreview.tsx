@@ -142,9 +142,7 @@ export function CameraPreview({ onConfirm, onSkip }: CameraPreviewProps) {
           <p className="text-zinc-400 text-lg leading-relaxed">
             Your opponent will see your camera feed during their turn.
           </p>
-          {error && (
-            <p className="text-red-400 text-sm">{error}</p>
-          )}
+          {error && <p className="text-red-400 text-sm">{error}</p>}
           <div className="flex gap-4">
             <button
               onClick={onSkip}
@@ -196,9 +194,7 @@ export function CameraPreview({ onConfirm, onSkip }: CameraPreviewProps) {
             Camera Preview
           </h2>
 
-          {error && (
-            <p className="text-red-400 text-xs text-center">{error}</p>
-          )}
+          {error && <p className="text-red-400 text-xs text-center">{error}</p>}
 
           {/* Camera switching controls */}
           {isNativePlatform() ? (
