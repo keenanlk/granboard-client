@@ -1,6 +1,6 @@
 [**Documentation**](../../README.md)
 
----
+***
 
 [Documentation](../../README.md) / @nlc-darts/web
 
@@ -16,6 +16,7 @@ hooks, events, BLE, and database modules.
 - [ATWController](classes/ATWController.md)
 - [ColyseusRemoteController](classes/ColyseusRemoteController.md)
 - [CricketController](classes/CricketController.md)
+- [EventBus](classes/EventBus.md)
 - [GameRecorder](classes/GameRecorder.md)
 - [Granboard](classes/Granboard.md)
 - [HighScoreController](classes/HighScoreController.md)
@@ -26,14 +27,23 @@ hooks, events, BLE, and database modules.
 ## Interfaces
 
 - [GameController](interfaces/GameController.md)
+- [GameStoreActions](interfaces/GameStoreActions.md)
 - [Invite](interfaces/Invite.md)
+- [OnlineConfig](interfaces/OnlineConfig.md)
 - [OnlinePlayer](interfaces/OnlinePlayer.md)
 - [RGB](interfaces/RGB.md)
 - [Room](interfaces/Room.md)
+- [RoundExtract](interfaces/RoundExtract.md)
+- [UseColyseusSyncOptions](interfaces/UseColyseusSyncOptions.md)
+- [UseColyseusSyncReturn](interfaces/UseColyseusSyncReturn.md)
+- [UseOnlineSyncOptions](interfaces/UseOnlineSyncOptions.md)
 
 ## Type Aliases
 
+- [ConnectionStatus](type-aliases/ConnectionStatus.md)
+- [FullState](type-aliases/FullState.md)
 - [GameEventMap](type-aliases/GameEventMap.md)
+- [Handler](type-aliases/Handler.md)
 - [InviteStatus](type-aliases/InviteStatus.md)
 - [OnlineGameType](type-aliases/OnlineGameType.md)
 - [PlayerStatus](type-aliases/PlayerStatus.md)
@@ -44,7 +54,7 @@ hooks, events, BLE, and database modules.
 
 - [Colors](variables/Colors.md)
 - [gameEventBus](variables/gameEventBus.md)
-- [LED_POSITIONS](variables/LED_POSITIONS.md)
+- [LED\_POSITIONS](variables/LED_POSITIONS.md)
 
 ## Functions
 

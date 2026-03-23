@@ -1,93 +1,93 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / Invite
 
 # Interface: Invite
 
-Defined in: [store/online.types.ts:33](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L33)
+Defined in: [store/online.types.ts:39](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L39)
 
 An invitation from one player to another to join a room.
 
 ## Properties
 
-### created_at
+### created\_at
 
-> **created_at**: `string`
+> **created\_at**: `string`
+
+Defined in: [store/online.types.ts:47](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L47)
+
+***
+
+### expires\_at
+
+> **expires\_at**: `string`
+
+Defined in: [store/online.types.ts:48](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L48)
+
+***
+
+### from\_id
+
+> **from\_id**: `string`
 
 Defined in: [store/online.types.ts:41](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L41)
 
----
+***
 
-### expires_at
+### from\_name?
 
-> **expires_at**: `string`
+> `optional` **from\_name?**: `string`
 
-Defined in: [store/online.types.ts:42](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L42)
-
----
-
-### from_id
-
-> **from_id**: `string`
-
-Defined in: [store/online.types.ts:35](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L35)
-
----
-
-### from_name?
-
-> `optional` **from_name?**: `string`
-
-Defined in: [store/online.types.ts:44](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L44)
+Defined in: [store/online.types.ts:50](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L50)
 
 Joined from online_players for display
 
----
+***
 
-### game_options
+### game\_options
 
-> **game_options**: `unknown`
+> **game\_options**: `unknown`
 
-Defined in: [store/online.types.ts:39](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L39)
+Defined in: [store/online.types.ts:45](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L45)
 
----
+***
 
-### game_type
+### game\_type
 
-> **game_type**: [`OnlineGameType`](../type-aliases/OnlineGameType.md)
+> **game\_type**: [`OnlineGameType`](../type-aliases/OnlineGameType.md)
 
-Defined in: [store/online.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L38)
+Defined in: [store/online.types.ts:44](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L44)
 
----
+***
 
 ### id
 
 > **id**: `string`
 
-Defined in: [store/online.types.ts:34](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L34)
+Defined in: [store/online.types.ts:40](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L40)
 
----
+***
 
-### room_id
+### room\_id
 
-> **room_id**: `string`
+> **room\_id**: `string`
 
-Defined in: [store/online.types.ts:37](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L37)
+Defined in: [store/online.types.ts:43](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L43)
 
----
+***
 
 ### status
 
 > **status**: [`InviteStatus`](../type-aliases/InviteStatus.md)
 
-Defined in: [store/online.types.ts:40](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L40)
+Defined in: [store/online.types.ts:46](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L46)
 
----
+***
 
-### to_id
+### to\_id
 
-> **to_id**: `string`
+> **to\_id**: `string`
 
-Defined in: [store/online.types.ts:36](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L36)
+Defined in: [store/online.types.ts:42](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L42)

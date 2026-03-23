@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / useOnlineSync
 
@@ -23,7 +23,7 @@ Also re-emits forwarded game events on the local event bus.
 
 ### \_\_namedParameters
 
-`UseOnlineSyncOptions`
+[`UseOnlineSyncOptions`](../interfaces/UseOnlineSyncOptions.md)
 
 ## Returns
 

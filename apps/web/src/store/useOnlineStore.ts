@@ -32,7 +32,7 @@ export interface OnlineConfig {
   gameOptions?: unknown;
 }
 
-type ConnectionStatus = "offline" | "connecting" | "online" | "error";
+export type ConnectionStatus = "offline" | "connecting" | "online" | "error";
 
 interface OnlineState {
   // Auth

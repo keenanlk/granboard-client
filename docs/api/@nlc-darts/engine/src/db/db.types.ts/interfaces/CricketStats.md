@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/db/db.types.ts](../README.md) / CricketStats
 
@@ -18,7 +18,7 @@ Aggregated statistics for a player's Cricket game history.
 
 Defined in: [db/db.types.ts:55](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L55)
 
----
+***
 
 ### gamesPlayed
 
@@ -26,7 +26,7 @@ Defined in: [db/db.types.ts:55](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:52](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L52)
 
----
+***
 
 ### mpr
 
@@ -34,7 +34,7 @@ Defined in: [db/db.types.ts:52](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:54](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L54)
 
----
+***
 
 ### wins
 

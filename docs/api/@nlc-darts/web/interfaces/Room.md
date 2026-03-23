@@ -1,67 +1,67 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / Room
 
 # Interface: Room
 
-Defined in: [store/online.types.ts:22](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L22)
+Defined in: [store/online.types.ts:28](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L28)
 
 A multiplayer game room record.
 
 ## Properties
 
-### created_at
+### created\_at
 
-> **created_at**: `string`
+> **created\_at**: `string`
 
-Defined in: [store/online.types.ts:29](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L29)
+Defined in: [store/online.types.ts:35](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L35)
 
----
+***
 
-### game_options
+### game\_options
 
-> **game_options**: `unknown`
+> **game\_options**: `unknown`
 
-Defined in: [store/online.types.ts:28](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L28)
+Defined in: [store/online.types.ts:34](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L34)
 
----
+***
 
-### game_type
+### game\_type
 
-> **game_type**: [`OnlineGameType`](../type-aliases/OnlineGameType.md)
+> **game\_type**: [`OnlineGameType`](../type-aliases/OnlineGameType.md)
 
-Defined in: [store/online.types.ts:27](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L27)
+Defined in: [store/online.types.ts:33](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L33)
 
----
+***
 
-### guest_id
+### guest\_id
 
-> **guest_id**: `string` \| `null`
+> **guest\_id**: `string` \| `null`
 
-Defined in: [store/online.types.ts:25](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L25)
+Defined in: [store/online.types.ts:31](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L31)
 
----
+***
 
-### host_id
+### host\_id
 
-> **host_id**: `string`
+> **host\_id**: `string`
 
-Defined in: [store/online.types.ts:24](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L24)
+Defined in: [store/online.types.ts:30](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L30)
 
----
+***
 
 ### id
 
 > **id**: `string`
 
-Defined in: [store/online.types.ts:23](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L23)
+Defined in: [store/online.types.ts:29](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L29)
 
----
+***
 
 ### status
 
 > **status**: [`RoomStatus`](../type-aliases/RoomStatus.md)
 
-Defined in: [store/online.types.ts:26](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L26)
+Defined in: [store/online.types.ts:32](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L32)

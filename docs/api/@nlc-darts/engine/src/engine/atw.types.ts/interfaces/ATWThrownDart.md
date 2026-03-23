@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/atw.types.ts](../README.md) / ATWThrownDart
 
@@ -20,7 +20,7 @@ Defined in: [engine/atw.types.ts:30](https://github.com/keenanlk/granboard-clien
 
 Number of positions advanced (0 if miss)
 
----
+***
 
 ### hit
 
@@ -30,7 +30,7 @@ Defined in: [engine/atw.types.ts:28](https://github.com/keenanlk/granboard-clien
 
 true if the dart hit the current target
 
----
+***
 
 ### previousTargetIndex
 
@@ -40,7 +40,7 @@ Defined in: [engine/atw.types.ts:32](https://github.com/keenanlk/granboard-clien
 
 targetIndex before this dart was thrown (for undo)
 
----
+***
 
 ### segment
 

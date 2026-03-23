@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/highScore.types.ts](../README.md) / HighScorePlayer
 
@@ -18,7 +18,7 @@ A player's state in a High Score game.
 
 Defined in: [engine/highScore.types.ts:27](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L27)
 
----
+***
 
 ### rounds
 
@@ -34,7 +34,7 @@ Defined in: [engine/highScore.types.ts:29](https://github.com/keenanlk/granboard
 
 > **score**: `number`
 
----
+***
 
 ### score
 

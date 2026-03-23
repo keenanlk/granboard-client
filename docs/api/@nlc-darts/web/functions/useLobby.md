@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / useLobby
 
@@ -32,7 +32,7 @@ Manages lobby lifecycle: auto-expire invites, countdown timers.
 
 ### connectionStatus
 
-> **connectionStatus**: `ConnectionStatus`
+> **connectionStatus**: [`ConnectionStatus`](../type-aliases/ConnectionStatus.md)
 
 ### currentRoom
 
@@ -70,13 +70,7 @@ Manages lobby lifecycle: auto-expire invites, countdown timers.
 
 ### goOnline
 
-> **goOnline**: (`displayName`) => `Promise`\<`void`\>
-
-#### Parameters
-
-##### displayName
-
-`string`
+> **goOnline**: () => `Promise`\<`void`\>
 
 #### Returns
 

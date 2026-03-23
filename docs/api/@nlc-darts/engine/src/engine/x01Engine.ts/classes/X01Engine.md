@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/x01Engine.ts](../README.md) / X01Engine
 
@@ -52,7 +52,7 @@ Apply a dart throw. Returns only the fields that changed.
 
 [`GameEngine`](../../GameEngine.ts/interfaces/GameEngine.md).[`addDart`](../../GameEngine.ts/interfaces/GameEngine.md#adddart)
 
----
+***
 
 ### nextTurn()
 
@@ -76,7 +76,7 @@ Commit the current player's turn and advance to the next player. Returns only th
 
 [`GameEngine`](../../GameEngine.ts/interfaces/GameEngine.md).[`nextTurn`](../../GameEngine.ts/interfaces/GameEngine.md#nextturn)
 
----
+***
 
 ### startGame()
 
@@ -104,7 +104,7 @@ Create fresh initial state for a new game.
 
 [`GameEngine`](../../GameEngine.ts/interfaces/GameEngine.md).[`startGame`](../../GameEngine.ts/interfaces/GameEngine.md#startgame)
 
----
+***
 
 ### undoLastDart()
 

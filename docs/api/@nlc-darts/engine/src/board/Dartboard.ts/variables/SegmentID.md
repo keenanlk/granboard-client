@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/board/Dartboard.ts](../README.md) / SegmentID
 
@@ -22,334 +22,334 @@ Numeric identifiers for every dartboard segment (inner, outer, triple, double fo
 
 > `readonly` **BUST**: `83` = `83`
 
-### DBL_1
+### DBL\_1
 
-> `readonly` **DBL_1**: `3` = `3`
+> `readonly` **DBL\_1**: `3` = `3`
 
-### DBL_10
+### DBL\_10
 
-> `readonly` **DBL_10**: `39` = `39`
+> `readonly` **DBL\_10**: `39` = `39`
 
-### DBL_11
+### DBL\_11
 
-> `readonly` **DBL_11**: `43` = `43`
+> `readonly` **DBL\_11**: `43` = `43`
 
-### DBL_12
+### DBL\_12
 
-> `readonly` **DBL_12**: `47` = `47`
+> `readonly` **DBL\_12**: `47` = `47`
 
-### DBL_13
+### DBL\_13
 
-> `readonly` **DBL_13**: `51` = `51`
+> `readonly` **DBL\_13**: `51` = `51`
 
-### DBL_14
+### DBL\_14
 
-> `readonly` **DBL_14**: `55` = `55`
+> `readonly` **DBL\_14**: `55` = `55`
 
-### DBL_15
+### DBL\_15
 
-> `readonly` **DBL_15**: `59` = `59`
+> `readonly` **DBL\_15**: `59` = `59`
 
-### DBL_16
+### DBL\_16
 
-> `readonly` **DBL_16**: `63` = `63`
+> `readonly` **DBL\_16**: `63` = `63`
 
-### DBL_17
+### DBL\_17
 
-> `readonly` **DBL_17**: `67` = `67`
+> `readonly` **DBL\_17**: `67` = `67`
 
-### DBL_18
+### DBL\_18
 
-> `readonly` **DBL_18**: `71` = `71`
+> `readonly` **DBL\_18**: `71` = `71`
 
-### DBL_19
+### DBL\_19
 
-> `readonly` **DBL_19**: `75` = `75`
+> `readonly` **DBL\_19**: `75` = `75`
 
-### DBL_2
+### DBL\_2
 
-> `readonly` **DBL_2**: `7` = `7`
+> `readonly` **DBL\_2**: `7` = `7`
 
-### DBL_20
+### DBL\_20
 
-> `readonly` **DBL_20**: `79` = `79`
+> `readonly` **DBL\_20**: `79` = `79`
 
-### DBL_3
+### DBL\_3
 
-> `readonly` **DBL_3**: `11` = `11`
+> `readonly` **DBL\_3**: `11` = `11`
 
-### DBL_4
+### DBL\_4
 
-> `readonly` **DBL_4**: `15` = `15`
+> `readonly` **DBL\_4**: `15` = `15`
 
-### DBL_5
+### DBL\_5
 
-> `readonly` **DBL_5**: `19` = `19`
+> `readonly` **DBL\_5**: `19` = `19`
 
-### DBL_6
+### DBL\_6
 
-> `readonly` **DBL_6**: `23` = `23`
+> `readonly` **DBL\_6**: `23` = `23`
 
-### DBL_7
+### DBL\_7
 
-> `readonly` **DBL_7**: `27` = `27`
+> `readonly` **DBL\_7**: `27` = `27`
 
-### DBL_8
+### DBL\_8
 
-> `readonly` **DBL_8**: `31` = `31`
+> `readonly` **DBL\_8**: `31` = `31`
 
-### DBL_9
+### DBL\_9
 
-> `readonly` **DBL_9**: `35` = `35`
+> `readonly` **DBL\_9**: `35` = `35`
 
-### DBL_BULL
+### DBL\_BULL
 
-> `readonly` **DBL_BULL**: `81` = `81`
+> `readonly` **DBL\_BULL**: `81` = `81`
 
-### INNER_1
+### INNER\_1
 
-> `readonly` **INNER_1**: `0` = `0`
+> `readonly` **INNER\_1**: `0` = `0`
 
-### INNER_10
+### INNER\_10
 
-> `readonly` **INNER_10**: `36` = `36`
+> `readonly` **INNER\_10**: `36` = `36`
 
-### INNER_11
+### INNER\_11
 
-> `readonly` **INNER_11**: `40` = `40`
+> `readonly` **INNER\_11**: `40` = `40`
 
-### INNER_12
+### INNER\_12
 
-> `readonly` **INNER_12**: `44` = `44`
+> `readonly` **INNER\_12**: `44` = `44`
 
-### INNER_13
+### INNER\_13
 
-> `readonly` **INNER_13**: `48` = `48`
+> `readonly` **INNER\_13**: `48` = `48`
 
-### INNER_14
+### INNER\_14
 
-> `readonly` **INNER_14**: `52` = `52`
+> `readonly` **INNER\_14**: `52` = `52`
 
-### INNER_15
+### INNER\_15
 
-> `readonly` **INNER_15**: `56` = `56`
+> `readonly` **INNER\_15**: `56` = `56`
 
-### INNER_16
+### INNER\_16
 
-> `readonly` **INNER_16**: `60` = `60`
+> `readonly` **INNER\_16**: `60` = `60`
 
-### INNER_17
+### INNER\_17
 
-> `readonly` **INNER_17**: `64` = `64`
+> `readonly` **INNER\_17**: `64` = `64`
 
-### INNER_18
+### INNER\_18
 
-> `readonly` **INNER_18**: `68` = `68`
+> `readonly` **INNER\_18**: `68` = `68`
 
-### INNER_19
+### INNER\_19
 
-> `readonly` **INNER_19**: `72` = `72`
+> `readonly` **INNER\_19**: `72` = `72`
 
-### INNER_2
+### INNER\_2
 
-> `readonly` **INNER_2**: `4` = `4`
+> `readonly` **INNER\_2**: `4` = `4`
 
-### INNER_20
+### INNER\_20
 
-> `readonly` **INNER_20**: `76` = `76`
+> `readonly` **INNER\_20**: `76` = `76`
 
-### INNER_3
+### INNER\_3
 
-> `readonly` **INNER_3**: `8` = `8`
+> `readonly` **INNER\_3**: `8` = `8`
 
-### INNER_4
+### INNER\_4
 
-> `readonly` **INNER_4**: `12` = `12`
+> `readonly` **INNER\_4**: `12` = `12`
 
-### INNER_5
+### INNER\_5
 
-> `readonly` **INNER_5**: `16` = `16`
+> `readonly` **INNER\_5**: `16` = `16`
 
-### INNER_6
+### INNER\_6
 
-> `readonly` **INNER_6**: `20` = `20`
+> `readonly` **INNER\_6**: `20` = `20`
 
-### INNER_7
+### INNER\_7
 
-> `readonly` **INNER_7**: `24` = `24`
+> `readonly` **INNER\_7**: `24` = `24`
 
-### INNER_8
+### INNER\_8
 
-> `readonly` **INNER_8**: `28` = `28`
+> `readonly` **INNER\_8**: `28` = `28`
 
-### INNER_9
+### INNER\_9
 
-> `readonly` **INNER_9**: `32` = `32`
+> `readonly` **INNER\_9**: `32` = `32`
 
 ### MISS
 
 > `readonly` **MISS**: `82` = `82`
 
-### OUTER_1
+### OUTER\_1
 
-> `readonly` **OUTER_1**: `2` = `2`
+> `readonly` **OUTER\_1**: `2` = `2`
 
-### OUTER_10
+### OUTER\_10
 
-> `readonly` **OUTER_10**: `38` = `38`
+> `readonly` **OUTER\_10**: `38` = `38`
 
-### OUTER_11
+### OUTER\_11
 
-> `readonly` **OUTER_11**: `42` = `42`
+> `readonly` **OUTER\_11**: `42` = `42`
 
-### OUTER_12
+### OUTER\_12
 
-> `readonly` **OUTER_12**: `46` = `46`
+> `readonly` **OUTER\_12**: `46` = `46`
 
-### OUTER_13
+### OUTER\_13
 
-> `readonly` **OUTER_13**: `50` = `50`
+> `readonly` **OUTER\_13**: `50` = `50`
 
-### OUTER_14
+### OUTER\_14
 
-> `readonly` **OUTER_14**: `54` = `54`
+> `readonly` **OUTER\_14**: `54` = `54`
 
-### OUTER_15
+### OUTER\_15
 
-> `readonly` **OUTER_15**: `58` = `58`
+> `readonly` **OUTER\_15**: `58` = `58`
 
-### OUTER_16
+### OUTER\_16
 
-> `readonly` **OUTER_16**: `62` = `62`
+> `readonly` **OUTER\_16**: `62` = `62`
 
-### OUTER_17
+### OUTER\_17
 
-> `readonly` **OUTER_17**: `66` = `66`
+> `readonly` **OUTER\_17**: `66` = `66`
 
-### OUTER_18
+### OUTER\_18
 
-> `readonly` **OUTER_18**: `70` = `70`
+> `readonly` **OUTER\_18**: `70` = `70`
 
-### OUTER_19
+### OUTER\_19
 
-> `readonly` **OUTER_19**: `74` = `74`
+> `readonly` **OUTER\_19**: `74` = `74`
 
-### OUTER_2
+### OUTER\_2
 
-> `readonly` **OUTER_2**: `6` = `6`
+> `readonly` **OUTER\_2**: `6` = `6`
 
-### OUTER_20
+### OUTER\_20
 
-> `readonly` **OUTER_20**: `78` = `78`
+> `readonly` **OUTER\_20**: `78` = `78`
 
-### OUTER_3
+### OUTER\_3
 
-> `readonly` **OUTER_3**: `10` = `10`
+> `readonly` **OUTER\_3**: `10` = `10`
 
-### OUTER_4
+### OUTER\_4
 
-> `readonly` **OUTER_4**: `14` = `14`
+> `readonly` **OUTER\_4**: `14` = `14`
 
-### OUTER_5
+### OUTER\_5
 
-> `readonly` **OUTER_5**: `18` = `18`
+> `readonly` **OUTER\_5**: `18` = `18`
 
-### OUTER_6
+### OUTER\_6
 
-> `readonly` **OUTER_6**: `22` = `22`
+> `readonly` **OUTER\_6**: `22` = `22`
 
-### OUTER_7
+### OUTER\_7
 
-> `readonly` **OUTER_7**: `26` = `26`
+> `readonly` **OUTER\_7**: `26` = `26`
 
-### OUTER_8
+### OUTER\_8
 
-> `readonly` **OUTER_8**: `30` = `30`
+> `readonly` **OUTER\_8**: `30` = `30`
 
-### OUTER_9
+### OUTER\_9
 
-> `readonly` **OUTER_9**: `34` = `34`
+> `readonly` **OUTER\_9**: `34` = `34`
 
-### RESET_BUTTON
+### RESET\_BUTTON
 
-> `readonly` **RESET_BUTTON**: `84` = `84`
+> `readonly` **RESET\_BUTTON**: `84` = `84`
 
-### TRP_1
+### TRP\_1
 
-> `readonly` **TRP_1**: `1` = `1`
+> `readonly` **TRP\_1**: `1` = `1`
 
-### TRP_10
+### TRP\_10
 
-> `readonly` **TRP_10**: `37` = `37`
+> `readonly` **TRP\_10**: `37` = `37`
 
-### TRP_11
+### TRP\_11
 
-> `readonly` **TRP_11**: `41` = `41`
+> `readonly` **TRP\_11**: `41` = `41`
 
-### TRP_12
+### TRP\_12
 
-> `readonly` **TRP_12**: `45` = `45`
+> `readonly` **TRP\_12**: `45` = `45`
 
-### TRP_13
+### TRP\_13
 
-> `readonly` **TRP_13**: `49` = `49`
+> `readonly` **TRP\_13**: `49` = `49`
 
-### TRP_14
+### TRP\_14
 
-> `readonly` **TRP_14**: `53` = `53`
+> `readonly` **TRP\_14**: `53` = `53`
 
-### TRP_15
+### TRP\_15
 
-> `readonly` **TRP_15**: `57` = `57`
+> `readonly` **TRP\_15**: `57` = `57`
 
-### TRP_16
+### TRP\_16
 
-> `readonly` **TRP_16**: `61` = `61`
+> `readonly` **TRP\_16**: `61` = `61`
 
-### TRP_17
+### TRP\_17
 
-> `readonly` **TRP_17**: `65` = `65`
+> `readonly` **TRP\_17**: `65` = `65`
 
-### TRP_18
+### TRP\_18
 
-> `readonly` **TRP_18**: `69` = `69`
+> `readonly` **TRP\_18**: `69` = `69`
 
-### TRP_19
+### TRP\_19
 
-> `readonly` **TRP_19**: `73` = `73`
+> `readonly` **TRP\_19**: `73` = `73`
 
-### TRP_2
+### TRP\_2
 
-> `readonly` **TRP_2**: `5` = `5`
+> `readonly` **TRP\_2**: `5` = `5`
 
-### TRP_20
+### TRP\_20
 
-> `readonly` **TRP_20**: `77` = `77`
+> `readonly` **TRP\_20**: `77` = `77`
 
-### TRP_3
+### TRP\_3
 
-> `readonly` **TRP_3**: `9` = `9`
+> `readonly` **TRP\_3**: `9` = `9`
 
-### TRP_4
+### TRP\_4
 
-> `readonly` **TRP_4**: `13` = `13`
+> `readonly` **TRP\_4**: `13` = `13`
 
-### TRP_5
+### TRP\_5
 
-> `readonly` **TRP_5**: `17` = `17`
+> `readonly` **TRP\_5**: `17` = `17`
 
-### TRP_6
+### TRP\_6
 
-> `readonly` **TRP_6**: `21` = `21`
+> `readonly` **TRP\_6**: `21` = `21`
 
-### TRP_7
+### TRP\_7
 
-> `readonly` **TRP_7**: `25` = `25`
+> `readonly` **TRP\_7**: `25` = `25`
 
-### TRP_8
+### TRP\_8
 
-> `readonly` **TRP_8**: `29` = `29`
+> `readonly` **TRP\_8**: `29` = `29`
 
-### TRP_9
+### TRP\_9
 
-> `readonly` **TRP_9**: `33` = `33`
+> `readonly` **TRP\_9**: `33` = `33`

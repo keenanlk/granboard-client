@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Merge coverage JSON from all workspaces into a single report.
-# Run: pnpm test:coverage:combined
 
 set -e
 
@@ -10,17 +9,24 @@ MERGED="$ROOT/.nyc_output"
 rm -rf "$MERGED" "$ROOT/coverage"
 mkdir -p "$MERGED"
 
-# Copy each workspace's coverage-final.json with a unique name
-for dir in packages/engine apps/web apps/server; do
-  json="$ROOT/$dir/coverage/coverage-final.json"
+# Find all workspace coverage-final.json files dynamically
+found=0
+for json in "$ROOT"/packages/*/coverage/coverage-final.json "$ROOT"/apps/*/coverage/coverage-final.json; do
   if [ -f "$json" ]; then
+    # Derive a unique name from the workspace path
+    dir="${json#"$ROOT"/}"
+    dir="${dir%/coverage/coverage-final.json}"
     name=$(echo "$dir" | tr '/' '-')
     cp "$json" "$MERGED/$name.json"
     echo "✓ Copied $dir coverage"
-  else
-    echo "⚠ No coverage found for $dir"
+    found=$((found + 1))
   fi
 done
+
+if [ "$found" -eq 0 ]; then
+  echo "⚠ No coverage files found"
+  exit 0
+fi
 
 # Generate merged report
 cd "$ROOT"

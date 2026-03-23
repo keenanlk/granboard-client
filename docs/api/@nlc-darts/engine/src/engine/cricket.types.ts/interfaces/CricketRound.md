@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/cricket.types.ts](../README.md) / CricketRound
 
@@ -26,7 +26,7 @@ Defined in: [engine/cricket.types.ts:41](https://github.com/keenanlk/granboard-c
 
 > **value**: `number`
 
----
+***
 
 ### marksEarned
 
@@ -34,7 +34,7 @@ Defined in: [engine/cricket.types.ts:41](https://github.com/keenanlk/granboard-c
 
 Defined in: [engine/cricket.types.ts:40](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L40)
 
----
+***
 
 ### score
 

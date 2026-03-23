@@ -1,12 +1,12 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
-[Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/board/BoardGeometry.ts](../README.md) / RING_RADII
+[Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/board/BoardGeometry.ts](../README.md) / RING\_RADII
 
-# Variable: RING_RADII
+# Variable: RING\_RADII
 
-> `const` **RING_RADII**: `object`
+> `const` **RING\_RADII**: `object`
 
 Defined in: [board/BoardGeometry.ts:19](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/board/BoardGeometry.ts#L19)
 

@@ -26,7 +26,7 @@ export function activeRoomCount(): number {
 }
 
 /** Options passed when creating a game room. */
-interface RoomCreateOptions {
+export interface RoomCreateOptions {
   /** Game-specific options blob, parsed by each room subclass. */
   gameOptions: unknown;
   /** Display names for each player, ordered by seat index. */

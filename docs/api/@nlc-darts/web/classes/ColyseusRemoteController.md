@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / ColyseusRemoteController
 
@@ -58,7 +58,7 @@ Handle a dart landing on a board segment.
 
 [`GameController`](../interfaces/GameController.md).[`onDartHit`](../interfaces/GameController.md#ondarthit)
 
----
+***
 
 ### onNextTurn()
 
@@ -76,7 +76,7 @@ Advance to the next player's turn.
 
 [`GameController`](../interfaces/GameController.md).[`onNextTurn`](../interfaces/GameController.md#onnextturn)
 
----
+***
 
 ### sendUndo()
 

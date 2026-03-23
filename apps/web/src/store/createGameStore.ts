@@ -14,6 +14,11 @@ export interface GameStoreActions<TState, TOptions> {
   restoreState: (saved: TState & { undoStack: TState[] }) => void;
 }
 
+/** Full Zustand store state: game state + undo stack + standard actions. */
+export type FullState<TState, TOptions> = TState & {
+  undoStack: TState[];
+} & GameStoreActions<TState, TOptions>;
+
 /**
  * Creates a Zustand game store wired to a GameEngine.
  *
@@ -24,14 +29,11 @@ export function createGameStore<TState extends object, TOptions>(
   engine: GameEngine<TState, TOptions>,
   defaultState: TState,
 ) {
-  type FullState = TState & { undoStack: TState[] } & GameStoreActions<
-      TState,
-      TOptions
-    >;
+  type Store = FullState<TState, TOptions>;
 
   const stateKeys = Object.keys(defaultState);
 
-  function extractSnapshot(s: FullState): TState {
+  function extractSnapshot(s: Store): TState {
     const snapshot: Record<string, unknown> = {};
     for (const key of stateKeys)
       snapshot[key] = (s as Record<string, unknown>)[key];
@@ -40,7 +42,7 @@ export function createGameStore<TState extends object, TOptions>(
 
   const DEFAULT_STATE = { ...defaultState, undoStack: [] as TState[] };
 
-  return create<FullState>()(
+  return create<Store>()(
     (set, get) =>
       ({
         ...DEFAULT_STATE,
@@ -49,14 +51,14 @@ export function createGameStore<TState extends object, TOptions>(
           set({
             ...engine.startGame(options, playerNames),
             undoStack: [],
-          } as Partial<FullState>),
+          } as Partial<Store>),
 
         addDart: (segment: Segment) =>
           set((s) => {
             const snapshot = extractSnapshot(s);
             const undoStack = [...s.undoStack, snapshot].slice(-UNDO_CAP);
             const updates = engine.addDart(s as unknown as TState, segment);
-            return { ...updates, undoStack } as Partial<FullState>;
+            return { ...updates, undoStack } as Partial<Store>;
           }),
 
         undoLastDart: () =>
@@ -66,7 +68,7 @@ export function createGameStore<TState extends object, TOptions>(
             return {
               ...prev,
               undoStack: s.undoStack.slice(0, -1),
-            } as Partial<FullState>;
+            } as Partial<Store>;
           }),
 
         nextTurn: () =>
@@ -74,17 +76,17 @@ export function createGameStore<TState extends object, TOptions>(
             const snapshot = extractSnapshot(s);
             const undoStack = [...s.undoStack, snapshot].slice(-UNDO_CAP);
             const updates = engine.nextTurn(s as unknown as TState);
-            return { ...updates, undoStack } as Partial<FullState>;
+            return { ...updates, undoStack } as Partial<Store>;
           }),
 
-        resetGame: () => set(DEFAULT_STATE as Partial<FullState>),
+        resetGame: () => set(DEFAULT_STATE as Partial<Store>),
 
         getSerializableState: () => {
           const s = get();
           return { ...extractSnapshot(s), undoStack: s.undoStack };
         },
 
-        restoreState: (saved) => set(saved as Partial<FullState>),
-      }) as FullState,
+        restoreState: (saved) => set(saved as Partial<Store>),
+      }) as Store,
   );
 }

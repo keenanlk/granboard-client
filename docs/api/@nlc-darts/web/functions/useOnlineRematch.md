@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / useOnlineRematch
 
@@ -17,7 +17,7 @@ Returns the current rematch state and actions.
 
 ### onlineConfig
 
-`OnlineConfig` \| `undefined`
+[`OnlineConfig`](../interfaces/OnlineConfig.md) \| `undefined`
 
 ## Returns
 

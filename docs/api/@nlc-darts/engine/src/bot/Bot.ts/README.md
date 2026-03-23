@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../README.md) / [@nlc-darts/engine](../../../README.md) / src/bot/Bot.ts
 
@@ -16,7 +16,7 @@
 
 Re-exports [BotSkill](../bot.types.ts/variables/BotSkill.md)
 
----
+***
 
 ### BotSkillType
 

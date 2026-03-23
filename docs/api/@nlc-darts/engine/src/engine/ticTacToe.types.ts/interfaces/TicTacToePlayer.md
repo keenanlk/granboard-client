@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/ticTacToe.types.ts](../README.md) / TicTacToePlayer
 
@@ -18,7 +18,7 @@ A player's state in a Tic-Tac-Toe game.
 
 Defined in: [engine/ticTacToe.types.ts:27](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L27)
 
----
+***
 
 ### marks
 
@@ -26,7 +26,7 @@ Defined in: [engine/ticTacToe.types.ts:27](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:26](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L26)
 
----
+***
 
 ### name
 
@@ -34,7 +34,7 @@ Defined in: [engine/ticTacToe.types.ts:26](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:25](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L25)
 
----
+***
 
 ### rounds
 

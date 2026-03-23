@@ -1,6 +1,6 @@
 [**Documentation**](../../../../README.md)
 
----
+***
 
 [Documentation](../../../../README.md) / [@nlc-darts/server](../../README.md) / [messages](../README.md) / ClientMessage
 
@@ -14,38 +14,80 @@ Client → Server action types
 
 ## Type Declaration
 
-### CAMERA_STATUS
+### CAMERA\_STATUS
 
-> `readonly` **CAMERA_STATUS**: `"camera_status"` = `"camera_status"`
+> `readonly` **CAMERA\_STATUS**: `"camera_status"` = `"camera_status"`
 
 Notifies opponent whether this player's camera is active.
 
-### DART_HIT
+### CREATE\_TOURNAMENT
 
-> `readonly` **DART_HIT**: `"dart_hit"` = `"dart_hit"`
+> `readonly` **CREATE\_TOURNAMENT**: `"create_tournament"` = `"create_tournament"`
 
-### NEXT_TURN
+### DART\_HIT
 
-> `readonly` **NEXT_TURN**: `"next_turn"` = `"next_turn"`
+> `readonly` **DART\_HIT**: `"dart_hit"` = `"dart_hit"`
 
-### REMATCH_ACCEPT
+### MATCH\_GAME\_RESULT
 
-> `readonly` **REMATCH_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
+> `readonly` **MATCH\_GAME\_RESULT**: `"match_game_result"` = `"match_game_result"`
 
-### REMATCH_DECLINE
+### MATCH\_GAME\_ROOM\_READY
 
-> `readonly` **REMATCH_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
+> `readonly` **MATCH\_GAME\_ROOM\_READY**: `"match_game_room_ready"` = `"match_game_room_ready"`
 
-### REMATCH_REQUEST
+### NEXT\_TURN
 
-> `readonly` **REMATCH_REQUEST**: `"rematch_request"` = `"rematch_request"`
+> `readonly` **NEXT\_TURN**: `"next_turn"` = `"next_turn"`
+
+### READY\_FOR\_MATCH
+
+> `readonly` **READY\_FOR\_MATCH**: `"ready_for_match"` = `"ready_for_match"`
+
+### RECORD\_RESULT
+
+> `readonly` **RECORD\_RESULT**: `"record_result"` = `"record_result"`
+
+### REGISTER\_PLAYER
+
+> `readonly` **REGISTER\_PLAYER**: `"register_player"` = `"register_player"`
+
+### REMATCH
+
+> `readonly` **REMATCH**: `"rematch"` = `"rematch"`
+
+Resets the game state for a rematch within the same room.
+
+### REMATCH\_ACCEPT
+
+> `readonly` **REMATCH\_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
+
+### REMATCH\_DECLINE
+
+> `readonly` **REMATCH\_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
+
+### REMATCH\_REQUEST
+
+> `readonly` **REMATCH\_REQUEST**: `"rematch_request"` = `"rematch_request"`
+
+### START\_TOURNAMENT
+
+> `readonly` **START\_TOURNAMENT**: `"start_tournament"` = `"start_tournament"`
 
 ### UNDO
 
 > `readonly` **UNDO**: `"undo"` = `"undo"`
 
-### WEBRTC_SIGNAL
+### UNREADY\_FOR\_MATCH
 
-> `readonly` **WEBRTC_SIGNAL**: `"webrtc_signal"` = `"webrtc_signal"`
+> `readonly` **UNREADY\_FOR\_MATCH**: `"unready_for_match"` = `"unready_for_match"`
+
+### UNREGISTER\_PLAYER
+
+> `readonly` **UNREGISTER\_PLAYER**: `"unregister_player"` = `"unregister_player"`
+
+### WEBRTC\_SIGNAL
+
+> `readonly` **WEBRTC\_SIGNAL**: `"webrtc_signal"` = `"webrtc_signal"`
 
 WebRTC SDP offer/answer relayed between peers for camera streaming.

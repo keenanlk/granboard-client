@@ -1,6 +1,6 @@
 [**Documentation**](../../README.md)
 
----
+***
 
 [Documentation](../../README.md) / @nlc-darts/engine
 
@@ -33,6 +33,7 @@
 - [src/engine/ticTacToeEngine.ts](src/engine/ticTacToeEngine.ts/README.md)
 - [src/engine/x01.types.ts](src/engine/x01.types.ts/README.md)
 - [src/engine/x01Engine.ts](src/engine/x01Engine.ts/README.md)
+- [src/grading/grading.ts](src/grading/grading.ts/README.md)
 - [src/index.ts](src/index.ts/README.md)
 - [src/lib/awards.ts](src/lib/awards.ts/README.md)
 - [src/lib/setTypes.ts](src/lib/setTypes.ts/README.md)

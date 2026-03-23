@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/db/db.types.ts](../README.md) / X01Stats
 
@@ -18,7 +18,7 @@ Aggregated statistics for a player's X01 game history.
 
 Defined in: [db/db.types.ts:46](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L46)
 
----
+***
 
 ### bestRound
 
@@ -26,7 +26,7 @@ Defined in: [db/db.types.ts:46](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:47](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L47)
 
----
+***
 
 ### gamesPlayed
 
@@ -34,7 +34,7 @@ Defined in: [db/db.types.ts:47](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:43](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L43)
 
----
+***
 
 ### ppd
 
@@ -42,7 +42,7 @@ Defined in: [db/db.types.ts:43](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:45](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L45)
 
----
+***
 
 ### wins
 

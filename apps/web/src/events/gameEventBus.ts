@@ -1,8 +1,8 @@
 import type { GameEventMap } from "./GameEvents.ts";
 
-type Handler<T> = (payload: T) => void;
+export type Handler<T> = (payload: T) => void;
 
-class EventBus<EventMap extends Record<string, unknown>> {
+export class EventBus<EventMap extends Record<string, unknown>> {
   private listeners = new Map<string, Set<Handler<unknown>>>();
 
   on<K extends keyof EventMap & string>(

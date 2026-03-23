@@ -1,14 +1,14 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / createGameStore
 
 # Function: createGameStore()
 
-> **createGameStore**\<`TState`, `TOptions`\>(`engine`, `defaultState`): `UseBoundStore`\<`StoreApi`\<`FullState`\>\>
+> **createGameStore**\<`TState`, `TOptions`\>(`engine`, `defaultState`): `UseBoundStore`\<`StoreApi`\<[`FullState`](../type-aliases/FullState.md)\<`TState`, `TOptions`\>\>\>
 
-Defined in: [store/createGameStore.ts:23](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/createGameStore.ts#L23)
+Defined in: [store/createGameStore.ts:28](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/createGameStore.ts#L28)
 
 Creates a Zustand game store wired to a GameEngine.
 
@@ -19,7 +19,7 @@ individual stores only need to supply their engine + default state.
 
 ### TState
 
-`TState` _extends_ `object`
+`TState` *extends* `object`
 
 ### TOptions
 
@@ -37,4 +37,4 @@ individual stores only need to supply their engine + default state.
 
 ## Returns
 
-`UseBoundStore`\<`StoreApi`\<`FullState`\>\>
+`UseBoundStore`\<`StoreApi`\<[`FullState`](../type-aliases/FullState.md)\<`TState`, `TOptions`\>\>\>

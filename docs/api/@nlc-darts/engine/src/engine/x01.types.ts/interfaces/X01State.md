@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/x01.types.ts](../README.md) / X01State
 
@@ -18,7 +18,7 @@ Complete mutable state for an X01 game in progress.
 
 Defined in: [engine/x01.types.ts:52](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L52)
 
----
+***
 
 ### currentRoundDarts
 
@@ -26,7 +26,7 @@ Defined in: [engine/x01.types.ts:52](https://github.com/keenanlk/granboard-clien
 
 Defined in: [engine/x01.types.ts:53](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L53)
 
----
+***
 
 ### isBust
 
@@ -34,7 +34,7 @@ Defined in: [engine/x01.types.ts:53](https://github.com/keenanlk/granboard-clien
 
 Defined in: [engine/x01.types.ts:58](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L58)
 
----
+***
 
 ### players
 
@@ -42,7 +42,7 @@ Defined in: [engine/x01.types.ts:58](https://github.com/keenanlk/granboard-clien
 
 Defined in: [engine/x01.types.ts:51](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L51)
 
----
+***
 
 ### turnStartOpened
 
@@ -52,7 +52,7 @@ Defined in: [engine/x01.types.ts:57](https://github.com/keenanlk/granboard-clien
 
 Opened state of each player at the start of the current turn — used for undo.
 
----
+***
 
 ### turnStartScores
 
@@ -62,7 +62,7 @@ Defined in: [engine/x01.types.ts:55](https://github.com/keenanlk/granboard-clien
 
 Score of each player at the start of the current turn — used to reset on bust.
 
----
+***
 
 ### winner
 
@@ -70,7 +70,7 @@ Score of each player at the start of the current turn — used to reset on bust.
 
 Defined in: [engine/x01.types.ts:59](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/x01.types.ts#L59)
 
----
+***
 
 ### x01Options
 

@@ -18,7 +18,7 @@ const FORWARDED_EVENTS: (keyof GameEventMap)[] = [
 ];
 
 /** Options for the {@link useOnlineSync} hook. */
-interface UseOnlineSyncOptions {
+export interface UseOnlineSyncOptions {
   /** Pass null/undefined for offline games — hook becomes a no-op */
   onlineConfig: OnlineConfig | null | undefined;
   getSerializableState: () => unknown;

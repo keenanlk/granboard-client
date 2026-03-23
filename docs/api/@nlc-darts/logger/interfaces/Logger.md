@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/logger](../README.md) / Logger
 
@@ -30,7 +30,7 @@ Create a child logger with additional bound context.
 
 `Logger`
 
----
+***
 
 ### debug()
 
@@ -54,7 +54,7 @@ Log a message at the debug level.
 
 `void`
 
----
+***
 
 ### error()
 
@@ -78,7 +78,7 @@ Log a message at the error level.
 
 `void`
 
----
+***
 
 ### info()
 
@@ -102,7 +102,7 @@ Log a message at the info level.
 
 `void`
 
----
+***
 
 ### warn()
 

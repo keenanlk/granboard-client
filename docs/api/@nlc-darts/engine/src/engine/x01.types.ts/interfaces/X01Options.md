@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/x01.types.ts](../README.md) / X01Options
 
@@ -20,7 +20,7 @@ Defined in: [engine/x01.types.ts:13](https://github.com/keenanlk/granboard-clien
 
 Must hit a double (or bull) before scoring begins. Default: false.
 
----
+***
 
 ### doubleOut
 
@@ -30,7 +30,7 @@ Defined in: [engine/x01.types.ts:9](https://github.com/keenanlk/granboard-client
 
 Final dart must be a double (or bull) to win. Default: false.
 
----
+***
 
 ### masterOut
 
@@ -40,7 +40,7 @@ Defined in: [engine/x01.types.ts:11](https://github.com/keenanlk/granboard-clien
 
 Final dart must be a double, triple, or bull to win. Default: false.
 
----
+***
 
 ### splitBull
 
@@ -50,7 +50,7 @@ Defined in: [engine/x01.types.ts:7](https://github.com/keenanlk/granboard-client
 
 When false (default), outer bull scores 50 same as double bull. When true, bulls are split (outer = 25, inner = 50).
 
----
+***
 
 ### startingScore
 

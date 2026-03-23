@@ -23,7 +23,11 @@ export { ColyseusRemoteController } from "./controllers/ColyseusRemoteController
 export { guardForOnlineTurn } from "./controllers/OnlineTurnGuard.js";
 
 // Stores
-export { createGameStore } from "./store/createGameStore.js";
+export {
+  createGameStore,
+  type FullState,
+  type GameStoreActions,
+} from "./store/createGameStore.js";
 export {
   type PlayerStatus,
   type RoomStatus,
@@ -33,6 +37,7 @@ export {
   type Room,
   type Invite,
 } from "./store/online.types.js";
+export { type OnlineConfig, type ConnectionStatus } from "./store/useOnlineStore.js";
 
 // Hooks
 export { useTurnDelay } from "./hooks/useTurnDelay.js";
@@ -44,12 +49,22 @@ export { useLobby } from "./hooks/useLobby.js";
 export { useAwardDetection } from "./hooks/useAwardDetection.js";
 export { useBoardWiring } from "./hooks/useBoardWiring.js";
 export { useBotTurn } from "./hooks/useBotTurn.js";
-export { useOnlineSync } from "./hooks/useOnlineSync.js";
-export { useColyseusSync } from "./hooks/useColyseusSync.js";
-export { useGameSession } from "./hooks/useGameSession.js";
+export {
+  useOnlineSync,
+  type UseOnlineSyncOptions,
+} from "./hooks/useOnlineSync.js";
+export {
+  useColyseusSync,
+  type UseColyseusSyncOptions,
+  type UseColyseusSyncReturn,
+} from "./hooks/useColyseusSync.js";
+export {
+  useGameSession,
+  type RoundExtract,
+} from "./hooks/useGameSession.js";
 
 // Events
-export { gameEventBus } from "./events/gameEventBus.js";
+export { gameEventBus, EventBus, type Handler } from "./events/gameEventBus.js";
 export { type GameEventMap } from "./events/GameEvents.js";
 
 // Board / BLE

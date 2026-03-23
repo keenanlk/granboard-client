@@ -1,14 +1,14 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / useColyseusSync
 
 # Function: useColyseusSync()
 
-> **useColyseusSync**(`__namedParameters`): `UseColyseusSyncReturn`
+> **useColyseusSync**(`__namedParameters`): [`UseColyseusSyncReturn`](../interfaces/UseColyseusSyncReturn.md)
 
-Defined in: [hooks/useColyseusSync.ts:52](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useColyseusSync.ts#L52)
+Defined in: [hooks/useColyseusSync.ts:67](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useColyseusSync.ts#L67)
 
 Manages a Colyseus room connection for online multiplayer state sync.
 
@@ -16,8 +16,8 @@ Manages a Colyseus room connection for online multiplayer state sync.
 
 ### \_\_namedParameters
 
-`UseColyseusSyncOptions`
+[`UseColyseusSyncOptions`](../interfaces/UseColyseusSyncOptions.md)
 
 ## Returns
 
-`UseColyseusSyncReturn`
+[`UseColyseusSyncReturn`](../interfaces/UseColyseusSyncReturn.md)

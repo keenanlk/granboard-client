@@ -30,7 +30,7 @@ export function setPendingColyseusRoom(room: Room) {
 }
 
 /** Options for the {@link useColyseusSync} hook. */
-interface UseColyseusSyncOptions {
+export interface UseColyseusSyncOptions {
   onlineConfig: OnlineConfig | null | undefined;
   restoreState: (state: unknown) => void;
   onGameEnded?: (winner: string) => void;
@@ -39,7 +39,7 @@ interface UseColyseusSyncOptions {
 }
 
 /** Return value from the {@link useColyseusSync} hook. */
-interface UseColyseusSyncReturn {
+export interface UseColyseusSyncReturn {
   room: Room | null;
   sendDart: (segmentId: number) => void;
   sendNextTurn: () => void;
