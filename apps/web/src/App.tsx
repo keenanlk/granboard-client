@@ -38,12 +38,21 @@ import type {
 import { OnlineLobbyScreen } from "./screens/OnlineLobbyScreen.tsx";
 import { OnlineSetupScreen } from "./screens/OnlineSetupScreen.tsx";
 import { AuthScreen } from "./screens/AuthScreen.tsx";
+import { OnlineChoiceScreen } from "./screens/OnlineChoiceScreen.tsx";
+import { TournamentHubScreen } from "./screens/TournamentHubScreen.tsx";
+import { CreateTournamentScreen } from "./screens/CreateTournamentScreen.tsx";
+import { BracketScreen } from "./screens/BracketScreen.tsx";
+import { MatchReadyModal } from "./components/tournament/MatchReadyModal.tsx";
+import { createOnlineTournament } from "./lib/tournamentApi.ts";
+import { createLocalTournament } from "./db/tournamentDb.ts";
 import { useOnlineStore } from "./store/useOnlineStore.ts";
 import { supabase } from "./lib/supabaseClient.ts";
 import type { OnlineGameType } from "./store/online.types.ts";
 import type { OnlineConfig } from "./store/useOnlineStore.ts";
 import { setPendingColyseusRoom } from "./hooks/useColyseusSync.ts";
+import { useTournamentRoom } from "./hooks/useTournamentRoom.ts";
 import { logger } from "./lib/logger.ts";
+import type { TournamentGameConfig } from "@nlc-darts/tournament";
 // Side-effect imports — activate sound and LED event subscriptions
 import "./sound/soundEffects.ts";
 import "./board/ledEffects.ts";
@@ -112,7 +121,11 @@ type Screen =
       playerIds: (string | null)[];
       botSkills: (BotSkill | null)[];
       restoredState?: unknown;
-    };
+    }
+  | { name: "online-choice" }
+  | { name: "tournament-hub" }
+  | { name: "create-tournament" }
+  | { name: "bracket"; tournamentId: string; isOnline: boolean };
 
 function formatTimeAgo(savedAt: number): string {
   const ago = Math.round((Date.now() - savedAt) / 60000);
@@ -187,6 +200,92 @@ function App() {
   const [screen, setScreen] = useState<Screen>({ name: "home" });
   const [rematchKey, setRematchKey] = useState(0);
   const [setMatch, setSetMatch] = useState<SetState | null>(null);
+  const [authedUserId, setAuthedUserId] = useState<string | null>(null);
+
+  // Tournament room (lifted to App level for global match alerts)
+  const tournamentRoom = useTournamentRoom();
+
+  // Tournament match context — tracks a best-of series during tournament play
+  const [tournamentMatch, setTournamentMatch] = useState<{
+    tournamentId: string;
+    matchId: number;
+    bestOf: string;
+    gameType: string;
+    gameSettings: TournamentGameConfig;
+    legResults: LegResult[];
+    playerNames: string[];
+    playerIds: string[];
+  } | null>(null);
+
+  // Connect tournament room when on tournament screens
+  useEffect(() => {
+    const inTournament = ["online-choice", "tournament-hub", "create-tournament", "bracket"].includes(screen.name);
+    if (inTournament && !tournamentRoom.connected) {
+      tournamentRoom.connect();
+    }
+    // Don't disconnect on screen change — keep alive for alerts
+  }, [screen.name, tournamentRoom.connected, tournamentRoom.connect]);
+
+  // Handle match_start from tournament room
+  useEffect(() => {
+    if (!tournamentRoom.matchStart) return;
+    const { matchId, playerNames, playerIds, gameSettings } = tournamentRoom.matchStart;
+    if (!gameSettings) return;
+
+    // Determine which tournament this is for (use bracket screen's tournamentId if on that screen)
+    const tid = screen.name === "bracket" ? (screen as { tournamentId: string }).tournamentId : "";
+
+    setTournamentMatch({
+      tournamentId: tid,
+      matchId,
+      bestOf: gameSettings.bestOf,
+      gameType: gameSettings.gameType,
+      gameSettings,
+      legResults: [],
+      playerNames,
+      playerIds,
+    });
+
+    // Navigate to the game
+    if (gameSettings.gameType === "x01" && gameSettings.x01Options) {
+      setScreen({
+        name: "game",
+        x01Options: gameSettings.x01Options,
+        playerNames,
+        playerIds: playerIds.map((id) => id),
+        botSkills: [null, null],
+      });
+    } else if (gameSettings.gameType === "cricket" && gameSettings.cricketOptions) {
+      setScreen({
+        name: "cricket",
+        options: gameSettings.cricketOptions,
+        playerNames,
+        playerIds: playerIds.map((id) => id),
+        botSkills: [null, null],
+      });
+    }
+
+    tournamentRoom.clearMatchStart();
+  }, [tournamentRoom.matchStart]);
+
+  // Resolve authed user ID when entering online flows
+  useEffect(() => {
+    if (
+      screen.name === "online-choice" ||
+      screen.name === "tournament-hub" ||
+      screen.name === "create-tournament" ||
+      screen.name === "bracket"
+    ) {
+      const storeId = useOnlineStore.getState().authUserId;
+      if (storeId) {
+        setAuthedUserId(storeId);
+      } else {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          setAuthedUserId(session?.user?.id ?? null);
+        });
+      }
+    }
+  }, [screen.name]);
 
   function handleRematch() {
     // Clear restoredState so the game starts fresh, then bump key to force remount
@@ -444,8 +543,94 @@ function App() {
     setPendingResume(null);
   }
 
+  // --- Tournament match helpers ---
+
+  function handleTournamentGameComplete(winnerName: string, storeName: "x01" | "cricket") {
+    if (!tournamentMatch) return;
+
+    const winnerIndex = tournamentMatch.playerNames.indexOf(winnerName);
+    const newResult: LegResult = { winnerName, winnerIndex };
+    const newResults = [...tournamentMatch.legResults, newResult];
+
+    // Check if best-of series is decided
+    const seriesWinner = getSetWinner(newResults, tournamentMatch.gameSettings.bestOf);
+    if (seriesWinner) {
+      // Series complete — report to tournament room
+      const winnerUserId = tournamentMatch.playerIds[tournamentMatch.playerNames.indexOf(seriesWinner)] ?? "";
+      tournamentRoom.reportMatchGameResult(
+        tournamentMatch.matchId,
+        winnerUserId,
+        newResults,
+      );
+      const tid = tournamentMatch.tournamentId;
+      setTournamentMatch(null);
+      clearSession();
+      setScreen({ name: "bracket", tournamentId: tid, isOnline: true });
+      return;
+    }
+
+    // Not decided — advance to next leg
+    setTournamentMatch({ ...tournamentMatch, legResults: newResults });
+
+    // Determine next leg game options
+    const gs = tournamentMatch.gameSettings;
+    if (storeName === "x01" && gs.x01Options) {
+      setScreen({
+        name: "game",
+        x01Options: gs.x01Options,
+        playerNames: tournamentMatch.playerNames,
+        playerIds: tournamentMatch.playerIds.map((id) => id),
+        botSkills: [null, null],
+      });
+    } else if (storeName === "cricket" && gs.cricketOptions) {
+      setScreen({
+        name: "cricket",
+        options: gs.cricketOptions,
+        playerNames: tournamentMatch.playerNames,
+        playerIds: tournamentMatch.playerIds.map((id) => id),
+        botSkills: [null, null],
+      });
+    }
+    setRematchKey((k) => k + 1);
+  }
+
+  function handleTournamentExit() {
+    const tid = tournamentMatch?.tournamentId ?? "";
+    setTournamentMatch(null);
+    clearSession();
+    setScreen({ name: "bracket", tournamentId: tid, isOnline: true });
+  }
+
   // Build set progress for current game screens
   const currentSetProgress = setMatch ? buildSetProgress(setMatch) : undefined;
+
+  // Determine the opponent name for the match alert
+  const matchAlertOpponent = (() => {
+    if (!tournamentRoom.matchAlert) return "";
+    const { playerNames, playerIds } = tournamentRoom.matchAlert;
+    const myIdx = playerIds.indexOf(authedUserId ?? "");
+    if (myIdx === 0) return playerNames[1] ?? "Opponent";
+    return playerNames[0] ?? "Opponent";
+  })();
+
+  // We need the tournament's game settings for the alert
+  // (the alert doesn't carry them, but we can try to get from bracket data or just show generic)
+  const matchAlertGameInfo = "Tournament Match";
+
+  const matchReadyModal = tournamentRoom.matchAlert ? (
+    <MatchReadyModal
+      opponentName={matchAlertOpponent}
+      gameInfo={matchAlertGameInfo}
+      onGoToMatch={() => {
+        const alert = tournamentRoom.matchAlert;
+        if (alert) {
+          setScreen({ name: "bracket", tournamentId: alert.tournamentId, isOnline: true });
+        }
+        tournamentRoom.clearMatchAlert();
+      }}
+      onDismiss={() => tournamentRoom.clearMatchAlert()}
+    />
+  ) : null;
 
   if (!playersLoaded) return <div className="h-screen bg-zinc-950" />;
 
@@ -455,6 +640,7 @@ function App() {
 
   if (screen.name === "game") {
     return (
+      <>
       <GameScreen
         key={rematchKey}
         x01Options={screen.x01Options}
@@ -468,30 +654,40 @@ function App() {
                 void useOnlineStore.getState().leaveRoom();
                 setScreen({ name: "online-lobby" });
               }
-            : setMatch
-              ? handleSetExit
-              : () => setScreen({ name: "home" })
+            : tournamentMatch
+              ? handleTournamentExit
+              : setMatch
+                ? handleSetExit
+                : () => setScreen({ name: "home" })
         }
         onRematch={handleRematch}
         setProgress={currentSetProgress}
         onNextLeg={
-          setMatch
+          tournamentMatch
             ? () => {
                 const winner = useGameStore.getState().winner;
-                if (winner) handleNextLeg(winner);
+                if (winner) handleTournamentGameComplete(winner, "x01");
               }
-            : undefined
+            : setMatch
+              ? () => {
+                  const winner = useGameStore.getState().winner;
+                  if (winner) handleNextLeg(winner);
+                }
+              : undefined
         }
         setConfig={setMatch?.config}
         legResults={setMatch?.legResults}
         currentLegIndex={setMatch?.currentLegIndex}
         onlineConfig={screen.onlineConfig}
       />
+      {matchReadyModal}
+      </>
     );
   }
 
   if (screen.name === "cricket") {
     return (
+      <>
       <CricketScreen
         key={rematchKey}
         options={screen.options}
@@ -505,25 +701,34 @@ function App() {
                 void useOnlineStore.getState().leaveRoom();
                 setScreen({ name: "online-lobby" });
               }
-            : setMatch
-              ? handleSetExit
-              : () => setScreen({ name: "home" })
+            : tournamentMatch
+              ? handleTournamentExit
+              : setMatch
+                ? handleSetExit
+                : () => setScreen({ name: "home" })
         }
         onRematch={handleRematch}
         setProgress={currentSetProgress}
         onNextLeg={
-          setMatch
+          tournamentMatch
             ? () => {
                 const winner = useCricketStore.getState().winner;
-                if (winner) handleNextLeg(winner);
+                if (winner) handleTournamentGameComplete(winner, "cricket");
               }
-            : undefined
+            : setMatch
+              ? () => {
+                  const winner = useCricketStore.getState().winner;
+                  if (winner) handleNextLeg(winner);
+                }
+              : undefined
         }
         setConfig={setMatch?.config}
         legResults={setMatch?.legResults}
         currentLegIndex={setMatch?.currentLegIndex}
         onlineConfig={screen.onlineConfig}
       />
+      {matchReadyModal}
+      </>
     );
   }
 
@@ -646,7 +851,7 @@ function App() {
     return (
       <AuthScreen
         onBack={() => setScreen({ name: "home" })}
-        onAuthenticated={() => setScreen({ name: "online-lobby" })}
+        onAuthenticated={() => setScreen({ name: "online-choice" })}
       />
     );
   }
@@ -654,7 +859,7 @@ function App() {
   if (screen.name === "online-lobby") {
     return (
       <OnlineLobbyScreen
-        onBack={() => setScreen({ name: "home" })}
+        onBack={() => setScreen({ name: "online-choice" })}
         onGameReady={(roomId, isHost) => {
           const { currentRoom, displayName, opponentName } =
             useOnlineStore.getState();
@@ -772,6 +977,77 @@ function App() {
     );
   }
 
+  if (screen.name === "online-choice") {
+    return (
+      <OnlineChoiceScreen
+        onBack={() => setScreen({ name: "home" })}
+        onLobby={() => setScreen({ name: "online-lobby" })}
+        onTournaments={() => setScreen({ name: "tournament-hub" })}
+      />
+    );
+  }
+
+  if (screen.name === "tournament-hub") {
+    return (
+      <>
+      <TournamentHubScreen
+        onBack={() => setScreen({ name: "online-choice" })}
+        onCreate={() => setScreen({ name: "create-tournament" })}
+        onViewBracket={(tournamentId) =>
+          setScreen({ name: "bracket", tournamentId, isOnline: true })
+        }
+        userId={authedUserId ?? ""}
+      />
+      {matchReadyModal}
+      </>
+    );
+  }
+
+  if (screen.name === "create-tournament") {
+    return (
+      <CreateTournamentScreen
+        onBack={() => setScreen({ name: "tournament-hub" })}
+        onCreateOnline={async (data) => {
+          if (!authedUserId) return;
+          const result = await createOnlineTournament(data, authedUserId);
+          if (result) {
+            setScreen({
+              name: "bracket",
+              tournamentId: result.id,
+              isOnline: true,
+            });
+          }
+        }}
+        onCreateLocal={async (data) => {
+          const tournament = await createLocalTournament(
+            data.name,
+            data.format,
+          );
+          setScreen({
+            name: "bracket",
+            tournamentId: tournament.id,
+            isOnline: false,
+          });
+        }}
+      />
+    );
+  }
+
+  if (screen.name === "bracket") {
+    return (
+      <>
+      <BracketScreen
+        tournamentId={screen.tournamentId}
+        isOnline={screen.isOnline}
+        userId={authedUserId ?? ""}
+        onBack={() => setScreen({ name: "tournament-hub" })}
+        tournamentRoom={tournamentRoom}
+      />
+      {matchReadyModal}
+      </>
+    );
+  }
+
   if (screen.name === "practice") {
     return (
       <PracticeScreen
@@ -796,7 +1072,7 @@ function App() {
           // Check for existing auth session
           void supabase.auth.getSession().then(({ data: { session } }) => {
             if (session?.user) {
-              setScreen({ name: "online-lobby" });
+              setScreen({ name: "online-choice" });
             } else {
               setScreen({ name: "auth" });
             }
@@ -810,6 +1086,7 @@ function App() {
           onNewGame={handleDeclineResume}
         />
       )}
+      {matchReadyModal}
     </>
   );
 }
