@@ -1,19 +1,19 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
-[Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/bot/x01OutChart.ts](../README.md) / SINGLE\_OUT\_CHART
+[Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/bot/x01OutChart.ts](../README.md) / SINGLE_OUT_CHART
 
-# Variable: SINGLE\_OUT\_CHART
+# Variable: SINGLE_OUT_CHART
 
-> `const` **SINGLE\_OUT\_CHART**: `Partial`\<`Record`\<`number`, [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)\>\>
+> `const` **SINGLE_OUT_CHART**: `Partial`\<`Record`\<`number`, [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)\>\>
 
 Defined in: [bot/x01OutChart.ts:24](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/x01OutChart.ts#L24)
 
 First-dart target for every reachable checkout in soft-tip X01 single-out (any out)
 with split bull OFF (both bull zones score 50).
 
-B  = Bull  — aim DBL_BULL (centre); either zone scores 50 when split bull is off
+B = Bull — aim DBL_BULL (centre); either zone scores 50 when split bull is off
 T# = Triple of that number
 S# = Outer single of that number
 

@@ -6,6 +6,7 @@ import {
   getBotCharacter,
   CreateSegment,
   x01PickTarget,
+  getSetWinner,
 } from "@nlc-darts/engine";
 import type {
   X01Options,
@@ -24,6 +25,7 @@ import { guardForOnlineTurn } from "../controllers/OnlineTurnGuard.ts";
 import { setActiveController } from "../controllers/GameController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
 import { useOnlineRematch } from "../hooks/useOnlineRematch.ts";
+import { useOnlineNextLeg } from "../hooks/useOnlineNextLeg.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
 import { useAwardDetection } from "../hooks/useAwardDetection.ts";
 import { GameShell } from "../components/GameShell.tsx";
@@ -58,6 +60,8 @@ interface GameScreenProps {
   legResults?: LegResult[];
   currentLegIndex?: number;
   onlineConfig?: OnlineConfig;
+  /** Called automatically when the tournament set is decided (no user click needed). */
+  onTournamentComplete?: (winnerName: string) => void;
 }
 
 export function GameScreen({
@@ -74,6 +78,7 @@ export function GameScreen({
   legResults,
   currentLegIndex,
   onlineConfig,
+  onTournamentComplete,
 }: GameScreenProps) {
   const {
     players,
@@ -362,6 +367,10 @@ export function GameScreen({
   const { rematchState, requestRematch, acceptRematch, declineRematch } =
     useOnlineRematch(onlineConfig);
 
+  const { nextLegState, requestNextLeg, resetNextLeg } = useOnlineNextLeg(
+    onlineConfig && setProgress ? room : null,
+  );
+
   // When both players accept rematch, reset the Colyseus room then remount
   useEffect(() => {
     if (rematchState === "accepted") {
@@ -370,6 +379,42 @@ export function GameScreen({
     }
     if (rematchState === "declined") onExit();
   }, [rematchState, onRematch, onExit, room]);
+
+  // When both players agree on next leg, reset the Colyseus room and advance
+  useEffect(() => {
+    if (nextLegState === "accepted") {
+      room?.send("rematch", {});
+      resetNextLeg();
+      onNextLeg?.();
+    }
+  }, [nextLegState, room, resetNextLeg, onNextLeg]);
+
+  // Auto-report tournament result when the set is decided (no user click needed)
+  const tournamentCompleteCalledRef = useRef(false);
+  useEffect(() => {
+    if (
+      !onTournamentComplete ||
+      !setProgress ||
+      !winner ||
+      tournamentCompleteCalledRef.current
+    )
+      return;
+    const format = setProgress.totalLegs === 3 ? "bo3" : "bo5";
+    const effectiveResults = [
+      ...setProgress.legResults,
+      {
+        winnerName: winner,
+        winnerIndex: setProgress.playerNames.indexOf(winner),
+      },
+    ];
+    const seriesWinner = getSetWinner(effectiveResults, format);
+    if (seriesWinner) {
+      tournamentCompleteCalledRef.current = true;
+      // Small delay so the ResultsOverlay renders first
+      const t = setTimeout(() => onTournamentComplete(winner), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [winner, setProgress, onTournamentComplete]);
 
   return (
     <GameShell
@@ -419,7 +464,6 @@ export function GameScreen({
                 setConfirmedStream(stream);
                 setCameraPreviewShown(false);
               }}
-              onSkip={() => setCameraPreviewShown(false)}
             />
           )}
           {onlineConfig && opponentDisconnected && !winner && (
@@ -430,6 +474,7 @@ export function GameScreen({
               onExit={onExit}
               onRematch={onlineConfig || setProgress ? undefined : onRematch}
               setProgress={setProgress}
+              isTournament={!!onlineConfig && !!setProgress}
               onNextLeg={onNextLeg}
               onlineRematch={
                 onlineConfig && !setProgress
@@ -438,6 +483,14 @@ export function GameScreen({
                       onRequest: requestRematch,
                       onAccept: acceptRematch,
                       onDecline: declineRematch,
+                    }
+                  : undefined
+              }
+              onlineNextLeg={
+                onlineConfig && setProgress
+                  ? {
+                      state: nextLegState,
+                      onRequest: requestNextLeg,
                     }
                   : undefined
               }

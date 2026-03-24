@@ -163,6 +163,7 @@ export function useColyseusSync({
 
         activeRoom = room;
         activeRoomId = colyseusRoomId ?? "host";
+        lastSeenSeq = 0;
         roomRef.current = room;
         setConnectedRoom(room);
         installHandlers(room);

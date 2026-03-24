@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/GameEngine.ts](../README.md) / GameEngine
 
@@ -12,9 +12,10 @@ Contract every game engine must implement.
 
 All methods are pure — they take state + inputs and return the fields that
 changed, with zero side effects. This makes engines:
-  - Fully testable without React or Zustand
-  - Safe to run server-side for multiplayer
-  - Replayable: any game can be reconstructed by replaying dart events
+
+- Fully testable without React or Zustand
+- Safe to run server-side for multiplayer
+- Replayable: any game can be reconstructed by replaying dart events
 
 ## Type Parameters
 
@@ -54,7 +55,7 @@ Apply a dart throw. Returns only the fields that changed.
 
 `Partial`\<`TState`\>
 
-***
+---
 
 ### nextTurn()
 
@@ -74,7 +75,7 @@ Commit the current player's turn and advance to the next player. Returns only th
 
 `Partial`\<`TState`\>
 
-***
+---
 
 ### startGame()
 
@@ -98,7 +99,7 @@ Create fresh initial state for a new game.
 
 `TState`
 
-***
+---
 
 ### undoLastDart()
 

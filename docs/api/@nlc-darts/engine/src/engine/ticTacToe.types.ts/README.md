@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../README.md) / [@nlc-darts/engine](../../../README.md) / src/engine/ticTacToe.types.ts
 
@@ -15,4 +15,4 @@
 
 ## Variables
 
-- [DEFAULT\_TICTACTOE\_OPTIONS](variables/DEFAULT_TICTACTOE_OPTIONS.md)
+- [DEFAULT_TICTACTOE_OPTIONS](variables/DEFAULT_TICTACTOE_OPTIONS.md)

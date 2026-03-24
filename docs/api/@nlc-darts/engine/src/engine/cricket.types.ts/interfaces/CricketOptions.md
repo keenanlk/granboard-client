@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/cricket.types.ts](../README.md) / CricketOptions
 
@@ -20,7 +20,7 @@ Defined in: [engine/cricket.types.ts:15](https://github.com/keenanlk/granboard-c
 
 Cut-throat mode: points go to opponents, lowest score wins. Default: false.
 
-***
+---
 
 ### roundLimit
 
@@ -30,7 +30,7 @@ Defined in: [engine/cricket.types.ts:13](https://github.com/keenanlk/granboard-c
 
 Maximum rounds per player. 0 = unlimited. Default: 20.
 
-***
+---
 
 ### singleBull
 

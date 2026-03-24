@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../README.md) / [@nlc-darts/engine](../../../README.md) / src/engine/cricket.types.ts
 
@@ -20,8 +20,8 @@
 
 ## Variables
 
-- [CRICKET\_TARGETS](variables/CRICKET_TARGETS.md)
-- [DEFAULT\_CRICKET\_OPTIONS](variables/DEFAULT_CRICKET_OPTIONS.md)
+- [CRICKET_TARGETS](variables/CRICKET_TARGETS.md)
+- [DEFAULT_CRICKET_OPTIONS](variables/DEFAULT_CRICKET_OPTIONS.md)
 
 ## Functions
 

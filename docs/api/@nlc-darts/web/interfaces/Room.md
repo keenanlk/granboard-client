@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / Room
 
@@ -12,45 +12,45 @@ A multiplayer game room record.
 
 ## Properties
 
-### created\_at
+### created_at
 
-> **created\_at**: `string`
+> **created_at**: `string`
 
 Defined in: [store/online.types.ts:35](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L35)
 
-***
+---
 
-### game\_options
+### game_options
 
-> **game\_options**: `unknown`
+> **game_options**: `unknown`
 
 Defined in: [store/online.types.ts:34](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L34)
 
-***
+---
 
-### game\_type
+### game_type
 
-> **game\_type**: [`OnlineGameType`](../type-aliases/OnlineGameType.md)
+> **game_type**: [`OnlineGameType`](../type-aliases/OnlineGameType.md)
 
 Defined in: [store/online.types.ts:33](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L33)
 
-***
+---
 
-### guest\_id
+### guest_id
 
-> **guest\_id**: `string` \| `null`
+> **guest_id**: `string` \| `null`
 
 Defined in: [store/online.types.ts:31](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L31)
 
-***
+---
 
-### host\_id
+### host_id
 
-> **host\_id**: `string`
+> **host_id**: `string`
 
 Defined in: [store/online.types.ts:30](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L30)
 
-***
+---
 
 ### id
 
@@ -58,7 +58,7 @@ Defined in: [store/online.types.ts:30](https://github.com/keenanlk/granboard-cli
 
 Defined in: [store/online.types.ts:29](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L29)
 
-***
+---
 
 ### status
 

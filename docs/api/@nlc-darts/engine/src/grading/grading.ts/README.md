@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../README.md) / [@nlc-darts/engine](../../../README.md) / src/grading/grading.ts
 
@@ -13,8 +13,8 @@
 ## Variables
 
 - [GRADES](variables/GRADES.md)
-- [MIN\_GAMES\_FOR\_GRADE](variables/MIN_GAMES_FOR_GRADE.md)
-- [ROLLING\_WINDOW](variables/ROLLING_WINDOW.md)
+- [MIN_GAMES_FOR_GRADE](variables/MIN_GAMES_FOR_GRADE.md)
+- [ROLLING_WINDOW](variables/ROLLING_WINDOW.md)
 
 ## Functions
 

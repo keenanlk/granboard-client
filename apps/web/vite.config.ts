@@ -49,7 +49,7 @@ export default defineConfig({
         theme_color: "#09090b",
         background_color: "#09090b",
         display: "fullscreen",
-        orientation: "landscape",
+        orientation: "any",
         icons: [
           {
             src: "/nlc-darts-192.png",

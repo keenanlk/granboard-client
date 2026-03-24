@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / UseColyseusSyncReturn
 
@@ -18,7 +18,7 @@ Return value from the [useColyseusSync](../functions/useColyseusSync.md) hook.
 
 Defined in: [hooks/useColyseusSync.ts:47](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useColyseusSync.ts#L47)
 
-***
+---
 
 ### room
 
@@ -26,7 +26,7 @@ Defined in: [hooks/useColyseusSync.ts:47](https://github.com/keenanlk/granboard-
 
 Defined in: [hooks/useColyseusSync.ts:43](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useColyseusSync.ts#L43)
 
-***
+---
 
 ### sendDart
 
@@ -44,7 +44,7 @@ Defined in: [hooks/useColyseusSync.ts:44](https://github.com/keenanlk/granboard-
 
 `void`
 
-***
+---
 
 ### sendNextTurn
 
@@ -56,7 +56,7 @@ Defined in: [hooks/useColyseusSync.ts:45](https://github.com/keenanlk/granboard-
 
 `void`
 
-***
+---
 
 ### sendUndo
 

@@ -1,6 +1,6 @@
 [**Documentation**](../../README.md)
 
-***
+---
 
 [Documentation](../../README.md) / @nlc-darts/web
 
@@ -54,7 +54,7 @@ hooks, events, BLE, and database modules.
 
 - [Colors](variables/Colors.md)
 - [gameEventBus](variables/gameEventBus.md)
-- [LED\_POSITIONS](variables/LED_POSITIONS.md)
+- [LED_POSITIONS](variables/LED_POSITIONS.md)
 
 ## Functions
 

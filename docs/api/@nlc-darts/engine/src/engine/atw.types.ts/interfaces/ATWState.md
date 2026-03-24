@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/atw.types.ts](../README.md) / ATWState
 
@@ -18,7 +18,7 @@ Complete mutable state for an Around the World game in progress.
 
 Defined in: [engine/atw.types.ts:60](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L60)
 
-***
+---
 
 ### currentRound
 
@@ -26,7 +26,7 @@ Defined in: [engine/atw.types.ts:60](https://github.com/keenanlk/granboard-clien
 
 Defined in: [engine/atw.types.ts:61](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L61)
 
-***
+---
 
 ### currentRoundDarts
 
@@ -34,7 +34,7 @@ Defined in: [engine/atw.types.ts:61](https://github.com/keenanlk/granboard-clien
 
 Defined in: [engine/atw.types.ts:62](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L62)
 
-***
+---
 
 ### firstFinishRound
 
@@ -44,7 +44,7 @@ Defined in: [engine/atw.types.ts:66](https://github.com/keenanlk/granboard-clien
 
 The round in which the first player finished
 
-***
+---
 
 ### options
 
@@ -52,7 +52,7 @@ The round in which the first player finished
 
 Defined in: [engine/atw.types.ts:58](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L58)
 
-***
+---
 
 ### players
 
@@ -60,7 +60,7 @@ Defined in: [engine/atw.types.ts:58](https://github.com/keenanlk/granboard-clien
 
 Defined in: [engine/atw.types.ts:59](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L59)
 
-***
+---
 
 ### winners
 

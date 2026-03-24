@@ -1,6 +1,7 @@
 import type React from "react";
 import { useState, useCallback, useEffect } from "react";
 import { supabase } from "../lib/supabaseClient.ts";
+import { ensureOnlinePlayer } from "../lib/tournamentApi.ts";
 import type { Tournament, TournamentFilters } from "@nlc-darts/tournament";
 
 const PAGE_SIZE = 20;
@@ -113,14 +114,17 @@ export async function findTournamentByCode(
 
 export async function registerForTournament(
   tournamentId: string,
-  userId: string,
 ): Promise<boolean> {
+  // Ensure the user has an online_players row (FK requirement).
+  // Tournament registration can happen without going through the lobby flow.
+  const userId = await ensureOnlinePlayer();
+  if (!userId) return false;
+
   const { error } = await supabase
     .from("tournament_registrations")
-    .upsert(
-      { tournament_id: tournamentId, user_id: userId },
-      { onConflict: "tournament_id,user_id" },
-    );
+    .insert({ tournament_id: tournamentId, user_id: userId });
+  // 23505 = already registered (unique constraint conflict) — treat as success
+  if (error && error.code === "23505") return true;
   return !error;
 }
 

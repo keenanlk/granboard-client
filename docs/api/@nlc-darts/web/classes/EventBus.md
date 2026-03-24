@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / EventBus
 
@@ -12,7 +12,7 @@ Defined in: [events/gameEventBus.ts:5](https://github.com/keenanlk/granboard-cli
 
 ### EventMap
 
-`EventMap` *extends* `Record`\<`string`, `unknown`\>
+`EventMap` _extends_ `Record`\<`string`, `unknown`\>
 
 ## Constructors
 
@@ -36,7 +36,7 @@ Defined in: [events/gameEventBus.ts:24](https://github.com/keenanlk/granboard-cl
 
 ##### K
 
-`K` *extends* `string`
+`K` _extends_ `string`
 
 #### Parameters
 
@@ -52,7 +52,7 @@ Defined in: [events/gameEventBus.ts:24](https://github.com/keenanlk/granboard-cl
 
 `void`
 
-***
+---
 
 ### off()
 
@@ -64,7 +64,7 @@ Defined in: [events/gameEventBus.ts:17](https://github.com/keenanlk/granboard-cl
 
 ##### K
 
-`K` *extends* `string`
+`K` _extends_ `string`
 
 #### Parameters
 
@@ -80,7 +80,7 @@ Defined in: [events/gameEventBus.ts:17](https://github.com/keenanlk/granboard-cl
 
 `void`
 
-***
+---
 
 ### on()
 
@@ -92,7 +92,7 @@ Defined in: [events/gameEventBus.ts:8](https://github.com/keenanlk/granboard-cli
 
 ##### K
 
-`K` *extends* `string`
+`K` _extends_ `string`
 
 #### Parameters
 

@@ -14,7 +14,10 @@ export function OnlineChoiceScreen({
   return (
     <div className="h-full flex flex-col bg-black text-white">
       {/* Header */}
-      <div className="flex items-center gap-4 px-6 pt-6 pb-4">
+      <div
+        className="flex items-center gap-4 px-6 pb-4"
+        style={{ paddingTop: "calc(var(--sat) + 1.5rem)" }}
+      >
         <button
           onClick={onBack}
           className="p-2 rounded-xl bg-zinc-900 border border-zinc-800"
@@ -35,7 +38,10 @@ export function OnlineChoiceScreen({
       </div>
 
       {/* Two large tiles */}
-      <div className="flex-1 flex flex-col gap-4 px-6 pb-6">
+      <div
+        className="flex-1 flex flex-col gap-4 px-6"
+        style={{ paddingBottom: "calc(var(--sab) + 1.5rem)" }}
+      >
         <button
           onClick={onLobby}
           className="flex-1 rounded-2xl px-8 text-left transition-all duration-150 flex items-center gap-6 bg-zinc-900 border-2 border-zinc-800 hover:border-blue-500"

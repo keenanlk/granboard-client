@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../README.md) / [@nlc-darts/engine](../../../README.md) / src/engine/highScore.types.ts
 
@@ -15,4 +15,4 @@
 
 ## Variables
 
-- [DEFAULT\_HIGHSCORE\_OPTIONS](variables/DEFAULT_HIGHSCORE_OPTIONS.md)
+- [DEFAULT_HIGHSCORE_OPTIONS](variables/DEFAULT_HIGHSCORE_OPTIONS.md)

@@ -17,13 +17,13 @@ export function BotSelectOverlay({
   onCancel,
 }: BotSelectOverlayProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-      <div className="flex flex-col items-center gap-6 w-full max-w-3xl px-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm overflow-y-auto">
+      <div className="flex flex-col items-center gap-6 w-full max-w-3xl px-6 py-8">
         <h2 className="text-xl font-black uppercase tracking-widest text-content-secondary">
           Choose Your Bot
         </h2>
 
-        <div className="grid grid-cols-4 gap-3 w-full">
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 w-full">
           {ALL_CHARACTERS.map(({ skill, character }) => {
             const isActive = currentSkill === skill;
             return (
@@ -45,7 +45,7 @@ export function BotSelectOverlay({
               >
                 {/* Character name — big neon text */}
                 <span
-                  className="text-lg font-black uppercase tracking-widest"
+                  className="text-sm sm:text-lg font-black uppercase tracking-widest"
                   style={{
                     fontFamily: "Beon, sans-serif",
                     color: character.color,

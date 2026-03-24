@@ -293,6 +293,10 @@ export function useTournamentRoom() {
     setState((s) => ({ ...s, matchGameRoom: null }));
   }, []);
 
+  const clearMatchCountdown = useCallback(() => {
+    setState((s) => ({ ...s, matchCountdown: null, matchReadyState: null }));
+  }, []);
+
   return {
     ...state,
     connect,
@@ -309,5 +313,6 @@ export function useTournamentRoom() {
     clearMatchStart,
     sendGameRoomReady,
     clearMatchGameRoom,
+    clearMatchCountdown,
   };
 }

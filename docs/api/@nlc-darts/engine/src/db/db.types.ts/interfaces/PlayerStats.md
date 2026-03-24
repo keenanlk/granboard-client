@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/db/db.types.ts](../README.md) / PlayerStats
 
@@ -18,7 +18,7 @@ Combined per-game-type statistics and overall totals for a player.
 
 Defined in: [db/db.types.ts:71](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L71)
 
-***
+---
 
 ### highscore
 
@@ -26,7 +26,7 @@ Defined in: [db/db.types.ts:71](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:72](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L72)
 
-***
+---
 
 ### totalGames
 
@@ -34,7 +34,7 @@ Defined in: [db/db.types.ts:72](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:73](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L73)
 
-***
+---
 
 ### totalWins
 
@@ -42,7 +42,7 @@ Defined in: [db/db.types.ts:73](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:74](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L74)
 
-***
+---
 
 ### x01
 

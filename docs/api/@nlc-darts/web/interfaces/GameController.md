@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / GameController
 
@@ -30,7 +30,7 @@ Handle a dart landing on a board segment.
 
 `void`
 
-***
+---
 
 ### onNextTurn()
 

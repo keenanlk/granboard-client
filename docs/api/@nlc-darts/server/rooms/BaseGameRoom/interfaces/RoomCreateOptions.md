@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../README.md) / [@nlc-darts/server](../../../README.md) / [rooms/BaseGameRoom](../README.md) / RoomCreateOptions
 
@@ -20,7 +20,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:31](https://github.com/keenan
 
 Game-specific options blob, parsed by each room subclass.
 
-***
+---
 
 ### playerIds
 
@@ -30,7 +30,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:35](https://github.com/keenan
 
 Supabase user IDs for each player (null for guests).
 
-***
+---
 
 ### playerNames
 
@@ -40,7 +40,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:33](https://github.com/keenan
 
 Display names for each player, ordered by seat index.
 
-***
+---
 
 ### roomId?
 

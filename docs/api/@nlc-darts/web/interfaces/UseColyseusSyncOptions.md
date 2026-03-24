@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / UseColyseusSyncOptions
 
@@ -28,7 +28,7 @@ Defined in: [hooks/useColyseusSync.ts:36](https://github.com/keenanlk/granboard-
 
 `void`
 
-***
+---
 
 ### onlineConfig
 
@@ -36,7 +36,7 @@ Defined in: [hooks/useColyseusSync.ts:36](https://github.com/keenanlk/granboard-
 
 Defined in: [hooks/useColyseusSync.ts:34](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useColyseusSync.ts#L34)
 
-***
+---
 
 ### onOpponentDisconnected?
 
@@ -48,7 +48,7 @@ Defined in: [hooks/useColyseusSync.ts:37](https://github.com/keenanlk/granboard-
 
 `void`
 
-***
+---
 
 ### onTurnDelay?
 
@@ -60,7 +60,7 @@ Defined in: [hooks/useColyseusSync.ts:38](https://github.com/keenanlk/granboard-
 
 `void`
 
-***
+---
 
 ### restoreState
 

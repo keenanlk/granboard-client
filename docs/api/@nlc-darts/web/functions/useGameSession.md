@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / useGameSession
 
@@ -15,12 +15,13 @@ Handles: controller lifecycle, per-turn recording, turn delay (remove darts coun
 winner-triggered final-round recording + session save, and localStorage persistence.
 
 Each game screen provides:
-  - onInit        — called first: startGame() + any game-specific init (e.g. LED open numbers)
-  - createController — factory for the game-specific controller
-  - extractRound  — reads current store state and returns dart data for recording
-  - winner        — current winner(s) from the store (null while game is live)
-  - getFinalScores — reads final scores from the store when the game ends
-  - getSerializableState — returns the store's serializable state for persistence
+
+- onInit — called first: startGame() + any game-specific init (e.g. LED open numbers)
+- createController — factory for the game-specific controller
+- extractRound — reads current store state and returns dart data for recording
+- winner — current winner(s) from the store (null while game is live)
+- getFinalScores — reads final scores from the store when the game ends
+- getSerializableState — returns the store's serializable state for persistence
 
 ## Parameters
 
@@ -129,9 +130,9 @@ If provided, called before triggering turn delay. Return true to skip the delay.
 > **triggerRemoteDelay**: () => `void`
 
 Trigger the turn delay overlay without going through the controller.
- Used by remote players when they receive a turn_delay broadcast.
- Intentionally ignores shouldSkipDelay — that only controls the
- local turn flow, not delays triggered by the host.
+Used by remote players when they receive a turn_delay broadcast.
+Intentionally ignores shouldSkipDelay — that only controls the
+local turn flow, not delays triggered by the host.
 
 #### Returns
 

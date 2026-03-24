@@ -25,6 +25,7 @@ describe("supabase types", () => {
     const player: PlayerRow = {
       id: "abc",
       display_name: "Test",
+      avatar_url: null,
       last_seen: new Date().toISOString(),
       status: "online",
     };

@@ -369,9 +369,15 @@ export function BracketScreen({
   };
 
   return (
-    <div className="h-full flex flex-col bg-black text-white">
+    <div
+      className="h-full flex flex-col bg-black text-white"
+      style={{ paddingBottom: "var(--sab)" }}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 pt-6 pb-3 shrink-0">
+      <div
+        className="flex items-center justify-between px-6 pb-3 shrink-0"
+        style={{ paddingTop: "calc(var(--sat) + 1.5rem)" }}
+      >
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
@@ -434,18 +440,15 @@ export function BracketScreen({
               <button
                 onClick={async () => {
                   if (isRegistered) {
-                    await supabase
-                      .from("tournament_registrations")
-                      .delete()
-                      .eq("tournament_id", tournamentId)
-                      .eq("user_id", userId);
+                    // Let the server handle delete + broadcast to all clients
+                    room.unregisterPlayer(tournamentId, userId);
                   } else {
-                    await supabase
-                      .from("tournament_registrations")
-                      .upsert(
-                        { tournament_id: tournamentId, user_id: userId },
-                        { onConflict: "tournament_id,user_id" },
-                      );
+                    // Ensure online_players row exists (FK requirement)
+                    const { ensureOnlinePlayer } =
+                      await import("../lib/tournamentApi.ts");
+                    await ensureOnlinePlayer();
+                    // Let the server handle insert + broadcast to all clients
+                    room.registerPlayer(tournamentId, userId);
                   }
                   await fetchParticipants();
                 }}

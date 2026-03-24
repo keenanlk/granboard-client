@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/ticTacToe.types.ts](../README.md) / TicTacToeState
 
@@ -18,7 +18,7 @@ Complete mutable state for a Tic-Tac-Toe game in progress.
 
 Defined in: [engine/ticTacToe.types.ts:39](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L39)
 
-***
+---
 
 ### currentRound
 
@@ -26,7 +26,7 @@ Defined in: [engine/ticTacToe.types.ts:39](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:40](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L40)
 
-***
+---
 
 ### currentRoundDarts
 
@@ -34,7 +34,7 @@ Defined in: [engine/ticTacToe.types.ts:40](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:41](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L41)
 
-***
+---
 
 ### grid
 
@@ -42,7 +42,7 @@ Defined in: [engine/ticTacToe.types.ts:41](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:37](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L37)
 
-***
+---
 
 ### isCatsGame
 
@@ -50,7 +50,7 @@ Defined in: [engine/ticTacToe.types.ts:37](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:43](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L43)
 
-***
+---
 
 ### options
 
@@ -58,7 +58,7 @@ Defined in: [engine/ticTacToe.types.ts:43](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:35](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L35)
 
-***
+---
 
 ### owner
 
@@ -66,7 +66,7 @@ Defined in: [engine/ticTacToe.types.ts:35](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L38)
 
-***
+---
 
 ### players
 
@@ -74,7 +74,7 @@ Defined in: [engine/ticTacToe.types.ts:38](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:36](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L36)
 
-***
+---
 
 ### winner
 

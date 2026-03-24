@@ -14,6 +14,7 @@ export type OnlineGameType = "x01" | "cricket" | "set";
 export interface OnlinePlayer {
   id: string;
   display_name: string;
+  avatar_url: string | null;
   status: PlayerStatus;
   last_seen: string;
   x01_grade: string | null;

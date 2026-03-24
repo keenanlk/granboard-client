@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/atw.types.ts](../README.md) / ATWRound
 
@@ -26,7 +26,7 @@ Defined in: [engine/atw.types.ts:37](https://github.com/keenanlk/granboard-clien
 
 > **shortName**: `string`
 
-***
+---
 
 ### endTargetIndex
 
@@ -34,7 +34,7 @@ Defined in: [engine/atw.types.ts:37](https://github.com/keenanlk/granboard-clien
 
 Defined in: [engine/atw.types.ts:39](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L39)
 
-***
+---
 
 ### startTargetIndex
 

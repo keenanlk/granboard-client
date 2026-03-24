@@ -301,19 +301,23 @@ max_frequency = "5s"
 # Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `keycloak`, `linkedin_oidc`, `notion`, `twitch`,
 # `twitter`, `x`, `slack`, `spotify`, `workos`, `zoom`.
-[auth.external.apple]
-enabled = false
-client_id = ""
-# DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
-secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
-# Overrides the default auth redirectUrl.
+[auth.external.google]
+enabled = true
+client_id = "env(GOOGLE_CLIENT_ID)"
+secret = "env(GOOGLE_CLIENT_SECRET)"
 redirect_uri = ""
-# Overrides the default auth provider URL. Used to support self-hosted gitlab, single-tenant Azure,
-# or any other third-party OIDC providers.
 url = ""
-# If enabled, the nonce check will be skipped. Required for local sign in with Google auth.
-skip_nonce_check = false
-# If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
+skip_nonce_check = true
+
+[auth.external.apple]
+enabled = true
+client_id = "com.keenankaufman.nlcdarts"
+# For native iOS sign-in, the secret is not used (token is verified directly).
+# This JWT is generated from the Apple .p8 key for web OAuth flow.
+secret = "eyJhbGciOiJFUzI1NiIsImtpZCI6IjNCWEpENlYzUEEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiIzMk0yV0dDR1hCIiwiaWF0IjoxNzc0Mjg0ODM3LCJleHAiOjE3ODk4MzY4MzcsImF1ZCI6Imh0dHBzOi8vYXBwbGVpZC5hcHBsZS5jb20iLCJzdWIiOiJjb20ua2VlbmFua2F1Zm1hbi5ubGNkYXJ0cy53ZWIifQ.2XGXlE6rICYfuST0vO1kaOh0Rkw6arVk9kU-llvG0CyHtf5VbulmArS0NjNpqejLwhLCfuapFuQPEh8Zamukvw"
+redirect_uri = ""
+url = ""
+skip_nonce_check = true
 email_optional = false
 
 # Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.

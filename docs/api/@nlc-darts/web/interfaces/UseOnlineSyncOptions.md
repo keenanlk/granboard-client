@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / UseOnlineSyncOptions
 
@@ -22,7 +22,7 @@ Defined in: [hooks/useOnlineSync.ts:24](https://github.com/keenanlk/granboard-cl
 
 `unknown`
 
-***
+---
 
 ### onGameEnded?
 
@@ -40,7 +40,7 @@ Defined in: [hooks/useOnlineSync.ts:29](https://github.com/keenanlk/granboard-cl
 
 `void`
 
-***
+---
 
 ### onlineConfig
 
@@ -50,7 +50,7 @@ Defined in: [hooks/useOnlineSync.ts:23](https://github.com/keenanlk/granboard-cl
 
 Pass null/undefined for offline games — hook becomes a no-op
 
-***
+---
 
 ### onOpponentDisconnected?
 
@@ -62,7 +62,7 @@ Defined in: [hooks/useOnlineSync.ts:30](https://github.com/keenanlk/granboard-cl
 
 `void`
 
-***
+---
 
 ### onRemoteDartHit?
 
@@ -80,7 +80,7 @@ Defined in: [hooks/useOnlineSync.ts:26](https://github.com/keenanlk/granboard-cl
 
 `void`
 
-***
+---
 
 ### onRemoteNextTurn?
 
@@ -92,7 +92,7 @@ Defined in: [hooks/useOnlineSync.ts:28](https://github.com/keenanlk/granboard-cl
 
 `void`
 
-***
+---
 
 ### onRemoteUndo?
 
@@ -104,7 +104,7 @@ Defined in: [hooks/useOnlineSync.ts:27](https://github.com/keenanlk/granboard-cl
 
 `void`
 
-***
+---
 
 ### onTurnDelay?
 
@@ -118,7 +118,7 @@ Remote: called when host starts the between-turn delay
 
 `void`
 
-***
+---
 
 ### restoreState
 

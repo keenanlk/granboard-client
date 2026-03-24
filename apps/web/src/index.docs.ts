@@ -37,7 +37,10 @@ export {
   type Room,
   type Invite,
 } from "./store/online.types.js";
-export { type OnlineConfig, type ConnectionStatus } from "./store/useOnlineStore.js";
+export {
+  type OnlineConfig,
+  type ConnectionStatus,
+} from "./store/useOnlineStore.js";
 
 // Hooks
 export { useTurnDelay } from "./hooks/useTurnDelay.js";
@@ -58,10 +61,7 @@ export {
   type UseColyseusSyncOptions,
   type UseColyseusSyncReturn,
 } from "./hooks/useColyseusSync.js";
-export {
-  useGameSession,
-  type RoundExtract,
-} from "./hooks/useGameSession.js";
+export { useGameSession, type RoundExtract } from "./hooks/useGameSession.js";
 
 // Events
 export { gameEventBus, EventBus, type Handler } from "./events/gameEventBus.js";

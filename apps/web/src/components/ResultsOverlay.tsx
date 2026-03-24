@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getSetWinner } from "@nlc-darts/engine";
 import type { BotSkill, SetProgress } from "@nlc-darts/engine";
 import type { RematchState } from "../hooks/useOnlineRematch.ts";
+import type { NextLegState } from "../hooks/useOnlineNextLeg.ts";
 import { RobotModel } from "./RobotModel.tsx";
 
 interface PlayerResult {
@@ -25,6 +26,13 @@ interface ResultsOverlayProps {
     onAccept: () => void;
     onDecline: () => void;
   };
+  /** Online next-leg coordination — when set, replaces the simple Next Leg button */
+  onlineNextLeg?: {
+    state: NextLegState;
+    onRequest: () => void;
+  };
+  /** When true, shows "Tournament Winner!" instead of "Set Winner!" */
+  isTournament?: boolean;
 }
 
 function WinnerRobot({ skill }: { skill: BotSkill }) {
@@ -101,6 +109,8 @@ export function ResultsOverlay({
   setProgress,
   onNextLeg,
   onlineRematch,
+  onlineNextLeg,
+  isTournament,
 }: ResultsOverlayProps) {
   const winners = playerResults.filter((p) => p.isWinner);
   const losers = playerResults.filter((p) => !p.isWinner);
@@ -134,7 +144,9 @@ export function ResultsOverlay({
   const isSetComplete = !!setWinner;
 
   const headline = isSetComplete
-    ? "Set Winner!"
+    ? isTournament
+      ? "Tournament Winner!"
+      : "Set Winner!"
     : winners.length === 0
       ? "Cat's Game"
       : isTie
@@ -166,7 +178,9 @@ export function ResultsOverlay({
           {isInSet && !isSetComplete
             ? `Leg ${setProgress.currentLeg} of ${setProgress.totalLegs}`
             : isSetComplete
-              ? "Set Complete"
+              ? isTournament
+                ? "Tournament Complete"
+                : "Set Complete"
               : "Game Over"}
         </p>
 
@@ -286,7 +300,7 @@ export function ResultsOverlay({
         >
           Menu
         </button>
-        {isInSet && !isSetComplete && onNextLeg && (
+        {isInSet && !isSetComplete && onNextLeg && !onlineNextLeg && (
           <button
             onClick={onNextLeg}
             className="btn-primary flex-1 tracking-widest"
@@ -295,6 +309,30 @@ export function ResultsOverlay({
             Next Leg
           </button>
         )}
+        {isInSet &&
+          !isSetComplete &&
+          onlineNextLeg &&
+          onlineNextLeg.state !== "sent" && (
+            <button
+              onClick={onlineNextLeg.onRequest}
+              className="btn-primary flex-1 tracking-widest"
+              style={{ fontFamily: "Beon, sans-serif", fontWeight: "normal" }}
+            >
+              Next Leg
+            </button>
+          )}
+        {isInSet &&
+          !isSetComplete &&
+          onlineNextLeg &&
+          onlineNextLeg.state === "sent" && (
+            <button
+              disabled
+              className="btn-primary flex-1 tracking-widest opacity-60 cursor-default"
+              style={{ fontFamily: "Beon, sans-serif", fontWeight: "normal" }}
+            >
+              Waiting…
+            </button>
+          )}
         {!isInSet && onlineRematch && onlineRematch.state === "idle" && (
           <button
             onClick={onlineRematch.onRequest}

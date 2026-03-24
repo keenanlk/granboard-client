@@ -57,6 +57,7 @@ import type { TournamentGameConfig } from "@nlc-darts/tournament";
 import "./sound/soundEffects.ts";
 import "./board/ledEffects.ts";
 import { ErrorBoundary } from "./components/ErrorFallback.tsx";
+import { useScreenOrientation } from "./hooks/useScreenOrientation.ts";
 
 const log = logger.child({ module: "colyseus" });
 
@@ -334,12 +335,16 @@ function App() {
     // Guest waits for MATCH_GAME_ROOM_CREATED (handled below)
 
     tournamentRoom.clearMatchStart();
+    tournamentRoom.clearMatchCountdown();
     tournamentRoom.clearMatchGameRoom(); // Clear stale game room from previous leg
   }, [tournamentRoom.matchStart]);
 
   // Handle game room created — GUEST joins the game room
   useEffect(() => {
-    if (!tournamentRoom.matchGameRoom || !tournamentMatch) return;
+    if (!tournamentRoom.matchGameRoom) return;
+    // tournamentMatch may not be set yet if match_start and match_game_room_created
+    // arrive in quick succession — wait for it
+    if (!tournamentMatch) return;
     const { colyseusRoomId } = tournamentRoom.matchGameRoom;
     // Only the guest for this match should join
     const isParticipant = tournamentMatch.playerIds.includes(
@@ -393,9 +398,10 @@ function App() {
     }
 
     tournamentRoom.clearMatchGameRoom();
-  }, [tournamentRoom.matchGameRoom]);
+  }, [tournamentRoom.matchGameRoom, tournamentMatch]);
 
   // Resolve authed user ID when entering online flows
+  // Always check the session to pick up sign-out / sign-in changes
   useEffect(() => {
     if (
       screen.name === "online-choice" ||
@@ -403,14 +409,9 @@ function App() {
       screen.name === "create-tournament" ||
       screen.name === "bracket"
     ) {
-      const storeId = useOnlineStore.getState().authUserId;
-      if (storeId) {
-        setAuthedUserId(storeId);
-      } else {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          setAuthedUserId(session?.user?.id ?? null);
-        });
-      }
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setAuthedUserId(session?.user?.id ?? null);
+      });
     }
   }, [screen.name]);
 
@@ -444,6 +445,7 @@ function App() {
   );
 
   useBoardWiring();
+  useScreenOrientation(screen.name);
 
   useEffect(() => {
     useGranboardStore.getState().autoReconnect();
@@ -702,17 +704,11 @@ function App() {
       return;
     }
 
-    // Not decided — advance to next leg
-    // Go back to bracket so both players can ready up for the next leg
+    // Not decided — stay on game screen; both players coordinate "Next Leg"
+    // via Colyseus messages. The game screen will call room.send("rematch")
+    // to reset server state, then bump rematchKey to remount with fresh state.
     setTournamentMatch({ ...tournamentMatch, legResults: newResults });
-    clearSession();
-    tournamentRoom.clearMatchGameRoom();
-    tournamentRoom.clearMatchStart();
-    setScreen({
-      name: "bracket",
-      tournamentId: tournamentMatch.tournamentId,
-      isOnline: true,
-    });
+    setRematchKey((k) => k + 1);
   }
 
   function handleTournamentExit() {
@@ -721,31 +717,41 @@ function App() {
       return;
     }
 
-    // If there's a winner, record the leg result before exiting
+    // If there's a winner, record the leg result and check for series completion
     const x01Winner = useGameStore.getState().winner;
     const cricketWinner = useCricketStore.getState().winner;
     const winner = x01Winner ?? cricketWinner;
-    if (winner && tournamentMatch) {
-      const alreadyRecorded = tournamentMatch.legResults.some(
-        (r) =>
-          r.winnerName === winner &&
-          tournamentMatch.legResults.length ===
-            tournamentMatch.legResults.length,
+
+    if (winner) {
+      // Append the current leg result and check for series completion
+      const winnerIndex = tournamentMatch.playerNames.indexOf(winner);
+      const finalResults = [
+        ...tournamentMatch.legResults,
+        { winnerName: winner, winnerIndex },
+      ];
+      const seriesWinner = getSetWinner(
+        finalResults,
+        tournamentMatch.gameSettings.bestOf,
       );
-      if (!alreadyRecorded || tournamentMatch.legResults.length === 0) {
-        const winnerIndex = tournamentMatch.playerNames.indexOf(winner);
-        const newResults = [
-          ...tournamentMatch.legResults,
-          { winnerName: winner, winnerIndex },
-        ];
-        setTournamentMatch({ ...tournamentMatch, legResults: newResults });
+      if (seriesWinner) {
+        const winnerUserId =
+          tournamentMatch.playerIds[
+            tournamentMatch.playerNames.indexOf(seriesWinner)
+          ] ?? "";
+        tournamentRoom.reportMatchGameResult(
+          tournamentMatch.matchId,
+          winnerUserId,
+          finalResults,
+        );
       }
     }
 
     const tid = tournamentMatch.tournamentId;
+    setTournamentMatch(null);
     clearSession();
     tournamentRoom.clearMatchGameRoom();
     tournamentRoom.clearMatchStart();
+    tournamentRoom.clearMatchCountdown();
     setScreen({ name: "bracket", tournamentId: tid, isOnline: true });
   }
 
@@ -810,13 +816,13 @@ function App() {
           botSkills={screen.botSkills}
           restoredState={screen.restoredState}
           onExit={
-            screen.onlineConfig
-              ? () => {
-                  void useOnlineStore.getState().leaveRoom();
-                  setScreen({ name: "online-lobby" });
-                }
-              : tournamentMatch
-                ? handleTournamentExit
+            tournamentMatch
+              ? handleTournamentExit
+              : screen.onlineConfig
+                ? () => {
+                    void useOnlineStore.getState().leaveRoom();
+                    setScreen({ name: "online-lobby" });
+                  }
                 : setMatch
                   ? handleSetExit
                   : () => setScreen({ name: "home" })
@@ -840,6 +846,11 @@ function App() {
           legResults={setMatch?.legResults}
           currentLegIndex={setMatch?.currentLegIndex}
           onlineConfig={screen.onlineConfig}
+          onTournamentComplete={
+            tournamentMatch
+              ? (winnerName) => handleTournamentGameComplete(winnerName)
+              : undefined
+          }
         />
         {matchReadyModal}
       </>
@@ -857,13 +868,13 @@ function App() {
           botSkills={screen.botSkills}
           restoredState={screen.restoredState}
           onExit={
-            screen.onlineConfig
-              ? () => {
-                  void useOnlineStore.getState().leaveRoom();
-                  setScreen({ name: "online-lobby" });
-                }
-              : tournamentMatch
-                ? handleTournamentExit
+            tournamentMatch
+              ? handleTournamentExit
+              : screen.onlineConfig
+                ? () => {
+                    void useOnlineStore.getState().leaveRoom();
+                    setScreen({ name: "online-lobby" });
+                  }
                 : setMatch
                   ? handleSetExit
                   : () => setScreen({ name: "home" })
@@ -887,6 +898,11 @@ function App() {
           legResults={setMatch?.legResults}
           currentLegIndex={setMatch?.currentLegIndex}
           onlineConfig={screen.onlineConfig}
+          onTournamentComplete={
+            tournamentMatch
+              ? (winnerName) => handleTournamentGameComplete(winnerName)
+              : undefined
+          }
         />
         {matchReadyModal}
       </>
@@ -1169,8 +1185,7 @@ function App() {
       <CreateTournamentScreen
         onBack={() => setScreen({ name: "tournament-hub" })}
         onCreateOnline={async (data) => {
-          if (!authedUserId) return;
-          const result = await createOnlineTournament(data, authedUserId);
+          const result = await createOnlineTournament(data);
           if (result) {
             setScreen({
               name: "bracket",

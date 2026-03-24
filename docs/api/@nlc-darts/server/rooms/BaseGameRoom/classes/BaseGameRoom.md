@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../README.md) / [@nlc-darts/server](../../../README.md) / [rooms/BaseGameRoom](../README.md) / BaseGameRoom
 
@@ -24,7 +24,7 @@ Concrete subclasses provide the engine and game-specific helpers.
 
 ### TState
 
-`TState` *extends* `object`
+`TState` _extends_ `object`
 
 ### TOptions
 
@@ -36,7 +36,7 @@ Concrete subclasses provide the engine and game-specific helpers.
 
 > **new BaseGameRoom**\<`TState`, `TOptions`\>(): `BaseGameRoom`\<`TState`, `TOptions`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:99
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:99
 
 #### Returns
 
@@ -52,7 +52,7 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 > **\_events**: `EventEmitter`\<\[`never`\]\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:80
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:80
 
 **`Internal`**
 
@@ -60,13 +60,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 [`X01Room`](../../X01Room/classes/X01Room.md).[`_events`](../../X01Room/classes/X01Room.md#_events)
 
-***
+---
 
 ### \_reconnections
 
 > `protected` **\_reconnections**: `object`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:88
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:88
 
 #### Index Signature
 
@@ -76,33 +76,33 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._reconnections`
 
-***
+---
 
 ### autoDispose
 
 > **autoDispose**: `boolean`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:56
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:56
 
 Automatically dispose the room when last client disconnects.
 
 #### Default
 
 ```ts
-true
+true;
 ```
 
 #### Inherited from
 
 [`X01Room`](../../X01Room/classes/X01Room.md).[`autoDispose`](../../X01Room/classes/X01Room.md#autodispose)
 
-***
+---
 
 ### clients
 
 > **clients**: `ClientArray`\<`any`, `any`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:78
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:78
 
 The array of connected clients.
 
@@ -114,13 +114,13 @@ The array of connected clients.
 
 `Room.clients`
 
-***
+---
 
 ### clock
 
 > **clock**: `ClockTimer`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:44
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:44
 
 Timing events tied to the room instance.
 Intervals and timeouts are cleared when the room is disposed.
@@ -129,7 +129,7 @@ Intervals and timeouts are cleared when the room is disposed.
 
 [`X01Room`](../../X01Room/classes/X01Room.md).[`clock`](../../X01Room/classes/X01Room.md#clock)
 
-***
+---
 
 ### engine
 
@@ -139,7 +139,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:49](https://github.com/keenan
 
 Game engine that drives state transitions for this room type.
 
-***
+---
 
 ### gameOptions
 
@@ -149,7 +149,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:56](https://github.com/keenan
 
 Parsed game options for the current match.
 
-***
+---
 
 ### gameState
 
@@ -159,19 +159,19 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:54](https://github.com/keenan
 
 Current authoritative game state.
 
-***
+---
 
 ### listing
 
 > **listing**: `RoomCache`\<`any`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:39
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:39
 
 #### Inherited from
 
 `Room.listing`
 
-***
+---
 
 ### log
 
@@ -181,13 +181,13 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:51](https://github.com/keenan
 
 Scoped logger instance for this room.
 
-***
+---
 
 ### maxClients
 
 > **maxClients**: `number`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:50
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:50
 
 Maximum number of clients allowed to connect into the room. When room reaches this limit,
 it is locked automatically. Unless the room was explicitly locked by you via `lock()` method,
@@ -197,13 +197,13 @@ the room will be unlocked as soon as a client disconnects from it.
 
 [`X01Room`](../../X01Room/classes/X01Room.md).[`maxClients`](../../X01Room/classes/X01Room.md#maxclients)
 
-***
+---
 
 ### patchRate
 
 > **patchRate**: `number`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:62
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:62
 
 Frequency to send the room state to connected clients, in milliseconds.
 
@@ -217,7 +217,7 @@ Frequency to send the room state to connected clients, in milliseconds.
 
 [`X01Room`](../../X01Room/classes/X01Room.md).[`patchRate`](../../X01Room/classes/X01Room.md#patchrate)
 
-***
+---
 
 ### playerIds
 
@@ -227,7 +227,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:64](https://github.com/keenan
 
 Supabase user IDs for each player (null for guests).
 
-***
+---
 
 ### playerMap
 
@@ -237,7 +237,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:60](https://github.com/keenan
 
 Maps Colyseus session IDs to player seat indices.
 
-***
+---
 
 ### playerNames
 
@@ -247,13 +247,13 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:62](https://github.com/keenan
 
 Ordered display names for each player.
 
-***
+---
 
 ### presence
 
 > **presence**: `Presence`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:72
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:72
 
 The presence instance. Check Presence API for more details.
 
@@ -265,13 +265,13 @@ The presence instance. Check Presence API for more details.
 
 [`X01Room`](../../X01Room/classes/X01Room.md).[`presence`](../../X01Room/classes/X01Room.md#presence)
 
-***
+---
 
 ### reservedSeats
 
 > `protected` **reservedSeats**: `object`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:82
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:82
 
 #### Index Signature
 
@@ -281,13 +281,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.reservedSeats`
 
-***
+---
 
 ### reservedSeatTimeouts
 
 > `protected` **reservedSeatTimeouts**: `object`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:85
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:85
 
 #### Index Signature
 
@@ -297,25 +297,25 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.reservedSeatTimeouts`
 
-***
+---
 
 ### seatReservationTime
 
 > `protected` **seatReservationTime**: `number`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:81
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:81
 
 #### Inherited from
 
 [`X01Room`](../../X01Room/classes/X01Room.md).[`seatReservationTime`](../../X01Room/classes/X01Room.md#seatreservationtime)
 
-***
+---
 
 ### state
 
 > **state**: `any`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:66
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:66
 
 The state instance you provided to `setState()`.
 
@@ -323,7 +323,7 @@ The state instance you provided to `setState()`.
 
 `Room.state`
 
-***
+---
 
 ### supabaseRoomId
 
@@ -333,7 +333,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:66](https://github.com/keenan
 
 Supabase room row ID for recording results, if available.
 
-***
+---
 
 ### undoStack
 
@@ -359,7 +359,7 @@ Determine the game type string for the game_results table.
 
 `string`
 
-***
+---
 
 ### locked
 
@@ -367,9 +367,10 @@ Determine the game type string for the game_results table.
 
 > **get** **locked**(): `boolean`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:37
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:37
 
 This property will change on these situations:
+
 - The maximum number of allowed clients has been reached (`maxClients`)
 - You manually locked, or unlocked the room using lock() or `unlock()`.
 
@@ -381,7 +382,7 @@ This property will change on these situations:
 
 `Room.locked`
 
-***
+---
 
 ### metadata
 
@@ -389,7 +390,7 @@ This property will change on these situations:
 
 > **get** **metadata**(): `Metadata`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:38
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:38
 
 ##### Returns
 
@@ -399,7 +400,7 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.metadata`
 
-***
+---
 
 ### roomId
 
@@ -407,7 +408,7 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 > **get** **roomId**(): `string`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:123
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:123
 
 A unique, auto-generated, 9-character-long id of the room.
 You may replace `this.roomId` during `onCreate()`.
@@ -422,7 +423,7 @@ roomId string
 
 > **set** **roomId**(`roomId`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:130
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:130
 
 Setting the roomId, is restricted in room lifetime except upon room creation.
 
@@ -442,7 +443,7 @@ roomId string
 
 `Room.roomId`
 
-***
+---
 
 ### roomName
 
@@ -450,7 +451,7 @@ roomId string
 
 > **get** **roomName**(): `string`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:110
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:110
 
 The name of the room you provided as first argument for `gameServer.define()`.
 
@@ -464,7 +465,7 @@ roomName string
 
 > **set** **roomName**(`roomName`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:116
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:116
 
 Setting the name of the room. Overwriting this property is restricted.
 
@@ -488,7 +489,7 @@ Setting the name of the room. Overwriting this property is restricted.
 
 > `protected` **\_\_init**(): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:104
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:104
 
 **`Internal`**
 
@@ -502,13 +503,13 @@ This method is called by the MatchMaker before onCreate()
 
 `Room.__init`
 
-***
+---
 
 ### \_decrementClientCount()
 
 > `protected` **\_decrementClientCount**(): `Promise`\<`boolean`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:264
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:264
 
 #### Returns
 
@@ -518,13 +519,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._decrementClientCount`
 
-***
+---
 
 ### \_dequeueAfterPatchMessages()
 
 > `protected` **\_dequeueAfterPatchMessages**(): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:255
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:255
 
 #### Returns
 
@@ -534,13 +535,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._dequeueAfterPatchMessages`
 
-***
+---
 
 ### \_dispose()
 
 > `protected` **\_dispose**(): `Promise`\<`any`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:258
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:258
 
 #### Returns
 
@@ -550,13 +551,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._dispose`
 
-***
+---
 
 ### \_disposeIfEmpty()
 
 > `protected` **\_disposeIfEmpty**(): `boolean`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:257
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:257
 
 #### Returns
 
@@ -566,13 +567,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._disposeIfEmpty`
 
-***
+---
 
 ### \_forciblyCloseClient()
 
 > `protected` **\_forciblyCloseClient**(`client`, `closeCode`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:260
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:260
 
 #### Parameters
 
@@ -592,13 +593,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._forciblyCloseClient`
 
-***
+---
 
 ### \_incrementClientCount()
 
 > `protected` **\_incrementClientCount**(): `Promise`\<`void`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:263
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:263
 
 #### Returns
 
@@ -608,13 +609,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._incrementClientCount`
 
-***
+---
 
 ### \_onAfterLeave()
 
 > `protected` **\_onAfterLeave**(`client`): `Promise`\<`void`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:262
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:262
 
 #### Parameters
 
@@ -630,13 +631,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._onAfterLeave`
 
-***
+---
 
 ### \_onJoin()
 
 > **\_onJoin**(`client`, `authContext`): `Promise`\<`void`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:240
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:240
 
 #### Parameters
 
@@ -656,13 +657,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._onJoin`
 
-***
+---
 
 ### \_onLeave()
 
 > `protected` **\_onLeave**(`client`, `code?`): `Promise`\<`any`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:261
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:261
 
 #### Parameters
 
@@ -682,13 +683,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._onLeave`
 
-***
+---
 
 ### \_onMessage()
 
 > `protected` **\_onMessage**(`client`, `buffer`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:259
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:259
 
 #### Parameters
 
@@ -708,13 +709,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._onMessage`
 
-***
+---
 
 ### \_reserveSeat()
 
 > `protected` **\_reserveSeat**(`sessionId`, `joinOptions?`, `authData?`, `seconds?`, `allowReconnection?`, `devModeReconnection?`): `Promise`\<`boolean`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:256
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:256
 
 #### Parameters
 
@@ -750,13 +751,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room._reserveSeat`
 
-***
+---
 
 ### allowReconnection()
 
 > **allowReconnection**(`previousClient`, `seconds`): `Deferred`\<`Client`\<`any`, `any`\>\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:251
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:251
 
 Allow the specified client to reconnect into the room. Must be used inside `onLeave()` method.
 If seconds is provided, the reconnection is going to be cancelled after the provided amount of seconds.
@@ -780,19 +781,19 @@ Timeout period on re-connection in seconds.
 `Deferred`\<`Client`\<`any`, `any`\>\>
 
 Deferred<Client> - The differed is a promise like type.
- This type can forcibly reject the promise by calling `.reject()`.
+This type can forcibly reject the promise by calling `.reject()`.
 
 #### Inherited from
 
 `Room.allowReconnection`
 
-***
+---
 
 ### broadcast()
 
 > **broadcast**(`type`, `message?`, `options?`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:222
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:222
 
 #### Parameters
 
@@ -816,13 +817,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.broadcast`
 
-***
+---
 
 ### broadcastBytes()
 
 > **broadcastBytes**(`type`, `message`, `options`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:226
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:226
 
 Broadcast bytes (UInt8Arrays) to a particular room
 
@@ -848,13 +849,13 @@ Broadcast bytes (UInt8Arrays) to a particular room
 
 `Room.broadcastBytes`
 
-***
+---
 
 ### broadcastPatch()
 
 > **broadcastPatch**(): `boolean`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:230
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:230
 
 Checks whether mutations have occurred in the state, and broadcast them to all connected clients.
 
@@ -866,13 +867,13 @@ Checks whether mutations have occurred in the state, and broadcast them to all c
 
 `Room.broadcastPatch`
 
-***
+---
 
 ### checkReconnectionToken()
 
 > **checkReconnectionToken**(`reconnectionToken`): `string`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:190
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:190
 
 #### Parameters
 
@@ -888,13 +889,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.checkReconnectionToken`
 
-***
+---
 
 ### disconnect()
 
 > **disconnect**(`closeCode?`): `Promise`\<`any`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:239
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:239
 
 Disconnect all connected clients, and then dispose the room.
 
@@ -916,7 +917,7 @@ Promise<void>
 
 `Room.disconnect`
 
-***
+---
 
 ### emitGameEvents()
 
@@ -940,7 +941,7 @@ Subclass hook: generate game events after a dart is processed.
 
 `void`
 
-***
+---
 
 ### extractPlayerGameStats()
 
@@ -980,13 +981,13 @@ Subclass hook: extract per-player stats at game end for recording.
 
 > **totalScore**: `number`
 
-***
+---
 
 ### hasReachedMaxClients()
 
 > **hasReachedMaxClients**(): `boolean`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:176
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:176
 
 Returns whether the sum of connected clients and reserved seats exceeds maximum number of clients.
 
@@ -1000,13 +1001,13 @@ boolean
 
 `Room.hasReachedMaxClients`
 
-***
+---
 
 ### hasReservedSeat()
 
 > **hasReservedSeat**(`sessionId`, `reconnectionToken?`): `boolean`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:189
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:189
 
 #### Parameters
 
@@ -1026,13 +1027,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.hasReservedSeat`
 
-***
+---
 
 ### lock()
 
 > **lock**(): `Promise`\<`void`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:216
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:216
 
 Locking the room will remove it from the pool of available rooms for new clients to connect to.
 
@@ -1044,13 +1045,13 @@ Locking the room will remove it from the pool of available rooms for new clients
 
 `Room.lock`
 
-***
+---
 
 ### onAuth()
 
 > **onAuth**(`client`, `options`, `context`): `any`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:149
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:149
 
 #### Parameters
 
@@ -1074,13 +1075,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.onAuth`
 
-***
+---
 
 ### onBeforePatch()?
 
 > `optional` **onBeforePatch**(`state`): `void` \| `Promise`\<`any`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:131
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:131
 
 #### Parameters
 
@@ -1096,13 +1097,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.onBeforePatch`
 
-***
+---
 
 ### onBeforeShutdown()
 
 > **onBeforeShutdown**(): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:157
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:157
 
 This method is called during graceful shutdown of the server process
 You may override this method to dispose the room in your own way.
@@ -1117,13 +1118,13 @@ Once process reaches room count of 0, the room process will be terminated.
 
 `Room.onBeforeShutdown`
 
-***
+---
 
 ### onCacheRoom()?
 
 > `optional` **onCacheRoom**(): `any`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:165
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:165
 
 devMode: When `devMode` is enabled, `onCacheRoom` method is called during
 graceful shutdown.
@@ -1139,7 +1140,7 @@ will be called with the data returned by `onCacheRoom`
 
 `Room.onCacheRoom`
 
-***
+---
 
 ### onCreate()
 
@@ -1161,7 +1162,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:92](https://github.com/keenan
 
 `Room.onCreate`
 
-***
+---
 
 ### onDispose()
 
@@ -1177,7 +1178,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:217](https://github.com/keena
 
 `Room.onDispose`
 
-***
+---
 
 ### onJoin()
 
@@ -1199,7 +1200,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:161](https://github.com/keena
 
 `Room.onJoin`
 
-***
+---
 
 ### onLeave()
 
@@ -1225,7 +1226,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:178](https://github.com/keena
 
 `Room.onLeave`
 
-***
+---
 
 ### onMessage()
 
@@ -1233,7 +1234,7 @@ Defined in: [apps/server/src/rooms/BaseGameRoom.ts:178](https://github.com/keena
 
 > **onMessage**\<`T`\>(`messageType`, `callback`): `any`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:231
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:231
 
 ##### Type Parameters
 
@@ -1263,7 +1264,7 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 > **onMessage**\<`T`\>(`messageType`, `callback`, `validate?`): `any`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:232
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:232
 
 ##### Type Parameters
 
@@ -1293,13 +1294,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.onMessage`
 
-***
+---
 
 ### onRestoreRoom()?
 
 > `optional` **onRestoreRoom**(`cached?`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:170
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:170
 
 devMode: When `devMode` is enabled, `onRestoreRoom` method is called during
 process startup, with the data returned by the `onCacheRoom` method.
@@ -1318,7 +1319,7 @@ process startup, with the data returned by the `onCacheRoom` method.
 
 `Room.onRestoreRoom`
 
-***
+---
 
 ### onTurnChanged()
 
@@ -1332,18 +1333,19 @@ Subclass hook: called after nextTurn for game-specific events.
 
 `void`
 
-***
+---
 
 ### onUncaughtException()?
 
 > `optional` **onUncaughtException**(`error`, `methodName`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:148
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:148
 
 Define a custom exception handler.
 If defined, all lifecycle hooks will be wrapped by try/catch, and the exception will be forwarded to this method.
 
 These methods will be wrapped by try/catch:
+
 - `onMessage`
 - `onAuth` / `onJoin` / `onLeave` / `onCreate` / `onDispose`
 - `clock.setTimeout` / `clock.setInterval`
@@ -1369,7 +1371,7 @@ These methods will be wrapped by try/catch:
 
 `Room.onUncaughtException`
 
-***
+---
 
 ### parseOptions()
 
@@ -1389,13 +1391,13 @@ Subclass hook: extract typed options from the raw create payload.
 
 `TOptions`
 
-***
+---
 
 ### resetAutoDisposeTimeout()
 
 > `protected` **resetAutoDisposeTimeout**(`timeoutInSeconds?`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:252
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:252
 
 #### Parameters
 
@@ -1411,13 +1413,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.resetAutoDisposeTimeout`
 
-***
+---
 
 ### send()
 
 > **send**(`client`, `type`, `message`, `options?`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:221
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:221
 
 #### Parameters
 
@@ -1445,13 +1447,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.send`
 
-***
+---
 
 ### sendFullState()
 
 > `protected` **sendFullState**(`client`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:254
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:254
 
 #### Parameters
 
@@ -1467,13 +1469,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.sendFullState`
 
-***
+---
 
 ### setMetadata()
 
 > **setMetadata**(`meta`): `Promise`\<`void`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:211
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:211
 
 #### Parameters
 
@@ -1489,13 +1491,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.setMetadata`
 
-***
+---
 
 ### ~~setPatchRate()~~
 
 > **setPatchRate**(`milliseconds`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:205
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:205
 
 #### Parameters
 
@@ -1515,13 +1517,13 @@ Use `.patchRate=` instead.
 
 `Room.setPatchRate`
 
-***
+---
 
 ### setPrivate()
 
 > **setPrivate**(`bool?`): `Promise`\<`void`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:212
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:212
 
 #### Parameters
 
@@ -1537,13 +1539,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.setPrivate`
 
-***
+---
 
 ### setSeatReservationTime()
 
 > **setSeatReservationTime**(`seconds`): `this`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:188
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:188
 
 Set the number of seconds a room can wait for a client to effectively join the room.
 You should consider how long your `onAuth()` will have to wait for setting a different seat reservation time.
@@ -1574,13 +1576,13 @@ The modified Room object.
 
 `Room.setSeatReservationTime`
 
-***
+---
 
 ### setSerializer()
 
 > **setSerializer**(`serializer`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:210
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:210
 
 #### Parameters
 
@@ -1596,13 +1598,13 @@ Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\
 
 `Room.setSerializer`
 
-***
+---
 
 ### setSimulationInterval()
 
 > **setSimulationInterval**(`onTickCallback?`, `delay?`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:201
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:201
 
 (Optional) Set a simulation interval that can change the state of the game.
 The simulation interval is your game loop.
@@ -1614,7 +1616,7 @@ The simulation interval is your game loop.
 `SimulationCallback`
 
 You can implement your physics or world updates here!
- This is a good place to update the room state.
+This is a good place to update the room state.
 
 ##### delay?
 
@@ -1636,13 +1638,13 @@ Interval delay on executing `onTickCallback` in milliseconds.
 
 `Room.setSimulationInterval`
 
-***
+---
 
 ### ~~setState()~~
 
 > **setState**(`newState`): `void`
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:209
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:209
 
 #### Parameters
 
@@ -1662,13 +1664,13 @@ Use `.state =` instead.
 
 `Room.setState`
 
-***
+---
 
 ### unlock()
 
 > **unlock**(): `Promise`\<`void`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:220
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:220
 
 Unlocking the room returns it to the pool of available rooms for new clients to connect to.
 
@@ -1680,13 +1682,13 @@ Unlocking the room returns it to the pool of available rooms for new clients to 
 
 `Room.unlock`
 
-***
+---
 
 ### onAuth()
 
 > `static` **onAuth**(`token`, `options`, `context`): `Promise`\<`unknown`\>
 
-Defined in: node\_modules/.pnpm/@colyseus+core@0.16.24\_@colyseus+schema@3.0.76\_@pm2+io@6.1.0/node\_modules/@colyseus/core/build/Room.d.ts:150
+Defined in: node_modules/.pnpm/@colyseus+core@0.16.24_@colyseus+schema@3.0.76_@pm2+io@6.1.0/node_modules/@colyseus/core/build/Room.d.ts:150
 
 #### Parameters
 

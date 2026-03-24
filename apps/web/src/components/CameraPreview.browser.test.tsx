@@ -44,27 +44,8 @@ beforeEach(() => {
 // ── Tests ────────────────────────────────────────────────────────────────
 
 describe("CameraPreview", () => {
-  it("renders ask step initially", async () => {
-    render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
-    await expect.element(page.getByText("Enable Camera?")).toBeVisible();
-    await expect
-      .element(page.getByRole("button", { name: "Enable" }))
-      .toBeVisible();
-    await expect
-      .element(page.getByRole("button", { name: "Skip" }))
-      .toBeVisible();
-  });
-
-  it("calls onSkip when Skip is clicked", async () => {
-    const onSkip = vi.fn();
-    render(<CameraPreview onConfirm={vi.fn()} onSkip={onSkip} />);
-    await page.getByText("Skip").click();
-    expect(onSkip).toHaveBeenCalled();
-  });
-
-  it("transitions to preview step on Enable", async () => {
-    render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
-    await page.getByRole("button", { name: "Enable" }).click();
+  it("auto-starts camera and shows preview", async () => {
+    render(<CameraPreview onConfirm={vi.fn()} />);
     await expect.element(page.getByText("Camera Preview")).toBeVisible();
     expect(requestCamera).toHaveBeenCalledWith({
       kind: "facingMode",
@@ -76,54 +57,47 @@ describe("CameraPreview", () => {
     vi.mocked(requestCamera).mockRejectedValueOnce(
       new Error("NotAllowedError"),
     );
-    render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
-    await page.getByRole("button", { name: "Enable" }).click();
+    render(<CameraPreview onConfirm={vi.fn()} />);
     await expect
-      .element(
-        page.getByText("Camera access denied. Check your browser permissions."),
-      )
+      .element(page.getByText("Camera error: NotAllowedError"))
       .toBeVisible();
   });
 
   it("calls onConfirm with stream when Confirm is clicked", async () => {
     const onConfirm = vi.fn();
-    render(<CameraPreview onConfirm={onConfirm} onSkip={vi.fn()} />);
-    await page.getByRole("button", { name: "Enable" }).click();
+    render(<CameraPreview onConfirm={onConfirm} />);
     await expect.element(page.getByText("Confirm")).toBeVisible();
     await page.getByText("Confirm").click();
     expect(onConfirm).toHaveBeenCalledWith(expect.any(Object));
     expect(stopAllTracks).not.toHaveBeenCalled();
   });
 
-  it("stops tracks and returns to ask step on Back", async () => {
-    render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
-    await page.getByRole("button", { name: "Enable" }).click();
-    await expect
-      .element(page.getByRole("button", { name: "Back" }))
-      .toBeVisible();
-    await page.getByRole("button", { name: "Back" }).click();
-    expect(stopAllTracks).toHaveBeenCalled();
-    await expect.element(page.getByText("Enable Camera?")).toBeVisible();
+  it("does not show Skip or Back buttons", async () => {
+    render(<CameraPreview onConfirm={vi.fn()} />);
+    await expect.element(page.getByText("Camera Preview")).toBeVisible();
+    expect(page.getByRole("button", { name: "Skip" }).elements()).toHaveLength(
+      0,
+    );
+    expect(page.getByRole("button", { name: "Back" }).elements()).toHaveLength(
+      0,
+    );
   });
 
   it("shows dropdown for web with multiple cameras", async () => {
     vi.mocked(isNativePlatform).mockReturnValue(false);
-    render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
-    await page.getByRole("button", { name: "Enable" }).click();
+    render(<CameraPreview onConfirm={vi.fn()} />);
     await expect.element(page.getByRole("combobox")).toBeVisible();
   });
 
   it("shows flip button on native platform", async () => {
     vi.mocked(isNativePlatform).mockReturnValue(true);
-    render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
-    await page.getByRole("button", { name: "Enable" }).click();
+    render(<CameraPreview onConfirm={vi.fn()} />);
     await expect.element(page.getByText("Flip")).toBeVisible();
   });
 
   it("flips camera on native when Flip is clicked", async () => {
     vi.mocked(isNativePlatform).mockReturnValue(true);
-    render(<CameraPreview onConfirm={vi.fn()} onSkip={vi.fn()} />);
-    await page.getByRole("button", { name: "Enable" }).click();
+    render(<CameraPreview onConfirm={vi.fn()} />);
     await expect.element(page.getByText("Flip")).toBeVisible();
     await page.getByText("Flip").click();
 

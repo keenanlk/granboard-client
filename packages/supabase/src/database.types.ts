@@ -150,18 +150,21 @@ export type Database = {
       };
       online_players: {
         Row: {
+          avatar_url: string | null;
           display_name: string;
           id: string;
           last_seen: string;
           status: string;
         };
         Insert: {
+          avatar_url?: string | null;
           display_name: string;
           id: string;
           last_seen?: string;
           status?: string;
         };
         Update: {
+          avatar_url?: string | null;
           display_name?: string;
           id?: string;
           last_seen?: string;

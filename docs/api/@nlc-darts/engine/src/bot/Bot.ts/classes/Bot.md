@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/bot/Bot.ts](../README.md) / Bot
 
@@ -11,15 +11,16 @@ Defined in: [bot/Bot.ts:29](https://github.com/keenanlk/granboard-client/blob/ma
 A Bot player that uses a statistical Gaussian throw model to simulate realistic darts.
 
 Each bot has a skill level (σ in mm). The lower the σ, the tighter the grouping:
-  - Pro (6mm): hits intended segment the vast majority of the time
-  - Advanced (12mm): regularly hits target, occasional adjacent segment
-  - Intermediate (25mm): frequently hits the right number but rarely the intended ring
-  - Beginner (50mm): wide scatter, often misses the target number entirely
+
+- Pro (6mm): hits intended segment the vast majority of the time
+- Advanced (12mm): regularly hits target, occasional adjacent segment
+- Intermediate (25mm): frequently hits the right number but rarely the intended ring
+- Beginner (50mm): wide scatter, often misses the target number entirely
 
 Usage:
-  const bot = new Bot("CPU", BotSkill.Intermediate);
-  const hitSegmentId = bot.throwX01(score, opts, opened);
-  store.addDart(CreateSegment(hitSegmentId));
+const bot = new Bot("CPU", BotSkill.Intermediate);
+const hitSegmentId = bot.throwX01(score, opts, opened);
+store.addDart(CreateSegment(hitSegmentId));
 
 ## Constructors
 
@@ -51,7 +52,7 @@ Defined in: [bot/Bot.ts:33](https://github.com/keenanlk/granboard-client/blob/ma
 
 Defined in: [bot/Bot.ts:30](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/bot/Bot.ts#L30)
 
-***
+---
 
 ### sigma
 
@@ -84,7 +85,7 @@ Returns the SegmentID where the dart actually lands (may miss target).
 
 [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-***
+---
 
 ### throwCricket()
 
@@ -121,7 +122,7 @@ Returns the SegmentID where the dart actually lands (may miss target).
 
 [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-***
+---
 
 ### throwHighScore()
 
@@ -146,7 +147,7 @@ Returns the SegmentID where the dart actually lands (may miss target).
 
 [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-***
+---
 
 ### throwTicTacToe()
 
@@ -187,7 +188,7 @@ Returns the SegmentID where the dart actually lands (may miss target).
 
 [`SegmentID`](../../../board/Dartboard.ts/type-aliases/SegmentID.md)
 
-***
+---
 
 ### throwX01()
 

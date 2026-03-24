@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/cricket.types.ts](../README.md) / CricketState
 
@@ -18,7 +18,7 @@ Complete mutable state for a Cricket game in progress.
 
 Defined in: [engine/cricket.types.ts:58](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L58)
 
-***
+---
 
 ### currentRound
 
@@ -26,7 +26,7 @@ Defined in: [engine/cricket.types.ts:58](https://github.com/keenanlk/granboard-c
 
 Defined in: [engine/cricket.types.ts:59](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L59)
 
-***
+---
 
 ### currentRoundDarts
 
@@ -34,7 +34,7 @@ Defined in: [engine/cricket.types.ts:59](https://github.com/keenanlk/granboard-c
 
 Defined in: [engine/cricket.types.ts:60](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L60)
 
-***
+---
 
 ### options
 
@@ -42,7 +42,7 @@ Defined in: [engine/cricket.types.ts:60](https://github.com/keenanlk/granboard-c
 
 Defined in: [engine/cricket.types.ts:56](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L56)
 
-***
+---
 
 ### players
 
@@ -50,7 +50,7 @@ Defined in: [engine/cricket.types.ts:56](https://github.com/keenanlk/granboard-c
 
 Defined in: [engine/cricket.types.ts:57](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L57)
 
-***
+---
 
 ### winner
 

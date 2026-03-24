@@ -8,21 +8,17 @@ import {
 } from "../lib/cameraUtils.ts";
 import type { CameraSelection } from "../lib/cameraUtils.ts";
 
-type Step = "ask" | "preview";
-
 interface CameraPreviewProps {
   /** Called with the confirmed MediaStream when the user taps Confirm. */
   onConfirm: (stream: MediaStream) => void;
-  /** Called when the user taps Skip (either step). */
-  onSkip: () => void;
 }
 
 /**
- * Full-screen modal shown once at online game start. Replaces CameraPrompt
- * with a two-step flow: ask → preview with camera switching.
+ * Full-screen modal shown once at online game start.
+ * Auto-starts the camera and lets the user switch/flip before confirming.
+ * Camera is mandatory for online play — there is no skip option.
  */
-export function CameraPreview({ onConfirm, onSkip }: CameraPreviewProps) {
-  const [step, setStep] = useState<Step>("ask");
+export function CameraPreview({ onConfirm }: CameraPreviewProps) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -53,37 +49,50 @@ export function CameraPreview({ onConfirm, onSkip }: CameraPreviewProps) {
     };
   }, []);
 
-  /** Acquire camera and transition to preview. */
-  async function handleEnable() {
-    setLoading(true);
-    setError(null);
-    try {
-      const s = await requestCamera({ kind: "facingMode", facingMode: "user" });
-      setStream(s);
-      setFacingMode("user");
-      setStep("preview");
-
-      // Enumerate devices after permission grant (labels are available now)
-      if (!isNativePlatform()) {
-        const videoDevices = await enumerateVideoDevices();
-        setDevices(videoDevices);
-        // Try to find the active device
-        const activeTrack = s.getVideoTracks()[0];
-        const activeSettings = activeTrack?.getSettings();
-        if (activeSettings?.deviceId) {
-          setSelectedDeviceId(activeSettings.deviceId);
-        } else if (videoDevices.length > 0) {
-          setSelectedDeviceId(videoDevices[0].deviceId);
+  // Auto-start camera on mount — camera is mandatory for online play
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const s = await requestCamera({
+          kind: "facingMode",
+          facingMode: "user",
+        });
+        if (cancelled) {
+          stopAllTracks(s);
+          return;
         }
+        setStream(s);
+        setFacingMode("user");
+
+        // Enumerate devices after permission grant (labels are available now)
+        if (!isNativePlatform()) {
+          const videoDevices = await enumerateVideoDevices();
+          if (cancelled) return;
+          setDevices(videoDevices);
+          const activeTrack = s.getVideoTracks()[0];
+          const activeSettings = activeTrack?.getSettings();
+          if (activeSettings?.deviceId) {
+            setSelectedDeviceId(activeSettings.deviceId);
+          } else if (videoDevices.length > 0) {
+            setSelectedDeviceId(videoDevices[0].deviceId);
+          }
+        }
+      } catch (err) {
+        if (cancelled) return;
+        console.error("[CameraPreview] getUserMedia failed:", err);
+        const msg = err instanceof Error ? err.message : String(err);
+        setError(`Camera error: ${msg}`);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-    } catch (err) {
-      console.error("[CameraPreview] getUserMedia failed:", err);
-      const msg = err instanceof Error ? err.message : String(err);
-      setError(`Camera error: ${msg}`);
-    } finally {
-      setLoading(false);
-    }
-  }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /** Switch camera — stop old, request new. */
   async function switchCamera(selection: CameraSelection) {
@@ -124,50 +133,7 @@ export function CameraPreview({ onConfirm, onSkip }: CameraPreviewProps) {
     }
   }
 
-  function handleBack() {
-    if (stream) stopAllTracks(stream);
-    setStream(null);
-    setStep("ask");
-    setError(null);
-  }
-
-  // ── Ask step ──────────────────────────────────────────────────────
-  if (step === "ask") {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-        <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-8 max-w-sm mx-4 text-center space-y-6">
-          <h2 className="text-3xl font-black text-white tracking-wide">
-            Enable Camera?
-          </h2>
-          <p className="text-zinc-400 text-lg leading-relaxed">
-            Your opponent will see your camera feed during their turn.
-          </p>
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          <div className="flex gap-4">
-            <button
-              onClick={onSkip}
-              className="flex-1 py-4 px-4 rounded-xl bg-zinc-800 text-zinc-300 font-bold uppercase tracking-widest text-lg transition-colors hover:bg-zinc-700"
-            >
-              Skip
-            </button>
-            <button
-              onClick={handleEnable}
-              disabled={loading}
-              className="flex-1 py-4 px-4 rounded-xl font-bold uppercase tracking-widest text-lg transition-colors disabled:opacity-50"
-              style={{
-                backgroundColor: "var(--color-game-accent)",
-                color: "var(--color-game-accent-text)",
-              }}
-            >
-              {loading ? "Starting…" : "Enable"}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Preview step ──────────────────────────────────────────────────
+  // ── Preview ──────────────────────────────────────────────────────
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
       <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-5 max-w-3xl w-full mx-4 flex gap-5 max-h-[calc(100dvh-2rem)]">
@@ -221,26 +187,18 @@ export function CameraPreview({ onConfirm, onSkip }: CameraPreviewProps) {
             </select>
           ) : null}
 
-          {/* Action buttons */}
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={handleConfirm}
-              disabled={!stream || loading}
-              className="w-full py-3 rounded-xl font-bold uppercase tracking-widest text-base transition-colors disabled:opacity-50"
-              style={{
-                backgroundColor: "var(--color-game-accent)",
-                color: "var(--color-game-accent-text)",
-              }}
-            >
-              Confirm
-            </button>
-            <button
-              onClick={handleBack}
-              className="w-full py-3 rounded-xl bg-zinc-800 text-zinc-300 font-bold uppercase tracking-widest text-base transition-colors hover:bg-zinc-700"
-            >
-              Back
-            </button>
-          </div>
+          {/* Confirm button */}
+          <button
+            onClick={handleConfirm}
+            disabled={!stream || loading}
+            className="w-full py-3 rounded-xl font-bold uppercase tracking-widest text-base transition-colors disabled:opacity-50"
+            style={{
+              backgroundColor: "var(--color-game-accent)",
+              color: "var(--color-game-accent-text)",
+            }}
+          >
+            Confirm
+          </button>
         </div>
       </div>
     </div>

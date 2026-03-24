@@ -1,6 +1,6 @@
 [**Documentation**](../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../README.md) / [@nlc-darts/server](../../README.md) / [messages](../README.md) / ServerMessage
 
@@ -14,70 +14,70 @@ Server → Client broadcast types
 
 ## Type Declaration
 
-### BRACKET\_UPDATE
+### BRACKET_UPDATE
 
-> `readonly` **BRACKET\_UPDATE**: `"bracket_update"` = `"bracket_update"`
+> `readonly` **BRACKET_UPDATE**: `"bracket_update"` = `"bracket_update"`
 
-### GAME\_ENDED
+### GAME_ENDED
 
-> `readonly` **GAME\_ENDED**: `"game_ended"` = `"game_ended"`
+> `readonly` **GAME_ENDED**: `"game_ended"` = `"game_ended"`
 
-### GAME\_EVENT
+### GAME_EVENT
 
-> `readonly` **GAME\_EVENT**: `"game_event"` = `"game_event"`
+> `readonly` **GAME_EVENT**: `"game_event"` = `"game_event"`
 
-### MATCH\_COUNTDOWN
+### MATCH_COUNTDOWN
 
-> `readonly` **MATCH\_COUNTDOWN**: `"match_countdown"` = `"match_countdown"`
+> `readonly` **MATCH_COUNTDOWN**: `"match_countdown"` = `"match_countdown"`
 
-### MATCH\_GAME\_ROOM\_CREATED
+### MATCH_GAME_ROOM_CREATED
 
-> `readonly` **MATCH\_GAME\_ROOM\_CREATED**: `"match_game_room_created"` = `"match_game_room_created"`
+> `readonly` **MATCH_GAME_ROOM_CREATED**: `"match_game_room_created"` = `"match_game_room_created"`
 
-### MATCH\_READY\_STATE
+### MATCH_READY_STATE
 
-> `readonly` **MATCH\_READY\_STATE**: `"match_ready_state"` = `"match_ready_state"`
+> `readonly` **MATCH_READY_STATE**: `"match_ready_state"` = `"match_ready_state"`
 
-### MATCH\_START
+### MATCH_START
 
-> `readonly` **MATCH\_START**: `"match_start"` = `"match_start"`
+> `readonly` **MATCH_START**: `"match_start"` = `"match_start"`
 
-### MATCH\_YOUR\_TURN
+### MATCH_YOUR_TURN
 
-> `readonly` **MATCH\_YOUR\_TURN**: `"match_your_turn"` = `"match_your_turn"`
+> `readonly` **MATCH_YOUR_TURN**: `"match_your_turn"` = `"match_your_turn"`
 
-### PLAYER\_LEFT
+### PLAYER_LEFT
 
-> `readonly` **PLAYER\_LEFT**: `"player_left"` = `"player_left"`
+> `readonly` **PLAYER_LEFT**: `"player_left"` = `"player_left"`
 
-### REGISTRATION\_UPDATE
+### REGISTRATION_UPDATE
 
-> `readonly` **REGISTRATION\_UPDATE**: `"registration_update"` = `"registration_update"`
+> `readonly` **REGISTRATION_UPDATE**: `"registration_update"` = `"registration_update"`
 
-### REMATCH\_ACCEPT
+### REMATCH_ACCEPT
 
-> `readonly` **REMATCH\_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
+> `readonly` **REMATCH_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
 
-### REMATCH\_DECLINE
+### REMATCH_DECLINE
 
-> `readonly` **REMATCH\_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
+> `readonly` **REMATCH_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
 
-### REMATCH\_REQUEST
+### REMATCH_REQUEST
 
-> `readonly` **REMATCH\_REQUEST**: `"rematch_request"` = `"rematch_request"`
+> `readonly` **REMATCH_REQUEST**: `"rematch_request"` = `"rematch_request"`
 
-### STATE\_UPDATE
+### STATE_UPDATE
 
-> `readonly` **STATE\_UPDATE**: `"state_update"` = `"state_update"`
+> `readonly` **STATE_UPDATE**: `"state_update"` = `"state_update"`
 
-### TOURNAMENT\_CREATED
+### TOURNAMENT_CREATED
 
-> `readonly` **TOURNAMENT\_CREATED**: `"tournament_created"` = `"tournament_created"`
+> `readonly` **TOURNAMENT_CREATED**: `"tournament_created"` = `"tournament_created"`
 
-### TOURNAMENT\_ERROR
+### TOURNAMENT_ERROR
 
-> `readonly` **TOURNAMENT\_ERROR**: `"tournament_error"` = `"tournament_error"`
+> `readonly` **TOURNAMENT_ERROR**: `"tournament_error"` = `"tournament_error"`
 
-### TURN\_DELAY
+### TURN_DELAY
 
-> `readonly` **TURN\_DELAY**: `"turn_delay"` = `"turn_delay"`
+> `readonly` **TURN_DELAY**: `"turn_delay"` = `"turn_delay"`

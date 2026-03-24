@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / RGB
 
@@ -18,7 +18,7 @@ An RGB color value (0-255 per channel).
 
 Defined in: [board/GranboardLED.ts:21](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/GranboardLED.ts#L21)
 
-***
+---
 
 ### g
 
@@ -26,7 +26,7 @@ Defined in: [board/GranboardLED.ts:21](https://github.com/keenanlk/granboard-cli
 
 Defined in: [board/GranboardLED.ts:20](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/board/GranboardLED.ts#L20)
 
-***
+---
 
 ### r
 

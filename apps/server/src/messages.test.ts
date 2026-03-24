@@ -23,6 +23,8 @@ describe("ClientMessage", () => {
         "UNREADY_FOR_MATCH",
         "MATCH_GAME_RESULT",
         "MATCH_GAME_ROOM_READY",
+        "NEXT_LEG_REQUEST",
+        "NEXT_LEG_ACCEPT",
       ].sort(),
     );
   });
@@ -49,6 +51,8 @@ describe("ServerMessage", () => {
         "MATCH_START",
         "MATCH_YOUR_TURN",
         "MATCH_GAME_ROOM_CREATED",
+        "NEXT_LEG_REQUEST",
+        "NEXT_LEG_ACCEPT",
       ].sort(),
     );
   });

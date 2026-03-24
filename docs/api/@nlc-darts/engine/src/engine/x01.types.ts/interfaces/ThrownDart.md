@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/x01.types.ts](../README.md) / ThrownDart
 
@@ -20,7 +20,7 @@ Defined in: [engine/x01.types.ts:29](https://github.com/keenanlk/granboard-clien
 
 False for double-in pre-open throws or bust darts — entire turn was canceled.
 
-***
+---
 
 ### segment
 

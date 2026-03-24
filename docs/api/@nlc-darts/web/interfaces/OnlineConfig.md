@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / OnlineConfig
 
@@ -18,7 +18,7 @@ Defined in: [store/useOnlineStore.ts:24](https://github.com/keenanlk/granboard-c
 
 Colyseus room ID for server-authoritative play
 
-***
+---
 
 ### gameOptions?
 
@@ -28,7 +28,7 @@ Defined in: [store/useOnlineStore.ts:32](https://github.com/keenanlk/granboard-c
 
 Game options for Colyseus room creation
 
-***
+---
 
 ### gameType?
 
@@ -38,7 +38,7 @@ Defined in: [store/useOnlineStore.ts:26](https://github.com/keenanlk/granboard-c
 
 Game type for Colyseus room creation
 
-***
+---
 
 ### isHost
 
@@ -46,7 +46,7 @@ Game type for Colyseus room creation
 
 Defined in: [store/useOnlineStore.ts:22](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/useOnlineStore.ts#L22)
 
-***
+---
 
 ### playerIds?
 
@@ -56,7 +56,7 @@ Defined in: [store/useOnlineStore.ts:30](https://github.com/keenanlk/granboard-c
 
 Player IDs for Colyseus room creation
 
-***
+---
 
 ### playerNames?
 
@@ -66,7 +66,7 @@ Defined in: [store/useOnlineStore.ts:28](https://github.com/keenanlk/granboard-c
 
 Player names for Colyseus room creation
 
-***
+---
 
 ### roomId
 

@@ -7,6 +7,7 @@ import {
   getBotCharacter,
   CreateSegment,
   cricketPickTarget,
+  getSetWinner,
 } from "@nlc-darts/engine";
 import type {
   CricketOptions,
@@ -41,6 +42,7 @@ import { ColyseusRemoteController } from "../controllers/ColyseusRemoteControlle
 import { guardForOnlineTurn } from "../controllers/OnlineTurnGuard.ts";
 import { setActiveController } from "../controllers/GameController.ts";
 import { useOnlineRematch } from "../hooks/useOnlineRematch.ts";
+import { useOnlineNextLeg } from "../hooks/useOnlineNextLeg.ts";
 import { OnlineIndicator } from "../components/OnlineIndicator.tsx";
 import { WaitingOverlay } from "../components/WaitingOverlay.tsx";
 import { useWebRTC } from "../hooks/useWebRTC.ts";
@@ -61,6 +63,8 @@ interface CricketScreenProps {
   legResults?: LegResult[];
   currentLegIndex?: number;
   onlineConfig?: OnlineConfig;
+  /** Called automatically when the tournament set is decided (no user click needed). */
+  onTournamentComplete?: (winnerName: string) => void;
 }
 
 function targetLabel(t: CricketTarget) {
@@ -153,6 +157,7 @@ export function CricketScreen({
   legResults,
   currentLegIndex,
   onlineConfig,
+  onTournamentComplete,
 }: CricketScreenProps) {
   const {
     players,
@@ -411,6 +416,10 @@ export function CricketScreen({
   const { rematchState, requestRematch, acceptRematch, declineRematch } =
     useOnlineRematch(onlineConfig);
 
+  const { nextLegState, requestNextLeg, resetNextLeg } = useOnlineNextLeg(
+    onlineConfig && setProgress ? room : null,
+  );
+
   useEffect(() => {
     if (rematchState === "accepted") {
       room?.send("rematch", {});
@@ -418,6 +427,41 @@ export function CricketScreen({
     }
     if (rematchState === "declined") onExit();
   }, [rematchState, onRematch, onExit, room]);
+
+  // When both players agree on next leg, reset the Colyseus room and advance
+  useEffect(() => {
+    if (nextLegState === "accepted") {
+      room?.send("rematch", {});
+      resetNextLeg();
+      onNextLeg?.();
+    }
+  }, [nextLegState, room, resetNextLeg, onNextLeg]);
+
+  // Auto-report tournament result when the set is decided (no user click needed)
+  const tournamentCompleteCalledRef = useRef(false);
+  useEffect(() => {
+    if (
+      !onTournamentComplete ||
+      !setProgress ||
+      !winner ||
+      tournamentCompleteCalledRef.current
+    )
+      return;
+    const format = setProgress.totalLegs === 3 ? "bo3" : "bo5";
+    const effectiveResults = [
+      ...setProgress.legResults,
+      {
+        winnerName: winner,
+        winnerIndex: setProgress.playerNames.indexOf(winner),
+      },
+    ];
+    const seriesWinner = getSetWinner(effectiveResults, format);
+    if (seriesWinner) {
+      tournamentCompleteCalledRef.current = true;
+      const t = setTimeout(() => onTournamentComplete(winner), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [winner, setProgress, onTournamentComplete]);
 
   const n = players.length;
   const readyToSwitch = currentRoundDarts.length === 3;
@@ -491,7 +535,6 @@ export function CricketScreen({
                 setConfirmedStream(stream);
                 setCameraPreviewShown(false);
               }}
-              onSkip={() => setCameraPreviewShown(false)}
             />
           )}
           {onlineConfig && opponentDisconnected && !winner && (
@@ -502,6 +545,7 @@ export function CricketScreen({
               onExit={onExit}
               onRematch={onlineConfig || setProgress ? undefined : onRematch}
               setProgress={setProgress}
+              isTournament={!!onlineConfig && !!setProgress}
               onNextLeg={onNextLeg}
               onlineRematch={
                 onlineConfig && !setProgress
@@ -510,6 +554,14 @@ export function CricketScreen({
                       onRequest: requestRematch,
                       onAccept: acceptRematch,
                       onDecline: declineRematch,
+                    }
+                  : undefined
+              }
+              onlineNextLeg={
+                onlineConfig && setProgress
+                  ? {
+                      state: nextLegState,
+                      onRequest: requestNextLeg,
                     }
                   : undefined
               }

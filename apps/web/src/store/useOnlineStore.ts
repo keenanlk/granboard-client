@@ -38,6 +38,7 @@ interface OnlineState {
   // Auth
   authUserId: string | null;
   displayName: string | null;
+  avatarUrl: string | null;
   connectionStatus: ConnectionStatus;
   stats: OnlinePlayerStats;
 
@@ -83,6 +84,7 @@ function buildPresencePayload(
   return {
     id: state.authUserId,
     display_name: state.displayName,
+    avatar_url: state.avatarUrl,
     status: statusOverride ?? "online",
     x01_grade: state.stats.x01.grade,
     x01_ppd: state.stats.x01.ppd,
@@ -96,6 +98,7 @@ function buildPresencePayload(
 export const useOnlineStore = create<OnlineState>((set, get) => ({
   authUserId: null,
   displayName: null,
+  avatarUrl: null,
   connectionStatus: "offline",
   stats: EMPTY_STATS,
   onlinePlayers: [],
@@ -117,7 +120,12 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
       const userId = session?.user?.id;
       if (!userId) throw new Error("Not authenticated");
 
-      const displayName = localStorage.getItem("nlc-online-name") ?? "Player";
+      const meta = session?.user?.user_metadata;
+      const displayName =
+        localStorage.getItem("nlc-online-name") ??
+        (meta?.full_name as string | undefined) ??
+        "Player";
+      const avatarUrl = (meta?.avatar_url as string | undefined) ?? null;
 
       // Fetch online stats for this player
       const stats = await fetchPlayerStats(userId);
@@ -127,6 +135,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
         {
           id: userId,
           display_name: displayName,
+          avatar_url: avatarUrl,
           status: "online" as PlayerStatus,
           last_seen: new Date().toISOString(),
         },
@@ -136,6 +145,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
       set({
         authUserId: userId,
         displayName,
+        avatarUrl,
         connectionStatus: "online",
         stats,
       });
@@ -153,6 +163,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
             const p = presences[0] as unknown as {
               id: string;
               display_name: string;
+              avatar_url: string | null;
               status: PlayerStatus;
               x01_grade: string | null;
               x01_ppd: number;
@@ -165,6 +176,7 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
               players.push({
                 id: p.id,
                 display_name: p.display_name,
+                avatar_url: p.avatar_url ?? null,
                 status: p.status,
                 last_seen: new Date().toISOString(),
                 x01_grade: p.x01_grade ?? null,
@@ -273,6 +285,9 @@ export const useOnlineStore = create<OnlineState>((set, get) => ({
 
     set({
       connectionStatus: "offline",
+      authUserId: null,
+      displayName: null,
+      avatarUrl: null,
       stats: EMPTY_STATS,
       onlinePlayers: [],
       lobbyChannel: null,

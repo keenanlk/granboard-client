@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/db/db.types.ts](../README.md) / HighScoreStats
 
@@ -18,7 +18,7 @@ Aggregated statistics for a player's High Score game history.
 
 Defined in: [db/db.types.ts:64](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L64)
 
-***
+---
 
 ### avgScore
 
@@ -26,7 +26,7 @@ Defined in: [db/db.types.ts:64](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:62](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L62)
 
-***
+---
 
 ### bestRound
 
@@ -34,7 +34,7 @@ Defined in: [db/db.types.ts:62](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:65](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L65)
 
-***
+---
 
 ### bestScore
 
@@ -42,7 +42,7 @@ Defined in: [db/db.types.ts:65](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:63](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L63)
 
-***
+---
 
 ### gamesPlayed
 
@@ -50,7 +50,7 @@ Defined in: [db/db.types.ts:63](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:60](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L60)
 
-***
+---
 
 ### wins
 

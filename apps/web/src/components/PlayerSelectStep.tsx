@@ -51,6 +51,14 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
     roster.map((r) => r.id).filter(Boolean) as string[],
   );
 
+  // Sort: selected players first (recently played), then alphabetical
+  const sortedPlayers = [...players].sort((a, b) => {
+    const aActive = inGameIds.has(a.id);
+    const bActive = inGameIds.has(b.id);
+    if (aActive !== bActive) return aActive ? -1 : 1;
+    return a.name.localeCompare(b.name);
+  });
+
   const toggleSaved = (id: string, name: string) => {
     if (inGameIds.has(id)) {
       onChange(roster.filter((r) => r.id !== id));
@@ -224,7 +232,7 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
 
   return (
     <div
-      className="flex flex-1 min-h-0"
+      className="flex flex-col sm:flex-row flex-1 min-h-0 overflow-y-auto sm:overflow-hidden"
       style={{ gap: "clamp(0.75rem,1.5vw,1.5rem)" }}
     >
       {/* Touch drag floating preview */}
@@ -273,13 +281,10 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
         })()}
 
       {/* Left: saved player pool */}
-      <div
-        className="flex flex-col gap-[clamp(0.5rem,1vh,1rem)] shrink-0 min-h-0"
-        style={{ width: "clamp(10rem,15vw,18rem)" }}
-      >
+      <div className="flex flex-col gap-[clamp(0.5rem,1vh,1rem)] shrink-0 min-h-0 max-h-[40vh] sm:max-h-none w-full sm:w-[clamp(10rem,15vw,18rem)]">
         <p
           className="text-content-muted uppercase tracking-widest font-bold shrink-0"
-          style={{ fontSize: "clamp(0.65rem,1vw,1rem)" }}
+          style={{ fontSize: "clamp(0.8rem,1vw,1rem)" }}
         >
           Saved Players
         </p>
@@ -293,7 +298,7 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
               No saved players yet
             </p>
           )}
-          {players.map((p) => {
+          {sortedPlayers.map((p) => {
             const active = inGameIds.has(p.id);
             return (
               <button
@@ -306,9 +311,9 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
                     : "border-border-default bg-surface-raised text-zinc-400 hover:border-border-subtle hover:text-white"
                 }`}
                 style={{
-                  fontSize: "clamp(0.8rem,1.3vw,1.5rem)",
+                  fontSize: "clamp(1rem,1.3vw,1.5rem)",
                   padding:
-                    "clamp(0.375rem,0.8vh,0.75rem) clamp(0.5rem,1vw,1rem)",
+                    "clamp(0.5rem,0.8vh,0.75rem) clamp(0.75rem,1vw,1rem)",
                   ...(active
                     ? {
                         borderColor: "var(--color-game-accent)",
@@ -322,7 +327,7 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
                 {active && (
                   <span
                     className="shrink-0"
-                    style={{ fontSize: "clamp(0.7rem,1vw,1.25rem)" }}
+                    style={{ fontSize: "clamp(0.875rem,1vw,1.25rem)" }}
                   >
                     ✓
                   </span>
@@ -381,10 +386,8 @@ export function PlayerSelectStep({ roster, onChange }: Props) {
       >
         <div
           ref={gridRef}
-          className="flex-1 min-h-0 grid overflow-hidden"
+          className="flex-1 min-h-0 grid grid-cols-2 sm:grid-cols-none sm:grid-rows-2 sm:grid-flow-col sm:auto-cols-fr overflow-y-auto sm:overflow-hidden"
           style={{
-            gridTemplateColumns: `repeat(${Math.ceil(Math.max(roster.length, 2) / 2)}, minmax(0, 1fr))`,
-            gridTemplateRows: "minmax(0, 1fr) minmax(0, 1fr)",
             gap: "clamp(0.375rem,0.5vw,0.75rem)",
           }}
         >

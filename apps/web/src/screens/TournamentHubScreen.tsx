@@ -62,7 +62,7 @@ export function TournamentHubScreen({
       return;
     }
 
-    const ok = await registerForTournament(tournament.id, userId);
+    const ok = await registerForTournament(tournament.id);
     if (!ok) {
       setJoinError("Failed to register");
       setJoining(false);
@@ -78,40 +78,39 @@ export function TournamentHubScreen({
   return (
     <div className="h-full flex flex-col bg-black text-white">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 pt-6 pb-4">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={onBack}
-            className="p-2 rounded-xl bg-zinc-900 border border-zinc-800"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1
-            className="text-2xl tracking-tight"
-            style={{
-              fontFamily: "Beon, sans-serif",
-              color: "#f59e0b",
-              textShadow: "0 0 20px #f59e0b",
-            }}
-          >
-            Tournaments
-          </h1>
-        </div>
+      <div
+        className="flex flex-wrap items-center gap-3 px-6 pb-4"
+        style={{ paddingTop: "calc(var(--sat) + 1.5rem)" }}
+      >
+        <button
+          onClick={onBack}
+          className="p-2 rounded-xl bg-zinc-900 border border-zinc-800"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <h1
+          className="text-2xl tracking-tight mr-auto"
+          style={{
+            fontFamily: "Beon, sans-serif",
+            color: "#f59e0b",
+            textShadow: "0 0 20px #f59e0b",
+          }}
+        >
+          Tournaments
+        </h1>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setJoinCodeModal(true)}
-            className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm font-medium flex items-center gap-2 hover:border-zinc-600"
-          >
-            <Hash className="w-4 h-4" /> Join by Code
-          </button>
-          <button
-            onClick={onCreate}
-            className="px-4 py-2 rounded-xl bg-amber-600 text-black text-sm font-bold flex items-center gap-2 hover:bg-amber-500"
-          >
-            <Plus className="w-4 h-4" /> Create
-          </button>
-        </div>
+        <button
+          onClick={() => setJoinCodeModal(true)}
+          className="px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-sm font-medium flex items-center gap-2 hover:border-zinc-600"
+        >
+          <Hash className="w-4 h-4" /> Join by Code
+        </button>
+        <button
+          onClick={onCreate}
+          className="px-4 py-2 rounded-xl bg-amber-600 text-black text-sm font-bold flex items-center gap-2 hover:bg-amber-500"
+        >
+          <Plus className="w-4 h-4" /> Create
+        </button>
       </div>
 
       {/* Tabs */}
@@ -132,7 +131,10 @@ export function TournamentHubScreen({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 pb-6">
+      <div
+        className="flex-1 overflow-y-auto px-6"
+        style={{ paddingBottom: "calc(var(--sab) + 1.5rem)" }}
+      >
         {tab === "discover" && (
           <DiscoverTab {...discover} onViewBracket={onViewBracket} />
         )}

@@ -155,6 +155,14 @@ export abstract class BaseGameRoom<
       this.broadcast(ServerMessage.REMATCH_DECLINE, {}, { except: client }),
     );
 
+    // Next-leg passthrough (tournament multi-leg matches)
+    this.onMessage(ClientMessage.NEXT_LEG_REQUEST, (client) =>
+      this.broadcast(ServerMessage.NEXT_LEG_REQUEST, {}, { except: client }),
+    );
+    this.onMessage(ClientMessage.NEXT_LEG_ACCEPT, (client) =>
+      this.broadcast(ServerMessage.NEXT_LEG_ACCEPT, {}, { except: client }),
+    );
+
     this.resetInactivityTimer();
   }
 

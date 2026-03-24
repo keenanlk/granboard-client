@@ -11,7 +11,10 @@ install! 'cocoapods', :disable_input_output_paths => true
 def capacitor_pods
   pod 'Capacitor', :path => '../../../../node_modules/.pnpm/@capacitor+ios@6.2.1_@capacitor+core@6.2.1/node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../../../node_modules/.pnpm/@capacitor+ios@6.2.1_@capacitor+core@6.2.1/node_modules/@capacitor/ios'
+  pod 'CapacitorCommunityAppleSignIn', :path => '../../../../node_modules/.pnpm/@capacitor-community+apple-sign-in@6.0.0_@capacitor+core@6.2.1/node_modules/@capacitor-community/apple-sign-in'
   pod 'CapacitorCommunityBluetoothLe', :path => '../../../../node_modules/.pnpm/@capacitor-community+bluetooth-le@6.1.0_@capacitor+core@6.2.1/node_modules/@capacitor-community/bluetooth-le'
+  pod 'CapacitorScreenOrientation', :path => '../../../../node_modules/.pnpm/@capacitor+screen-orientation@6.0.4_@capacitor+core@6.2.1/node_modules/@capacitor/screen-orientation'
+  pod 'CodetrixStudioCapacitorGoogleAuth', :path => '../../../../node_modules/.pnpm/@codetrix-studio+capacitor-google-auth@3.4.0-rc.4_@capacitor+core@6.2.1/node_modules/@codetrix-studio/capacitor-google-auth'
 end
 
 target 'App' do

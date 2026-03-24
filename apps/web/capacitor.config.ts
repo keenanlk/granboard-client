@@ -24,6 +24,15 @@ const config: CapacitorConfig = {
       // remote Vite dev server (https://...)
       enabled: !isDev,
     },
+    GoogleAuth: {
+      scopes: ["profile", "email"],
+      serverClientId:
+        process.env.GOOGLE_CLIENT_ID ??
+        "565349671076-579gg3sd6ngbs9kckoivgmb1ot5ovfsi.apps.googleusercontent.com",
+      iosClientId:
+        "565349671076-sjhpr4tvgnu1u1vns1k8bd2husb3796s.apps.googleusercontent.com",
+      forceCodeForRefreshToken: true,
+    },
     BluetoothLe: {
       // Displayed in the iOS Bluetooth permission dialog
       displayStrings: {

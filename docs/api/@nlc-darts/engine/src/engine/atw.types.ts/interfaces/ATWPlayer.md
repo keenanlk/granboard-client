@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/atw.types.ts](../README.md) / ATWPlayer
 
@@ -20,7 +20,7 @@ Defined in: [engine/atw.types.ts:48](https://github.com/keenanlk/granboard-clien
 
 The current target number (1-20 or 25 for Bull)
 
-***
+---
 
 ### finished
 
@@ -28,7 +28,7 @@ The current target number (1-20 or 25 for Bull)
 
 Defined in: [engine/atw.types.ts:49](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L49)
 
-***
+---
 
 ### finishedInRound
 
@@ -38,7 +38,7 @@ Defined in: [engine/atw.types.ts:51](https://github.com/keenanlk/granboard-clien
 
 The round in which this player finished (null if not finished)
 
-***
+---
 
 ### name
 
@@ -46,7 +46,7 @@ The round in which this player finished (null if not finished)
 
 Defined in: [engine/atw.types.ts:44](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L44)
 
-***
+---
 
 ### rounds
 
@@ -54,7 +54,7 @@ Defined in: [engine/atw.types.ts:44](https://github.com/keenanlk/granboard-clien
 
 Defined in: [engine/atw.types.ts:52](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L52)
 
-***
+---
 
 ### targetIndex
 
@@ -64,7 +64,7 @@ Defined in: [engine/atw.types.ts:46](https://github.com/keenanlk/granboard-clien
 
 0-20 = in progress, 21 = finished
 
-***
+---
 
 ### totalDartsThrown
 

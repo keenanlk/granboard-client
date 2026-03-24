@@ -1,28 +1,72 @@
 PODS:
+  - AppAuth (1.7.6):
+    - AppAuth/Core (= 1.7.6)
+    - AppAuth/ExternalUserAgent (= 1.7.6)
+  - AppAuth/Core (1.7.6)
+  - AppAuth/ExternalUserAgent (1.7.6):
+    - AppAuth/Core
   - Capacitor (6.2.1):
     - CapacitorCordova
+  - CapacitorCommunityAppleSignIn (6.0.0):
+    - Capacitor
   - CapacitorCommunityBluetoothLe (6.1.0):
     - Capacitor
   - CapacitorCordova (6.2.1)
+  - CapacitorScreenOrientation (6.0.4):
+    - Capacitor
+  - CodetrixStudioCapacitorGoogleAuth (0.0.1):
+    - Capacitor
+    - GoogleSignIn (~> 6.2.4)
+  - GoogleSignIn (6.2.4):
+    - AppAuth (~> 1.5)
+    - GTMAppAuth (~> 1.3)
+    - GTMSessionFetcher/Core (< 3.0, >= 1.1)
+  - GTMAppAuth (1.3.1):
+    - AppAuth/Core (~> 1.6)
+    - GTMSessionFetcher/Core (< 3.0, >= 1.5)
+  - GTMSessionFetcher/Core (2.3.0)
 
 DEPENDENCIES:
   - "Capacitor (from `../../../../node_modules/.pnpm/@capacitor+ios@6.2.1_@capacitor+core@6.2.1/node_modules/@capacitor/ios`)"
+  - "CapacitorCommunityAppleSignIn (from `../../../../node_modules/.pnpm/@capacitor-community+apple-sign-in@6.0.0_@capacitor+core@6.2.1/node_modules/@capacitor-community/apple-sign-in`)"
   - "CapacitorCommunityBluetoothLe (from `../../../../node_modules/.pnpm/@capacitor-community+bluetooth-le@6.1.0_@capacitor+core@6.2.1/node_modules/@capacitor-community/bluetooth-le`)"
   - "CapacitorCordova (from `../../../../node_modules/.pnpm/@capacitor+ios@6.2.1_@capacitor+core@6.2.1/node_modules/@capacitor/ios`)"
+  - "CapacitorScreenOrientation (from `../../../../node_modules/.pnpm/@capacitor+screen-orientation@6.0.4_@capacitor+core@6.2.1/node_modules/@capacitor/screen-orientation`)"
+  - "CodetrixStudioCapacitorGoogleAuth (from `../../../../node_modules/.pnpm/@codetrix-studio+capacitor-google-auth@3.4.0-rc.4_@capacitor+core@6.2.1/node_modules/@codetrix-studio/capacitor-google-auth`)"
+
+SPEC REPOS:
+  trunk:
+    - AppAuth
+    - GoogleSignIn
+    - GTMAppAuth
+    - GTMSessionFetcher
 
 EXTERNAL SOURCES:
   Capacitor:
     :path: "../../../../node_modules/.pnpm/@capacitor+ios@6.2.1_@capacitor+core@6.2.1/node_modules/@capacitor/ios"
+  CapacitorCommunityAppleSignIn:
+    :path: "../../../../node_modules/.pnpm/@capacitor-community+apple-sign-in@6.0.0_@capacitor+core@6.2.1/node_modules/@capacitor-community/apple-sign-in"
   CapacitorCommunityBluetoothLe:
     :path: "../../../../node_modules/.pnpm/@capacitor-community+bluetooth-le@6.1.0_@capacitor+core@6.2.1/node_modules/@capacitor-community/bluetooth-le"
   CapacitorCordova:
     :path: "../../../../node_modules/.pnpm/@capacitor+ios@6.2.1_@capacitor+core@6.2.1/node_modules/@capacitor/ios"
+  CapacitorScreenOrientation:
+    :path: "../../../../node_modules/.pnpm/@capacitor+screen-orientation@6.0.4_@capacitor+core@6.2.1/node_modules/@capacitor/screen-orientation"
+  CodetrixStudioCapacitorGoogleAuth:
+    :path: "../../../../node_modules/.pnpm/@codetrix-studio+capacitor-google-auth@3.4.0-rc.4_@capacitor+core@6.2.1/node_modules/@codetrix-studio/capacitor-google-auth"
 
 SPEC CHECKSUMS:
+  AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
   Capacitor: 1e0d0e7330dea9f983b50da737d8918abcf273f8
+  CapacitorCommunityAppleSignIn: c8bba4ca8ff6ff843367ece13ee8af24e9266eb9
   CapacitorCommunityBluetoothLe: d6fc1f6f8d6f0ef722c0817a7533ce35d42dc4f9
   CapacitorCordova: 8d93e14982f440181be7304aa9559ca631d77fff
+  CapacitorScreenOrientation: 00a95b0e2c75610be324e5ac7c6b5754745646d1
+  CodetrixStudioCapacitorGoogleAuth: fcce058390347c1ce5d8ac4764bdf1f5c1ee233b
+  GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
+  GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
+  GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
 
-PODFILE CHECKSUM: 17bc3acfbb764a52938ce5dac65cf8832d0bf6c4
+PODFILE CHECKSUM: fe3843fe1392773511de17b0ab87bd5d58e92c60
 
 COCOAPODS: 1.15.2

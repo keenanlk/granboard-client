@@ -75,8 +75,11 @@ export function HomeScreen({
 
   return (
     <div
-      className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden"
-      style={{ paddingLeft: "var(--sal)" }}
+      className="h-screen bg-zinc-950 text-white flex flex-col overflow-y-auto overflow-x-hidden"
+      style={{
+        paddingLeft: "var(--sal)",
+        paddingRight: "var(--sar)",
+      }}
     >
       {/* Header — padded for notch */}
       <header
@@ -174,7 +177,7 @@ export function HomeScreen({
           </p>
         )}
 
-        <div className="flex-1 min-h-0 grid grid-cols-3 grid-rows-2 gap-3">
+        <div className="flex-1 min-h-0 grid grid-cols-2 sm:grid-cols-3 gap-3">
           {GAMES.map((game) => (
             <button
               key={game.id}
@@ -192,7 +195,7 @@ export function HomeScreen({
               }}
             >
               <p
-                className="text-4xl tracking-tight font-normal"
+                className="text-2xl sm:text-4xl tracking-tight font-normal"
                 style={{
                   fontFamily: "Beon, sans-serif",
                   color: game.color,
@@ -222,7 +225,7 @@ export function HomeScreen({
             }}
           >
             <p
-              className="text-4xl tracking-tight font-normal"
+              className="text-2xl sm:text-4xl tracking-tight font-normal"
               style={{
                 fontFamily: "Beon, sans-serif",
                 color: "#60a5fa",
@@ -253,7 +256,7 @@ export function HomeScreen({
             }}
           >
             <p
-              className="text-4xl tracking-tight font-normal"
+              className="text-2xl sm:text-4xl tracking-tight font-normal"
               style={{
                 fontFamily: "Beon, sans-serif",
                 color: "#a78bfa",
@@ -282,7 +285,7 @@ export function HomeScreen({
             }}
           >
             <p
-              className="text-4xl tracking-tight font-normal"
+              className="text-2xl sm:text-4xl tracking-tight font-normal"
               style={{
                 fontFamily: "Beon, sans-serif",
                 color: "#f59e0b",
@@ -311,7 +314,7 @@ export function HomeScreen({
             }}
           >
             <p
-              className="text-4xl tracking-tight font-normal"
+              className="text-2xl sm:text-4xl tracking-tight font-normal"
               style={{
                 fontFamily: "Beon, sans-serif",
                 color: "#22d3ee",

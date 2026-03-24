@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
-***
+---
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / Invite
 
@@ -12,55 +12,55 @@ An invitation from one player to another to join a room.
 
 ## Properties
 
-### created\_at
+### created_at
 
-> **created\_at**: `string`
+> **created_at**: `string`
 
 Defined in: [store/online.types.ts:47](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L47)
 
-***
+---
 
-### expires\_at
+### expires_at
 
-> **expires\_at**: `string`
+> **expires_at**: `string`
 
 Defined in: [store/online.types.ts:48](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L48)
 
-***
+---
 
-### from\_id
+### from_id
 
-> **from\_id**: `string`
+> **from_id**: `string`
 
 Defined in: [store/online.types.ts:41](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L41)
 
-***
+---
 
-### from\_name?
+### from_name?
 
-> `optional` **from\_name?**: `string`
+> `optional` **from_name?**: `string`
 
 Defined in: [store/online.types.ts:50](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L50)
 
 Joined from online_players for display
 
-***
+---
 
-### game\_options
+### game_options
 
-> **game\_options**: `unknown`
+> **game_options**: `unknown`
 
 Defined in: [store/online.types.ts:45](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L45)
 
-***
+---
 
-### game\_type
+### game_type
 
-> **game\_type**: [`OnlineGameType`](../type-aliases/OnlineGameType.md)
+> **game_type**: [`OnlineGameType`](../type-aliases/OnlineGameType.md)
 
 Defined in: [store/online.types.ts:44](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L44)
 
-***
+---
 
 ### id
 
@@ -68,15 +68,15 @@ Defined in: [store/online.types.ts:44](https://github.com/keenanlk/granboard-cli
 
 Defined in: [store/online.types.ts:40](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L40)
 
-***
+---
 
-### room\_id
+### room_id
 
-> **room\_id**: `string`
+> **room_id**: `string`
 
 Defined in: [store/online.types.ts:43](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L43)
 
-***
+---
 
 ### status
 
@@ -84,10 +84,10 @@ Defined in: [store/online.types.ts:43](https://github.com/keenanlk/granboard-cli
 
 Defined in: [store/online.types.ts:46](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L46)
 
-***
+---
 
-### to\_id
+### to_id
 
-> **to\_id**: `string`
+> **to_id**: `string`
 
 Defined in: [store/online.types.ts:42](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L42)

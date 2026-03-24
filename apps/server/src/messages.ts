@@ -23,6 +23,8 @@ export const ClientMessage = {
   UNREADY_FOR_MATCH: "unready_for_match",
   MATCH_GAME_RESULT: "match_game_result",
   MATCH_GAME_ROOM_READY: "match_game_room_ready",
+  NEXT_LEG_REQUEST: "next_leg_request",
+  NEXT_LEG_ACCEPT: "next_leg_accept",
 } as const;
 
 /** Server → Client broadcast types */
@@ -46,4 +48,6 @@ export const ServerMessage = {
   MATCH_START: "match_start",
   MATCH_YOUR_TURN: "match_your_turn",
   MATCH_GAME_ROOM_CREATED: "match_game_room_created",
+  NEXT_LEG_REQUEST: "next_leg_request",
+  NEXT_LEG_ACCEPT: "next_leg_accept",
 } as const;
