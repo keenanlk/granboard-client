@@ -1,6 +1,6 @@
 [**Documentation**](../../README.md)
 
----
+***
 
 [Documentation](../../README.md) / @nlc-darts/web
 
@@ -34,8 +34,6 @@ hooks, events, BLE, and database modules.
 - [RGB](interfaces/RGB.md)
 - [Room](interfaces/Room.md)
 - [RoundExtract](interfaces/RoundExtract.md)
-- [UseColyseusSyncOptions](interfaces/UseColyseusSyncOptions.md)
-- [UseColyseusSyncReturn](interfaces/UseColyseusSyncReturn.md)
 - [UseOnlineSyncOptions](interfaces/UseOnlineSyncOptions.md)
 
 ## Type Aliases
@@ -47,14 +45,13 @@ hooks, events, BLE, and database modules.
 - [InviteStatus](type-aliases/InviteStatus.md)
 - [OnlineGameType](type-aliases/OnlineGameType.md)
 - [PlayerStatus](type-aliases/PlayerStatus.md)
-- [RematchState](type-aliases/RematchState.md)
 - [RoomStatus](type-aliases/RoomStatus.md)
 
 ## Variables
 
 - [Colors](variables/Colors.md)
 - [gameEventBus](variables/gameEventBus.md)
-- [LED_POSITIONS](variables/LED_POSITIONS.md)
+- [LED\_POSITIONS](variables/LED_POSITIONS.md)
 
 ## Functions
 
@@ -78,9 +75,9 @@ hooks, events, BLE, and database modules.
 - [useAwardDetection](functions/useAwardDetection.md)
 - [useBoardWiring](functions/useBoardWiring.md)
 - [useBotTurn](functions/useBotTurn.md)
-- [useColyseusSync](functions/useColyseusSync.md)
+- [useGameRoom](functions/useGameRoom.md)
 - [useGameSession](functions/useGameSession.md)
 - [useLobby](functions/useLobby.md)
-- [useOnlineRematch](functions/useOnlineRematch.md)
 - [useOnlineSync](functions/useOnlineSync.md)
+- [useTournament](functions/useTournament.md)
 - [useTurnDelay](functions/useTurnDelay.md)

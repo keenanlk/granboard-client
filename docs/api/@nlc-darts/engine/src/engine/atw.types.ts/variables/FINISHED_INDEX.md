@@ -1,12 +1,12 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
-[Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/atw.types.ts](../README.md) / FINISHED_INDEX
+[Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/atw.types.ts](../README.md) / FINISHED\_INDEX
 
-# Variable: FINISHED_INDEX
+# Variable: FINISHED\_INDEX
 
-> `const` **FINISHED_INDEX**: `21` = `21`
+> `const` **FINISHED\_INDEX**: `21` = `21`
 
 Defined in: [engine/atw.types.ts:11](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/atw.types.ts#L11)
 

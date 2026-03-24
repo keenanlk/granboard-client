@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / GameEventMap
 
@@ -20,11 +20,11 @@ Map of game event names to their payload types.
 
 Defined in: [events/GameEvents.ts:6](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L6)
 
----
+***
 
-### dart_hit
+### dart\_hit
 
-> **dart_hit**: `object`
+> **dart\_hit**: `object`
 
 Defined in: [events/GameEvents.ts:5](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L5)
 
@@ -36,19 +36,19 @@ Defined in: [events/GameEvents.ts:5](https://github.com/keenanlk/granboard-clien
 
 > **segment**: [`Segment`](../../engine/src/board/Dartboard.ts/interfaces/Segment.md)
 
----
+***
 
-### game_start
+### game\_start
 
-> **game_start**: `Record`\<`string`, `never`\>
+> **game\_start**: `Record`\<`string`, `never`\>
 
 Defined in: [events/GameEvents.ts:11](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L11)
 
----
+***
 
-### game_won
+### game\_won
 
-> **game_won**: `object`
+> **game\_won**: `object`
 
 Defined in: [events/GameEvents.ts:7](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L7)
 
@@ -56,19 +56,19 @@ Defined in: [events/GameEvents.ts:7](https://github.com/keenanlk/granboard-clien
 
 > **playerName**: `string`
 
----
+***
 
-### next_turn
+### next\_turn
 
-> **next_turn**: `Record`\<`string`, `never`\>
+> **next\_turn**: `Record`\<`string`, `never`\>
 
 Defined in: [events/GameEvents.ts:8](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L8)
 
----
+***
 
-### open_numbers
+### open\_numbers
 
-> **open_numbers**: `object`
+> **open\_numbers**: `object`
 
 Defined in: [events/GameEvents.ts:10](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/events/GameEvents.ts#L10)
 

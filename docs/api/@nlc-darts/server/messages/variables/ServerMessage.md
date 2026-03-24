@@ -1,6 +1,6 @@
 [**Documentation**](../../../../README.md)
 
----
+***
 
 [Documentation](../../../../README.md) / [@nlc-darts/server](../../README.md) / [messages](../README.md) / ServerMessage
 
@@ -8,76 +8,84 @@
 
 > `const` **ServerMessage**: `object`
 
-Defined in: [apps/server/src/messages.ts:29](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/messages.ts#L29)
+Defined in: [apps/server/src/messages.ts:31](https://github.com/keenanlk/granboard-client/blob/main/apps/server/src/messages.ts#L31)
 
 Server → Client broadcast types
 
 ## Type Declaration
 
-### BRACKET_UPDATE
+### BRACKET\_UPDATE
 
-> `readonly` **BRACKET_UPDATE**: `"bracket_update"` = `"bracket_update"`
+> `readonly` **BRACKET\_UPDATE**: `"bracket_update"` = `"bracket_update"`
 
-### GAME_ENDED
+### GAME\_ENDED
 
-> `readonly` **GAME_ENDED**: `"game_ended"` = `"game_ended"`
+> `readonly` **GAME\_ENDED**: `"game_ended"` = `"game_ended"`
 
-### GAME_EVENT
+### GAME\_EVENT
 
-> `readonly` **GAME_EVENT**: `"game_event"` = `"game_event"`
+> `readonly` **GAME\_EVENT**: `"game_event"` = `"game_event"`
 
-### MATCH_COUNTDOWN
+### MATCH\_COUNTDOWN
 
-> `readonly` **MATCH_COUNTDOWN**: `"match_countdown"` = `"match_countdown"`
+> `readonly` **MATCH\_COUNTDOWN**: `"match_countdown"` = `"match_countdown"`
 
-### MATCH_GAME_ROOM_CREATED
+### MATCH\_GAME\_ROOM\_CREATED
 
-> `readonly` **MATCH_GAME_ROOM_CREATED**: `"match_game_room_created"` = `"match_game_room_created"`
+> `readonly` **MATCH\_GAME\_ROOM\_CREATED**: `"match_game_room_created"` = `"match_game_room_created"`
 
-### MATCH_READY_STATE
+### MATCH\_READY\_STATE
 
-> `readonly` **MATCH_READY_STATE**: `"match_ready_state"` = `"match_ready_state"`
+> `readonly` **MATCH\_READY\_STATE**: `"match_ready_state"` = `"match_ready_state"`
 
-### MATCH_START
+### MATCH\_START
 
-> `readonly` **MATCH_START**: `"match_start"` = `"match_start"`
+> `readonly` **MATCH\_START**: `"match_start"` = `"match_start"`
 
-### MATCH_YOUR_TURN
+### MATCH\_YOUR\_TURN
 
-> `readonly` **MATCH_YOUR_TURN**: `"match_your_turn"` = `"match_your_turn"`
+> `readonly` **MATCH\_YOUR\_TURN**: `"match_your_turn"` = `"match_your_turn"`
 
-### PLAYER_LEFT
+### NEXT\_LEG\_ACCEPT
 
-> `readonly` **PLAYER_LEFT**: `"player_left"` = `"player_left"`
+> `readonly` **NEXT\_LEG\_ACCEPT**: `"next_leg_accept"` = `"next_leg_accept"`
 
-### REGISTRATION_UPDATE
+### NEXT\_LEG\_REQUEST
 
-> `readonly` **REGISTRATION_UPDATE**: `"registration_update"` = `"registration_update"`
+> `readonly` **NEXT\_LEG\_REQUEST**: `"next_leg_request"` = `"next_leg_request"`
 
-### REMATCH_ACCEPT
+### PLAYER\_LEFT
 
-> `readonly` **REMATCH_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
+> `readonly` **PLAYER\_LEFT**: `"player_left"` = `"player_left"`
 
-### REMATCH_DECLINE
+### REGISTRATION\_UPDATE
 
-> `readonly` **REMATCH_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
+> `readonly` **REGISTRATION\_UPDATE**: `"registration_update"` = `"registration_update"`
 
-### REMATCH_REQUEST
+### REMATCH\_ACCEPT
 
-> `readonly` **REMATCH_REQUEST**: `"rematch_request"` = `"rematch_request"`
+> `readonly` **REMATCH\_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
 
-### STATE_UPDATE
+### REMATCH\_DECLINE
 
-> `readonly` **STATE_UPDATE**: `"state_update"` = `"state_update"`
+> `readonly` **REMATCH\_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
 
-### TOURNAMENT_CREATED
+### REMATCH\_REQUEST
 
-> `readonly` **TOURNAMENT_CREATED**: `"tournament_created"` = `"tournament_created"`
+> `readonly` **REMATCH\_REQUEST**: `"rematch_request"` = `"rematch_request"`
 
-### TOURNAMENT_ERROR
+### STATE\_UPDATE
 
-> `readonly` **TOURNAMENT_ERROR**: `"tournament_error"` = `"tournament_error"`
+> `readonly` **STATE\_UPDATE**: `"state_update"` = `"state_update"`
 
-### TURN_DELAY
+### TOURNAMENT\_CREATED
 
-> `readonly` **TURN_DELAY**: `"turn_delay"` = `"turn_delay"`
+> `readonly` **TOURNAMENT\_CREATED**: `"tournament_created"` = `"tournament_created"`
+
+### TOURNAMENT\_ERROR
+
+> `readonly` **TOURNAMENT\_ERROR**: `"tournament_error"` = `"tournament_error"`
+
+### TURN\_DELAY
+
+> `readonly` **TURN\_DELAY**: `"turn_delay"` = `"turn_delay"`

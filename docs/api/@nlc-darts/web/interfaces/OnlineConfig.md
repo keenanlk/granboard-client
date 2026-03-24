@@ -1,12 +1,14 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / OnlineConfig
 
 # Interface: OnlineConfig
 
-Defined in: [store/useOnlineStore.ts:20](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/useOnlineStore.ts#L20)
+Defined in: [store/online.types.ts:78](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L78)
+
+Configuration for launching an online game via Colyseus.
 
 ## Properties
 
@@ -14,62 +16,52 @@ Defined in: [store/useOnlineStore.ts:20](https://github.com/keenanlk/granboard-c
 
 > `optional` **colyseusRoomId?**: `string`
 
-Defined in: [store/useOnlineStore.ts:24](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/useOnlineStore.ts#L24)
+Defined in: [store/online.types.ts:81](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L81)
 
-Colyseus room ID for server-authoritative play
-
----
+***
 
 ### gameOptions?
 
 > `optional` **gameOptions?**: `unknown`
 
-Defined in: [store/useOnlineStore.ts:32](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/useOnlineStore.ts#L32)
+Defined in: [store/online.types.ts:85](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L85)
 
-Game options for Colyseus room creation
-
----
+***
 
 ### gameType?
 
 > `optional` **gameType?**: `"x01"` \| `"cricket"`
 
-Defined in: [store/useOnlineStore.ts:26](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/useOnlineStore.ts#L26)
+Defined in: [store/online.types.ts:82](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L82)
 
-Game type for Colyseus room creation
-
----
+***
 
 ### isHost
 
 > **isHost**: `boolean`
 
-Defined in: [store/useOnlineStore.ts:22](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/useOnlineStore.ts#L22)
+Defined in: [store/online.types.ts:80](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L80)
 
----
+***
 
 ### playerIds?
 
 > `optional` **playerIds?**: (`string` \| `null`)[]
 
-Defined in: [store/useOnlineStore.ts:30](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/useOnlineStore.ts#L30)
+Defined in: [store/online.types.ts:84](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L84)
 
-Player IDs for Colyseus room creation
-
----
+***
 
 ### playerNames?
 
 > `optional` **playerNames?**: `string`[]
 
-Defined in: [store/useOnlineStore.ts:28](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/useOnlineStore.ts#L28)
+Defined in: [store/online.types.ts:83](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L83)
 
-Player names for Colyseus room creation
-
----
+***
 
 ### roomId
 
 > **roomId**: `string`
 
-Defined in: [store/useOnlineStore.ts:21](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/useOnlineStore.ts#L21)
+Defined in: [store/online.types.ts:79](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L79)

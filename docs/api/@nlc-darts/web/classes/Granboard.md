@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / Granboard
 
@@ -58,7 +58,7 @@ Defined in: [board/Granboard.ts:259](https://github.com/keenanlk/granboard-clien
 
 `Promise`\<`void`\>
 
----
+***
 
 ### setSegmentHitCallback()
 
@@ -76,7 +76,7 @@ Defined in: [board/Granboard.ts:253](https://github.com/keenanlk/granboard-clien
 
 `void`
 
----
+***
 
 ### ConnectToBoard()
 
@@ -88,7 +88,7 @@ Defined in: [board/Granboard.ts:273](https://github.com/keenanlk/granboard-clien
 
 `Promise`\<`Granboard`\>
 
----
+***
 
 ### TryAutoReconnect()
 

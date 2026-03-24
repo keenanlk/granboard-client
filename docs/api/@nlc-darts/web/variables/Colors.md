@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / Colors
 
@@ -46,19 +46,19 @@ Predefined RGB colors for LED commands.
 
 > `readonly` **r**: `0` = `0`
 
-### LIGHT_BLUE
+### LIGHT\_BLUE
 
-> `readonly` **LIGHT_BLUE**: `object`
+> `readonly` **LIGHT\_BLUE**: `object`
 
-#### LIGHT_BLUE.b
+#### LIGHT\_BLUE.b
 
 > `readonly` **b**: `255` = `255`
 
-#### LIGHT_BLUE.g
+#### LIGHT\_BLUE.g
 
 > `readonly` **g**: `200` = `200`
 
-#### LIGHT_BLUE.r
+#### LIGHT\_BLUE.r
 
 > `readonly` **r**: `0` = `0`
 

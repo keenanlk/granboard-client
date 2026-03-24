@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/lib/setTypes.ts](../README.md) / SetState
 
@@ -18,7 +18,7 @@ Complete mutable state for a set in progress.
 
 Defined in: [lib/setTypes.ts:38](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L38)
 
----
+***
 
 ### config
 
@@ -26,7 +26,7 @@ Defined in: [lib/setTypes.ts:38](https://github.com/keenanlk/granboard-client/bl
 
 Defined in: [lib/setTypes.ts:33](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L33)
 
----
+***
 
 ### currentLegIndex
 
@@ -34,7 +34,7 @@ Defined in: [lib/setTypes.ts:33](https://github.com/keenanlk/granboard-client/bl
 
 Defined in: [lib/setTypes.ts:35](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L35)
 
----
+***
 
 ### legResults
 
@@ -42,7 +42,7 @@ Defined in: [lib/setTypes.ts:35](https://github.com/keenanlk/granboard-client/bl
 
 Defined in: [lib/setTypes.ts:34](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L34)
 
----
+***
 
 ### playerIds
 
@@ -50,7 +50,7 @@ Defined in: [lib/setTypes.ts:34](https://github.com/keenanlk/granboard-client/bl
 
 Defined in: [lib/setTypes.ts:37](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L37)
 
----
+***
 
 ### playerNames
 

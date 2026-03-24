@@ -1,6 +1,6 @@
 [**Documentation**](../../../../README.md)
 
----
+***
 
 [Documentation](../../../../README.md) / [@nlc-darts/server](../../README.md) / [messages](../README.md) / ClientMessage
 
@@ -14,43 +14,51 @@ Client → Server action types
 
 ## Type Declaration
 
-### CAMERA_STATUS
+### CAMERA\_STATUS
 
-> `readonly` **CAMERA_STATUS**: `"camera_status"` = `"camera_status"`
+> `readonly` **CAMERA\_STATUS**: `"camera_status"` = `"camera_status"`
 
 Notifies opponent whether this player's camera is active.
 
-### CREATE_TOURNAMENT
+### CREATE\_TOURNAMENT
 
-> `readonly` **CREATE_TOURNAMENT**: `"create_tournament"` = `"create_tournament"`
+> `readonly` **CREATE\_TOURNAMENT**: `"create_tournament"` = `"create_tournament"`
 
-### DART_HIT
+### DART\_HIT
 
-> `readonly` **DART_HIT**: `"dart_hit"` = `"dart_hit"`
+> `readonly` **DART\_HIT**: `"dart_hit"` = `"dart_hit"`
 
-### MATCH_GAME_RESULT
+### MATCH\_GAME\_RESULT
 
-> `readonly` **MATCH_GAME_RESULT**: `"match_game_result"` = `"match_game_result"`
+> `readonly` **MATCH\_GAME\_RESULT**: `"match_game_result"` = `"match_game_result"`
 
-### MATCH_GAME_ROOM_READY
+### MATCH\_GAME\_ROOM\_READY
 
-> `readonly` **MATCH_GAME_ROOM_READY**: `"match_game_room_ready"` = `"match_game_room_ready"`
+> `readonly` **MATCH\_GAME\_ROOM\_READY**: `"match_game_room_ready"` = `"match_game_room_ready"`
 
-### NEXT_TURN
+### NEXT\_LEG\_ACCEPT
 
-> `readonly` **NEXT_TURN**: `"next_turn"` = `"next_turn"`
+> `readonly` **NEXT\_LEG\_ACCEPT**: `"next_leg_accept"` = `"next_leg_accept"`
 
-### READY_FOR_MATCH
+### NEXT\_LEG\_REQUEST
 
-> `readonly` **READY_FOR_MATCH**: `"ready_for_match"` = `"ready_for_match"`
+> `readonly` **NEXT\_LEG\_REQUEST**: `"next_leg_request"` = `"next_leg_request"`
 
-### RECORD_RESULT
+### NEXT\_TURN
 
-> `readonly` **RECORD_RESULT**: `"record_result"` = `"record_result"`
+> `readonly` **NEXT\_TURN**: `"next_turn"` = `"next_turn"`
 
-### REGISTER_PLAYER
+### READY\_FOR\_MATCH
 
-> `readonly` **REGISTER_PLAYER**: `"register_player"` = `"register_player"`
+> `readonly` **READY\_FOR\_MATCH**: `"ready_for_match"` = `"ready_for_match"`
+
+### RECORD\_RESULT
+
+> `readonly` **RECORD\_RESULT**: `"record_result"` = `"record_result"`
+
+### REGISTER\_PLAYER
+
+> `readonly` **REGISTER\_PLAYER**: `"register_player"` = `"register_player"`
 
 ### REMATCH
 
@@ -58,36 +66,36 @@ Notifies opponent whether this player's camera is active.
 
 Resets the game state for a rematch within the same room.
 
-### REMATCH_ACCEPT
+### REMATCH\_ACCEPT
 
-> `readonly` **REMATCH_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
+> `readonly` **REMATCH\_ACCEPT**: `"rematch_accept"` = `"rematch_accept"`
 
-### REMATCH_DECLINE
+### REMATCH\_DECLINE
 
-> `readonly` **REMATCH_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
+> `readonly` **REMATCH\_DECLINE**: `"rematch_decline"` = `"rematch_decline"`
 
-### REMATCH_REQUEST
+### REMATCH\_REQUEST
 
-> `readonly` **REMATCH_REQUEST**: `"rematch_request"` = `"rematch_request"`
+> `readonly` **REMATCH\_REQUEST**: `"rematch_request"` = `"rematch_request"`
 
-### START_TOURNAMENT
+### START\_TOURNAMENT
 
-> `readonly` **START_TOURNAMENT**: `"start_tournament"` = `"start_tournament"`
+> `readonly` **START\_TOURNAMENT**: `"start_tournament"` = `"start_tournament"`
 
 ### UNDO
 
 > `readonly` **UNDO**: `"undo"` = `"undo"`
 
-### UNREADY_FOR_MATCH
+### UNREADY\_FOR\_MATCH
 
-> `readonly` **UNREADY_FOR_MATCH**: `"unready_for_match"` = `"unready_for_match"`
+> `readonly` **UNREADY\_FOR\_MATCH**: `"unready_for_match"` = `"unready_for_match"`
 
-### UNREGISTER_PLAYER
+### UNREGISTER\_PLAYER
 
-> `readonly` **UNREGISTER_PLAYER**: `"unregister_player"` = `"unregister_player"`
+> `readonly` **UNREGISTER\_PLAYER**: `"unregister_player"` = `"unregister_player"`
 
-### WEBRTC_SIGNAL
+### WEBRTC\_SIGNAL
 
-> `readonly` **WEBRTC_SIGNAL**: `"webrtc_signal"` = `"webrtc_signal"`
+> `readonly` **WEBRTC\_SIGNAL**: `"webrtc_signal"` = `"webrtc_signal"`
 
 WebRTC SDP offer/answer relayed between peers for camera streaming.

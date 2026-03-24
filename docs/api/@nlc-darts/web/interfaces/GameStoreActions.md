@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / GameStoreActions
 
@@ -38,7 +38,7 @@ Defined in: [store/createGameStore.ts:9](https://github.com/keenanlk/granboard-c
 
 `void`
 
----
+***
 
 ### getSerializableState
 
@@ -50,7 +50,7 @@ Defined in: [store/createGameStore.ts:13](https://github.com/keenanlk/granboard-
 
 `TState` & `object`
 
----
+***
 
 ### nextTurn
 
@@ -62,7 +62,7 @@ Defined in: [store/createGameStore.ts:11](https://github.com/keenanlk/granboard-
 
 `void`
 
----
+***
 
 ### resetGame
 
@@ -74,7 +74,7 @@ Defined in: [store/createGameStore.ts:12](https://github.com/keenanlk/granboard-
 
 `void`
 
----
+***
 
 ### restoreState
 
@@ -92,7 +92,7 @@ Defined in: [store/createGameStore.ts:14](https://github.com/keenanlk/granboard-
 
 `void`
 
----
+***
 
 ### startGame
 
@@ -114,7 +114,7 @@ Defined in: [store/createGameStore.ts:8](https://github.com/keenanlk/granboard-c
 
 `void`
 
----
+***
 
 ### undoLastDart
 

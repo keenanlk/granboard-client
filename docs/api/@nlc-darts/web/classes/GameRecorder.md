@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / GameRecorder
 
@@ -68,7 +68,7 @@ Call this before nextTurn() — captures the just-completed round for a player.
 
 `void`
 
----
+***
 
 ### save()
 

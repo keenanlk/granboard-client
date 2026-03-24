@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/lib/setTypes.ts](../README.md) / LegResult
 
@@ -18,7 +18,7 @@ Result of a completed leg within a set.
 
 Defined in: [lib/setTypes.ts:28](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L28)
 
----
+***
 
 ### winnerName
 

@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/db/db.types.ts](../README.md) / PlayerRecord
 
@@ -18,7 +18,7 @@ A stored player profile.
 
 Defined in: [db/db.types.ts:5](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L5)
 
----
+***
 
 ### id
 
@@ -26,7 +26,7 @@ Defined in: [db/db.types.ts:5](https://github.com/keenanlk/granboard-client/blob
 
 Defined in: [db/db.types.ts:3](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L3)
 
----
+***
 
 ### name
 

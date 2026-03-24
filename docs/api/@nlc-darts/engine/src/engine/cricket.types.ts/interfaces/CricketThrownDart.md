@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/cricket.types.ts](../README.md) / CricketThrownDart
 
@@ -18,7 +18,7 @@ A single dart thrown during a Cricket game, with mark and scoring details.
 
 Defined in: [engine/cricket.types.ts:31](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L31)
 
----
+***
 
 ### marksAdded
 
@@ -26,7 +26,7 @@ Defined in: [engine/cricket.types.ts:31](https://github.com/keenanlk/granboard-c
 
 Defined in: [engine/cricket.types.ts:29](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L29)
 
----
+***
 
 ### marksEarned
 
@@ -34,7 +34,7 @@ Defined in: [engine/cricket.types.ts:29](https://github.com/keenanlk/granboard-c
 
 Defined in: [engine/cricket.types.ts:30](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L30)
 
----
+***
 
 ### pointsDistributed?
 
@@ -52,7 +52,7 @@ Cut-throat only: which opponents received points (for undo).
 
 > **points**: `number`
 
----
+***
 
 ### pointsScored
 
@@ -60,7 +60,7 @@ Cut-throat only: which opponents received points (for undo).
 
 Defined in: [engine/cricket.types.ts:32](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L32)
 
----
+***
 
 ### segment
 
@@ -68,7 +68,7 @@ Defined in: [engine/cricket.types.ts:32](https://github.com/keenanlk/granboard-c
 
 Defined in: [engine/cricket.types.ts:27](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/cricket.types.ts#L27)
 
----
+***
 
 ### target
 

@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/lib/setTypes.ts](../README.md) / LegConfig
 
@@ -18,7 +18,7 @@ Configuration for a single leg within a set.
 
 Defined in: [lib/setTypes.ts:12](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L12)
 
----
+***
 
 ### gameType
 
@@ -26,7 +26,7 @@ Defined in: [lib/setTypes.ts:12](https://github.com/keenanlk/granboard-client/bl
 
 Defined in: [lib/setTypes.ts:10](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/lib/setTypes.ts#L10)
 
----
+***
 
 ### x01Options?
 

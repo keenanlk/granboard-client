@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / OnlineGameType
 
@@ -8,6 +8,6 @@
 
 > **OnlineGameType** = `"x01"` \| `"cricket"` \| `"set"`
 
-Defined in: [store/online.types.ts:11](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L11)
+Defined in: [store/online.types.ts:34](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L34)
 
 Game types supported in online multiplayer.

@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/ticTacToe.types.ts](../README.md) / TicTacToeThrownDart
 
@@ -18,7 +18,7 @@ A single dart thrown during a Tic-Tac-Toe game.
 
 Defined in: [engine/ticTacToe.types.ts:20](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L20)
 
----
+***
 
 ### gridIndex
 
@@ -26,7 +26,7 @@ Defined in: [engine/ticTacToe.types.ts:20](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:18](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L18)
 
----
+***
 
 ### marksAdded
 
@@ -34,7 +34,7 @@ Defined in: [engine/ticTacToe.types.ts:18](https://github.com/keenanlk/granboard
 
 Defined in: [engine/ticTacToe.types.ts:19](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/ticTacToe.types.ts#L19)
 
----
+***
 
 ### segment
 

@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / useLobby
 
@@ -8,9 +8,10 @@
 
 > **useLobby**(): `object`
 
-Defined in: [hooks/useLobby.ts:8](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useLobby.ts#L8)
+Defined in: [hooks/useLobby.ts:9](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useLobby.ts#L9)
 
-Manages lobby lifecycle: auto-expire invites, countdown timers.
+Thin selector hook for lobby state.
+Invite countdowns computed from `expires_at` timestamps.
 
 ## Returns
 
@@ -32,7 +33,7 @@ Manages lobby lifecycle: auto-expire invites, countdown timers.
 
 ### connectionStatus
 
-> **connectionStatus**: [`ConnectionStatus`](../type-aliases/ConnectionStatus.md)
+> **connectionStatus**: `LobbyPhase` = `lobbyPhase`
 
 ### currentRoom
 
@@ -75,6 +76,10 @@ Manages lobby lifecycle: auto-expire invites, countdown timers.
 #### Returns
 
 `Promise`\<`void`\>
+
+### lobbyPhase
+
+> **lobbyPhase**: `LobbyPhase`
 
 ### onlinePlayers
 

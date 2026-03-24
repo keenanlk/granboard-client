@@ -1,91 +1,99 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / OnlinePlayer
 
 # Interface: OnlinePlayer
 
-Defined in: [store/online.types.ts:14](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L14)
+Defined in: [store/online.types.ts:37](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L37)
 
 A player visible in the online lobby.
 
 ## Properties
 
-### cricket_games
+### avatar\_url
 
-> **cricket_games**: `number`
+> **avatar\_url**: `string` \| `null`
 
-Defined in: [store/online.types.ts:24](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L24)
+Defined in: [store/online.types.ts:40](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L40)
 
----
+***
 
-### cricket_grade
+### cricket\_games
 
-> **cricket_grade**: `string` \| `null`
+> **cricket\_games**: `number`
 
-Defined in: [store/online.types.ts:22](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L22)
+Defined in: [store/online.types.ts:48](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L48)
 
----
+***
 
-### cricket_mpr
+### cricket\_grade
 
-> **cricket_mpr**: `number`
+> **cricket\_grade**: `string` \| `null`
 
-Defined in: [store/online.types.ts:23](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L23)
+Defined in: [store/online.types.ts:46](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L46)
 
----
+***
 
-### display_name
+### cricket\_mpr
 
-> **display_name**: `string`
+> **cricket\_mpr**: `number`
 
-Defined in: [store/online.types.ts:16](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L16)
+Defined in: [store/online.types.ts:47](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L47)
 
----
+***
+
+### display\_name
+
+> **display\_name**: `string`
+
+Defined in: [store/online.types.ts:39](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L39)
+
+***
 
 ### id
 
 > **id**: `string`
 
-Defined in: [store/online.types.ts:15](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L15)
+Defined in: [store/online.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L38)
 
----
+***
 
-### last_seen
+### last\_seen
 
-> **last_seen**: `string`
+> **last\_seen**: `string`
 
-Defined in: [store/online.types.ts:18](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L18)
+Defined in: [store/online.types.ts:42](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L42)
 
----
+***
 
 ### status
 
 > **status**: [`PlayerStatus`](../type-aliases/PlayerStatus.md)
 
-Defined in: [store/online.types.ts:17](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L17)
+Defined in: [store/online.types.ts:41](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L41)
 
----
+***
 
-### x01_games
+### x01\_games
 
-> **x01_games**: `number`
+> **x01\_games**: `number`
 
-Defined in: [store/online.types.ts:21](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L21)
+Defined in: [store/online.types.ts:45](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L45)
 
----
+***
 
-### x01_grade
+### x01\_grade
 
-> **x01_grade**: `string` \| `null`
+> **x01\_grade**: `string` \| `null`
 
-Defined in: [store/online.types.ts:19](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L19)
+Defined in: [store/online.types.ts:43](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L43)
 
----
+***
 
-### x01_ppd
+### x01\_ppd
 
-> **x01_ppd**: `number`
+> **x01\_ppd**: `number`
 
-Defined in: [store/online.types.ts:20](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L20)
+Defined in: [store/online.types.ts:44](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/store/online.types.ts#L44)

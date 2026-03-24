@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / useOnlineSync
 
@@ -8,7 +8,7 @@
 
 > **useOnlineSync**(`__namedParameters`): `object`
 
-Defined in: [hooks/useOnlineSync.ts:45](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useOnlineSync.ts#L45)
+Defined in: [hooks/useOnlineSync.ts:44](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useOnlineSync.ts#L44)
 
 Core online sync hook — always safe to call (no-op when onlineConfig is null).
 

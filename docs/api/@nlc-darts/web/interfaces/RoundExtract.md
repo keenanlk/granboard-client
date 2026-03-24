@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / RoundExtract
 
@@ -18,7 +18,7 @@ Data extracted from the store at the end of a turn for recording.
 
 Defined in: [hooks/useGameSession.ts:25](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useGameSession.ts#L25)
 
----
+***
 
 ### darts
 
@@ -26,7 +26,7 @@ Defined in: [hooks/useGameSession.ts:25](https://github.com/keenanlk/granboard-c
 
 Defined in: [hooks/useGameSession.ts:23](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useGameSession.ts#L23)
 
----
+***
 
 ### playerIndex
 
@@ -34,7 +34,7 @@ Defined in: [hooks/useGameSession.ts:23](https://github.com/keenanlk/granboard-c
 
 Defined in: [hooks/useGameSession.ts:22](https://github.com/keenanlk/granboard-client/blob/main/apps/web/src/hooks/useGameSession.ts#L22)
 
----
+***
 
 ### roundScore
 

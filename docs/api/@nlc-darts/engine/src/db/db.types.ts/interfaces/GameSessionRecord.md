@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/db/db.types.ts](../README.md) / GameSessionRecord
 
@@ -18,7 +18,7 @@ A complete persisted game session with participants and round history.
 
 Defined in: [db/db.types.ts:29](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L29)
 
----
+***
 
 ### id
 
@@ -26,7 +26,7 @@ Defined in: [db/db.types.ts:29](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:28](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L28)
 
----
+***
 
 ### options
 
@@ -34,7 +34,7 @@ Defined in: [db/db.types.ts:28](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:31](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L31)
 
----
+***
 
 ### participants
 
@@ -58,7 +58,7 @@ Defined in: [db/db.types.ts:32](https://github.com/keenanlk/granboard-client/blo
 
 > **playerId**: `string` \| `null`
 
----
+***
 
 ### playedAt
 
@@ -66,7 +66,7 @@ Defined in: [db/db.types.ts:32](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:30](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L30)
 
----
+***
 
 ### rounds
 

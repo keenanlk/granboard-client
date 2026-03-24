@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/engine/highScore.types.ts](../README.md) / HighScoreState
 
@@ -18,7 +18,7 @@ Complete mutable state for a High Score game in progress.
 
 Defined in: [engine/highScore.types.ts:36](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L36)
 
----
+***
 
 ### currentRound
 
@@ -26,7 +26,7 @@ Defined in: [engine/highScore.types.ts:36](https://github.com/keenanlk/granboard
 
 Defined in: [engine/highScore.types.ts:37](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L37)
 
----
+***
 
 ### currentRoundDarts
 
@@ -34,7 +34,7 @@ Defined in: [engine/highScore.types.ts:37](https://github.com/keenanlk/granboard
 
 Defined in: [engine/highScore.types.ts:38](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L38)
 
----
+***
 
 ### inPlayoff
 
@@ -44,7 +44,7 @@ Defined in: [engine/highScore.types.ts:42](https://github.com/keenanlk/granboard
 
 true when tied players are throwing 1-dart playoff
 
----
+***
 
 ### options
 
@@ -52,7 +52,7 @@ true when tied players are throwing 1-dart playoff
 
 Defined in: [engine/highScore.types.ts:34](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L34)
 
----
+***
 
 ### players
 
@@ -60,7 +60,7 @@ Defined in: [engine/highScore.types.ts:34](https://github.com/keenanlk/granboard
 
 Defined in: [engine/highScore.types.ts:35](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/engine/highScore.types.ts#L35)
 
----
+***
 
 ### playoffDarts
 
@@ -76,7 +76,7 @@ Defined in: [engine/highScore.types.ts:43](https://github.com/keenanlk/granboard
 
 > **value**: `number`
 
----
+***
 
 ### winners
 

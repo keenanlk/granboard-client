@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../../README.md) / [@nlc-darts/engine](../../../../README.md) / [src/db/db.types.ts](../README.md) / RoundRecord
 
@@ -18,7 +18,7 @@ A persisted round containing darts and score for one player turn.
 
 Defined in: [db/db.types.ts:22](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L22)
 
----
+***
 
 ### playerId
 
@@ -26,7 +26,7 @@ Defined in: [db/db.types.ts:22](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:20](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L20)
 
----
+***
 
 ### playerIndex
 
@@ -34,7 +34,7 @@ Defined in: [db/db.types.ts:20](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:18](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L18)
 
----
+***
 
 ### playerName
 
@@ -42,7 +42,7 @@ Defined in: [db/db.types.ts:18](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:19](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L19)
 
----
+***
 
 ### round
 
@@ -50,7 +50,7 @@ Defined in: [db/db.types.ts:19](https://github.com/keenanlk/granboard-client/blo
 
 Defined in: [db/db.types.ts:21](https://github.com/keenanlk/granboard-client/blob/main/packages/engine/src/db/db.types.ts#L21)
 
----
+***
 
 ### roundScore
 

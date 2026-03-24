@@ -1,6 +1,6 @@
 [**Documentation**](../../../../../README.md)
 
----
+***
 
 [Documentation](../../../../../README.md) / [@nlc-darts/engine](../../../README.md) / src/board/BoardGeometry.ts
 
@@ -8,8 +8,8 @@
 
 ## Variables
 
-- [CLOCKWISE_NUMBERS](variables/CLOCKWISE_NUMBERS.md)
-- [RING_RADII](variables/RING_RADII.md)
+- [CLOCKWISE\_NUMBERS](variables/CLOCKWISE_NUMBERS.md)
+- [RING\_RADII](variables/RING_RADII.md)
 
 ## Functions
 

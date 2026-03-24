@@ -1,6 +1,6 @@
 [**Documentation**](../../../README.md)
 
----
+***
 
 [Documentation](../../../README.md) / [@nlc-darts/web](../README.md) / createGameStore
 
@@ -19,7 +19,7 @@ individual stores only need to supply their engine + default state.
 
 ### TState
 
-`TState` _extends_ `object`
+`TState` *extends* `object`
 
 ### TOptions
 
