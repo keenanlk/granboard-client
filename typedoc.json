@@ -4,6 +4,7 @@
   "entryPoints": [
     "packages/engine",
     "packages/logger",
+    "packages/tournament",
     "apps/server",
     "apps/web"
   ],

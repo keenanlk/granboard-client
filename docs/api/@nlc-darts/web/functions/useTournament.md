@@ -19,7 +19,7 @@ Replaces useTournamentRoom.
 
 ### bracketData
 
-> **bracketData**: `ValueToArray`\<`DataTypes`\> \| `null`
+> **bracketData**: `ValueToArray`\<[`DataTypes`](../../tournament/interfaces/DataTypes.md)\> \| `null`
 
 ### clearMatchAlert
 
