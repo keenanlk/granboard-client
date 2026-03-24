@@ -49,8 +49,8 @@ import { useOnlineStore } from "./store/useOnlineStore.ts";
 import { supabase } from "./lib/supabaseClient.ts";
 import type { OnlineGameType } from "./store/online.types.ts";
 import type { OnlineConfig } from "./store/useOnlineStore.ts";
-import { setPendingColyseusRoom } from "./hooks/useColyseusSync.ts";
-import { useTournamentRoom } from "./hooks/useTournamentRoom.ts";
+import { useTournament } from "./hooks/useTournament.ts";
+import { getColyseusManager } from "./online/managers.ts";
 import { logger } from "./lib/logger.ts";
 import type { TournamentGameConfig } from "@nlc-darts/tournament";
 // Side-effect imports — activate sound and LED event subscriptions
@@ -202,8 +202,8 @@ function App() {
   const [setMatch, setSetMatch] = useState<SetState | null>(null);
   const [authedUserId, setAuthedUserId] = useState<string | null>(null);
 
-  // Tournament room (lifted to App level for global match alerts)
-  const tournamentRoom = useTournamentRoom();
+  // Tournament state (lifted to App level for global match alerts)
+  const tournamentRoom = useTournament();
 
   // Tournament match context — tracks a best-of series during tournament play
   const [tournamentMatch, setTournamentMatch] = useState<{
@@ -267,33 +267,26 @@ function App() {
     }));
 
     if (isHost) {
-      // Host creates the Colyseus game room
+      // Host creates the Colyseus game room via the connection manager
+      const gameType = gameSettings.gameType as string;
+      const options =
+        gameType === "x01"
+          ? gameSettings.x01Options
+          : gameSettings.cricketOptions;
+
       (async () => {
         try {
-          const { Client } = await import("colyseus.js");
-          const rawColUrl =
-            (import.meta.env.VITE_COLYSEUS_URL as string) ??
-            "ws://localhost:2567";
-          const colyseusUrl = rawColUrl.startsWith("/")
-            ? `${location.origin}${rawColUrl}`
-            : rawColUrl;
-          const client = new Client(colyseusUrl);
-          const gameType = gameSettings.gameType as string;
-          const options =
-            gameType === "x01"
-              ? gameSettings.x01Options
-              : gameSettings.cricketOptions;
-          const colyseusRoom = await client.create(gameType, {
+          const mgr = getColyseusManager();
+          const colyseusRoom = await mgr.createRoom(gameType, {
             gameOptions: options,
             playerNames,
             playerIds,
           });
-          setPendingColyseusRoom(colyseusRoom);
 
           // Notify the opponent of the game room ID via tournament room
           tournamentRoom.sendGameRoomReady(matchId, colyseusRoom.roomId);
 
-          // Navigate host to game
+          // Navigate host to game — useGameRoom will adopt the manager's room
           const onlineConfig: OnlineConfig = {
             roomId: `tournament-${matchId}`,
             isHost: true,
@@ -1063,27 +1056,18 @@ function App() {
             currentRoom?.guest_id ?? null,
           ];
 
-          // Host: create Colyseus room first so we can share the ID
+          // Host: create Colyseus room via connection manager
           let colyseusRoomId: string | undefined;
           if (screen.isHost) {
             try {
-              const { Client } = await import("colyseus.js");
-              const rawColUrl =
-                (import.meta.env.VITE_COLYSEUS_URL as string) ??
-                `${location.protocol === "https:" ? "https" : "http"}://192.168.40.151:2567`;
-              const colyseusUrl = rawColUrl.startsWith("/")
-                ? `${location.origin}${rawColUrl}`
-                : rawColUrl;
-              const client = new Client(colyseusUrl);
-              const colyseusRoom = await client.create(gameType as string, {
+              const mgr = getColyseusManager();
+              const colyseusRoom = await mgr.createRoom(gameType as string, {
                 gameOptions: options,
                 playerNames,
                 playerIds,
                 roomId: screen.roomId,
               });
               colyseusRoomId = colyseusRoom.roomId;
-              // Store the room so useColyseusSync can reuse it
-              setPendingColyseusRoom(colyseusRoom);
             } catch (err) {
               log.error({ err }, "Failed to create room");
             }
@@ -1119,19 +1103,13 @@ function App() {
           }
           // Host broadcasts game_started with Colyseus room ID
           if (screen.isHost) {
-            const { roomChannel } = useOnlineStore.getState();
-            if (roomChannel) {
-              roomChannel.send({
-                type: "broadcast",
-                event: "game_started",
-                payload: {
-                  gameType,
-                  options,
-                  playerNames: [screen.hostName, screen.guestName],
-                  colyseusRoomId,
-                },
-              });
-            }
+            const { getSupabaseManager } = await import("./online/managers.ts");
+            getSupabaseManager().sendBroadcast("game_started", {
+              gameType,
+              options: options as Record<string, unknown>,
+              playerNames: [screen.hostName, screen.guestName],
+              colyseusRoomId,
+            });
           }
         }}
       />

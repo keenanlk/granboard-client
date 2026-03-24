@@ -2,8 +2,7 @@ import { useEffect, useRef } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { CreateSegment } from "@nlc-darts/engine";
 import type { Segment, SegmentID } from "@nlc-darts/engine";
-import type { OnlineConfig } from "../store/useOnlineStore.ts";
-import { useOnlineStore } from "../store/useOnlineStore.ts";
+import type { OnlineConfig } from "../store/online.types.ts";
 import { supabase } from "../lib/supabaseClient.ts";
 import { gameEventBus } from "../events/gameEventBus.ts";
 import type { GameEventMap } from "../events/GameEvents.ts";
@@ -125,12 +124,9 @@ export function useOnlineSync({
   useEffect(() => {
     if (!roomId) return; // offline — no-op
 
-    let channel = useOnlineStore.getState().roomChannel;
-    if (!channel) {
-      channel = supabase.channel(`room:${roomId}`);
-      channel.subscribe();
-      useOnlineStore.getState().setRoomChannel(channel);
-    }
+    let channel: RealtimeChannel | null = null;
+    channel = supabase.channel(`room:${roomId}`);
+    channel.subscribe();
     channelRef.current = channel;
 
     if (isHost) {

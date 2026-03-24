@@ -37,15 +37,16 @@ export {
   type Room,
   type Invite,
 } from "./store/online.types.js";
-export { type OnlineConfig, type ConnectionStatus } from "./store/useOnlineStore.js";
+export {
+  type OnlineConfig,
+  type ConnectionStatus,
+} from "./store/useOnlineStore.js";
 
 // Hooks
 export { useTurnDelay } from "./hooks/useTurnDelay.js";
-export {
-  useOnlineRematch,
-  type RematchState,
-} from "./hooks/useOnlineRematch.js";
 export { useLobby } from "./hooks/useLobby.js";
+export { useGameRoom } from "./hooks/useGameRoom.js";
+export { useTournament } from "./hooks/useTournament.js";
 export { useAwardDetection } from "./hooks/useAwardDetection.js";
 export { useBoardWiring } from "./hooks/useBoardWiring.js";
 export { useBotTurn } from "./hooks/useBotTurn.js";
@@ -53,15 +54,7 @@ export {
   useOnlineSync,
   type UseOnlineSyncOptions,
 } from "./hooks/useOnlineSync.js";
-export {
-  useColyseusSync,
-  type UseColyseusSyncOptions,
-  type UseColyseusSyncReturn,
-} from "./hooks/useColyseusSync.js";
-export {
-  useGameSession,
-  type RoundExtract,
-} from "./hooks/useGameSession.js";
+export { useGameSession, type RoundExtract } from "./hooks/useGameSession.js";
 
 // Events
 export { gameEventBus, EventBus, type Handler } from "./events/gameEventBus.js";

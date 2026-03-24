@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getSetWinner } from "@nlc-darts/engine";
 import type { BotSkill, SetProgress } from "@nlc-darts/engine";
-import type { RematchState } from "../hooks/useOnlineRematch.ts";
+import type { RematchPhase } from "../store/online.types.ts";
 import { RobotModel } from "./RobotModel.tsx";
 
 interface PlayerResult {
@@ -20,7 +20,7 @@ interface ResultsOverlayProps {
   onNextLeg?: () => void;
   /** Online rematch state — when set, replaces the simple Rematch button */
   onlineRematch?: {
-    state: RematchState;
+    state: RematchPhase;
     onRequest: () => void;
     onAccept: () => void;
     onDecline: () => void;

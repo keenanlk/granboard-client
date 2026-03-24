@@ -4,8 +4,8 @@ import {
   DEFAULT_CRICKET_OPTIONS,
 } from "@nlc-darts/engine";
 import type { X01Options, CricketOptions } from "@nlc-darts/engine";
-import { useOnlineStore } from "../store/useOnlineStore.ts";
 import type { OnlineGameType } from "../store/online.types.ts";
+import { getSupabaseManager } from "../online/managers.ts";
 
 interface OnlineSetupScreenProps {
   gameType: OnlineGameType;
@@ -66,28 +66,20 @@ export function OnlineSetupScreen({
   // Guest: listen for game_started from host
   useEffect(() => {
     if (isHost) return;
-    const { roomChannel } = useOnlineStore.getState();
-    if (!roomChannel) return;
+    const mgr = getSupabaseManager();
 
-    roomChannel.on(
-      "broadcast",
-      { event: "game_started" },
-      ({
-        payload,
-      }: {
-        payload: {
-          gameType: OnlineGameType;
-          options: unknown;
-          playerNames: string[];
-          colyseusRoomId?: string;
-        };
-      }) => {
-        onStart(payload.gameType, payload.options, payload.colyseusRoomId);
-      },
-    );
+    mgr.onRoomBroadcast("game_started", (payload) => {
+      const p = payload as {
+        gameType: OnlineGameType;
+        options: unknown;
+        playerNames: string[];
+        colyseusRoomId?: string;
+      };
+      onStart(p.gameType, p.options, p.colyseusRoomId);
+    });
 
     // Listen for host leaving while guest waits
-    roomChannel.on("broadcast", { event: "player_left" }, () => {
+    mgr.onRoomBroadcast("player_left", () => {
       onBack();
     });
   }, [isHost, onStart, onBack]);

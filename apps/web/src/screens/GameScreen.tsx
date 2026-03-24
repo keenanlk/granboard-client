@@ -16,14 +16,13 @@ import type {
   SetConfig,
   LegResult,
 } from "@nlc-darts/engine";
-import type { Room } from "colyseus.js";
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { X01Controller } from "../controllers/X01Controller.ts";
 import { guardForOnlineTurn } from "../controllers/OnlineTurnGuard.ts";
 import { setActiveController } from "../controllers/GameController.ts";
 import { useGameSession } from "../hooks/useGameSession.ts";
-import { useOnlineRematch } from "../hooks/useOnlineRematch.ts";
+import { useGameRoom } from "../hooks/useGameRoom.ts";
 import { useBotTurn } from "../hooks/useBotTurn.ts";
 import { useAwardDetection } from "../hooks/useAwardDetection.ts";
 import { GameShell } from "../components/GameShell.tsx";
@@ -35,8 +34,7 @@ import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
 import { RobotModel } from "../components/RobotModel.tsx";
 import { Sounds } from "../sound/sounds.ts";
 import { playerTextSizes } from "../lib/playerTextSizes.ts";
-import type { OnlineConfig } from "../store/useOnlineStore.ts";
-import { useColyseusSync } from "../hooks/useColyseusSync.ts";
+import type { OnlineConfig } from "../store/online.types.ts";
 import { ColyseusRemoteController } from "../controllers/ColyseusRemoteController.ts";
 import { OnlineIndicator } from "../components/OnlineIndicator.tsx";
 import { WaitingOverlay } from "../components/WaitingOverlay.tsx";
@@ -98,7 +96,6 @@ export function GameScreen({
 
   // Refs for deferred callbacks — populated after hooks that define them
   const dismissOverlaysRef = useRef<(() => void) | undefined>(undefined);
-  const colyseusRoomRef = useRef<Room | null>(null);
 
   const { handleNextTurn, isTransitioning, countdown, triggerRemoteDelay } =
     useGameSession({
@@ -108,14 +105,6 @@ export function GameScreen({
       botSkills,
       options: x01Options,
       createController: () => {
-        if (onlineConfig && colyseusRoomRef.current) {
-          const localIndex = onlineConfig.isHost ? 0 : 1;
-          return guardForOnlineTurn(
-            new ColyseusRemoteController(colyseusRoomRef.current),
-            localIndex,
-            () => useGameStore.getState().currentPlayerIndex,
-          );
-        }
         return new X01Controller();
       },
       extractRound: () => {
@@ -159,24 +148,22 @@ export function GameScreen({
       onBeforeNextTurn: () => dismissOverlaysRef.current?.(),
     });
 
-  // Colyseus sync — always called, no-op when onlineConfig is null
-  const { room } = useColyseusSync({
-    onlineConfig: onlineConfig ?? null,
-    restoreState: (state) =>
-      useGameStore
-        .getState()
-        .restoreState(state as X01State & { undoStack: X01State[] }),
-    onOpponentDisconnected: () => {
-      setOpponentDisconnected(true);
-    },
-    onTurnDelay: () => {
-      triggerRemoteDelay();
-    },
-  });
+  const { room, rematchPhase, requestRematch, acceptRematch, declineRematch } =
+    useGameRoom(onlineConfig ?? null, {
+      restoreState: (state) =>
+        useGameStore
+          .getState()
+          .restoreState(state as X01State & { undoStack: X01State[] }),
+      onOpponentDisconnected: () => {
+        setOpponentDisconnected(true);
+      },
+      onTurnDelay: () => {
+        triggerRemoteDelay();
+      },
+    });
 
   // When Colyseus room connects, swap to the remote controller
   useEffect(() => {
-    colyseusRoomRef.current = room;
     if (room && onlineConfig) {
       const localIndex = onlineConfig.isHost ? 0 : 1;
       const controller = guardForOnlineTurn(
@@ -359,17 +346,14 @@ export function GameScreen({
     dismissOverlaysRef.current = dismissAward;
   });
 
-  const { rematchState, requestRematch, acceptRematch, declineRematch } =
-    useOnlineRematch(onlineConfig);
-
   // When both players accept rematch, reset the Colyseus room then remount
   useEffect(() => {
-    if (rematchState === "accepted") {
+    if (rematchPhase === "accepted") {
       room?.send("rematch", {});
       onRematch();
     }
-    if (rematchState === "declined") onExit();
-  }, [rematchState, onRematch, onExit, room]);
+    if (rematchPhase === "declined") onExit();
+  }, [rematchPhase, onRematch, onExit, room]);
 
   return (
     <GameShell
@@ -434,7 +418,7 @@ export function GameScreen({
               onlineRematch={
                 onlineConfig && !setProgress
                   ? {
-                      state: rematchState,
+                      state: rematchPhase,
                       onRequest: requestRematch,
                       onAccept: acceptRematch,
                       onDecline: declineRematch,
