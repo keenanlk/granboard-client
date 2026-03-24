@@ -1,3 +1,6 @@
+# Claude memory symlink
+.claude-memory
+
 # Logs
 logs
 *.log
