@@ -3,23 +3,22 @@ import { useOnlineStore } from "../store/useOnlineStore.ts";
 import type { Invite, OnlineGameType } from "../store/online.types.ts";
 
 /**
- * Manages lobby lifecycle: auto-expire invites, countdown timers.
+ * Thin selector hook for lobby state.
+ * Invite countdowns computed from `expires_at` timestamps.
  */
 export function useLobby() {
-  const {
-    connectionStatus,
-    onlinePlayers,
-    pendingInvite,
-    sentInvite,
-    sendInvite,
-    acceptInvite,
-    declineInvite,
-    dismissInvite,
-    dismissSentInvite,
-    goOnline,
-    goOffline,
-    currentRoom,
-  } = useOnlineStore();
+  const lobbyPhase = useOnlineStore((s) => s.lobbyPhase);
+  const onlinePlayers = useOnlineStore((s) => s.onlinePlayers);
+  const pendingInvite = useOnlineStore((s) => s.pendingInvite);
+  const sentInvite = useOnlineStore((s) => s.sentInvite);
+  const currentRoom = useOnlineStore((s) => s.currentRoom);
+  const goOnline = useOnlineStore((s) => s.goOnline);
+  const goOffline = useOnlineStore((s) => s.goOffline);
+  const sendInvite = useOnlineStore((s) => s.sendInvite);
+  const acceptInvite = useOnlineStore((s) => s.acceptInvite);
+  const declineInvite = useOnlineStore((s) => s.declineInvite);
+  const dismissInvite = useOnlineStore((s) => s.dismissInvite);
+  const dismissSentInvite = useOnlineStore((s) => s.dismissSentInvite);
 
   // Countdown for sent invite (seconds remaining)
   const [sentCountdown, setSentCountdown] = useState<number | null>(null);
@@ -39,7 +38,6 @@ export function useLobby() {
     }
 
     if (!sentInvite) {
-      // Defer to avoid synchronous setState in effect body
       queueMicrotask(() => setSentCountdown(null));
       return;
     }
@@ -109,7 +107,8 @@ export function useLobby() {
   }
 
   return {
-    connectionStatus,
+    connectionStatus: lobbyPhase,
+    lobbyPhase,
     onlinePlayers,
     pendingInvite,
     sentInvite,

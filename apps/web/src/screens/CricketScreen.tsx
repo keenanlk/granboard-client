@@ -7,7 +7,6 @@ import {
   getBotCharacter,
   CreateSegment,
   cricketPickTarget,
-  getSetWinner,
 } from "@nlc-darts/engine";
 import type {
   CricketOptions,
@@ -20,7 +19,7 @@ import type {
   SetConfig,
   LegResult,
 } from "@nlc-darts/engine";
-import type { Room } from "colyseus.js";
+
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
 import { CricketMarksOverlay } from "../components/CricketMarksOverlay.tsx";
@@ -36,13 +35,12 @@ import { HistoryRow } from "../components/HistoryRow.tsx";
 import { BotThinkingIndicator } from "../components/BotThinkingIndicator.tsx";
 import { RobotModel } from "../components/RobotModel.tsx";
 import { playerTextSizes } from "../lib/playerTextSizes.ts";
-import type { OnlineConfig } from "../store/useOnlineStore.ts";
-import { useColyseusSync } from "../hooks/useColyseusSync.ts";
+import type { OnlineConfig } from "../store/online.types.ts";
+import { useGameRoom } from "../hooks/useGameRoom.ts";
 import { ColyseusRemoteController } from "../controllers/ColyseusRemoteController.ts";
 import { guardForOnlineTurn } from "../controllers/OnlineTurnGuard.ts";
 import { setActiveController } from "../controllers/GameController.ts";
-import { useOnlineRematch } from "../hooks/useOnlineRematch.ts";
-import { useOnlineNextLeg } from "../hooks/useOnlineNextLeg.ts";
+
 import { OnlineIndicator } from "../components/OnlineIndicator.tsx";
 import { WaitingOverlay } from "../components/WaitingOverlay.tsx";
 import { useWebRTC } from "../hooks/useWebRTC.ts";
@@ -63,8 +61,6 @@ interface CricketScreenProps {
   legResults?: LegResult[];
   currentLegIndex?: number;
   onlineConfig?: OnlineConfig;
-  /** Called automatically when the tournament set is decided (no user click needed). */
-  onTournamentComplete?: (winnerName: string) => void;
 }
 
 function targetLabel(t: CricketTarget) {
@@ -157,7 +153,6 @@ export function CricketScreen({
   legResults,
   currentLegIndex,
   onlineConfig,
-  onTournamentComplete,
 }: CricketScreenProps) {
   const {
     players,
@@ -178,7 +173,6 @@ export function CricketScreen({
 
   // Refs for deferred callbacks — populated after hooks that define them
   const dismissOverlaysRef = useRef<(() => void) | undefined>(undefined);
-  const colyseusRoomRef = useRef<Room | null>(null);
 
   const { handleNextTurn, isTransitioning, countdown, triggerRemoteDelay } =
     useGameSession({
@@ -188,14 +182,6 @@ export function CricketScreen({
       botSkills,
       options,
       createController: () => {
-        if (onlineConfig && colyseusRoomRef.current) {
-          const localIndex = onlineConfig.isHost ? 0 : 1;
-          return guardForOnlineTurn(
-            new ColyseusRemoteController(colyseusRoomRef.current),
-            localIndex,
-            () => useCricketStore.getState().currentPlayerIndex,
-          );
-        }
         return new CricketController();
       },
       extractRound: () => {
@@ -241,24 +227,22 @@ export function CricketScreen({
       onBeforeNextTurn: () => dismissOverlaysRef.current?.(),
     });
 
-  // Colyseus sync — always called, no-op when onlineConfig is null
-  const { room } = useColyseusSync({
-    onlineConfig: onlineConfig ?? null,
-    restoreState: (state) =>
-      useCricketStore
-        .getState()
-        .restoreState(state as CricketState & { undoStack: CricketState[] }),
-    onOpponentDisconnected: () => {
-      setOpponentDisconnected(true);
-    },
-    onTurnDelay: () => {
-      triggerRemoteDelay();
-    },
-  });
+  const { room, rematchPhase, requestRematch, acceptRematch, declineRematch } =
+    useGameRoom(onlineConfig ?? null, {
+      restoreState: (state) =>
+        useCricketStore
+          .getState()
+          .restoreState(state as CricketState & { undoStack: CricketState[] }),
+      onOpponentDisconnected: () => {
+        setOpponentDisconnected(true);
+      },
+      onTurnDelay: () => {
+        triggerRemoteDelay();
+      },
+    });
 
   // When Colyseus room connects, swap to the remote controller
   useEffect(() => {
-    colyseusRoomRef.current = room;
     if (room && onlineConfig) {
       const localIndex = onlineConfig.isHost ? 0 : 1;
       const controller = guardForOnlineTurn(
@@ -413,55 +397,13 @@ export function CricketScreen({
     };
   });
 
-  const { rematchState, requestRematch, acceptRematch, declineRematch } =
-    useOnlineRematch(onlineConfig);
-
-  const { nextLegState, requestNextLeg, resetNextLeg } = useOnlineNextLeg(
-    onlineConfig && setProgress ? room : null,
-  );
-
   useEffect(() => {
-    if (rematchState === "accepted") {
+    if (rematchPhase === "accepted") {
       room?.send("rematch", {});
       onRematch();
     }
-    if (rematchState === "declined") onExit();
-  }, [rematchState, onRematch, onExit, room]);
-
-  // When both players agree on next leg, reset the Colyseus room and advance
-  useEffect(() => {
-    if (nextLegState === "accepted") {
-      room?.send("rematch", {});
-      resetNextLeg();
-      onNextLeg?.();
-    }
-  }, [nextLegState, room, resetNextLeg, onNextLeg]);
-
-  // Auto-report tournament result when the set is decided (no user click needed)
-  const tournamentCompleteCalledRef = useRef(false);
-  useEffect(() => {
-    if (
-      !onTournamentComplete ||
-      !setProgress ||
-      !winner ||
-      tournamentCompleteCalledRef.current
-    )
-      return;
-    const format = setProgress.totalLegs === 3 ? "bo3" : "bo5";
-    const effectiveResults = [
-      ...setProgress.legResults,
-      {
-        winnerName: winner,
-        winnerIndex: setProgress.playerNames.indexOf(winner),
-      },
-    ];
-    const seriesWinner = getSetWinner(effectiveResults, format);
-    if (seriesWinner) {
-      tournamentCompleteCalledRef.current = true;
-      const t = setTimeout(() => onTournamentComplete(winner), 3000);
-      return () => clearTimeout(t);
-    }
-  }, [winner, setProgress, onTournamentComplete]);
+    if (rematchPhase === "declined") onExit();
+  }, [rematchPhase, onRematch, onExit, room]);
 
   const n = players.length;
   const readyToSwitch = currentRoundDarts.length === 3;
@@ -535,6 +477,7 @@ export function CricketScreen({
                 setConfirmedStream(stream);
                 setCameraPreviewShown(false);
               }}
+              onSkip={() => setCameraPreviewShown(false)}
             />
           )}
           {onlineConfig && opponentDisconnected && !winner && (
@@ -545,23 +488,14 @@ export function CricketScreen({
               onExit={onExit}
               onRematch={onlineConfig || setProgress ? undefined : onRematch}
               setProgress={setProgress}
-              isTournament={!!onlineConfig && !!setProgress}
               onNextLeg={onNextLeg}
               onlineRematch={
                 onlineConfig && !setProgress
                   ? {
-                      state: rematchState,
+                      state: rematchPhase,
                       onRequest: requestRematch,
                       onAccept: acceptRematch,
                       onDecline: declineRematch,
-                    }
-                  : undefined
-              }
-              onlineNextLeg={
-                onlineConfig && setProgress
-                  ? {
-                      state: nextLegState,
-                      onRequest: requestNextLeg,
                     }
                   : undefined
               }

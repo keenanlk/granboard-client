@@ -1,542 +1,549 @@
 import { create } from "zustand";
-import { supabase } from "../lib/supabaseClient.ts";
-import type { RealtimeChannel } from "@supabase/supabase-js";
-import type { Json } from "@nlc-darts/supabase";
 import { logger } from "../lib/logger.ts";
 import { fetchPlayerStats, EMPTY_STATS } from "../lib/onlineStats.ts";
-import type { OnlinePlayerStats } from "../lib/onlineStats.ts";
+import { transition } from "../online/transitions.ts";
+import {
+  bindManagersToStore,
+  getSupabaseManager,
+  getColyseusManager,
+  getTournamentManager,
+  cleanupAllManagers,
+} from "../online/managers.ts";
+import type {
+  OnlineStore,
+  OnlineStoreState,
+  Invite,
+  OnlineGameType,
+  OnlineConfig,
+  RoomStatus,
+  Room,
+} from "./online.types.ts";
+import { supabase } from "../lib/supabaseClient.ts";
 
 const log = logger.child({ module: "online" });
-import type {
-  Invite,
-  InviteStatus,
-  OnlineGameType,
-  OnlinePlayer,
-  PlayerStatus,
-  Room,
-  RoomStatus,
-} from "./online.types.ts";
 
-export interface OnlineConfig {
-  roomId: string;
-  isHost: boolean;
-  /** Colyseus room ID for server-authoritative play */
-  colyseusRoomId?: string;
-  /** Game type for Colyseus room creation */
-  gameType?: "x01" | "cricket";
-  /** Player names for Colyseus room creation */
-  playerNames?: string[];
-  /** Player IDs for Colyseus room creation */
-  playerIds?: (string | null)[];
-  /** Game options for Colyseus room creation */
-  gameOptions?: unknown;
-}
-
-export type ConnectionStatus = "offline" | "connecting" | "online" | "error";
-
-interface OnlineState {
+const INITIAL_STATE: OnlineStoreState = {
   // Auth
-  authUserId: string | null;
-  displayName: string | null;
-  avatarUrl: string | null;
-  connectionStatus: ConnectionStatus;
-  stats: OnlinePlayerStats;
-
-  // Lobby
-  onlinePlayers: OnlinePlayer[];
-  lobbyChannel: RealtimeChannel | null;
-
-  // Rooms & invites
-  currentRoom: Room | null;
-  roomChannel: RealtimeChannel | null;
-  isHost: boolean;
-  opponentName: string | null;
-  pendingInvite: Invite | null;
-  sentInvite: Invite | null;
-
-  // Actions
-  goOnline: () => Promise<void>;
-  goOffline: () => Promise<void>;
-  createRoom: (
-    gameType: OnlineGameType,
-    gameOptions: unknown,
-  ) => Promise<Room | null>;
-  joinRoom: (roomId: string) => Promise<void>;
-  leaveRoom: () => Promise<void>;
-  sendInvite: (
-    toId: string,
-    gameType: OnlineGameType,
-    gameOptions: unknown,
-  ) => Promise<void>;
-  acceptInvite: (invite: Invite) => Promise<void>;
-  declineInvite: (invite: Invite) => Promise<void>;
-  dismissInvite: () => void;
-  dismissSentInvite: () => void;
-  setCurrentRoom: (room: Room | null) => void;
-  setRoomChannel: (channel: RealtimeChannel | null) => void;
-  updateRoomStatus: (status: RoomStatus) => void;
-}
-
-function buildPresencePayload(
-  state: OnlineState,
-  statusOverride?: PlayerStatus,
-) {
-  return {
-    id: state.authUserId,
-    display_name: state.displayName,
-    avatar_url: state.avatarUrl,
-    status: statusOverride ?? "online",
-    x01_grade: state.stats.x01.grade,
-    x01_ppd: state.stats.x01.ppd,
-    x01_games: state.stats.x01.games,
-    cricket_grade: state.stats.cricket.grade,
-    cricket_mpr: state.stats.cricket.mpr,
-    cricket_games: state.stats.cricket.games,
-  };
-}
-
-export const useOnlineStore = create<OnlineState>((set, get) => ({
   authUserId: null,
   displayName: null,
-  avatarUrl: null,
-  connectionStatus: "offline",
   stats: EMPTY_STATS,
+
+  // Phase machines
+  lobbyPhase: "offline",
+  invitePhase: "idle",
+  roomPhase: "idle",
+  colyseusPhase: "disconnected",
+  rematchPhase: "idle",
+  nextLegPhase: "idle",
+  tournamentPhase: "disconnected",
+
+  // Lobby
   onlinePlayers: [],
-  lobbyChannel: null,
+
+  // Rooms & invites
   currentRoom: null,
-  roomChannel: null,
   isHost: false,
   opponentName: null,
   pendingInvite: null,
   sentInvite: null,
+  onlineConfig: null,
 
-  goOnline: async () => {
-    set({ connectionStatus: "connecting" });
-    try {
-      // Expect an existing session (user signed in via AuthScreen)
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const userId = session?.user?.id;
-      if (!userId) throw new Error("Not authenticated");
+  // Tournament
+  bracketData: null,
+  participantUserMap: null,
+  registrationUpdate: null,
+  tournamentCreated: null,
+  tournamentError: null,
+  matchReadyState: null,
+  matchCountdown: null,
+  matchStart: null,
+  matchAlert: null,
+  matchGameRoom: null,
+};
 
-      const meta = session?.user?.user_metadata;
-      const displayName =
-        localStorage.getItem("nlc-online-name") ??
-        (meta?.full_name as string | undefined) ??
-        "Player";
-      const avatarUrl = (meta?.avatar_url as string | undefined) ?? null;
+export const useOnlineStore = create<OnlineStore>((set, get) => {
+  // Bind managers to store immediately
+  const storeSet = (partial: Partial<OnlineStoreState>) => set(partial);
+  const storeGet = () => get() as OnlineStoreState;
 
-      // Fetch online stats for this player
-      const stats = await fetchPlayerStats(userId);
+  // Deferred binding — managers may be created lazily
+  queueMicrotask(() => bindManagersToStore(storeGet, storeSet));
 
-      // Upsert player record
-      await supabase.from("online_players").upsert(
-        {
-          id: userId,
-          display_name: displayName,
-          avatar_url: avatarUrl,
-          status: "online" as PlayerStatus,
-          last_seen: new Date().toISOString(),
-        },
-        { onConflict: "id" },
-      );
+  return {
+    ...INITIAL_STATE,
 
-      set({
-        authUserId: userId,
-        displayName,
-        avatarUrl,
-        connectionStatus: "online",
-        stats,
-      });
+    set: storeSet,
 
-      // Join lobby presence channel
-      const lobbyChannel = supabase.channel("lobby", {
-        config: { presence: { key: userId } },
-      });
+    // --- Lobby ---
 
-      lobbyChannel
-        .on("presence", { event: "sync" }, () => {
-          const state = lobbyChannel.presenceState();
-          const players: OnlinePlayer[] = [];
-          for (const [, presences] of Object.entries(state)) {
-            const p = presences[0] as unknown as {
-              id: string;
-              display_name: string;
-              avatar_url: string | null;
-              status: PlayerStatus;
-              x01_grade: string | null;
-              x01_ppd: number;
-              x01_games: number;
-              cricket_grade: string | null;
-              cricket_mpr: number;
-              cricket_games: number;
-            };
-            if (p.id !== get().authUserId) {
-              players.push({
-                id: p.id,
-                display_name: p.display_name,
-                avatar_url: p.avatar_url ?? null,
-                status: p.status,
-                last_seen: new Date().toISOString(),
-                x01_grade: p.x01_grade ?? null,
-                x01_ppd: p.x01_ppd ?? 0,
-                x01_games: p.x01_games ?? 0,
-                cricket_grade: p.cricket_grade ?? null,
-                cricket_mpr: p.cricket_mpr ?? 0,
-                cricket_games: p.cricket_games ?? 0,
-              });
-            }
-          }
-          set({ onlinePlayers: players });
-        })
-        .on(
-          "broadcast",
-          { event: "invite" },
-          ({ payload }: { payload: Invite }) => {
-            if (payload.to_id === get().authUserId) {
-              set({ pendingInvite: payload });
-            }
-          },
-        )
-        .on(
-          "broadcast",
-          { event: "invite_response" },
-          ({
-            payload,
-          }: {
-            payload: {
-              invite_id: string;
-              status: InviteStatus;
-              room_id: string;
-              guest_id?: string;
-              guest_name?: string;
-            };
-          }) => {
-            const sent = get().sentInvite;
-            if (sent && sent.id === payload.invite_id) {
-              if (payload.status === "accepted") {
-                // Host already has the room from createRoom — just update guest info
-                const { currentRoom } = get();
-                if (currentRoom) {
-                  set({
-                    sentInvite: null,
-                    currentRoom: {
-                      ...currentRoom,
-                      guest_id: payload.guest_id ?? sent.to_id,
-                    },
-                    opponentName: payload.guest_name ?? null,
-                  });
-                } else {
-                  set({ sentInvite: null });
-                }
-              } else {
-                // Declined — clean up the room we created
-                set({ sentInvite: null });
-                void get().leaveRoom();
-              }
-            }
-          },
-        )
-        .subscribe(async (status) => {
-          if (status === "SUBSCRIBED") {
-            await lobbyChannel.track(buildPresencePayload(get()));
-          }
+    goOnline: async () => {
+      const s = get();
+      const next = transition("lobby", s.lobbyPhase, "connecting");
+      if (next === s.lobbyPhase) return;
+      set({ lobbyPhase: next });
+
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (!userId) throw new Error("Not authenticated");
+
+        const displayName = localStorage.getItem("nlc-online-name") ?? "Player";
+        const stats = await fetchPlayerStats(userId);
+
+        const mgr = getSupabaseManager();
+        await mgr.upsertPlayer(userId, displayName, "online");
+
+        set({
+          authUserId: userId,
+          displayName,
+          stats,
+          lobbyPhase: transition("lobby", "connecting", "online"),
         });
 
-      set({ lobbyChannel });
+        await mgr.joinLobby(userId);
+      } catch (err) {
+        log.error({ err }, "goOnline failed");
+        set({ lobbyPhase: transition("lobby", "connecting", "error") });
+      }
+    },
 
-      // Heartbeat — update last_seen every 30s
-      const heartbeat = setInterval(async () => {
-        const { authUserId } = get();
-        if (!authUserId) {
-          clearInterval(heartbeat);
-          return;
-        }
-        await supabase
-          .from("online_players")
-          .update({ last_seen: new Date().toISOString() })
-          .eq("id", authUserId);
-      }, 30000);
-    } catch (err) {
-      log.error({ err }, "goOnline failed");
-      set({ connectionStatus: "error" });
-    }
-  },
+    goOffline: async () => {
+      const s = get();
 
-  goOffline: async () => {
-    // Clean up any active room first
-    if (get().currentRoom) {
-      await get().leaveRoom();
-    }
+      // Clean up room if active
+      if (s.currentRoom) {
+        await get().leaveRoom();
+      }
 
-    const { lobbyChannel, authUserId } = get();
+      const { authUserId } = get();
+      if (authUserId) {
+        const mgr = getSupabaseManager();
+        await mgr.updatePlayerStatus(authUserId, "online");
+      }
 
-    if (lobbyChannel) {
-      await supabase.removeChannel(lobbyChannel);
-    }
+      cleanupAllManagers();
 
-    if (authUserId) {
-      await supabase
-        .from("online_players")
-        .update({ status: "online" as PlayerStatus })
-        .eq("id", authUserId);
-    }
-
-    set({
-      connectionStatus: "offline",
-      authUserId: null,
-      displayName: null,
-      avatarUrl: null,
-      stats: EMPTY_STATS,
-      onlinePlayers: [],
-      lobbyChannel: null,
-      roomChannel: null,
-      currentRoom: null,
-      isHost: false,
-      opponentName: null,
-      pendingInvite: null,
-      sentInvite: null,
-    });
-  },
-
-  createRoom: async (gameType, gameOptions) => {
-    const { authUserId } = get();
-    if (!authUserId) return null;
-
-    const { data, error } = await supabase
-      .from("rooms")
-      .insert({
-        host_id: authUserId,
-        status: "waiting" as RoomStatus,
-        game_type: gameType,
-        game_options: gameOptions as Json,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      log.error({ err: error }, "createRoom failed");
-      return null;
-    }
-
-    const room = data as Room;
-    set({ currentRoom: room, isHost: true });
-
-    // Join room channel
-    const roomChannel = supabase.channel(`room:${room.id}`);
-    roomChannel.subscribe();
-    set({ roomChannel });
-
-    // Update player status
-    await supabase
-      .from("online_players")
-      .update({ status: "in_game" as PlayerStatus })
-      .eq("id", authUserId);
-
-    // Update lobby presence
-    const { lobbyChannel } = get();
-    if (lobbyChannel) {
-      await lobbyChannel.track(buildPresencePayload(get(), "in_game"));
-    }
-
-    return room;
-  },
-
-  joinRoom: async (roomId: string) => {
-    const { authUserId } = get();
-    if (!authUserId) return;
-
-    // Update room with guest
-    const { data, error } = await supabase
-      .from("rooms")
-      .update({ guest_id: authUserId })
-      .eq("id", roomId)
-      .select()
-      .single();
-
-    if (error) {
-      log.error({ err: error }, "joinRoom failed");
-      return;
-    }
-
-    const room = data as Room;
-    set({ currentRoom: room, isHost: false });
-
-    // Join room channel
-    const roomChannel = supabase.channel(`room:${room.id}`);
-    roomChannel.subscribe();
-    set({ roomChannel });
-
-    // Update player status
-    await supabase
-      .from("online_players")
-      .update({ status: "in_game" as PlayerStatus })
-      .eq("id", authUserId);
-
-    const { lobbyChannel } = get();
-    if (lobbyChannel) {
-      await lobbyChannel.track(buildPresencePayload(get(), "in_game"));
-    }
-  },
-
-  leaveRoom: async () => {
-    const { roomChannel, currentRoom, authUserId } = get();
-
-    // Clear local state immediately so navigations don't see stale room
-    set({
-      currentRoom: null,
-      roomChannel: null,
-      isHost: false,
-      opponentName: null,
-    });
-
-    // Async cleanup — broadcast, DB updates, channel teardown
-    if (roomChannel) {
-      roomChannel.send({
-        type: "broadcast",
-        event: "player_left",
-        payload: { playerId: authUserId },
+      set({
+        ...INITIAL_STATE,
+        lobbyPhase: "offline",
       });
-      await supabase.removeChannel(roomChannel);
-    }
+    },
 
-    if (currentRoom) {
-      await supabase
-        .from("rooms")
-        .update({ status: "abandoned" as RoomStatus })
-        .eq("id", currentRoom.id);
-    }
+    // --- Invites ---
 
-    if (authUserId) {
-      await supabase
-        .from("online_players")
-        .update({ status: "online" as PlayerStatus })
-        .eq("id", authUserId);
+    sendInvite: async (
+      toId: string,
+      gameType: OnlineGameType,
+      gameOptions: unknown,
+    ) => {
+      const s = get();
+      const next = transition("invite", s.invitePhase, "sending");
+      if (next === s.invitePhase) return;
+      set({ invitePhase: next });
 
-      const { lobbyChannel } = get();
-      if (lobbyChannel) {
-        await lobbyChannel.track(buildPresencePayload(get()));
+      // Create room first
+      const room = await get().createRoom(gameType, gameOptions);
+      if (!room) {
+        set({ invitePhase: transition("invite", "sending", "idle") });
+        return;
+      }
+
+      const mgr = getSupabaseManager();
+      const invite = await mgr.sendInvite(toId, gameType, gameOptions, room.id);
+
+      if (invite) {
+        set({
+          sentInvite: invite,
+          invitePhase: transition("invite", "sending", "awaiting_reply"),
+        });
+      } else {
+        set({ invitePhase: transition("invite", "sending", "idle") });
+      }
+    },
+
+    acceptInvite: async (invite: Invite) => {
+      const s = get();
+      const next = transition("invite", s.invitePhase, "accepted");
+      if (next === s.invitePhase) return;
+
+      const mgr = getSupabaseManager();
+      await mgr.respondToInvite(invite, "accepted");
+
+      set({
+        invitePhase: "idle",
+        pendingInvite: null,
+        opponentName: invite.from_name ?? null,
+      });
+
+      await get().joinRoom(invite.room_id);
+    },
+
+    declineInvite: async (invite: Invite) => {
+      const s = get();
+      const next = transition("invite", s.invitePhase, "declined");
+      if (next === s.invitePhase) return;
+
+      const mgr = getSupabaseManager();
+      await mgr.respondToInvite(invite, "declined");
+
+      set({ invitePhase: "idle", pendingInvite: null });
+    },
+
+    dismissInvite: () => set({ pendingInvite: null, invitePhase: "idle" }),
+    dismissSentInvite: () => set({ sentInvite: null, invitePhase: "idle" }),
+
+    // --- Room ---
+
+    createRoom: async (
+      gameType: OnlineGameType,
+      gameOptions: unknown,
+    ): Promise<Room | null> => {
+      const { authUserId } = get();
+      if (!authUserId) return null;
+
+      set({ roomPhase: transition("room", get().roomPhase, "creating") });
+
+      const mgr = getSupabaseManager();
+      const room = await mgr.createRoomRecord(
+        authUserId,
+        gameType,
+        gameOptions,
+      );
+
+      if (!room) {
+        set({ roomPhase: transition("room", "creating", "idle") });
+        return null;
+      }
+
+      set({
+        currentRoom: room,
+        isHost: true,
+        roomPhase: transition("room", "creating", "waiting"),
+      });
+
+      mgr.joinRoomChannel(room.id);
+      await mgr.updatePlayerStatus(authUserId, "in_game");
+      await mgr.updatePresenceStatus("in_game");
+
+      return room;
+    },
+
+    joinRoom: async (roomId: string) => {
+      const { authUserId } = get();
+      if (!authUserId) return;
+
+      set({ roomPhase: transition("room", get().roomPhase, "waiting") });
+
+      const mgr = getSupabaseManager();
+      const room = await mgr.joinRoomRecord(roomId, authUserId);
+
+      if (!room) {
+        set({ roomPhase: transition("room", "waiting", "idle") });
+        return;
+      }
+
+      set({ currentRoom: room, isHost: false });
+
+      mgr.joinRoomChannel(room.id);
+      await mgr.updatePlayerStatus(authUserId, "in_game");
+      await mgr.updatePresenceStatus("in_game");
+    },
+
+    leaveRoom: async () => {
+      const { currentRoom, authUserId, roomPhase } = get();
+
+      set({
+        roomPhase: transition("room", roomPhase, "leaving"),
+        currentRoom: null,
+        isHost: false,
+        opponentName: null,
+        onlineConfig: null,
+        rematchPhase: "idle",
+        nextLegPhase: "idle",
+      });
+
+      const mgr = getSupabaseManager();
+
+      if (currentRoom) {
+        mgr.sendBroadcast("player_left", { playerId: authUserId });
+        mgr.leaveRoomChannel();
+        await mgr.abandonRoom(currentRoom.id);
+      }
+
+      // Leave Colyseus room if connected
+      const colyMgr = getColyseusManager();
+      await colyMgr.leave();
+
+      if (authUserId) {
+        await mgr.updatePlayerStatus(authUserId, "online");
+        await mgr.updatePresenceStatus("online");
+      }
+
+      set({
+        roomPhase: transition("room", "leaving", "idle"),
+        colyseusPhase: "disconnected",
+      });
+    },
+
+    updateRoomStatus: (status: RoomStatus) => {
+      const { currentRoom } = get();
+      if (currentRoom) {
+        set({ currentRoom: { ...currentRoom, status } });
+        const mgr = getSupabaseManager();
+        void mgr.updateRoomRecordStatus(currentRoom.id, status);
+      }
+    },
+
+    // --- Game (Colyseus) ---
+
+    launchGame: async (config: OnlineConfig) => {
+      set({
+        onlineConfig: config,
+        roomPhase: transition("room", get().roomPhase, "launching"),
+        colyseusPhase: transition(
+          "colyseus",
+          get().colyseusPhase,
+          "connecting",
+        ),
+        rematchPhase: "idle",
+        nextLegPhase: "idle",
+      });
+
+      const mgr = getColyseusManager();
+
+      try {
+        if (config.isHost) {
+          if (config.colyseusRoomId) {
+            // Room already created externally (e.g., by App.tsx for tournament)
+            // The pending room pattern is replaced: the manager now owns the room
+            await mgr.joinRoom(config.colyseusRoomId);
+          } else {
+            // Create a new room
+            const room = await mgr.createRoom(config.gameType!, {
+              gameOptions: config.gameOptions,
+              playerNames: config.playerNames!,
+              playerIds: config.playerIds!,
+              roomId: config.roomId,
+            });
+
+            // Update config with real room ID
+            set({
+              onlineConfig: { ...config, colyseusRoomId: room.roomId },
+            });
+          }
+        } else if (config.colyseusRoomId) {
+          await mgr.joinRoom(config.colyseusRoomId);
+        }
+
+        mgr.requestState();
+
+        set({
+          roomPhase: transition("room", "launching", "playing"),
+          colyseusPhase: "connected",
+        });
+      } catch (err) {
+        log.error({ err }, "launchGame failed");
+        set({
+          roomPhase: transition("room", "launching", "idle"),
+          colyseusPhase: transition("colyseus", "connecting", "error"),
+        });
+      }
+    },
+
+    sendDart: (segmentId: number) => {
+      if (get().colyseusPhase !== "connected") return;
+      getColyseusManager().send("dart_hit", { segmentId });
+    },
+
+    sendNextTurn: () => {
+      if (get().colyseusPhase !== "connected") return;
+      getColyseusManager().send("next_turn", {});
+    },
+
+    sendUndo: () => {
+      if (get().colyseusPhase !== "connected") return;
+      getColyseusManager().send("undo", {});
+    },
+
+    // --- Rematch ---
+
+    requestRematch: () => {
+      const s = get();
+      if (s.rematchPhase === "received") {
+        // Both agree
+        getColyseusManager().send("rematch_accept", {});
+        const mgr = getSupabaseManager();
+        mgr.sendBroadcast("rematch_accept", {});
+        set({ rematchPhase: "accepted" });
+      } else {
+        getColyseusManager().send("rematch_request", {});
+        const mgr = getSupabaseManager();
+        mgr.sendBroadcast("rematch_request", {});
+        set({
+          rematchPhase: transition("rematch", s.rematchPhase, "sent"),
+        });
+      }
+    },
+
+    acceptRematch: () => {
+      getColyseusManager().send("rematch_accept", {});
+      const mgr = getSupabaseManager();
+      mgr.sendBroadcast("rematch_accept", {});
+      set({ rematchPhase: "accepted" });
+    },
+
+    declineRematch: () => {
+      getColyseusManager().send("rematch_decline", {});
+      const mgr = getSupabaseManager();
+      mgr.sendBroadcast("rematch_decline", {});
+      set({ rematchPhase: "declined" });
+    },
+
+    resetRematch: () => set({ rematchPhase: "idle" }),
+
+    // --- Next Leg ---
+
+    requestNextLeg: () => {
+      const s = get();
+      if (s.nextLegPhase === "opponent_ready") {
+        getColyseusManager().send("next_leg_accept", {});
+        set({ nextLegPhase: "accepted" });
+      } else {
+        getColyseusManager().send("next_leg_request", {});
+        set({
+          nextLegPhase: transition("nextLeg", s.nextLegPhase, "sent"),
+        });
+      }
+    },
+
+    resetNextLeg: () => set({ nextLegPhase: "idle" }),
+
+    // --- Tournament ---
+
+    connectTournament: async (tournamentId?: string) => {
+      const mgr = getTournamentManager();
+      await mgr.connect(tournamentId);
+    },
+
+    disconnectTournament: () => {
+      getTournamentManager().disconnect();
+    },
+
+    createTournament: (data) => {
+      getTournamentManager().send("create_tournament", data);
+    },
+
+    startTournament: (tournamentId: string, userId: string) => {
+      getTournamentManager().send("start_tournament", {
+        tournamentId,
+        userId,
+      });
+    },
+
+    registerPlayer: (tournamentId: string, userId: string) => {
+      getTournamentManager().send("register_player", {
+        tournamentId,
+        userId,
+      });
+    },
+
+    unregisterPlayer: (tournamentId: string, userId: string) => {
+      getTournamentManager().send("unregister_player", {
+        tournamentId,
+        userId,
+      });
+    },
+
+    readyForMatch: (matchId: number, userId: string, tournamentId: string) => {
+      getTournamentManager().send("ready_for_match", {
+        matchId,
+        userId,
+        tournamentId,
+      });
+    },
+
+    unreadyForMatch: (matchId: number, userId: string) => {
+      getTournamentManager().send("unready_for_match", { matchId, userId });
+    },
+
+    reportMatchGameResult: (
+      matchId: number,
+      winnerUserId: string,
+      legResults: Array<{ winnerName: string; winnerIndex: number }>,
+    ) => {
+      getTournamentManager().send("match_game_result", {
+        matchId,
+        winnerUserId,
+        legResults,
+      });
+    },
+
+    sendGameRoomReady: (matchId: number, colyseusRoomId: string) => {
+      getTournamentManager().send("match_game_room_ready", {
+        matchId,
+        colyseusRoomId,
+      });
+    },
+
+    recordResult: (
+      matchId: number,
+      opponent1Score: number,
+      opponent2Score: number,
+    ) => {
+      getTournamentManager().send("record_result", {
+        matchId,
+        opponent1Score,
+        opponent2Score,
+      });
+    },
+
+    clearMatchAlert: () => set({ matchAlert: null }),
+    clearMatchStart: () => set({ matchStart: null }),
+    clearMatchCountdown: () => set({ matchCountdown: null }),
+    clearMatchGameRoom: () => set({ matchGameRoom: null }),
+  };
+});
+
+// Dev-mode stale state detection
+if (import.meta.env.DEV) {
+  const STALE_THRESHOLDS: Record<string, number> = {
+    connecting: 15_000, // lobbyPhase stuck connecting
+    launching: 15_000, // roomPhase stuck launching
+    reconnecting: 30_000, // colyseusPhase stuck reconnecting
+  };
+
+  const staleTimers: Record<string, ReturnType<typeof setTimeout>> = {};
+
+  useOnlineStore.subscribe((state, prev) => {
+    const phases = ["lobbyPhase", "roomPhase", "colyseusPhase"] as const;
+
+    for (const key of phases) {
+      if (state[key] !== prev[key]) {
+        // Clear existing timer for this phase
+        if (staleTimers[key]) {
+          clearTimeout(staleTimers[key]);
+          delete staleTimers[key];
+        }
+
+        const threshold = STALE_THRESHOLDS[state[key]];
+        if (threshold) {
+          staleTimers[key] = setTimeout(() => {
+            const current = useOnlineStore.getState()[key];
+            if (current === state[key]) {
+              log.warn(
+                { phase: key, value: current, staleMs: threshold },
+                "Phase appears stuck — consider auto-recovering",
+              );
+            }
+          }, threshold);
+        }
       }
     }
-  },
+  });
+}
 
-  sendInvite: async (toId, gameType, gameOptions) => {
-    const { authUserId, displayName } = get();
-    if (!authUserId) return;
-
-    // Create room first
-    const room = await get().createRoom(gameType, gameOptions);
-    if (!room) return;
-
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + 30000);
-
-    const invite: Invite = {
-      id:
-        typeof crypto.randomUUID === "function"
-          ? crypto.randomUUID()
-          : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
-      from_id: authUserId,
-      to_id: toId,
-      room_id: room.id,
-      game_type: gameType,
-      game_options: gameOptions,
-      status: "pending",
-      created_at: now.toISOString(),
-      expires_at: expiresAt.toISOString(),
-      from_name: displayName ?? "Unknown",
-    };
-
-    // Store invite in DB
-    await supabase.from("invites").insert({
-      id: invite.id,
-      from_id: invite.from_id,
-      to_id: invite.to_id,
-      room_id: invite.room_id,
-      game_type: invite.game_type,
-      game_options: invite.game_options as Json,
-      status: invite.status,
-      created_at: invite.created_at,
-      expires_at: invite.expires_at,
-    });
-
-    // Broadcast invite via lobby channel
-    const { lobbyChannel } = get();
-    if (lobbyChannel) {
-      lobbyChannel.send({
-        type: "broadcast",
-        event: "invite",
-        payload: invite,
-      });
-    }
-
-    set({ sentInvite: invite });
-  },
-
-  acceptInvite: async (invite: Invite) => {
-    const { authUserId, lobbyChannel } = get();
-    if (!authUserId) return;
-
-    // Update invite in DB
-    await supabase
-      .from("invites")
-      .update({ status: "accepted" as InviteStatus })
-      .eq("id", invite.id);
-
-    // Notify sender via lobby broadcast (include guest info so host can resolve name)
-    if (lobbyChannel) {
-      lobbyChannel.send({
-        type: "broadcast",
-        event: "invite_response",
-        payload: {
-          invite_id: invite.id,
-          status: "accepted",
-          room_id: invite.room_id,
-          guest_id: authUserId,
-          guest_name: get().displayName,
-        },
-      });
-    }
-
-    set({ pendingInvite: null, opponentName: invite.from_name ?? null });
-
-    // Join the room
-    await get().joinRoom(invite.room_id);
-  },
-
-  declineInvite: async (invite: Invite) => {
-    const { lobbyChannel } = get();
-
-    await supabase
-      .from("invites")
-      .update({ status: "declined" as InviteStatus })
-      .eq("id", invite.id);
-
-    if (lobbyChannel) {
-      lobbyChannel.send({
-        type: "broadcast",
-        event: "invite_response",
-        payload: {
-          invite_id: invite.id,
-          status: "declined",
-          room_id: invite.room_id,
-        },
-      });
-    }
-
-    set({ pendingInvite: null });
-  },
-
-  dismissInvite: () => set({ pendingInvite: null }),
-  dismissSentInvite: () => set({ sentInvite: null }),
-  setCurrentRoom: (room) => set({ currentRoom: room }),
-  setRoomChannel: (channel) => set({ roomChannel: channel }),
-  updateRoomStatus: (status) => {
-    const { currentRoom } = get();
-    if (currentRoom) {
-      set({ currentRoom: { ...currentRoom, status } });
-      void supabase.from("rooms").update({ status }).eq("id", currentRoom.id);
-    }
-  },
-}));
+// Backward-compatible exports
+export type { OnlineConfig } from "./online.types.ts";
+export type ConnectionStatus = "offline" | "connecting" | "online" | "error";
