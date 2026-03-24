@@ -3,6 +3,7 @@ import { useCricketStore } from "../store/useCricketStore.ts";
 import {
   CRICKET_TARGETS,
   detectCricketAward,
+  getSetWinner,
   Bot,
   getBotCharacter,
   CreateSegment,
@@ -18,6 +19,7 @@ import type {
   SetProgress,
   SetConfig,
   LegResult,
+  SetFormat,
 } from "@nlc-darts/engine";
 
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
@@ -61,6 +63,7 @@ interface CricketScreenProps {
   legResults?: LegResult[];
   currentLegIndex?: number;
   onlineConfig?: OnlineConfig;
+  onTournamentComplete?: (winnerName: string) => void;
 }
 
 function targetLabel(t: CricketTarget) {
@@ -153,6 +156,7 @@ export function CricketScreen({
   legResults,
   currentLegIndex,
   onlineConfig,
+  onTournamentComplete,
 }: CricketScreenProps) {
   const {
     players,
@@ -405,6 +409,35 @@ export function CricketScreen({
     if (rematchPhase === "declined") onExit();
   }, [rematchPhase, onRematch, onExit, room]);
 
+  // Auto-complete tournament set when decided
+  const tournamentCompleteCalledRef = useRef(false);
+  useEffect(() => {
+    if (
+      !onTournamentComplete ||
+      !setProgress ||
+      !winner ||
+      tournamentCompleteCalledRef.current
+    )
+      return;
+    const format =
+      setProgress.totalLegs === 3
+        ? "bo3"
+        : (`bo${setProgress.totalLegs}` as SetFormat);
+    const effectiveResults = [
+      ...setProgress.legResults,
+      {
+        winnerName: winner,
+        winnerIndex: players.findIndex((p) => p.name === winner),
+      },
+    ];
+    const setWinner = getSetWinner(effectiveResults, format);
+    if (setWinner) {
+      tournamentCompleteCalledRef.current = true;
+      const t = setTimeout(() => onTournamentComplete(winner), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [winner, setProgress, onTournamentComplete, players]);
+
   const n = players.length;
   const readyToSwitch = currentRoundDarts.length === 3;
   const nextPlayerIndex = (currentPlayerIndex + 1) % players.length;
@@ -477,7 +510,6 @@ export function CricketScreen({
                 setConfirmedStream(stream);
                 setCameraPreviewShown(false);
               }}
-              onSkip={() => setCameraPreviewShown(false)}
             />
           )}
           {onlineConfig && opponentDisconnected && !winner && (

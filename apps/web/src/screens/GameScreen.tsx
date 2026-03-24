@@ -5,6 +5,7 @@ import {
   Bot,
   getBotCharacter,
   CreateSegment,
+  getSetWinner,
   x01PickTarget,
 } from "@nlc-darts/engine";
 import type {
@@ -15,6 +16,7 @@ import type {
   SetProgress,
   SetConfig,
   LegResult,
+  SetFormat,
 } from "@nlc-darts/engine";
 import { AwardOverlay } from "../components/AwardOverlay.tsx";
 import { ResultsOverlay } from "../components/ResultsOverlay.tsx";
@@ -56,6 +58,7 @@ interface GameScreenProps {
   legResults?: LegResult[];
   currentLegIndex?: number;
   onlineConfig?: OnlineConfig;
+  onTournamentComplete?: (winnerName: string) => void;
 }
 
 export function GameScreen({
@@ -72,6 +75,7 @@ export function GameScreen({
   legResults,
   currentLegIndex,
   onlineConfig,
+  onTournamentComplete,
 }: GameScreenProps) {
   const {
     players,
@@ -355,6 +359,35 @@ export function GameScreen({
     if (rematchPhase === "declined") onExit();
   }, [rematchPhase, onRematch, onExit, room]);
 
+  // Auto-complete tournament set when decided
+  const tournamentCompleteCalledRef = useRef(false);
+  useEffect(() => {
+    if (
+      !onTournamentComplete ||
+      !setProgress ||
+      !winner ||
+      tournamentCompleteCalledRef.current
+    )
+      return;
+    const format =
+      setProgress.totalLegs === 3
+        ? "bo3"
+        : (`bo${setProgress.totalLegs}` as SetFormat);
+    const effectiveResults = [
+      ...setProgress.legResults,
+      {
+        winnerName: winner,
+        winnerIndex: players.findIndex((p) => p.name === winner),
+      },
+    ];
+    const setWinner = getSetWinner(effectiveResults, format);
+    if (setWinner) {
+      tournamentCompleteCalledRef.current = true;
+      const t = setTimeout(() => onTournamentComplete(winner), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [winner, setProgress, onTournamentComplete, players]);
+
   return (
     <GameShell
       gameClass="game-x01"
@@ -403,7 +436,6 @@ export function GameScreen({
                 setConfirmedStream(stream);
                 setCameraPreviewShown(false);
               }}
-              onSkip={() => setCameraPreviewShown(false)}
             />
           )}
           {onlineConfig && opponentDisconnected && !winner && (

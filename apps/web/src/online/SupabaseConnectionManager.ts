@@ -22,6 +22,7 @@ type StoreReader = () => OnlineStoreState;
 export interface PresencePayload {
   id: string;
   display_name: string;
+  avatar_url: string | null;
   status: PlayerStatus;
   x01_grade: string | null;
   x01_ppd: number;
@@ -57,6 +58,7 @@ export class SupabaseConnectionManager extends ConnectionManager {
     return {
       id: state.authUserId!,
       display_name: state.displayName ?? "Player",
+      avatar_url: null,
       status: statusOverride ?? "online",
       x01_grade: state.stats.x01.grade,
       x01_ppd: state.stats.x01.ppd,
@@ -85,6 +87,7 @@ export class SupabaseConnectionManager extends ConnectionManager {
             players.push({
               id: p.id,
               display_name: p.display_name,
+              avatar_url: p.avatar_url ?? null,
               status: p.status,
               last_seen: new Date().toISOString(),
               x01_grade: p.x01_grade ?? null,
