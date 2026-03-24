@@ -21,6 +21,9 @@ export type WebRTCStatus =
 
 export type WebRTCStatusCallback = (status: WebRTCStatus) => void;
 export type StreamCallback = (stream: MediaStream | null) => void;
+export type SignalRegistrar = (
+  handler: ((payload: unknown) => void) | null,
+) => void;
 
 /** Send a Colyseus message, silently swallowing errors if the WebSocket is already closed. */
 function safeSend(room: Room, type: string, payload: unknown) {
@@ -84,6 +87,7 @@ export class WebRTCManager {
   private onStatus: WebRTCStatusCallback;
   private onLocalStream: StreamCallback;
   private onRemoteStream: StreamCallback;
+  private registerSignal: SignalRegistrar | null = null;
 
   constructor(callbacks: {
     onStatus: WebRTCStatusCallback;
@@ -101,7 +105,11 @@ export class WebRTCManager {
    * @param room  - Active Colyseus room used for signaling.
    * @param isHost - Whether this player is the room host (creates offers).
    */
-  async start(room: Room, isHost: boolean): Promise<void> {
+  async start(
+    room: Room,
+    isHost: boolean,
+    registerSignal?: SignalRegistrar,
+  ): Promise<void> {
     // getUserMedia requires a secure context (HTTPS, localhost, or capacitor://).
     if (!navigator.mediaDevices?.getUserMedia) {
       console.warn(
@@ -136,6 +144,7 @@ export class WebRTCManager {
       return;
     }
 
+    this.registerSignal = registerSignal ?? null;
     this.localStream = stream;
     this.onLocalStream(stream);
     this.setupPeerConnection(room, isHost, stream);
@@ -150,17 +159,20 @@ export class WebRTCManager {
    * @param room   - Active Colyseus room used for signaling.
    * @param isHost - Whether this player is the room host (creates offers).
    * @param stream - Pre-acquired MediaStream from getUserMedia.
+   * @param registerSignal - Optional registrar for persistent signal handler.
    */
   async startWithStream(
     room: Room,
     isHost: boolean,
     stream: MediaStream,
+    registerSignal?: SignalRegistrar,
   ): Promise<void> {
     if (this.stopped) {
       for (const track of stream.getTracks()) track.stop();
       return;
     }
 
+    this.registerSignal = registerSignal ?? null;
     this.localStream = stream;
     this.onLocalStream(stream);
     this.setupPeerConnection(room, isHost, stream);
@@ -217,13 +229,23 @@ export class WebRTCManager {
     };
 
     // Register signaling handler — receives offers/answers from the other player
-    room.onMessage(
-      "webrtc_signal",
-      (payload: { type: string; sdp?: RTCSessionDescriptionInit }) => {
-        if (this.stopped) return;
-        this.handleSignal(pc, room, payload, isHost);
-      },
-    );
+    const signalHandler = (payload: unknown) => {
+      if (this.stopped) return;
+      this.handleSignal(
+        pc,
+        room,
+        payload as { type: string; sdp?: RTCSessionDescriptionInit },
+        isHost,
+      );
+    };
+
+    if (this.registerSignal) {
+      // Register through the manager so the handler survives removeAllListeners()
+      this.registerSignal(signalHandler);
+    } else {
+      // Fallback: register directly on the room
+      room.onMessage("webrtc_signal", signalHandler);
+    }
 
     // Host creates offer with retry; guest just waits for the offer
     if (isHost) {
@@ -304,6 +326,12 @@ export class WebRTCManager {
   /** Tear down the peer connection, stop camera tracks, and reset state. */
   stop(): void {
     this.stopped = true;
+
+    // Unregister the persistent signal handler
+    if (this.registerSignal) {
+      this.registerSignal(null);
+      this.registerSignal = null;
+    }
 
     if (this.offerRetryTimer) {
       clearTimeout(this.offerRetryTimer);

@@ -89,11 +89,25 @@ export const useOnlineStore = create<OnlineStore>((set, get) => {
         const userId = session?.user?.id;
         if (!userId) throw new Error("Not authenticated");
 
-        const displayName = localStorage.getItem("nlc-online-name") ?? "Player";
+        const mgr = getSupabaseManager();
+
+        // DB is source of truth for display name; fall back to localStorage / OAuth
+        const existing = await mgr.fetchPlayer(userId);
+        const displayName =
+          existing?.display_name ||
+          localStorage.getItem("nlc-online-name") ||
+          (session?.user?.user_metadata?.full_name as string | undefined) ||
+          "Player";
+        // Keep localStorage in sync
+        localStorage.setItem("nlc-online-name", displayName);
+
+        const avatarUrl =
+          existing?.avatar_url ??
+          (session?.user?.user_metadata?.avatar_url as string | undefined) ??
+          null;
         const stats = await fetchPlayerStats(userId);
 
-        const mgr = getSupabaseManager();
-        await mgr.upsertPlayer(userId, displayName, "online");
+        await mgr.upsertPlayer(userId, displayName, "online", avatarUrl);
 
         set({
           authUserId: userId,
@@ -299,6 +313,23 @@ export const useOnlineStore = create<OnlineStore>((set, get) => {
     // --- Game (Colyseus) ---
 
     launchGame: async (config: OnlineConfig) => {
+      const mgr = getColyseusManager();
+      const existingRoom = mgr.getRoom();
+
+      // If manager already has a connected room (e.g., App.tsx created it),
+      // just set state and request sync — don't create/join again
+      if (existingRoom && existingRoom.roomId === config.colyseusRoomId) {
+        set({
+          onlineConfig: config,
+          roomPhase: "playing",
+          colyseusPhase: "connected",
+          rematchPhase: "idle",
+          nextLegPhase: "idle",
+        });
+        mgr.requestState();
+        return;
+      }
+
       set({
         onlineConfig: config,
         roomPhase: transition("room", get().roomPhase, "launching"),
@@ -310,8 +341,6 @@ export const useOnlineStore = create<OnlineStore>((set, get) => {
         rematchPhase: "idle",
         nextLegPhase: "idle",
       });
-
-      const mgr = getColyseusManager();
 
       try {
         if (config.isHost) {

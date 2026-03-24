@@ -35,6 +35,7 @@ export class ColyseusConnectionManager extends ConnectionManager {
   private lastSeenSeq = 0;
   private callbacks: ColyseusCallbacks | null = null;
   private setState: StoreWriter;
+  private webrtcSignalHandler: ((payload: unknown) => void) | null = null;
 
   constructor(setState: StoreWriter) {
     super(3); // max 3 retries
@@ -57,6 +58,17 @@ export class ColyseusConnectionManager extends ConnectionManager {
     this.callbacks = callbacks;
     if (!this.room) return;
     this.attachRoomHandlers(this.room);
+  }
+
+  /**
+   * Register a handler for webrtc_signal messages that survives
+   * `attachRoomHandlers` / `removeAllListeners` calls.
+   */
+  onWebRTCSignal(handler: ((payload: unknown) => void) | null): void {
+    this.webrtcSignalHandler = handler;
+    if (handler && this.room) {
+      this.room.onMessage("webrtc_signal", handler);
+    }
   }
 
   /** Create a new game room (host). */
@@ -182,6 +194,11 @@ export class ColyseusConnectionManager extends ConnectionManager {
     room.onMessage("rematch_decline", () => {
       this.setState({ rematchPhase: "declined" });
     });
+
+    // Re-register WebRTC signal handler if one was set (survives removeAllListeners)
+    if (this.webrtcSignalHandler) {
+      room.onMessage("webrtc_signal", this.webrtcSignalHandler);
+    }
 
     room.onLeave((code: number) => {
       log.info({ code, roomId: room.roomId }, "Room onLeave");

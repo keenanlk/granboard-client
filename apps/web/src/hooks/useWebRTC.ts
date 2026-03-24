@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Room } from "colyseus.js";
 import { WebRTCManager } from "../services/WebRTCManager.ts";
-import type { WebRTCStatus } from "../services/WebRTCManager.ts";
+import type {
+  WebRTCStatus,
+  SignalRegistrar,
+} from "../services/WebRTCManager.ts";
 
 interface UseWebRTCOptions {
   /** Active Colyseus room used for WebRTC signaling. */
@@ -12,6 +15,8 @@ interface UseWebRTCOptions {
   enabled: boolean;
   /** Pre-acquired camera stream from CameraPreview. When provided, WebRTCManager skips getUserMedia. */
   preAcquiredStream?: MediaStream | null;
+  /** Register persistent signal handler via ColyseusConnectionManager so it survives removeAllListeners. */
+  registerSignal?: SignalRegistrar;
 }
 
 interface UseWebRTCReturn {
@@ -35,6 +40,7 @@ export function useWebRTC({
   isHost,
   enabled,
   preAcquiredStream,
+  registerSignal,
 }: UseWebRTCOptions): UseWebRTCReturn {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -75,14 +81,14 @@ export function useWebRTC({
 
     if (preAcquiredStream) {
       console.log("[useWebRTC] calling startWithStream");
-      manager.startWithStream(room, isHost, preAcquiredStream);
+      manager.startWithStream(room, isHost, preAcquiredStream, registerSignal);
     } else {
       console.log("[useWebRTC] calling start (no pre-acquired stream)");
-      manager.start(room, isHost);
+      manager.start(room, isHost, registerSignal);
     }
 
     return cleanup;
-  }, [room, isHost, enabled, preAcquiredStream, cleanup]);
+  }, [room, isHost, enabled, preAcquiredStream, registerSignal, cleanup]);
 
   return { localStream, remoteStream, status };
 }

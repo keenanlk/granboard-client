@@ -83,6 +83,12 @@ describe("canTransition", () => {
     it("allows leaving -> idle", () => {
       expect(canTransition("room", "leaving", "idle")).toBe(true);
     });
+    it("allows waiting -> launching", () => {
+      expect(canTransition("room", "waiting", "launching")).toBe(true);
+    });
+    it("allows idle -> launching", () => {
+      expect(canTransition("room", "idle", "launching")).toBe(true);
+    });
     it("rejects idle -> playing", () => {
       expect(canTransition("room", "idle", "playing")).toBe(false);
     });
@@ -105,6 +111,9 @@ describe("canTransition", () => {
     });
     it("allows reconnecting -> error", () => {
       expect(canTransition("colyseus", "reconnecting", "error")).toBe(true);
+    });
+    it("allows connected -> connecting", () => {
+      expect(canTransition("colyseus", "connected", "connecting")).toBe(true);
     });
     it("rejects disconnected -> connected (must go through connecting)", () => {
       expect(canTransition("colyseus", "disconnected", "connected")).toBe(

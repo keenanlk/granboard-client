@@ -39,6 +39,7 @@ import { OnlineLobbyScreen } from "./screens/OnlineLobbyScreen.tsx";
 import { OnlineSetupScreen } from "./screens/OnlineSetupScreen.tsx";
 import { AuthScreen } from "./screens/AuthScreen.tsx";
 import { OnlineChoiceScreen } from "./screens/OnlineChoiceScreen.tsx";
+import { OnlineSettingsScreen } from "./screens/OnlineSettingsScreen.tsx";
 import { TournamentHubScreen } from "./screens/TournamentHubScreen.tsx";
 import { CreateTournamentScreen } from "./screens/CreateTournamentScreen.tsx";
 import { BracketScreen } from "./screens/BracketScreen.tsx";
@@ -124,6 +125,7 @@ type Screen =
       restoredState?: unknown;
     }
   | { name: "online-choice" }
+  | { name: "online-settings" }
   | { name: "tournament-hub" }
   | { name: "create-tournament" }
   | { name: "bracket"; tournamentId: string; isOnline: boolean };
@@ -398,6 +400,7 @@ function App() {
   useEffect(() => {
     if (
       screen.name === "online-choice" ||
+      screen.name === "online-settings" ||
       screen.name === "tournament-hub" ||
       screen.name === "create-tournament" ||
       screen.name === "bracket"
@@ -1138,6 +1141,19 @@ function App() {
         onBack={() => setScreen({ name: "home" })}
         onLobby={() => setScreen({ name: "online-lobby" })}
         onTournaments={() => setScreen({ name: "tournament-hub" })}
+        onSettings={() => setScreen({ name: "online-settings" })}
+      />
+    );
+  }
+
+  if (screen.name === "online-settings") {
+    return (
+      <OnlineSettingsScreen
+        onBack={() => setScreen({ name: "online-choice" })}
+        onSignOut={() => {
+          void useOnlineStore.getState().goOffline();
+          setScreen({ name: "home" });
+        }}
       />
     );
   }

@@ -343,16 +343,30 @@ export class SupabaseConnectionManager extends ConnectionManager {
     this.sendLobbyBroadcast("invite_response", payload);
   }
 
+  /** Fetch the existing player record (returns null if not found). */
+  async fetchPlayer(
+    userId: string,
+  ): Promise<{ display_name: string; avatar_url: string | null } | null> {
+    const { data } = await supabase
+      .from("online_players")
+      .select("display_name, avatar_url")
+      .eq("id", userId)
+      .single();
+    return data;
+  }
+
   /** Upsert the online_players DB record. */
   async upsertPlayer(
     userId: string,
     displayName: string,
     status: PlayerStatus,
+    avatarUrl?: string | null,
   ): Promise<void> {
     await supabase.from("online_players").upsert(
       {
         id: userId,
         display_name: displayName,
+        avatar_url: avatarUrl ?? null,
         status,
         last_seen: new Date().toISOString(),
       },

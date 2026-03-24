@@ -1,40 +1,50 @@
-import { ArrowLeft, Users, Trophy } from "lucide-react";
+import { ArrowLeft, Users, Trophy, Settings } from "lucide-react";
 
 interface OnlineChoiceScreenProps {
   onBack: () => void;
   onLobby: () => void;
   onTournaments: () => void;
+  onSettings: () => void;
 }
 
 export function OnlineChoiceScreen({
   onBack,
   onLobby,
   onTournaments,
+  onSettings,
 }: OnlineChoiceScreenProps) {
   return (
     <div className="h-full flex flex-col bg-black text-white">
       {/* Header */}
       <div
-        className="flex items-center gap-4 px-6 pb-4"
+        className="flex items-center justify-between px-6 pb-4"
         style={{ paddingTop: "calc(var(--sat) + 1.5rem)" }}
       >
+        <div className="flex items-center gap-4">
+          <button
+            onClick={onBack}
+            className="p-2 rounded-xl bg-zinc-900 border border-zinc-800"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1
+            className="text-3xl tracking-tight"
+            style={{
+              fontFamily: "Beon, sans-serif",
+              color: "#f59e0b",
+              textShadow:
+                "0 0 20px #f59e0b, 0 0 60px #f59e0b, 0 0 100px rgba(245,158,11,0.5)",
+            }}
+          >
+            Online
+          </h1>
+        </div>
         <button
-          onClick={onBack}
-          className="p-2 rounded-xl bg-zinc-900 border border-zinc-800"
+          onClick={onSettings}
+          className="p-2 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-amber-600/50 transition-colors"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <Settings className="w-5 h-5 text-zinc-400" />
         </button>
-        <h1
-          className="text-3xl tracking-tight"
-          style={{
-            fontFamily: "Beon, sans-serif",
-            color: "#f59e0b",
-            textShadow:
-              "0 0 20px #f59e0b, 0 0 60px #f59e0b, 0 0 100px rgba(245,158,11,0.5)",
-          }}
-        >
-          Online
-        </h1>
       </div>
 
       {/* Two large tiles */}

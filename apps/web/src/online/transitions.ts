@@ -116,9 +116,9 @@ const INVITE_TRANSITIONS: TransitionTable = {
 };
 
 const ROOM_TRANSITIONS: TransitionTable = {
-  idle: ["creating", "waiting"],
+  idle: ["creating", "waiting", "launching"],
   creating: ["waiting", "idle"],
-  waiting: ["setup", "leaving", "idle"],
+  waiting: ["setup", "launching", "leaving", "idle"],
   setup: ["launching", "leaving"],
   launching: ["playing", "leaving", "idle"],
   playing: ["finished", "leaving"],
@@ -129,7 +129,7 @@ const ROOM_TRANSITIONS: TransitionTable = {
 const COLYSEUS_TRANSITIONS: TransitionTable = {
   disconnected: ["connecting"],
   connecting: ["connected", "error", "disconnected"],
-  connected: ["disconnected", "reconnecting"],
+  connected: ["disconnected", "reconnecting", "connecting"],
   reconnecting: ["connected", "error", "disconnected"],
   error: ["disconnected", "connecting"],
 };

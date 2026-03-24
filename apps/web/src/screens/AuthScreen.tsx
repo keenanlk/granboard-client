@@ -41,16 +41,32 @@ export function AuthScreen({ onAuthenticated, onBack }: AuthScreenProps) {
   }
 
   async function checkFirstTime() {
-    const existingName = localStorage.getItem("nlc-online-name");
-    if (existingName) {
+    const localName = localStorage.getItem("nlc-online-name");
+    if (localName) {
       onAuthenticated();
       return;
     }
 
-    // First-time user — pre-fill from provider metadata
     const {
       data: { session },
     } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
+
+    // Check DB for existing display name (e.g. localStorage was cleared)
+    if (userId) {
+      const { data } = await supabase
+        .from("online_players")
+        .select("display_name")
+        .eq("id", userId)
+        .single();
+      if (data?.display_name) {
+        localStorage.setItem("nlc-online-name", data.display_name);
+        onAuthenticated();
+        return;
+      }
+    }
+
+    // First-time user — pre-fill from provider metadata
     const providerName =
       (session?.user?.user_metadata?.full_name as string) ?? "";
     setDisplayName(providerName);

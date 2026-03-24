@@ -15,7 +15,6 @@ import type {
 import { useLobby } from "../hooks/useLobby.ts";
 import { InviteModal } from "../components/InviteModal.tsx";
 import { useOnlineStore } from "../store/useOnlineStore.ts";
-import { supabase } from "../lib/supabaseClient.ts";
 import type { OnlineGameType } from "../store/online.types.ts";
 
 const GRADE_COLORS: Record<string, string> = {
@@ -93,8 +92,6 @@ export function OnlineLobbyScreen({
   } = useLobby();
 
   const displayName = useOnlineStore((s) => s.displayName);
-  const [editingName, setEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState("");
 
   const [inviteTarget, setInviteTarget] = useState<string | null>(null);
   const [selectedGame, setSelectedGame] = useState<OnlineGameType | null>(null);
@@ -688,111 +685,19 @@ export function OnlineLobbyScreen({
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-950/40 border border-amber-800">
-            <span className="size-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.7)]" />
-            <span className="text-sm font-bold text-amber-400">
-              {connectionStatus === "online" ? "Online" : "Error"}
-            </span>
+        <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-950/40 border border-amber-800">
+          <span className="size-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.7)]" />
+          <span className="text-sm font-bold text-amber-400">
+            {connectionStatus === "online" ? "Online" : "Error"}
           </span>
-          <button
-            onClick={() => {
-              void supabase.auth.signOut().then(() => {
-                void goOffline();
-                onBack();
-              });
-            }}
-            className="text-zinc-500 hover:text-white transition-colors text-xs uppercase tracking-wider font-bold"
-          >
-            Sign Out
-          </button>
-        </div>
+        </span>
       </header>
 
-      {/* Player name + edit */}
-      <div className="px-6 pb-2 shrink-0 flex items-center gap-2">
-        {editingName ? (
-          <>
-            <input
-              type="text"
-              value={nameInput}
-              onChange={(e) => setNameInput(e.target.value)}
-              maxLength={20}
-              autoFocus
-              className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-white font-bold uppercase tracking-widest text-sm focus:outline-none focus:border-amber-500 transition-colors"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && nameInput.trim()) {
-                  const newName = nameInput.trim();
-                  localStorage.setItem("nlc-online-name", newName);
-                  useOnlineStore.setState({ displayName: newName });
-                  const uid = useOnlineStore.getState().authUserId;
-                  if (uid) {
-                    void supabase
-                      .from("online_players")
-                      .update({ display_name: newName })
-                      .eq("id", uid);
-                  }
-                  setEditingName(false);
-                } else if (e.key === "Escape") {
-                  setEditingName(false);
-                }
-              }}
-            />
-            <button
-              onClick={() => {
-                const newName = nameInput.trim();
-                if (newName) {
-                  localStorage.setItem("nlc-online-name", newName);
-                  useOnlineStore.setState({ displayName: newName });
-                  const uid = useOnlineStore.getState().authUserId;
-                  if (uid) {
-                    void supabase
-                      .from("online_players")
-                      .update({ display_name: newName })
-                      .eq("id", uid);
-                  }
-                }
-                setEditingName(false);
-              }}
-              className="text-amber-400 text-xs font-bold uppercase tracking-wider"
-            >
-              Save
-            </button>
-            <button
-              onClick={() => setEditingName(false)}
-              className="text-zinc-500 text-xs font-bold uppercase tracking-wider"
-            >
-              Cancel
-            </button>
-          </>
-        ) : (
-          <>
-            <span className="text-zinc-400 text-sm font-bold uppercase tracking-widest">
-              {displayName ?? "Player"}
-            </span>
-            <button
-              onClick={() => {
-                setNameInput(displayName ?? "");
-                setEditingName(true);
-              }}
-              className="text-zinc-600 hover:text-amber-400 transition-colors"
-              aria-label="Edit display name"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="size-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                <path d="m15 5 4 4" />
-              </svg>
-            </button>
-          </>
-        )}
+      {/* Player name */}
+      <div className="px-6 pb-2 shrink-0">
+        <span className="text-zinc-400 text-sm font-bold uppercase tracking-widest">
+          {displayName ?? "Player"}
+        </span>
       </div>
 
       {/* Waiting for response overlay */}

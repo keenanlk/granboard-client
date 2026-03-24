@@ -48,6 +48,7 @@ import { WaitingOverlay } from "../components/WaitingOverlay.tsx";
 import { useWebRTC } from "../hooks/useWebRTC.ts";
 import { CameraBackground } from "../components/CameraBackground.tsx";
 import { CameraPreview } from "../components/CameraPreview.tsx";
+import { getColyseusManager } from "../online/managers.ts";
 
 interface CricketScreenProps {
   options: CricketOptions;
@@ -259,11 +260,17 @@ export function CricketScreen({
   }, [room, onlineConfig]);
 
   const localPlayerIndex = onlineConfig ? (onlineConfig.isHost ? 0 : 1) : 0;
+  const registerSignal = useCallback(
+    (handler: ((payload: unknown) => void) | null) =>
+      getColyseusManager().onWebRTCSignal(handler),
+    [],
+  );
   const { localStream, remoteStream } = useWebRTC({
     room,
     isHost: onlineConfig?.isHost ?? false,
     enabled: confirmedStream !== null,
     preAcquiredStream: confirmedStream,
+    registerSignal: onlineConfig ? registerSignal : undefined,
   });
 
   const bots = useMemo(() => {
